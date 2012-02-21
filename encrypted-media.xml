@@ -1,0 +1,1776 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Encrypted Media Extensions</title>
+    <link rel="stylesheet" href="video-working-draft.css" />
+    <link rel="stylesheet" href="main.css" />
+    <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/w3c-unofficial.css" />
+    <style type="text/css">
+      <!-- For inline non-normative text. -->
+      .non-normative { font-style: italic; color: DarkSlateGrey; }
+      .non-normative em { font-style: normal;}
+      .non-normative var { font-style: normal;}
+      <!-- For discussion of open issues. -->
+      .issue {
+      padding:    1em;
+      margin: 1em 0em 0em;
+      border: 1px solid #f00;
+      background: #fcc;
+      }
+      .issue::before {
+      content:    "Issue";
+      display:    block;
+      width:  150px;
+      margin: -1.5em 0 0.5em 0;
+      font-weight:    bold;
+      border: 1px solid #f00;
+      background: #fff;
+      padding:    3px 1em;
+      }
+    </style>
+
+
+  </head>
+  <body>
+    <div class="head">
+      <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
+      <h1>Encrypted Media Extensions v0.1</h1>
+      <h2>Draft Proposal</h2>
+      <dl>
+        <dt>Editors:</dt>
+        <dd>David Dorwin, Google, Inc.</dd>
+        <dd>Adrian Bateman, Microsoft Corporation</dd>
+        <dd>Mark Watson, Netflix, Inc.</dd>
+      </dl>
+    </div>
+
+    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#Copyright">Copyright</a> &#169; 2012 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>&#174;</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+
+    <h2>Status of this Document</h2>
+
+    <p><em>
+      This section describes the status of this document at the time of its publication. Other documents may supersede this document.
+      A list of current W3C publications and the latest revision of this technical report can be found in the
+      <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.
+    </em></p>
+    <p>
+      This document was submitted to the <a href="http://www.w3.org/html/wg/">HTML Working Group</a> as an Unofficial Draft.
+      If you wish to make comments regarding this document, please send them to <a href="mailto:public-html@w3.org">public-html@w3.org</a>
+      (<a href="mailto:public-html-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-html/">archives</a>).
+      You may send feedback to <a href="mailto:public-html-comments@w3.org">public-html-comments@w3.org</a>
+      (<a href="mailto:public-html-comments-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-html-comments/">archives</a>)
+      without joining the working group. All feedback is welcome.
+    </p>
+    <p>
+      Publication as a Unofficial Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated,
+      replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.
+    </p>
+    <p>
+      This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>.
+      W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent disclosures</a> made in connection with
+      the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which
+      the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+      information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.
+      </p>
+
+
+    <h2>Abstract</h2>
+
+    <p>This proposal extends HTMLMediaElement to enable playback of protected content.
+    The proposed API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
+    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.
+    No "DRM" is added to the HTML5 specification, and only simple clear key decryption is required as a common baseline.
+    </p>
+
+
+    <h2>Table of Contents</h2>
+
+    <ul id="toc" style="list-style-type:none">
+      <li><a href="#introduction">1. Introduction</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#goals">1.1 Goals</a></li>
+          <li><a href="#definitions">1.2. Definitions</a></li>
+        </ul></li>
+      <li><a href="#extensions">2. Media Element Extensions</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#error-codes">2.1. Error Codes</a></li>
+        </ul></li>
+      <li><a href="#events">3. Events</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#event-definitions">3.1 Event Definitions</a></li>
+          <li><a href="#event-summary">3.2 Event Summary</a></li>
+        </ul></li>
+      <li><a href="#key-release">4. Key Release</a></li>
+      <li><a href="#algorithms">5. Algorithms</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#algorithms-enrypted-block">5.1. Potentially Encrypted Stream Encountered</a></li>
+          <li><a href="#algorithms-encrypted-stream">5.2. Potentially encrypted stream encountered</a></li>
+          <li><a href="#algorithms-load">5.3. Addition to Media Element Load Algorithm</a></li>
+        </ul></li>
+      <li><a href="#simple-decryption">6. Simple Decryption</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#simple-decryption-clear-key">6.1. Clear Key</a></li>
+        </ul></li>
+      <li><a href="#examples">7. Examples</a></li>
+      <li><a href="#faq">8. FAQ</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#faq-use-cases">8.1. Use Cases</a></li>
+          <li><a href="#faq-use">8.2. Use</a></li>
+          <li><a href="#faq-api">8.3. API</a></li>
+          <li><a href="#faq-source">8.4. Source, Containers, and Streams</a></li>
+          <li><a href="#faq-protection">8.5. Content and Key Protection</a></li>
+        </ul></li>
+      <li><a href="#open-issues">9. Open Issues</a></li>
+      <li><a href="#revision-history">10. Revision History</a></li>
+    </ul>
+
+
+    <h2 id="introduction">1. Introduction</h2>
+    <non-normative-section/>
+    <p>This proposal allows JavaScript to select content protection mechanisms, control license/key exchange, and implement custom license management algorithms.
+    It supports a wide range of use cases without requiring client-side modifications in each user agent for each use case.
+    This also enables content providers to develop a single application solution for all devices.
+    A generic stack implemented using the proposed APIs is shown below.
+    This is just an example flow and is not intended to show all possible communication or uses.</p>
+    <img src="stack_overview.png" alt="A generic stack implemented using the proposed APIs" height="700"></img>
+
+    <h3 id="goals">1.1 Goals</h3>
+    <non-normative-section/>
+    <p>This proposal was designed with the following goals in mind:</p>
+    <ul>
+      <li>Support simple decryption without the need for DRM servers, etc.</li>
+      <li>Support a wide range of media containers and codecs.</li>
+      <li>Stream reusability - the actual encrypted content stream/file for a given container/codec should be identical regardless of the user agent and content decryption and protection mechanism.</li>
+      <li>Support a wide range of use cases.</li>
+      <li>Flexibility (and control) for applications and content providers without requiring client/user agent updates.</li>
+      <li>Minimize additions to HTMLMediaElement and new capabilities added to the user agent.
+      <ul>
+        <li>Defer all information and algorithms about the content decryption and protection solution to the application/server and client <a href="#cdm">content decryption module</a>. The user agent should just pass information.</li>
+        <li>The user agent should not be responsible for communication with license servers.</li>
+        <li>The user agent should not select among content decryption and protection options. The application should make this decision.</li>
+        <li>Note: Applications are already capable of everything required except secure decryption and decode.</li>
+      </ul></li>
+      <li>Compatible with adaptive streaming.</li>
+      <li>Usability.</li>
+    </ul>
+
+    <h3 id="definitions">1.2. Definitions</h3>
+
+    <h4 id="cdm">1.2.1. Content Decryption Module (CDM)</h4>
+    <non-normative-section/>
+    <p>The Content Decryption Module (CDM) is a generic term for a part of or add-on to the user agent that provides functionality for one or more <a href="#key-system">Key Systems</a>.
+    Implementations may or may not separate the implementations of CDMs and may or may not treat them as separate from the user agent.
+    This is transparent to the API and application.
+    A user agent may support one or more CDMs.</p>
+
+    <h4 id="key-system">1.2.2. Key System</h4>
+    <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
+    Key System strings provide unique identification of a Key System.
+    They used by the user agent to select the <a href="#cdm">Content Decryption Modules</a> and identify the source of a key-related event.
+    <a href="#simple-decryption">Simple Decryption</a> Key Systems are supported by all user agents. User agents may also provide additional CDMs with corresponding Key System strings.
+    </p>
+
+    <p>Key System strings are always a reverse domain name. <span class="non-normative">For example, "com.example.somesystem".</span>
+    Within a given system <span class="non-normative">("somesystem" in the example)</span>, subsystems may be defined as determined by the key system provider.
+    <span class="non-normative">For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".</span>
+    <span class="non-normative">Key system providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.</span>
+    </p>
+    <p class="issue">It may make sense to provide informal guidelines to avoid these diverging too much. There are probably best practices too. Should platform-specific or <a href="#faq-provider-capabilities">protection capability information</a> be contained in these strings?)</p>
+
+    <p>If a user agent returns "maybe" or "probably" for any subsystem string, it must return "maybe" when a parent system string is passed to <methodref>canPlayType</methodref>.
+    <span class="non-normative">For example, if a user agent returns "maybe" or "probably" for "com.example.somesystem.1_5", it must return "maybe" for "com.example.somesystem".</span>
+    </p>
+
+    <h4 id="session-id">1.2.3. Session ID</h4>
+    <p>A session ID is an optional string ID used to associate calls related to a key/license lifetime, starting with the request.
+    <span class="non-normative">It is a local binding between a request and key/license.
+    It does not associate keys or licenses for different streams (i.e. audio and video).</span>
+    If supported by the <a href="#key-system">Key System</a>, it is generated by the user agent/CDM and provided to the application in the <coderef>keymessage</coderef> event.
+    <span class="non-normative">(Session IDs need not necessarily be supported by the underlying content protection client or server.)</span>
+    </p>
+    <p>Each successful call to <methodref>generateKeyRequest</methodref> generates a new Session ID (returned in the <coderef>keymessage</coderef> event).</p>
+
+    <p class="non-normative">Applications should always provide the session ID from an event in subsequent calls for this key or license.
+    (This is a best practice, even if the current Key System does not support session IDs.)
+    This may mean that the application must associate a server response with the session ID and provide them both to <methodref>addKey</methodref>.
+    </p>
+
+    <p>If Session IDs are supported, a new one will be created each time <methodref>generateKeyRequest</methodref> is called.
+    The user agent/CDM manage the lifetime of Session IDs.
+    All Session IDs are cleared from the <a href="#media-element">media element</a> when a load occurs, although
+    the CDM may retain them for longer.
+    </p>
+
+    <p>NOTE: The key acquisition process (calling <methodref>generateKeyRequest</methodref>/<methodref>addKey</methodref>) may be executed multiple times for different sessions (each identified by a <var title="true"><a href="#session-id">sessionId</a></var>).</p>
+    <p class="issue">
+    The current proposal does not support a mechanism to release keys.
+    It is expected that the User Agent and CDM will release keys that are no longer needed as necessary to free resources.
+    No use case for triggering this release from JavaScript has been identified.
+    </p>
+
+    <h4 id="initialization-data">1.2.4. Initialization Data</h4>
+    <non-normative-section/>
+    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
+    It should always allow unique identification of the key or keys needed to decrypt the content, possibly after being parsed by a CDM or server.
+    </p>
+
+    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a key request message.
+    This block could be as simple as a key or content ID to send to a server or as complex as an opaque Key System-specific collection of data.
+    This initialization information may be obtained in some application-specific way or may be stored with the <videoanchor name="media-data">media data</videoanchor>.
+    Container formats may provide for storage of such information, possibly for multiple <a href="#key-system">Key Systems</a> in a single media file.
+    </p>
+
+    <p>Initialization data found in the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
+    This data has a container-specific format and is assumed to contain one or more generic or Key System-specific sets of initialization information.
+    </p>
+
+    <p>Initialization Data - generic or containing information for the selected Key System - must be provided, in the same format, in the first <a href="#media-element">media element</a> method call that specifies a <var title="true">keySystem</var>.</p>
+
+
+    <h2 id="extensions">2. Media Element Extensions</h2>
+    <p>We extend <dfn id="media-element" title="media element"><media-element/></dfn> to allow decryption key acquisition to be handled in JavaScript. We also extend <methodref>canPlayType</methodref> to provide <em>basic</em> information about the <a href="#key-system">Key Systems</a> supported by the user agent.</p>
+    <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
+
+    <pre class="idl">
+partial interface <precodedfn>HTMLMediaElement</precodedfn> {
+  // No API changes. 'type' string is extended.
+  DOMString <premethodref>canPlayType</premethodref>(in DOMString type, in DOMstring? <a href="#key-system">keySystem</a>);
+
+  void <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
+  void <premethodref>addKey</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array key, in Uint8Array? initData, in DOMString? <a href="#session-id">sessionId</a>);
+  void <premethodref>cancelKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in DOMString? <a href="#session-id">sessionId</a>);
+};
+
+partial interface <precodedfn>HTMLSourceElement</precodedfn> {
+             attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
+};</pre>
+
+    <p>The <methoddfn name="canPlayType">canPlayType(<var title="true">type</var>, <var title="true">keySystem</var>)</methoddfn> method is modified to add an optional second parameter to specify the <a href="#key-system">Key System</a>.</p>
+
+    <div class="example">
+      <p>The following list shows some examples of how to use the <var title="true">keySystem</var> parameter in <methodref>canPlayType</methodref> calls.</p>
+      <dl>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">video.canPlayType(null, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
+        <dd><pre class="code">video.canPlayType(null, "com.example.somesystem.1_5")</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
+        <dt>Returns whether the user agent supports the container and codec(s) specified by <var title="true">mimeType</var> but not whether encrypted streams can be decrypted.
+        This is no different from the current specification.</dt>
+        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>)</pre></dd>
+        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, null)</pre></dd>
+        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "")</pre></dd>
+      </dl>
+    </div>
+    
+    <p class="issue" id="canplaytype-capability-detection">
+    The <methodref>canPlayType</methodref> method provides a simple capability detection mechanism for <a href="#key-system">Key System</a> capabilities.
+    If multiple versions of a protection system exist with different capabilities, these can be allocated distinct identifiers by the owner of that Key System.
+    This can be extended even to feature discovery, for example "com.example.somesystem.ignite" and "com.example.somesystem.explode" might identify features of the "com.example.somesystem" keysystem. 
+    It is an open question whether this usage is desirable or sufficient or whether more detailed capability detection mechanisms are needed.
+    </p>
+
+    <p>In addition to the steps in the current specification, this method must run the following steps:</p>
+    <ol>
+      <li><p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> is null</dt>
+          <dd>Continue to the next step.</dd>
+          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a></dt>
+          <dd>Return the empty string.</dd>
+          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
+          <dd>Return the empty string.</dd>
+        </dl>
+      </li>
+      <li><p>Return "maybe" or "probably" as appropriate per the existing specification of <videoref name="dom-navigator-canplaytype">canPlayType()</videoref>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="generateKeyRequest">generateKeyRequest(<var title="true"><a href="#key-system">keySystem</a></var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
+    <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.</p>
+
+    <ol>
+      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+
+      <li><p>If <videoref name="dom-media-networkstate">networkState</videoref> is <videoref name="dom-media-network_empty">NETWORK_EMPTY</videoref>, throw an <invalid-state-err/>.</p>
+      <p class="non-normative">In general, applications should wait for an event named <coderef>needkey</coderef> or <videoref name="event-media-loadstart">loadstart</videoref> (per the <resource-fetch-algorithm/>) before calling this method.</p>
+      </li>
+
+      <li><p>Initialize <var title="true">handler</var> by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> is one of the user agent's supported <a href="#key-system">Key Systems</a></dt>
+          <dd>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</dd>
+          <dt>Otherwise</dt>
+          <dd>Throw a <not-supported-err/>.</dd>
+        </dl>
+      </li>
+
+      <li><p>Schedule a task to handle the call, providing <var title="true">initData</var>.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+<!-- Everything above here should be the same for all methods. -->
+          <li><p>Let <var title="true">defaultUrl</var> be null.</p></li>
+          <li><p>Use <var title="true">handler</var> to generate a key request and follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If a request is successfully generated</dt>
+              <dd>
+              <ol>
+                <li><p>Let <var title="true">key request</var> be a key request generated by the <a href="#cdm">CDM</a> using <var title="true">initData</var>, if provided.</p>
+                  <p>Note: <var title="true">handler</var> must not use any data, including <videoanchor name="media-data">media data</videoanchor>, not provided via <var title="true">initData</var>.</p>
+                </li>
+                <li><p>If <var title="true">initData</var> is not null and contains a default URL for <var title="true">keySystem</var>, let <var title="true">defaultUrl</var> be that URL.</p></li> 
+              </ol>
+              </dd>
+              <dt>Otherwise</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = null<br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
+          <li><p>Let <var title="true">sessionId</var> be a unique <a href="#session-id">Session ID</a> string. It may be generated by <var title="true">handler</var>.</p></li>
+          <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keymessage</coderef> at the <a href="#media-element">media element</a></p>
+            <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+              <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+              <coderef>message</coderef> = <var title="true">key request</var><br></br>
+              <coderef>defaultUrl</coderef> = <var title="true">defaultUrl</var>
+            </li></ul>
+            <p class="non-normative">Note: <coderef>message</coderef> may be a request for multiple keys, depending on the <var title="true"><a href="#key-system">keySystem</a></var> and/or <var title="true">initData</var>. This is transparent to the application.</p>
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+    <p>The <methoddfn name="addKey">addKey(<var title="true"><a href="#key-system">keySystem</a></var>, <var title="true">key</var>, <var title="true">initData</var>, <var title="true"><a href="#session-id">sessionId</a></var>)</methoddfn> method must run the following steps:</p>
+    <p class="non-normative">Note: The contents of <var title="true">key</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.
+    It may be a raw key or a license containing a key.
+    The contents may also vary depending on the container, key length, etc.</p>
+    <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a> and should be the same format as the same parameter in <methodref>generateKeyRequest</methodref>.
+    It may be null.
+    </p>
+
+<div class="issue" id="issue-disallow-addkey-only">
+    <p>The proposal currently allows <methodref>addKey</methodref> to be called without calling <methodref>generateKeyRequest</methodref>.
+    This has the advantages that simple use cases, especially for <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>, are fairly straightforward and simple.
+    The disadvantages are that user agents need to support multiple flows and applications written for the simple case are different than those written for the more general case.
+    In addition, some container formats may not support the simple case (i.e. if <var title="true">initData</var> is not easily-parsable to obtain a key ID).
+    </p>
+    It is an open question whether allowing the simple solutions is worth the effects.
+    See <a href="#issue-disallow-addkey-only-example">this example</a> for an illustration of the impact on simple applications.
+</div>
+    <p class="issue" id="issue-remove-addkey-data">
+    It has been proposed that the <var title="true">initData</var> parameter, which would most likely contain inforamation identifying the key or keys needed, be removed from <methodref>addKey</methodref> because any association can be done within the CDM using <var title="true"><a href="#session-id">sessionId</a></var>.
+    (However, see <a href="#issue-correlation">Session Correlation</a>.)
+    Such a change depends on <a href="#issue-disallow-addkey-only">requiring that generateKeyRequest() always be called before addKey()</a>.
+    Assuming that change is made, removing the parameter simplifies the API but hides all association between a key identifier and <var title="true">key</var>.
+    See <a href="#issue-needkey-simple-event-example">this example</a> for an illustration of the impact of this change.
+    </p>
+
+    <ol>
+      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+
+      <li><p>If <videoref name="dom-media-networkstate">networkState</videoref> is <videoref name="dom-media-network_empty">NETWORK_EMPTY</videoref>, throw an <invalid-state-err/>.</p>
+      <p class="non-normative">In general, applications should wait for an event named <coderef>needkey</coderef> or <videoref name="event-media-loadstart">loadstart</videoref> (per the <resource-fetch-algorithm/>) before calling this method.</p>
+      </li>
+
+      <li><p>Initialize <var title="true">handler</var> by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> is one of the user agent's supported <a href="#key-system">Key Systems</a></dt>
+          <dd>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</dd>
+          <dt>Otherwise</dt>
+          <dd>Throw a <not-supported-err/>.</dd>
+        </dl>
+      </li>
+
+      <li><p>If <var title="true">sessionId</var> is not null and is unrecognized, throw an <invalid-access-err/>.</p>
+        <p class="issue">
+        Should this be handled here or in the task scheduled in the next step.
+        The advantage of handling it here is that what is likely a programming error is immediately and simply reported via an exception.
+        The disadvantage is that the user agent must store session IDs (and track when they are released) for each Key System rather than letting the CDM manage them.
+        This is inconsistent with the <a href="#goals">goal</a> that the user agent should just pass information.
+        This same issue also applies to <methodref>cancelKeyRequest</methodref>.
+        </p>
+      </li>
+
+      <li><p>Schedule a task to handle the call, providing <var title="true">key</var>, <var title="true">initData</var>, and <var title="true">sessionId</var>.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+<!-- Everything above here except sessionId handling should be the same for all methods. -->
+          <li><p>Let <var title="true">key stored</var> be false.</p></li>
+          <li><p>Let <var title="true">next message</var> be null.</p></li>
+          <li><p>Use <var title="true">handler</var> to handle <var title="true">key</var>.</p>
+            <ol>
+              <li><p>Process <var title="true">key</var>.</p></li>
+              <li><p>If <var title="true">key</var> contains a key or license, store the key.</p>
+                <ol>
+                  <li><p>Let <var title="true">key ID</var> be null.</p></li>
+                  <li><p>If <var title="true">sessionId</var> is not null and refers to a session with <a href="#initialization-data">Initialization Data</a> that contains a key ID, let <var title="true">key ID</var> be that ID.</p></li>
+                  <li><p>If <var title="true">key</var> is not null and contains a key ID, let <var title="true">key ID</var> be that ID.</p></li>
+                  <li><p>If <var title="true">initData</var> is not null and contains a key ID, let <var title="true">key ID</var> be that ID.</p></li>
+                  <li><p>Store the key by following the steps for the first matching condition from the following list:</p>  
+                    <dl class="switch">
+                      <dt>If <var title="true">key ID</var> is not null</dt>
+                      <dd>
+                        <ol>
+                          <li><p>Clear any key not associated with a key ID.</p></li>
+                          <li><p>If a key already exists for <var title="true">key ID</var>, delete that element.</p></li>
+                          <li><p>Store the key and/or license in <var title="true">key</var> indexed by <var title="true">key ID</var>. <span class="non-normative">The replacement algorithm is <a href="#key-system">Key System</a>-dependent.</span></p></li>
+                        </ol>
+                      </dd>
+                      <dt>Otherwise</dt>
+                      <dd>
+                        <ol>
+                          <li><p>Clear all stored keys.</p></li>
+                          <li><p>Store the key and/or license in <var title="true">key</var> with no associated key ID.</p></li>
+                        </ol>
+                      </dd>
+                    </dl>
+                    <p class="non-normative">At most one key may be stored if key IDs are not used.</p>
+                    <p class="non-normative">Clearing keys avoids needing to handle a mixture of keys with and without IDs in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>.</p>
+                    <p class="non-normative">Note: It is recommended that CDM providers support a standard and reasonably high minimum number of cached keys/licenses (with IDs) per media element as well as a standard replacement algorithm.
+                    This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
+                    </p>
+                  </li>
+                  <li><p>Let <var title="true">key stored</var> be true.</p></li>
+                </ol>
+              </li>
+              <li><p>If another message needs to be sent to the server, let <var title="true">next message</var> be that message.</p></li>
+            </ol>
+          </li>
+          <li>If <var title="true">key stored</var> is true and the <a href="#media-element">media element</a> is <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.
+            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
+          </li>
+          <li><p>Fire the appropriate event by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If <var title="true">next message</var> is null</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyadded</coderef> at the <a href="#media-element">media element</a></p>
+                <p>The event is of type <coderef>MediaKeyCompleteEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                </li></ul>
+              </dd>
+              <dt>Otherwise</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keymessage</coderef> at the <a href="#media-element">media element</a></p>
+                <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                  <coderef>message</coderef> = <var title="true">next message</var><br></br>
+                  <coderef>defaultUrl</coderef> = null
+                  <p class="issue">Is there a reason that this cannot be null?</p>
+                </li></ul>
+              </dd>
+            </dl>
+          <p>If any of the preceding steps in the task failed, <queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a>.</p>
+            <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+              <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+              <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+              <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+            </li></ul>
+          </li>
+      </ol>
+      </li>
+    </ol>
+
+    <p>The key acquisition process <em>may</em> involve the web page handling <coderef>keymessage</coderef> events, sending the message to a Key System-specific service, and calling <coderef>addKey</coderef> with the response message.
+    This continues until the <coderef>keyadded</coderef> event is fired.
+    During the process, the web page may wish to cancel the acquisition process.
+    <span class="non-normative">For example, if the page cannot contact the license service because of network issues it may wish to fallback to an alternative key system.</span>
+    The page calls <methodref>cancelKeyRequest</methodref> to cancel the a key acquisition and return the media element to a state where <methodref>generateKeyRequest</methodref> may be called again.
+    </p>
+
+    <p>The <methoddfn name="cancelKeyRequest">cancelKeyRequest(<var title="true"><a href="#key-system">keySystem</a></var>, <var title="true">sessionId</var>)</methoddfn> method must run the following steps:</p>
+
+     <ol>
+      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+      <li><p>If <var title="true">sessionId</var> is not null and is unrecognized or not mapped to the <var title="true"><a href="#key-system">keySystem</a></var>, throw an <invalid-access-err/>.</p></li>
+      <li>If a <coderef>keyadded</coderef> event has already been fired for this <var title="true">sessionId</var>, throw an <invalid-state-err/>.</li>
+      <li>Clear any internal state associated with the <var title="true">sessionId</var> (or if this is null with the <var title="true"><a href="#key-system">keySystem</a></var> for this media element).
+      This <var title="true">sessionId</var> will now be unrecognized.
+      <p class="issue">Can this step be done synchronously or should a task be queued to do it in the background and a <coderef>needkey</coderef> event fired when done?</p>
+      </li>
+      <li>
+        <p class="issue">It is an open question what exactly should happen here.
+        The state of the <a href="#media-element">media element</a> is unknown and it may not have even triggered the original <methodref>generateKeyRequest</methodref> call.
+        Should a <coderef>needkey</coderef> event be fired regardless of the state? What if the <a href="#media-element">media element</a> is not <a href="#waiting-for-a-key">waiting for a key</a>?
+        Should the <a href="#media-element">media element</a> attempt to resume playback if it is <a href="#waiting-for-a-key">waiting for a key</a>, causing an event if appropriate?
+        Should the application be responsible for calling <methodref>generateKeyRequest</methodref> without an event?
+        </p>
+      </li>
+    </ol>
+
+    <p>The <codedfn prefix="source">keySystem</codedfn> attribute of <coderef>HTMLSourceElement</coderef> specifies the <a href="#key-system">Key System</a> to be used with the <videoref name="media-resource">media resource</videoref>.
+    The <resource-selection-algorithm/> is modified to check the <coderef prefix="source">keySystem</coderef> attribute after the existing <em>step 5</em> of the <em>Otherwise</em> branch of <em>step 6</em>:
+    </p>
+    <ol start="6">
+      <li><p>&#8987; If <var title="">candidate</var> has a <coderef prefix="source">keySystem</coderef> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <videoref name="attr-source-type">type</videoref>, then end the <synchronous-section/>, and jump down to the <i title="">failed</i> step below.</p></li>
+    </ol>
+
+    <p>A <a href="#media-element">media element</a> is said to <dfn id="have-selected-key-system">have a selected Key System</dfn> when one of the following has occurred:</p>
+    <ul>
+      <li>The media source was selected from a <coderef>HTMLSourceElement</coderef>.
+      <p>In this case, the selected key system is the <coderef>keySystem</coderef> attribute of the selected <coderef>HTMLSourceElement</coderef>.</p></li>
+
+      <li>One of the <a href="#dom-htmlmediaelement">new methods</a> has been called successfully (asynchronous steps may not have completed)
+      <p>In this case, the selected key system is the <var title="true">keySystem</var> parameter for the last successful call.</p></li>
+    </ul>
+
+    <h3 id="error-codes">2.1. Error Codes</h3>
+    <p><videoref name="mediaerror">MediaError</videoref> is extended, and a new error type is added.</p>
+    <pre class="idl">
+partial interface <precodedfn>MediaError</precodedfn> {
+  const unsigned short <precoderef>MEDIA_ERR_ENCRYPTED</precoderef> = 5;
+};
+
+interface <precodedfn>MediaKeyError</precodedfn> {
+  const unsigned short <precoderef>MEDIA_KEYERR_UNKNOWN</precoderef> = 1;
+  const unsigned short <precoderef>MEDIA_KEYERR_CLIENT</precoderef> = 2;
+  const unsigned short <precoderef>MEDIA_KEYERR_SERVICE</precoderef> = 3;
+  const unsigned short <precoderef>MEDIA_KEYERR_OUTPUT</precoderef> = 4;
+  const unsigned short <precoderef>MEDIA_KEYERR_HARDWARECHANGE</precoderef> = 5;
+  const unsigned short <precoderef>MEDIA_KEYERR_DOMAIN</precoderef> = 6;
+};</pre>
+
+    <p>The <codedfn>code</codedfn> attribute of a <coderef>MediaError</coderef> may additionally return the following:</p>
+    <dl>
+      <dt><codedfn>MEDIA_ERR_ENCRYPTED</codedfn> (numeric value 5)</dt>
+      <dd>The stream could not be played because it is encrypted and one of the following:
+        <ol>
+          <li>No key was provided and no <coderef>needkey</coderef> handler was provided</li>
+          <li>The provided key could not be successfully applied</li>
+          <li>The user agent does not support decryption of this <videoanchor name="media-data">media data</videoanchor></li>
+        </ol>
+      </dd>
+    </dl>
+    <p class="issue">It has been suggested that there be a separate error for each of the above cases.
+    This is an option if the community feels that being able to differentiate among them is worthwhile.
+    A single error is consistent with the current broad error codes, though that may be something that should be improved in general.
+    It seems that except for #1, which should only occur in applications that do not support encrypted media, these are all application bugs and not something that would improve the user experience.
+    Any unique handling of the error codes by an application would essentially be describing a bug type.
+    Unique codes might be helpful in tracking down the cause of the bug, but there are probably other options.
+    It is also possible that some of these cases should be reported via <coderef>MediaKeyErrorEventInit</coderef>. 
+    </p>
+
+    <p>A <coderef>MediaKeyError</coderef> may be one of the following:</p>
+    <dl>
+      <dt><codedfn>MEDIA_KEYERR_UNKNOWN</codedfn> (numeric value 1)</dt>
+      <dd>An unspecified error occurred. This value is used for errors that don't match any of the following codes.</dd>
+      <dt><codedfn>MEDIA_KEYERR_CLIENT</codedfn> (numeric value 2)</dt>
+      <dd>The <a href="#key-system">Key System</a> could not be installed or updated.
+        <p class="issue">Should this be two separate errors?</p>
+      </dd>
+      <dt><codedfn>MEDIA_KEYERR_SERVICE</codedfn> (numeric value 3)</dt>
+      <dd>The message passed into <coderef>addKey</coderef> indicated an error from the license service.</dd>
+      <dt><codedfn>MEDIA_KEYERR_OUTPUT</codedfn> (numeric value 4)</dt>
+      <dd>There is no available output device with the required characteristics for the content protection system.</dd>
+      <dt><codedfn>MEDIA_KEYERR_HARDWARECHANGE</codedfn> (numeric value 5)</dt>
+      <dd>A hardware configuration change caused a content protection error.</dd>
+      <dt><codedfn>MEDIA_KEYERR_DOMAIN</codedfn> (numeric value 6)</dt>
+      <dd>An error occurred in a multi-device domain licensing configuration. <span class="non-normative">The most common error is a failure to join the domain.</span></dd>
+    </dl>
+
+
+    <h2 id="events">3. Events</h2>
+
+    <h3 id="event-definitions">3.1. Event Definitions</h3>
+
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString? <precoderef>keySystem</precoderef>;
+  readonly attribute DOMString? <precoderef>sessionId</precoderef>;
+  readonly attribute Uint8Array? <precoderef>initData</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString? <precoderef>keySystem</precoderef>;
+  DOMString? <precoderef>sessionId</precoderef>;
+  Uint8Array? <precoderef>initData</precoderef>;
+};</pre>
+
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+  readonly attribute DOMString? <precoderef>sessionId</precoderef>;
+  readonly attribute Uint8Array <precoderef>message</precoderef>;
+  readonly attribute DOMString? <precoderef>defaultUrl</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString <precoderef>keySystem</precoderef>;
+  DOMString? <precoderef>sessionId</precoderef>;
+  Uint8Array <precoderef>message</precoderef>;
+  DOMString? <precoderef>defaultUrl</precoderef>;
+};</pre>
+
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyCompleteEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyCompleteEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+  readonly attribute DOMString? <precoderef>sessionId</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyCompleteEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString <precoderef>keySystem</precoderef>;
+  DOMString? <precoderef>sessionId</precoderef>;
+};</pre>
+
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyErrorEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyErrorEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+  readonly attribute DOMString? <precoderef>sessionId</precoderef>;
+  readonly attribute <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
+  readonly attribute unsigned short <precoderef>systemCode</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString <precoderef>keySystem</precoderef>;
+  DOMString? <precoderef>sessionId</precoderef>;
+  <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
+  unsigned short <precoderef>systemCode</precoderef>;
+};</pre>
+
+    <dl class="domintro">
+     <dt><var title="">event</var> . <coderef>keySystem</coderef></dt>
+     <dd>
+       <p>Returns the name of the <a href="#key-system">Key System</a> that generated the event.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>sessionId</coderef></dt>
+     <dd>
+       <p>Returns the <a href="#session-id">Session ID</a> the event is related to, if applicable.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>initData</coderef></dt>
+     <dd>
+       <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>message</coderef></dt>
+     <dd>
+       <p>Returns the message <span class="non-normative">(i.e. key request)</span> to send.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>defaultUrl</coderef></dt>
+     <dd>
+       <p>Returns the default key exchange URL.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>errorCode</coderef></dt>
+     <dd>
+       <p>Returns the <coderef>MediaKeyError</coderef> for the error that occurred.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>systemCode</coderef></dt>
+     <dd>
+       <p>Returns a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.</p>
+     </dd>
+    </dl>
+    <div class="impl">
+    <p>The <codedfn>keySystem</codedfn> attribute is an identifier for the <a href="#key-system">Key System</a> that generated the event.
+    It may be null in the <coderef>needkey</coderef> event if the media element does not <a href="#have-selected-key-system">have a selected Key System</a>.
+    </p>
+    <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for the key or license that this event refers to. It may be null.</p>
+    <p>The <codedfn>initData</codedfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
+    <p>The <codedfn>message</codedfn> attribute contains a message from the CDM. Messages are Key System-specific. <span class="non-normative">In most cases, it should be sent to a key server.</span></p>
+    <p>The <codedfn>defaultUrl</codedfn> is the default URL to send the key request to as provided by the <videoanchor name="media-data">media data</videoanchor>. It may be null.</p>
+    <p>The <codedfn>errorCode</codedfn> attribute contains the <coderef>MediaKeyError</coderef> code for the error that occurred.</p>
+    <p>The <codedfn>systemCode</codedfn> attribute contains a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.
+    <span class="non-normative">This allows a more granular status to be returned than the more general <coderef>errorCode</coderef>.</span>
+    It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
+    </p>
+
+    <p>If a response (i.e. a license) is necessary, applications should use one of the <a href="#dom-htmlmediaelement">new methods</a> to provide the response.</p>
+    </div>
+
+    <h3 id="event-summary">3.2. Event Summary</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+          <th>Preconditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><codedfn>keyadded</codedfn></td>
+          <td><coderef>MediaKeyCompleteEvent</coderef></td>
+          <td>A key has been added as the result of a <methodref>addKey</methodref> call.
+          </td>
+          <td><!-- No Preconditions. --></td>
+        </tr>
+        <tr>
+          <td><codedfn>keyerror</codedfn></td>
+          <td><coderef>MediaKeyErrorEvent</coderef></td>
+          <td>An error occurs in one of the <a href="#dom-htmlmediaelement">new methods</a> or <a href="#cdm">CDM</a>.</td>
+          <td><!-- No Preconditions. --></td>
+        </tr>
+        <tr>
+          <td><codedfn>keymessage</codedfn></td>
+          <td><coderef>MediaKeyMessageEvent</coderef></td>
+          <td>
+            A message has been generated <span class="non-normative">(and likely needs to be sent to a key server)</span>.
+            <span class="non-normative">For example, a key request has been generated as the result of a <methodref>generateKeyRequest</methodref> call or another message must be sent in response to an <methodref>addKey</methodref> call.</span>
+          </td>
+          <td><!-- No Preconditions. --></td>
+        </tr>
+        <tr>
+          <td><codedfn>needkey</codedfn></td>
+          <td><coderef>MediaKeyNeededEvent</coderef></td>
+          <td>
+            The user agent needs a key or license to begin or continue playback.
+            <br></br><span class="non-normative"><br></br>It may have encountered <videoanchor name="media-data">media data</videoanchor> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
+          </td>
+          <td><readystate/> is equal to <have-metadata/> or greater.
+          <span class="non-normative">It is possible that the element is playing or has played.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+<div class="issue" id="issue-needkey-simple-event">
+    <p>It has been proposed that <coderef>needkey</coderef> be a simple event.
+    In this case, it would not provide any indication of the key that is needed and the application would need to call <methodref>generateKeyRequest</methodref> to get an appropriate message or identifier, including for the <a href="#simple-decryption-clear-key">Clear Key</a> case.
+    Such a change assumes that the <a href="#issue-disallow-addkey-only">consistent flow</a> option is selected. 
+    See <a href="#issue-needkey-simple-event-example">this example</a> for an illustration of the impact of this change.
+    </p>
+    (Because <coderef>sessionId</coderef> is not included in <coderef>needkey</coderef> and is not generated until <methodref>generateKeyRequest</methodref> generates a <coderef>keymessage</coderef> event, this cange would not result in the loss of any correlation.
+    See <a href="#issue-correlation">Session Correlation</a> for a discussion of the general lack of correlation.)
+</div>
+
+    <h2 id="key-release">4. Key Release</h2>
+    <h3>4.1. Introduction</h3>
+    <non-normative-section/>
+    <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
+    This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
+    Use cases for such proof include any service where is it necessary for the service to know, reliably, which granted keys/licences are still available for use by the user and which have been deleted.
+    Examples include a service with restrictions on the number of concurrent streams available to a user or a service where content is available on a rental basis, for use offline.
+    </p>
+    
+    <p>Secure proof of key release must necessarily involve the CDM due to the relative ease with which scripts may be modified.
+    The CDM must provide a message asserting, in a CDM-specific form, that a specific key or license has been destroyed.
+    Such messages must be cached in the CDM until acknowledgement of their delivery to the service has been received.
+    This acknowledgement must also be in the form of a CDM-specific message.
+    </p>
+    
+    <p>The mechanism for secure proof of key release operates outside the scope of any <a href="#media-element">media element</a>.
+    This is because proof-of-release messages may be cached in CDMs after the associated media elements have been destroyed.
+    Proof-of-key-release messages are subject to the same origin policy: they shall only be delivered to scripts with the same origin as the script which created the media element that provided the key/license.
+    </p>
+    
+    <h3>4.2. Key Release Manager</h3>
+    <p>The following interface is defined for management of key release messages:</p>
+    
+    <pre class="idl" id="key-release-manager">
+    [Constructor()]
+    interface <precodedfn>KeyReleaseManager</precodedfn> : <precodedfn>EventTarget</precodedfn> {
+        void <premethodref>getKeyReleases</premethodref>(in DOMString <a href="#key-system">keySystem</a>);
+        void <premethodref>addKeyReleaseCommit</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in DOMString <a href="#session-id">sessionId</a>, in Uint8Array message);
+    }
+    </pre>
+    <p>The <methoddfn name="getKeyReleases">getKeyReleases(<var title="true"><a href="#key-system">keysystem</a></var>)</methoddfn> method must run the following steps:</p>
+
+    <ol>
+      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+      <li><p>Initialize <var title="true">handler</var> by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keysystem</var> is one of the user agent's supported <a href="#key-system">Key Systems</a></dt>
+          <dd>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</dd>
+          <dt>Otherwise</dt>
+          <dd>Throw a <not-supported-err/>.</dd>
+        </dl>
+      </li>
+
+      <li><p>Schedule a task to handle the call.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Use <var title="true">handler</var> to generate one or more key release messages, if supported.
+            <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If generating a key release message is not supported</dt>
+              <dd>Let <var title="true">key release messages</var> be null</dd>
+              <dt>Otherwise</dt>
+              <dd>Let <var title="true">key release messages</var> be a set of key release messages generated by the <a href="#cdm">CDM</a> for the current origin.</dd>
+            </dl>
+          </li>
+          <li><p>For each <var title="true">key release message</var> in <var title="true">key release messages</var>, <queue-a-task/> to <fire-a-simple-event/> named <coderef>keyrelease</coderef> at the <a href="#key-release-manager">key release manager</a>.</p>
+            <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+              <coderef>sessionId</coderef> = the sessionId originally associated with the provision of the key<br></br>
+              <coderef>message</coderef> = <var title="true">key release message</var><br></br>
+              <coderef>defaultUrl</coderef> = value of the default URL, if stored by the CDM.
+            </li></ul>
+          </li>
+        </ol>
+      </li>
+    </ol>
+    
+    <p>The <methoddfn name="addKeyReleaseCommit">addKeyReleaseCommit(<var title="true"><a href="#key-system">keysystem</a></var>,
+                                                                     <var title="true"><a href="#session-id">sessionId</a></var>,
+                                                                     <var title="true"><a href="#message">message</a></var>)</methoddfn>
+    method must run the following steps:
+    </p>
+
+    <ol>
+      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+      <li><p>Initialize <var title="true">handler</var> by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keysystem</var> is one of the user agent's supported <a href="#key-system">Key Systems</a></dt>
+          <dd>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</dd>
+          <dt>Otherwise</dt>
+          <dd>Throw a <not-supported-err/>.</dd>
+        </dl>
+      </li>
+
+      <li><p>Schedule a task to handle the call, providing <var title="true">sessionId</var> and <var title="true">message</var>.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Use <var title="true">handler</var> to commit the message.
+            <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If committing a key release message is supported and the <var title="true">message</var> is valid:</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyreleasecommitted</coderef> at the <a href="#key-release-manager">key release manager</a>.</p>
+                <p>The event is of type <coderef>MediaKeyCompleteEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                </li></ul>
+              </dd>
+              <dt>Otherwise</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#key-release-manager">key release manager</a>.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+    <h2 id="algorithms">5. Algorithms</h2>
+
+    <h3 id="algorithms-enrypted-block">5.1. Encrypted Block Encountered</h3>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
+
+    <ol>
+      <li><p>Let <var title="">key system</var> be null.</p></li>
+      <li><p>Let <var title="">handler</var> be null.</p></li>
+      <li><p>Let <var title="">block initData</var> be null.</p></li>
+      <li><p>Let <var title="">block key</var> be null.</p></li>
+      <li><p>If the block (or its parent entity) has <a href="#initialization-data">Initialization Data</a>, let <var title="">block initData</var> be that initialization data.</p></li>
+      <li><p>Select the key system and handler by following the steps for the first matching condition from the following list:</p>
+      <dl class="switch">
+        <dt>If the media element <a href="#have-selected-key-system">has a selected Key System</a></dt>
+        <dd>Run the following steps:
+          <ol>
+            <li><p>Let <var title="true">key system</var> be the selected Key System.</p></li>
+            <li><p>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">key system</var>.</p></li>
+          </ol>
+        </dd>
+        <dt>Otherwise</dt>
+        <dd>Jump to the <i>Key Presence</i> step below.</dd>
+      </dl>
+      </li>
+      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+      
+      <li><p>Use <var title="true">handler</var> to select the key:</p>
+        <ol>
+          <li><p>Let <var title="">block key ID</var> be null.</p></li>
+          <li><p>If <var title="">block initData</var> is not null and contains a key ID, let <var title="">block key ID</var> be that ID.</p></li>
+          <li><p>Select the key by following the steps for the first matching condition from the following list:</p>  
+          <dl class="switch">
+            <dt>If <var title="">block key ID</var> is not null</dt>
+            <dd>
+            <p>Select the key by using <var title="true">handler</var> to follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var>  has a key cached for <var title="">block key ID</var></dt>
+              <dd>Let <var title="">block key</var> be the matching cached key.</dd>
+              <dt>If <var title="true">handler</var> has a key cached with no ID <span class="non-normative">(there can be one at most)</span></dt>
+              <dd>Let <var title="">block key</var> be the single cached key.</dd>
+              <dt>Otherwise (<var title="true">handler</var> has no keys cached OR has one or more keys cached, none of which have a matching key ID)</dt>
+              <dd>Jump to the <i>Key Presence</i> step below.</dd>
+            </dl>
+            </dd>
+            <dt>Otherwise</dt>
+            <dd>
+            <p>Select the key by using <var title="true">handler</var> to follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> has a single key cached (with or without a key ID)</dt>
+              <dd>Let <var title="">block key</var> be the single cached key.</dd>
+              <dt>If <var title="true">handler</var> has more than one key cached <span class="non-normative">(all would have IDs)</span></dt>
+              <dd>Abort media element's <resource-fetch-algorithm/> and run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Key Presence</i> step below.</dd>
+            </dl>
+            </dd>
+          </dl>
+          </li>
+        </ol>
+      </li>
+      <li><p><i>Key Presence</i>: Handle the presence of a key by following the steps for the first matching condition from the following list:</p>
+      <dl class="switch">
+        <dt>If <var title="">handler</var> is not null and <var title="">block key</var> is not null.</dt>
+        <dd>Use <var title="true">handler</var> to Decrypt the block using <var title="">block key</var> by following the steps for the first matching condition from the following list:
+          <dl class="switch">
+            <dt>If decryption fails</dt>
+            <dd>Abort media element's <resource-fetch-algorithm/> and run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error.</dd>
+            <dt>Otherwise</dt>
+            <dd>Continue.</dd>
+          </dl>
+          <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
+        </dd>
+        <dt>If there is an event handler for <coderef>needkey</coderef></dt>
+        <dd>
+        <queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.
+        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>keySystem</coderef> = <var title="">key system</var><br></br>
+          <coderef>sessionId</coderef> = null<br></br>
+          <coderef>initData</coderef> = <var title="">block initData</var>
+        </li></ul>
+        <p class="non-normative">The <a href="#media-element">media element</a> is said to be <videoref name="potentially-playing">potentially playing</videoref>
+        unless playback stops because the stream cannot be decrypted, in which case the <a href="#media-element">media element</a> is said to be <a href="#waiting-for-a-key">waiting for a key</a>.
+        </p>
+        </dd>
+        <dt>Otherwise</dt>
+        <dd>Abort media element's <resource-fetch-algorithm/> and run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error.</dd>
+      </dl>
+      </li>
+    </ol>
+
+    <div class="non-normative">
+    <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <resource-fetch-algorithm/>:</p>
+    <ol>
+      <li><p>Let <var title="">encrypted</var> be false.</p></li>
+      <li><p>Detect whether the frame is encrypted.</p>
+        <dl class="switch">
+          <dt>If the frame is encrypted</dt>
+          <dd>Run the steps above.</dd>
+          <dt>Otherwise</dt>
+          <dd>Continue.</dd>
+        </dl>
+      </li>
+      <li><p>Decode the frame.</p></li>
+      <li><p>Provide the frame for rendering.</p></li>
+    </ol>
+    </div>
+
+    <p>The following paragraph is added to <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>.</p>
+    <ul style="list-style-type:none">
+    <li>A <a href="#media-element">media element</a> is said to be <dfn id="waiting-for-a-key">waiting for a key</dfn> when
+    it would be <videoref name="potentially-playing">potentially playing</videoref> but
+    the user agent has reached a point in the <videoref name="media-resource">media resource</videoref> that must be decrypted for the resource to continue and the <a href="#cdm">CDM</a> does not have the necessary key.
+    </li>
+    <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
+    </ul>
+
+    <h3 id="algorithms-encrypted-stream">5.2. Potentially Encrypted Stream Encountered</h3>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <resource-fetch-algorithm/>:</p>
+
+    <ol>
+      <li><p>Let <var title="">key system</var> be null.</p></li>
+      <li><p>Let <var title="">handler</var> be null.</p></li>
+      <li><p>Let <var title="">initData</var> be null.</p></li>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
+      <li><p>Select the key system and handler by following the steps for the first matching condition from the following list:</p>
+      <dl class="switch">
+        <dt>If the media element <a href="#have-selected-key-system">has a selected Key System</a></dt>
+        <dd>Run the following steps:
+          <ol>
+            <li><p>Let <var title="true">key system</var> be the selected Key System.</p></li>
+            <li><p>Let <var title="true">handler</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">key system</var>.</p></li>
+          </ol>
+        </dd>
+        <dt>Otherwise</dt>
+        <dd>Jump to the <i>Need Key</i> step below.</dd>
+      </dl>
+      </li>
+      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+      <li><p>Use <var title="true">handler</var> to determine whether the key is known:</p>
+        <ol>
+          <li><p>Let <var title="">key ID</var> be null.</p></li>
+          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
+          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
+          <li><p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
+          <dl class="switch">
+            <dt>If <var title="">key ID</var> is not null</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a key cached for <var title="">key ID</var></dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+            <dt>Otherwise</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a single key cached (with or without a key ID)</dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+          </dl>
+          </li>
+        </ol>
+      </li>
+      <li><p><i>Need Key</i>: <queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>keySystem</coderef> = <var title="">key system</var><br></br>
+          <coderef>sessionId</coderef> = null<br></br>
+          <coderef>initData</coderef> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+        <p class="issue">This could be skipped if the key has already been set, but always sending the event seems easier.</p>
+        <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This algorithm is merely informative.</p>
+      </li>
+
+      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
+    </ol>
+
+    <h3 id="algorithms-load">5.3. Addition to Media Element Load Algorithm</h3>
+    <p>The following step is added to the existing <media-element-load-algorithm/>:</p>
+    <ul>
+      <li><p>Clear all cached keys for this <a href="#media-element">media element</a>.</p>
+      <p class="non-normative">This also means the keys will be cleared when the <videoref name="attr-media-src">src</videoref> attribute is set or changed per <videoanchor name="location-of-the-media-resource">Location of the media resource</videoanchor></p>
+      </li>
+    </ul>
+
+
+    <h2 id="simple-decryption">6. Simple Decryption</h2>
+    <p>All user agents must support the simple decryption capabilities described in this section regardless of whether they support a more advanced <a href="#cdm">CDM</a>.
+    <span class="non-normative">This ensures that there is a common baseline level of protection that is guaranteed to be supported in all user agents, including those that are entirely open source.
+    Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.</span>
+    </p>
+
+    <h3 id="simple-decryption-clear-key">6.1. Clear Key</h3>
+    <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> indicates a plain-text clear (unencrypted) key will be used to decrypt the source.
+    No additional client-side content protection is required.
+    Use of this Key System is described below.
+    </p>
+    
+    <p>The <var title="true">keySystem</var> parameter and <coderef>keySystem</coderef> attributes are always <code>"org.w3.clearkey"</code>
+    with the exception of events before the Key System <a href="#have-selected-key-system">has been selected</a>.
+    All events except <coderef>needkey</coderef> have a valid <coderef>sessionId</coderef> string, which is numerical.</p>
+
+    <p>The <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event and the <var title="true">initData</var> parameters of <methodref>generateKeyRequest</methodref> and <methodref>addKey</methodref> are the same container-specific <a href="#initialization-data">Initialization Data</a> format and values.
+    <span class="non-normative">
+    If supported, these values should provide some type of identification of the content or key that could be used to look up the key (since there is no defined logic for parsing it).
+    For containers that support a simple key ID, it should be a binary array containing the raw key ID.
+    For other containers, it may be some other opaque blob or null.</span>
+    </p>
+
+    <p><methodref>generateKeyRequest</methodref> may optionally be called.
+    The resulting <coderef>MediaKeyMessageEvent</coderef> has:
+    </p>
+    <ul style="list-style-type:none"><li>
+      <coderef>keySystem</coderef> = <code>"org.w3.clearkey"</code><br></br>
+      <coderef>sessionId</coderef> = a unique numerical string<br></br>
+      <coderef>message</coderef> = a container-specific unique key identifier extracted from the <var title="true">initData</var> parameter (if <var title="true">initData</var> was and null one could not be extracted; otherwise null)<br></br>
+      <coderef>defaultUrl</coderef> = value of the default URL if present in the <videoanchor name="media-data">media data</videoanchor> and null otherwise.
+    </li></ul>
+
+    <p>To provide a key using this Key System, pass the following to <methodref>addKey</methodref>:</p>
+    <ul>
+      <li><var title="true">keySystem</var>: <code>"org.w3.clearkey"</code></li>
+      <li><var title="true">key</var>: An array of bytes containing the key</li>
+      <li><var title="true">initData</var>:
+        <dl class="switch">
+          <dt>If <methodref>generateKeyRequest</methodref> was called:</dt>
+          <dd>The value of the <coderef>message</coderef> attribute of the resulting <coderef>MediaKeyMessageEvent</coderef></dd>
+          <dt>Otherwise</dt>
+          <dd><a href="#initialization-data">Initialization Data</a> corresponding to the <var title="true">key</var> or null.</dd>
+        </dl>
+      </li>
+      <li><var title="true">sessionId</var>:
+        <dl class="switch">
+          <dt>If <methodref>generateKeyRequest</methodref> was called:</dt>
+          <dd>The value of the <coderef>sessionId</coderef> attribute of the resulting <coderef>MediaKeyMessageEvent</coderef></dd>
+          <dt>Otherwise</dt>
+          <dd>null</dd>
+        </dl>
+      </li>
+    </ul>
+
+
+    <h2 id="examples">7. Examples</h2>
+    <non-normative-sections/>
+    <p>This section contains example solutions for various use cases using the proposed extensions.
+    These are not the only solutions to these use cases.
+    Video elements are used in the examples, but the same would apply to all <a href="#media-element">media element</a>s.
+    In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
+    </p>
+
+    <h3 class="exampleheader">7.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
+    <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
+    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <methodref>addKey</methodref> call. It also does not handle errors.</p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  function load() {
+    var video = document.getElementById("video");
+    var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
+    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, null);
+  }
+&lt;/script&gt;
+
+&lt;body onload="load()"&gt;
+  &lt;video src="foo.webm" autoplay id="video"&gt;&lt;/video&gt;
+&lt;/body&gt;</pre>
+    </div>
+
+<div class="issue" id="issue-disallow-addkey-only-example">
+    <p>The solution below shows what the simple solution above would become if we choose to require a <a href="#issue-disallow-addkey-only">consistent flow</a> for all applications.
+    In this scenario, the serial solution above becomes the event-based solution shown below.
+    The <a href="#issue-needkey-simple-event-example">next example</a> also illustrates the impact.
+    </p>
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  function load() {
+    var video = document.getElementById("video");
+
+    video.<premethodref>generateKeyRequest</premethodref>("org.w3.clearkey", null);
+  }
+
+  function handleMessage(event) {
+    if (event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
+      throw "Unhandled keySystem in event";
+    var video = event.target;
+
+    var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
+    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, null, event.<precoderef>sessionId</precoderef>);
+  }
+&lt;/script&gt;
+
+&lt;body onload="load()"&gt;
+  &lt;video src="foo.webm" autoplay id="video" on<precoderef>keymessage</precoderef>="handleMessage(event)"&gt;&lt;/video&gt;
+&lt;/body&gt;</pre>
+    </div>
+</div>
+
+    <h3 class="exampleheader">7.2. Source Known but Key Not Known at Page Load</h3>
+    <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <videoanchor name="media-data">media data</videoanchor>.
+    If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
+
+    <p class="exampledescription">If any asynchronous operation is required to get the key in <code>handleKeyNeeded()</code>, it could be called a second time if the stream is detected as potentially encrypted before an encrypted block/frame is encountered. In this case, applications may want to handle subsequent calls specially to avoid redundant license requests. This is not shown in the examples below.</p>
+
+    <h4 class="exampleheader">7.2.1. Clear Key Encryption</h4>
+    <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
+    <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  function handleKeyNeeded(event) {
+    if (event.<precoderef>keySystem</precoderef> &amp;&amp; event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
+      throw "Unhandled keySystem in event";
+    var initData = event.<precoderef>initData</precoderef>;
+    var video = event.target;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "http://.../getkey", false);
+    xmlhttp.send(initData);
+    var key = new Uint8Array(xmlhttp.response);
+    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, initData, event.<precoderef>sessionId</precoderef>);
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+<div class="issue" id="issue-needkey-simple-event-example">
+    <p>The solution below shows what the solution above would become if we choose to require a <a href="#issue-disallow-addkey-only">consistent flow</a>,  
+    <a href="#issue-needkey-simple-event">make needkey a simple event</a>, and <a href="#issue-remove-addkey-data">removed from the data parameter from addKey()</a>.
+    </p> 
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  function handleKeyNeeded(event) {
+    if (event.<precoderef>keySystem</precoderef> &amp;&amp; event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
+      throw "Unhandled keySystem in event";
+    var video = event.target;
+
+    // Note: The CDM will generate a request for whatever <a href="#initialization-data">Initialization Data</a> it chooses since there is no association with the current event. 
+    video.<premethodref>generateKeyRequest</premethodref>("org.w3.clearkey", null);
+  }
+  
+  function handleMessage(event) {
+    if (event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
+      throw "Unhandled keySystem in event";
+    var message = event.<precoderef>message</precoderef>;
+    var video = event.target;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "http://.../getkey", false);
+    xmlhttp.send(message);
+    var key = new Uint8Array(xmlhttp.response);
+    // Note: The CDM will find the <a href="#initialization-data">Initialization Data</a> based on the sessionId.
+    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, event.<precoderef>sessionId</precoderef>);
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="handleMessage(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+    <p>Some differences of note:</p>
+    <ul>
+      <li>The example is longer and involves an additional event handler. (This is primarily due to <a href="#issue-disallow-addkey-only">requiring applications to use a consistent flow</a>.)</li>
+      <li>There is no association between the <coderef>needkey</coderef> event and the method calls since <a href="#session-id">Session ID</a> is not created until <methodref>generateKeyRequest</methodref> completes.
+        This is a general problem that the first solution only works around.
+        See <a href="#issue-correlation">Session Correlation</a>.
+      </li>
+      <li>The <a href="#initialization-data">Initialization Data</a> is handled behind the scenes by the CDM and never exposed to the application.</li>
+      <li>The example is much closer to the Other Content Decryption Module version below.</li>
+    </ul>
+</div>
+
+
+    <h4 class="exampleheader">7.2.2. Other Content Decryption Module</h4>
+    <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  function handleKeyNeeded(event) {
+    if (event.<precoderef>keySystem</precoderef> &amp;&amp; event.<precoderef>keySystem</precoderef> != "com.example.somesystem.1_0")
+      throw "Unhandled keySystem in event";
+    var initData = event.<precoderef>initData</precoderef>;
+    var video = event.target;
+
+    video.<premethodref>generateKeyRequest</premethodref>("com.example.somesystem.1_0", initData);
+  }
+
+  function licenseRequestReady(event) {
+    if (event.<precoderef>keySystem</precoderef> != "com.example.somesystem.1_0")
+      throw "Unhandled keySystem in event";
+    var request = event.<precoderef>message</precoderef>;
+    if (!request)
+      throw "Could not create license request";
+
+    var video = event.target;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "http://.../getkey", false);
+    xmlhttp.send(request);
+    var license = new Uint8Array(xmlhttp.response);
+    video.<premethodref>addKey</premethodref>("com.example.somesystem.1_0", license, null, event.<precoderef>sessionId</precoderef>);
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="licenseRequestReady(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+    <h3 id="examples-selecting-key-system" class="exampleheader">7.3. Selecting a Supported Key System</h3>
+    <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using <methodref>canPlayType</methodref> and selecting one.
+    </p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+
+  function selectKeySystem(video) {
+    if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != “”) {
+      licenseUrl = “https://license.example.com/getkey”; // OR “https://example.&lt;My Video Site domain&gt;”
+      if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != “”) {
+        keySystem = “com.example.somesystem.2_0”;
+      } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != “”) {
+        keySystem = “com.example.somesystem.1_5”;
+      }
+    } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "foobar") != “” {
+      licenseUrl = “https://license.foobar.com/request”;
+      keySystem = “foobar”;
+    } else {
+      throw “Key System not supported”;
+    }
+  }
+
+  function handleKeyNeeded(event) {
+    var targetKeySystem = event.<precoderef>keySystem</precoderef>;  
+    if (targetKeySystem == null) {
+      selectKeySystem(video);  // See previous example for implementation.
+      targetKeySystem = keySystem;
+    }
+    var initData = event.<precoderef>initData</precoderef>;
+    var video = event.target;
+
+    video.<premethodref>generateKeyRequest</premethodref>(targetKeySystem, initData);
+  }
+
+  function licenseRequestReady(event) {
+    if (event.<precoderef>keySystem</precoderef> != keySystem)
+      throw "Message from unexpected Key System";
+    var request = event.<precoderef>message</precoderef>;
+    if (!request)
+      throw "Could not create license request";
+
+    var video = event.target;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", licenseUrl, false);
+    xmlhttp.send(request);
+    var license = new Uint8Array(xmlhttp.response);
+    video.<premethodref>addKey</premethodref>(keySystem, license, null, event.<precoderef>sessionId</precoderef>);
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="licenseRequestReady(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+    <h3 class="exampleheader">7.4. Using All Events</h3>
+    <p class="exampledescription">This is a more complete example showing all events being used along with asynchronous XHR.</p>
+    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <methodref>addKey</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+
+  function handleMessageResponse() {
+    var license = new Uint8Array(xmlhttp.response);
+    var video = document.getElementById(“video”);
+    video.<premethodref>addKey</premethodref>(keySystem, license, null, this.sessionId);
+  }
+  
+  function sendMessage(message, sessionId) {
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.sessionId = sessionId;
+    xmlhttp.onreadystatechange = handleMessageResponse;
+    xmlhttp.open("POST", licenseUrl, true);
+    xmlhttp.send(message);
+  }
+
+  function handleKeyNeeded(event) {
+    var targetKeySystem = event.<precoderef>keySystem</precoderef>;  
+    if (targetKeySystem == null) {
+      selectKeySystem(video);  // See previous example for implementation.
+      targetKeySystem = keySystem;
+    }
+    var initData = event.<precoderef>initData</precoderef>;
+    var video = event.target;
+
+    video.<premethodref>generateKeyRequest</premethodref>(targetKeySystem, initData);
+  }
+
+  function handleKeyMessage(event) {
+    if (event.<precoderef>keySystem</precoderef> != keySystem)
+      throw "Message from unexpected Key System";
+    var message = event.<precoderef>message</precoderef>;
+    if (!message)
+      throw "Invalid key message";
+  
+    sendMessage(message, event.<precoderef>sessionId</precoderef>);
+  }
+
+  function handleKeyComplete(event) {
+    // Do some bookkeeping with event.<precoderef>sessionId</precoderef> if necessary.
+  }
+
+  function handleKeyError(event) {
+    // Report event.<precoderef>errorCode</precoderef> and do some bookkeeping with event.<precoderef>sessionId</precoderef> if necessary.
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="handleKeyMessage(event)" on<precoderef>keyadded</precoderef>="handleKeyComplete(event)" on<precoderef>keyerror</precoderef>="handleKeyError(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+
+    <h2 id="faq">8. FAQ</h2>
+    <non-normative-sections/>
+
+    <h3 id="faq-use-cases">8.1. Use Cases</h3>
+
+    <h4 class="faqquestion">What use cases does this support?</h4>
+    <p class="faqanswer">Everything from user-generated content to be shared with family (user is not an adversary) to online radio to feature-length movies.</p>
+
+    <h4 id="faq-adaptive-streaming" class="faqquestion">Is this proposal compatible with adaptive streaming?</h4>
+    <p class="faqanswer">Yes, this proposal is compatible with both "Type 1" and "Type 3" <a href="http://www.w3.org/2011/webtv/wiki/MPTF/HTML_adaptive_calls">adaptive streaming modes</a> as defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web &amp; TV Interest Group</a>.</p>
+    <ul>
+      <li>If adaptive streaming is handled within the user agent (Type 1), the adaptive implementation can expose the events and methods needed to provide key(s) for the streams via the APIs in this proposal.</li>
+      <li>If adaptive streaming is handled in the application/JavaScript (Type 3), behavior should be very similar to the non-adaptive case.
+      For example, the proposed <a href="http://html5-mediasource-api.googlecode.com/svn/trunk/draft-spec/mediasource-draft-spec.html">MediaSource Extensions</a> allow the application to provide a dynamic <code>src</code>, which could be encrypted and handled just like a normal stream.
+      </li>
+    </ul>
+
+    <h4 id="faq-key-rotation" class="faqquestion">Is key rotation supported?</h4>
+    <p class="faqanswer">Yes.</p>
+
+    <h4 class="faqquestion">Can I encrypt captions / &lt;track&gt; elements?</h4>
+    <p class="faqanswer">No, this proposal only supports decrypting audio and video that are part of the <videoanchor name="media-data">media data</videoanchor>.</p>
+
+    <h4 id="sourceelement" class="faqquestion">Can I let the user agent select the appropriate CDM using <code>&lt;source&gt;</code> elements?</h4>
+    <p class="faqanswer">Yes, using the <coderef prefix="source">keySystem</coderef> attribute of the <coderef>HTMLSourceElement</coderef>.
+    When used with <videoref name="attr-source-type">type</videoref> attribute, this will select the first <code>&lt;source&gt;</code> element (container, codec, and <a href="#key-system">Key System</a>) that the user agent might support.
+    The selected <a href="#cdm">CDM</a> will not be reported to the application until an event is fired.
+    </p>
+
+    <h4 id="faq-heartbeat" class="faqquestion">Is a heartbeat supported?</h4>
+    <p class="faqanswer">Yes.</p>
+    <p class="faqanswer">Heartbeat is a mode of operation where the <a href="#cdm">Content Decryption Module</a> requires to receive an explicit heartbeat message from its server on a regular basis, otherwise decryption is blocked.
+    This enables use-cases requiring strict online control of access to the content.
+    Heartbeat must be supported by the CDM and is implemented in this model by supplying an expiration time or valid duration in the license provided to the CDM.
+    Before expiry of this license, the CDM must trigger a new message exchange to obtain an updated license.
+    </p>
+<div class="issue">
+    <p>It is an open question whether CDMs should</p>
+    <ul>
+      <li>Use <coderef>keymessage</coderef> to continue the current session</li>
+      <li>OR start a new message exchange procedes in exactly the same way as the initial message exchange, with the exception that the <a href="#key-system">Key System</a>and <a href="#session-id">Session ID</a> are known when the needley event is sent.</li>
+    </ul>
+    The latter option may impact the <coderef>MediaKeyNeededEvent</coderef> definition. See the <a href="#issue-multiple-keys">related issue</a>.    
+</div>
+    
+    <h3 id="faq-use">8.2. Use</h3>
+
+    <h4 class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
+    <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <methodref>generateKeyRequest</methodref> to be included in the license request.</p>
+
+    <h4 class="faqquestion">How do I resume playback after receiving the <coderef>needkey</coderef> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
+    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <methodref>addKey</methodref> and processed.</p>
+
+    <h4 class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
+    <p class="faqanswer">Yes, this will likely be necessary to support all or a majority of user agents.
+    An application could also use different <a href="#key-system">Key Systems</a> on a single user agent for different purposes.</p>
+
+    <h4 class="faqquestion">How do I add support for a CDM to my application?</h4>
+    <p id="faq-cdm-library" class="faqanswer">We envision <a href="#cdm">CDM</a> providers creating JavaScript libraries that application developers can include. <methodref>canPlayType</methodref> can then be used to select from supported libraries.</p>
+
+    <h4 id="faq-provider-capabilities" class="faqquestion">How do I determine if the UA supports specific capabilities for a given provider?</h4>
+    <p class="faqanswer">This is vendor-/<a href="#key-system">Key System</a>-specific.</p>
+    <p class="faqanswer">Obtaining this information could take time and is open-ended, so it is not appropriate for <methodref>canPlayType</methodref>.
+    There is also no way for <methodref>canPlayType</methodref> to attest to capabilities anyway.
+    Some basic Key System feature detection may be <a href="canplaytype-capability-detection">available via canPlayType()</a>.
+    </p>
+
+    <h4 class="faqquestion">How should an application handle a <coderef>needkey</coderef> event with a null <coderef>keySystem</coderef> attribute?</h4>
+    <p class="faqanswer">This is a very common scenario because it happens when the user agent encounters encrypted media and does not have an appropriate key.
+    If the application does not already know which <a href="#key-system">Key System</a> to use, it should use <methodref>canPlayType</methodref> to select an appropriate one.
+    When the <coderef>keySystem</coderef> attribute is null, the <coderef>initData</coderef> attribute is always independent of the <a href="#key-system">Key System</a>.
+    </p>
+
+    <h4 class="faqquestion">What is a license URL (<code>licenseUrl</code>) in the examples?</h4>
+    <p class="faqanswer">This is the URL for a server capable of providing the key for the stream, usually using the <a href="#initialization-data">Initialization Data</a> and often after verifying the requesting user.
+    The URL is application- and/or <a href="#key-system">Key System</a>-specific and may be a content provider or a Key System provider depending on the solution.</p>
+
+    <h4 class="faqquestion">This is too complex and hard to use.</h4>
+    <p class="faqanswer">That's not a question, but we'll try to address it anyway.
+    As shown in the <a href="#examples">examples</a>, the basic use cases are reasonably simple and only require a little setup to get the key and provide it to the user agent.
+    We believe most small content sites can add basic protection to their applications with minimal efforts.</p>
+    <p class="faqanswer">The more complex cases, such as fast time to first frame and various license management algorithms, require more complex code, but professional-strength content protection is complex and that is to be expected.
+    Professional-strength content protection requires server components and working with one or more content protection vendors, so this isn’t really any more complex.
+    In fact, if you implement a few solutions, it will work on any browser-based platform, avoiding the need for per-platform solutions on both the server and client.
+    The fixed set of interfaces may even lead to more consistent patterns and behavior across various solutions.
+    It is generally the large content providers that have more complex requirements, and we believe they will have the appropriate resources to implement applications that meet their requirements.
+    </p>
+    <p class="faqanswer">Providers of <a href="#cdm">content decryption modules</a> will need to provide detailed specifications for actions and events to guide content providers in designing the algorithms in their applications.
+    They can also provide a <a href="#faq-cdm-library">JavaScript libraries</a> for their solution that can be integrated into any application.
+    An application would then basically select a solution and delegate a lot of the work to the appropriate library.</p>
+
+    <h3 id="faq-api">8.3. API</h3>
+
+    <h4 class="faqquestion">How is the decryption algorithm specified?</h4>
+    <p class="faqanswer">This is container specific. A container may standardize on a specific algorithm (i.e. AES-128) and/or allow it to be specified. The user agent must know and/or detect the appropriate algorithm to use with the key provided by this API.</p>
+
+    <h4 class="faqquestion">What are the advantages of doing license/key exchange in the application?</h4>
+    <p class="faqanswer">Advantages include:</p>
+    <ul>
+      <li><a href="#simple-decryption">Simple Decryption</a> works in the same way as more advanced solutions and without additional APIs.</li>
+      <li>The user agent is not responsible for deciding which decryption mechanism to use.</li>
+      <li>The application has full control (i.e. of deciding what streams to offer) and does not need to rely on errors from (or a detailed API to) the <a href="#cdm">CDM</a>.</li>
+      <li>The application can manage its own license protocol, authentication refresh, key rotation etc. without relying on changes to or specific use cases being implemented in each user agent's CDM (as long as the appropriate primitives are available in the CDM).</li>
+      <li>Error handling can be tailored to the application without needing to expose status information and failure conditions from the CDM through the API.</li>
+      <li>The content provider can decide whether and what to proxy to the (potentially third-party) license server without client modifications.</li>
+      <li>Reduces the complexity and size of the CDM.</li>
+    </ul>
+
+    <h4 class="faqquestion">Why does <methodref>canPlayType</methodref> need to be modified? Why doesn't it provide more information?</h4>
+    <p class="faqanswer">The modifications allow applications to detect whether the user agent is capable of supporting the application's encrypted content (at any level of protection) and to allow the application to branch to the appropriate code and/or select a <a href="#faq-cdm-library">CDM library</a>.</p>
+    <p class="faqanswer">At the same time, we do not want to put too much burden on <methodref>canPlayType</methodref> and it must remain a synchronous method that can be processed from static data. See the <a href="#faq-provider-capabilities">related question</a>.</p>
+
+    <h4 class="faqquestion">Why does <methodref>canPlayType</methodref> need a second parameter? Why not just add Key System to the <code>type</code> parameter string (or MIME type)?</h4>
+    <p class="faqanswer">This could have gone either way, and the behavior of both existing user agents and those that implement these extensions would be the same. (Existing user agents ignore it in both cases.)
+    The main reason for using a separate parameter is that the <a href="#key-system">Key System</a> is not part of the MIME type (see the <a href="#faq-key-system-mime-type">related question</a>), and the <code>type</code> parameter is generally used interchangeably with the MIME type.
+    Separating the Key System from the MIME type should avoid confusion.
+    </p>
+    <p class="faqanswer">The downside is that the same <code>type</code> string cannot be used for both <methodref>canPlayType</methodref> and the source element's <videoref name="attr-source-type">type</videoref> attribute.
+    Instead, the Key System is passed as a second parameter to <methodref>canPlayType</methodref> and as a separate attribute to the source element.
+    </p>
+
+    <h4 class="faqquestion">Will I be informed if a call to one of the <a href="#dom-htmlmediaelement">new methods</a> fails?</h4>
+    <p class="faqanswer">Errors that occur during synchronous portion of the algorithms will be thrown.
+    For asynchronous portions (i.e. when a task is scheduled), a <coderef>MediaKeyErrorEvent</coderef> will be fired.
+    </p>
+
+    <h4 id="faq-key-system-mime-type" class="faqquestion">Why isn't the <a href="#key-system">Key System</a> part of the MIME type (like codecs)?</h4>
+    <p class="faqanswer">In many cases (especially the direction the content providers and standards are moving), the stream is not specific to any one Key System or provider. Multiple Key Systems could be used to decrypt the same generic stream. Thus, the <a href="#key-system">Key System</a> is not information about the file and should not be part of the MIME type.</p>
+    <p class="faqanswer">One could argue that the encryption algorithm (e.g. AES-128) and configuration should be in the MIME type. That is not required for this proposal, so it is not addressed here.</p>
+
+    <h4 class="faqquestion">Why do we need another event?</h4>
+    <p class="faqanswer">While many use case could be implemented without an additional event (by requiring the app to provide all the information up front), some use cases may be better handled by an event.</p>
+
+    <h4 class="faqquestion">Why does the event need multiple attributes?</h4>
+    <p class="faqanswer">The <coderef>keySystem</coderef> attribute ensures that the application knows which <a href="#cdm">CDM</a> caused the event so it can know how to handle the event. While the application could probably know or discover this in other ways, this makes it simple for the application.</p>
+
+    <h4 class="faqquestion">Why do we need a new <coderef>MediaError</coderef> code?</h4>
+    <p class="faqanswer">Without a new error code (<coderef>MEDIA_ERR_ENCRYPTED</coderef>), it is not possible for user agents to clearly indicate to an application that playback failed because the content was encrypted and user agents will likely need to fire a <code>MEDIA_ERR_DECODE</code> or <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>, which would be confusing.</p>
+
+    <h4 class="faqquestion">Will adding a new error code to <coderef>MediaError</coderef> break existing applications?</h4>
+    <p class="faqanswer">Applications that are not aware of the new error code (<coderef>MEDIA_ERR_ENCRYPTED</coderef>) may not correctly handle it, but they should still be able to detect that an error has occurred because a) an error event is fired and b) <var title="">media</var> . <code title="dom-media-error"><videoref name="mediaerror">error</videoref></code> is not null.</p>
+
+    <h4 class="faqquestion">Why do we need a new error type (<coderef>MediaKeyError</coderef>) and event (<coderef>MediaKeyErrorEvent</coderef>)?</h4>
+    <p class="faqanswer">While key/license exchange errors are fatal to the exchange session, most are not fatal to playback.
+    This is especially true if the <a href="#media-element">media element</a> already has a key for the current (and future) frames or, for example, the exchange was for a different stream in an <a href="#faq-adaptive-streaming">adaptive streaming</a> scenario.
+    The separation allows the <a href="#media-element">media element</a> to continue playback while the application attempts to resolve the exchange problem or until the requested key/license is actually needed.
+    </p>    
+
+    <h4 class="faqquestion">What happens if a response to the <coderef>needkey</coderef> event from a <a href="#algorithms-encrypted-stream">encountering a potentially encrypted stream</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
+    <p class="faqanswer">The <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a> will proceed as normal.
+    If no appropriate key has been provided, a second <coderef>needkey</coderef> event will be fired and decoding will stop.
+    </p>
+
+    <h4 class="faqquestion">The same <coderef>needkey</coderef> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
+    <p class="faqanswer">The same event was used intentionally to reduce the complexity of applications. Ideally, they would not need to know.</p>
+
+    <h4 class="faqquestion">What if a different [supported] <a href="#key-system">Key System</a> is passed to one of the <a href="#dom-htmlmediaelement">new methods</a> in subsequent calls to the same <coderef>HTMLMediaElement</coderef>?</h4>
+    <p class="faqquestion">(Expanding on the question, this relates to the new methods, including <methodref>generateKeyRequest</methodref> and <methodref>addKey</methodref>, that modify state and does not apply to <methodref>canPlayType</methodref>, which is explicitly intended to be called with multiple <a href="#key-system">Key System</a> strings.
+    For example, what if <methodref>generateKeyRequest</methodref> is called with one Key System then <methodref>addKey</methodref> is called with another; or if <methodref>addKey</methodref> is called twice with two different Key Systems.)
+    </p>
+    <p class="faqanswer">If a load occurs between calls with different Key Systems, then there is no problem.</p>
+    <p class="faqanswer">Otherwise, the calls will be treated separately.
+    <methodref>generateKeyRequest</methodref> will start a new session with a new <a href="#session-id">Session ID</a>.
+    <methodref>addKey</methodref> will behave as normal unless <var title="true">sessionId</var> parameter is not null and is unrecognized for the specified <var title="true">keySystem</var> parameter.
+    </p>
+
+    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <methodref>addKey</methodref>?</h4>
+    <p class="faqanswer">Replace it, updating the ordering to reflect that this key ID was most recently added.
+    In other words, simply replacing the existing key data is not sufficient.
+    The exact algorithm is covered in <methodref>addKey</methodref>.
+    </p>
+
+    <h3 id="faq-source">8.4. Source, Containers, and Streams</h3>
+
+    <h4 class="faqquestion">What containers and codecs are supported?</h4>
+    <p class="faqanswer">Containers and codecs are not specified. A user agent may support decryption of whichever container and codec combination(s) it wishes.</p>
+    <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <methodref>canPlayType</methodref>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
+
+    <h4 class="faqquestion">What if a container/codec does not support indicating the stream or a frame/block is encrypted?</h4>
+    <p class="faqanswer">The application must use <methodref>addKey</methodref> to indicate the stream is encrypted and provide the key before decoding starts.</p>
+
+    <h4 class="faqquestion">Must the container provide Initialization Data or a content key ID?</h4>
+    <p class="faqanswer">This is ideal, but the API would also support the application sending the <a href="#initialization-data">Initialization Data</a> or ID directly to the server or providing it to the <a href="#cdm">CDM</a> via <methodref>generateKeyRequest</methodref>.</p>
+
+    <h4 class="faqquestion">What if a container/codec does not support key IDs or bit(s)?</h4>
+    <p class="faqanswer">The application will need to use some other mechanism to select the appropriate key for the content.
+    The user agent will only be able to use one key at a time.
+    <a href="#faq-key-rotation">Key rotation</a> will be much more complex or impossible.
+    </p>
+
+    <h4 id="faq-adaptive-streaming-multiple-keys" class="faqquestion">Can I use different keys for each stream (<a href="#faq-adaptive-streaming">adaptive streaming</a>)?</h4>
+    <p class="faqanswer">Yes, though you may want to consider the complexity and performance drawbacks. For the best user experience, you will want to provide keys for the streams to the user agent before the switch.</p>
+
+    <h4 class="faqquestion">What elements of the source are encrypted?</h4>
+    <p class="faqanswer">This depends on the container/codec being used. This proposal should support all cases, including entirely encrypted streams, individual frames encrypted separately, groups of frames encrypted, and portions of frames encrypted.
+    If not all blocks or frames are encrypted, the user agent should be able to easily detect this, either based on an indication in the container or the block/frame.</p>
+
+    <h4 class="faqquestion">Must all blocks/frames in a stream be encrypted?</h4>
+    <p class="faqanswer">No, subject to container/codec limitations.</p>
+
+    <h4 class="faqquestion">What cipher and parameters should be used for decryption?</h4>
+    <p class="faqanswer">The cipher and parameters should be implicit in or specified by the container. If some are optional, the application must know what is supported by the <a href="#cdm">CDM</a>.</p>
+
+    <h4 class="faqquestion">What cipher and parameters should be used for <a href="#simple-decryption">Simple Decryption</a>? Which must the user agent support?</h4>
+    <p class="faqanswer">As in the above question, these are either implicit in or specified by the container. User agents must support any default or baseline ciphers and parameters in the container specification. Practically, user agents should support all ciphers and parameters commonly used with the container.</p>
+
+    <h3 id="faq-protection">8.5. Content and Key Protection</h3>
+
+    <h4 class="faqquestion">Can I ensure the content key is protected without working with a content protection provider?</h4>
+    <p class="faqanswer">No. Protecting the content key would require that the browser's media stack have some secret that cannot easily be obtained. This is the type of thing DRM solutions provide. Establishing a standard mechanism to support this is beyond the scope of HTML5 standards and should be deferred to specific user agent solutions. In addition, it is not something that fully open source browsers could natively support.</p>
+    <p class="faqanswer">Content protected using this proposal without a content protection provider is still more secure and a higher barrier than providing an unencrypted file over HTTP or HTTPS. We would also argue that it is no less secure than encrypted HLS. For long streams, <a href="#faq-key-rotation">key rotation</a> can provide additional protection.</p>
+    <p class="faqanswer">It is also possible to extend the proposed specification in the future to support a more robust basic case <strong>without changing the API</strong>.</p>
+
+    <h4 class="faqquestion">Can a user agent support multiple content protection providers?</h4>
+    <p class="faqanswer">Yes. The application will query the user agent's capabilities and select the <a href="#key-system">Key System</a> to use.</p>
+
+    <h4 class="faqquestion">Can a user agent protect the compressed content?</h4>
+    <p class="faqanswer">Yes, this proposal naturally supports such protection.</p>
+
+    <h4 class="faqquestion">Can a user agent protect the rendering path or protect the uncompressed content after decoding?</h4>
+    <p class="faqanswer">Yes, a user agent could use platform-specific capabilities to protect the rendering path.
+    </p>
+
+<h2 id="open-issues">9. Open Issues</h2>
+<non-normative-sections/>
+<p>This section describes some open issues on which comments are requested.</p>
+    <h3 id="issue-api-encapsuation">9.1. API Encapsulation</h3>
+    
+    <div class="issue">
+    <p>It has been suggested that only a single key manager attribute be added to the HTMLMediaElement itself in order to improve encapsulation.
+    For example:
+    </p>
+
+<pre class="idl">
+partial interface <precodedfn prefix="alternate-encapsulation">HTMLMediaElement</precodedfn> {
+    attribute <precoderef>MediaKeyManager</precoderef> <precoderef>keymanager</precoderef>;
+};
+
+interface <precodedfn>MediaKeyManager</precodedfn> {
+  void <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
+  void <premethodref>addKey</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array key, in Uint8Array? initData, in DOMString? <a href="#session-id">sessionId</a>);
+  void <premethodref>cancelKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in DOMString? <a href="#session-id">sessionId</a>);
+};
+</pre>
+</div>
+      
+<h3 id="issue-oo-api-design">9.2. Object-Oriented API Design</h3>
+<div class="issue">
+
+<p>A variant of the API with the same functionality has been suggested in which key exchange 'sessions' are explicitly represented as objects.
+The methods used to supply a key/license or cancel the session become methods on this object, not the <coderef>HTMLMediaElement</coderef> itself.
+</p>
+
+<pre class="idl">
+partial interface <precodedfn prefix="alternate-oo">HTMLMediaElement</precodedfn> {
+    MediaKeySession <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
+};
+
+interface <precodedfn>MediaKeySession</precodedfn> : <precoderef>EventTarget</precoderef> {
+    readonly attribute DOMString <precoderef>keySystem</precoderef>;
+    readonly attribute DOMString? <precoderef>sessionId</precoderef>;
+    
+    void addKey(in Uint8Array key);
+    void cancel();
+};
+</pre>
+
+<p>The following event would be fired at the <coderef>MediaKeySession</coderef> when a message is ready to be sent.</p>
+<pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
+interface <precodedfn prefix="alternate-oo">MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+    readonly attribute Uint8Array <precoderef>message</precoderef>;
+    readonly attribute DOMString? <precoderef>defaultUrl</precoderef>;
+};
+
+dictionary <precodedfn prefix="alternate-oo">MediaKeyMessageEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref>  {
+    Uint8Array <precoderef>message</precoderef>;
+    DOMString? <precoderef>defaultUrl</precoderef>;
+};</pre>
+
+<p>Note that in the <coderef>MediaKeySession</coderef> interface, <coderef>sessionId</coderef> is guaranteed to be initialized only after the first <coderef>MediaKeyMessageEvent</coderef>.</p>
+
+<p>The following event would be fired at the <coderef>MediaKeySession</coderef> when the transaction is complete. (It could be replaced by a simple event.)</p>
+<pre class="idl">
+[Constructor(DOMString type)]
+interface <precodedfn prefix="alternate-oo">MediaKeyCompleteEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+};
+</pre>
+
+<p>Finally, the following event would be fired at <coderef>MediaKeySession</coderef> if <methodref>getKeyRequest</methodref> or <methodref>addKey</methodref> results in an error.</p>
+
+<pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyErrorEventInit</precoderef> eventInitDict)]
+interface <precodedfn prefix="alternate-oo">MediaKeyErrorEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+    readonly attribute <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
+    readonly attribute unsigned short <precoderef>systemCode</precoderef>;
+};
+
+dictionary <precodedfn prefix="alternate-oo">MediaKeyErrorEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref>  {
+    <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
+    unsigned short <precoderef>systemCode</precoderef>;
+};</pre>
+</div>
+
+    <h3 id="issue-correlation">9.3. Session Correlation</h3>
+<div class="issue">
+    <p>
+    The current API design allows for multiple parallel key requests to be in flight. Each call to <methodref>generateKeyRequest</methodref> begins a message exchange resulting ultimately in a <coderef>keyadded</coderef> or <coderef>keyerror</coderef> event.
+    The first <coderef>keymessage</coderef> event <em>may</em> contain a <a href="#session-id">Session ID</a> identifying the session.
+    This session ID is later used to enable correlation between messages conveyed in <coderef>keymessage</coderef> and responses added in <coderef>addKey</coderef>.
+    </p>
+    <p>
+    However, the current design does not support correlation between specific <methodref>generateKeyRequest</methodref> calls (and the <coderef>needkey</coderef> event that might have triggered it) and subsequent sessions.
+    If a page knows it needs two keys, it can call <methodref>generateKeyRequest</methodref> twice but there is no way to know which <coderef>keymessage</coderef> or <coderef>keyerror</coderef> results from  each call.
+    This might be particularly important for the error case. Modifications to the API such as those described in <a href="#issue-oo-api-design">Object-Oriented API Design</a> could address this issue.
+    </p>
+</div>
+
+    <h3 id="issue-mediacontroller">9.4. Working with MediaController</h3>
+<div class="issue">
+    <p>
+    HTML5 defines a <videoref name="mediacontroller">MediaController</videoref> that is used to coordinate playback of multiple <a href="#media-element">media elements</a>.
+    The current proposal does not support a scenario where a single key is required for multiple media elements coordinated through a single <videoref name="mediacontroller">MediaController</videoref>.
+    One way to solve this would be to create a new interface that provides the <a href="#extensions">Media Element Extensions</a> and then provide an instance of this interface on both the <coderef>HTMLMediaElement</coderef> and on the <videoref name="mediacontroller">MediaController</videoref> interfaces.
+    The changes outlined in section <a href="#issue-oo-api-design">Object-Oriented API Design</a> might be modified to support this approach.
+    </p>
+</div>
+
+    <h3 id="issue-multiple-keys">9.5. Multiple Keys in a Stream</h3>
+<div class="issue">
+    <p>It is possible that a stream may encounter a different key for a given stream after a key request session as been completed.
+    How this should be handled is not explicitly described; it may be up to the <a href="#key-system">Key System</a> and/or application but that might lead to confusion and inconsistencies.
+    </p>
+
+    <p>One option is to fire a <coderef>keymessage</coderef> to be sent to the server, which would return a new license to provide via <methodref>addKey</methodref>.
+    The same <a href="#session-id">Session ID</a> would be used because <methodref>generateKeyRequest</methodref> is not called again.
+    Note that this means a <coderef>keymessage</coderef> even can occur after a <coderef>keyadded</coderef> event for the same session.
+    </p>
+
+    <p>Another option is to fire a <coderef>needkey</coderef> event and follow the same steps as for the first key.
+    In this case, the application should call <methodref>generateKeyRequest</methodref> to generate the message.
+    This would result in the generation of a new Session ID, which is consistent with the first key.
+    </p>
+    
+    <p>If we select the first option, <coderef>MediaKeyNeededEvent</coderef>, the type of the <coderef>needkey</coderef> event can be simplified because it would never be called with a known <coderef>keySystem</coderef> or <coderef>sessionId</coderef>.
+    If we select the second option, <coderef>keySystem</coderef> should almost certainly be retained on <coderef>MediaKeyNeededEvent</coderef> and <coderef>sessionId</coderef> probably should be retained.
+    </p>
+    
+    <p>This decision should account for other use cases, such as <a href="#faq-heartbeat">heartbeat</a>.
+    For heartbeat and any other CDM-originated message that isn't requesting a new key, it probably makes sense to use the same Session ID and provide the request directly via a <coderef>keymessage</coderef> event.
+    This is essentially the first option above.
+    Selecting the second option for multiple keys does not necessarily mean that heartbeat cannot work differently.
+    </p>
+</div>
+
+    <h2 id="revision-history">10. Revision History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0.1</td>
+          <td>Initial Proposal</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
