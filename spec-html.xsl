@@ -60,10 +60,6 @@
     <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/video.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
 
-  <xsl:template match="//preinfraref">
-    <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/infrastructure.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
-  </xsl:template>
-
   <xsl:template match="//dom4ref">
     <a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
@@ -94,6 +90,10 @@
 
   <xsl:template match="//invalid-access-err">
     <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_access_err</xsl:attribute>INVALID_ACCESS_ERR</a></code>
+  </xsl:template>
+
+  <xsl:template match="//type-mismatch-err">
+    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-type_mismatch_err</xsl:attribute>TYPE_MISMATCH_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//readystate">

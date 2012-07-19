@@ -36,7 +36,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 28 June 2012</h2>
+      <h2>W3C Editor's Draft 19 July 2012</h2>
       <dl>
 	<dt>Latest published version:</dt>
 	<dd>Not yet published</dd>
@@ -332,7 +332,22 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>Schedule a task to handle the call, providing <var title="true">initData</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">keySystem</var><br>
+                  <code><a href="#dom-sessionid">sessionId</a></code> = null<br>
+                  <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                  <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
 
           <li><p>Let <var title="true">defaultURL</var> be null.</p></li>
           <li>
@@ -403,7 +418,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     </p>
 
     <ol>
-      <li><p>If the first argument is null, throw a <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-syntax_err">SYNTAX_ERR</a></code>.</p></li>
+      <li><p>If the first or second argument is null, throw a <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-syntax_err">SYNTAX_ERR</a></code>.</p></li>
+
+      <li><p>If the second argument is an empty array, throw a <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-type_mismatch_err">TYPE_MISMATCH_ERR</a></code>.</p></li>
 
       <li>
 <p>If <code><a href="http://dev.w3.org/html5/spec/video.html#dom-media-networkstate">networkState</a></code> is <code><a href="http://dev.w3.org/html5/spec/video.html#dom-media-network_empty">NETWORK_EMPTY</a></code>, throw an <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>.</p>
@@ -436,7 +453,22 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>Schedule a task to handle the call, providing <var title="true">key</var>, <var title="true">initData</var>, and <var title="true">sessionId</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">keySystem</var><br>
+                  <code><a href="#dom-sessionid">sessionId</a></code> = <var title="true">sessionId</var><br>
+                  <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                  <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
 
           <li><p>Let <var title="true">key stored</var> be false.</p></li>
           <li><p>Let <var title="true">next message</var> be null.</p></li>
@@ -838,7 +870,7 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
     
     <pre class="idl" id="key-release-manager">
     [Constructor()]
-    interface <dfn id="dom-keyreleasemanager">KeyReleaseManager</dfn> : <dfn id="dom-eventtarget">EventTarget</dfn> {
+    interface <dfn id="dom-keyreleasemanager">KeyReleaseManager</dfn> : <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventtarget">EventTarget</a> {
         void <a href="#dom-getkeyreleases">getKeyReleases</a>(in DOMString <a href="#key-system">keySystem</a>);
         void <a href="#dom-addkeyreleasecommit">addKeyReleaseCommit</a>(in DOMString <a href="#key-system">keySystem</a>, in DOMString <a href="#session-id">sessionId</a>, in Uint8Array message);
     }
@@ -862,7 +894,22 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
 <p>Schedule a task to handle the call.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">keySystem</var><br>
+                  <code><a href="#dom-sessionid">sessionId</a></code> = null<br>
+                  <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                  <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
           <li>
 <p>Use <var title="true">handler</var> to generate one or more key release messages, if supported.
             <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
@@ -910,7 +957,22 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
 <p>Schedule a task to handle the call, providing <var title="true">sessionId</var> and <var title="true">message</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">keySystem</var><br>
+                  <code><a href="#dom-sessionid">sessionId</a></code> = <var title="true">sessionId</var><br>
+                  <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                  <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
           <li>
 <p>Use <var title="true">handler</var> to commit the message.
             <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
@@ -967,8 +1029,22 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
         <dd>Jump to the <i>Key Presence</i> step below.</dd>
       </dl>
       </li>
-      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
-      
+      <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+        <dl class="switch">
+          <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+          <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+            <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">key system</var><br>
+              <code><a href="#dom-sessionid">sessionId</a></code> = null<br>
+              <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+              <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+            </li></ul>
+          </dd>
+        </dl>
+      </li>
       <li>
 <p>Use <var title="true">handler</var> to select the key:</p>
         <ol>
@@ -1091,7 +1167,22 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
         <dd>Jump to the <i>Need Key</i> step below.</dd>
       </dl>
       </li>
-      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+      <li>
+<p>Load <var title="true">handler</var> if necessary.</p>
+        <dl class="switch">
+          <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+          <dd>
+<p><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a> to <a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <a href="#media-element">media element</a> and abort the task.</p>
+            <p>The event is of type <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <code><a href="#dom-keysystem">keySystem</a></code> = <var title="true">key system</var><br>
+              <code><a href="#dom-sessionid">sessionId</a></code> = null<br>
+              <code><a href="#dom-errorcode">errorCode</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+              <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+            </li></ul>
+          </dd>
+        </dl>
+      </li>
       <li>
 <p>Use <var title="true">handler</var> to determine whether the key is known:</p>
         <ol>
@@ -1181,7 +1272,7 @@ dictionary <dfn id="dom-mediakeyerroreventinit">MediaKeyErrorEventInit</dfn> : <
     <ul style="list-style-type:none"><li>
       <code><a href="#dom-keysystem">keySystem</a></code> = <code>"org.w3.clearkey"</code><br>
       <code><a href="#dom-sessionid">sessionId</a></code> = a unique numerical string<br>
-      <code><a href="#dom-message">message</a></code> = a container-specific unique key identifier extracted from the <var title="true">initData</var> parameter (if <var title="true">initData</var> was and null one could not be extracted; otherwise null)<br>
+      <code><a href="#dom-message">message</a></code> = a container-specific unique key identifier extracted from the <var title="true">initData</var> parameter of <code><a href="#dom-generatekeyrequest">generateKeyRequest()</a></code>. null if <var title="true">initData</var> was null or a key identifier could not be extracted.<br>
       <code><a href="#dom-defaulturl">defaultURL</a></code> = value of the default URL if present in the <a href="http://dev.w3.org/html5/spec/video.html#media-data">media data</a> and null otherwise.
     </li></ul>
 
@@ -1760,7 +1851,7 @@ partial interface <dfn id="dom-alternate-oohtmlmediaelement">HTMLMediaElement</d
     MediaKeySession <a href="#dom-generatekeyrequest">generateKeyRequest</a>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
 };
 
-interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="#dom-eventtarget">EventTarget</a> {
+interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventtarget">EventTarget</a> {
     readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
     readonly attribute DOMString? <a href="#dom-sessionid">sessionId</a>;
     

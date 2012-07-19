@@ -35,7 +35,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 28 June 2012</h2>
+      <h2>W3C Editor's Draft 19 July 2012</h2>
       <dl>
 	<dt>Latest published version:</dt>
 	<dd>Not yet published</dd>
@@ -322,7 +322,20 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Schedule a task to handle the call, providing <var title="true">initData</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = null<br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
 <!-- Everything above here should be the same for all methods. -->
           <li><p>Let <var title="true">defaultURL</var> be null.</p></li>
           <li><p>Use <var title="true">handler</var> to generate a key request and follow the steps for the first matching condition from the following list:</p>
@@ -389,7 +402,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     </p>
 
     <ol>
-      <li><p>If the first argument is null, throw a <syntax-err/>.</p></li>
+      <li><p>If the first or second argument is null, throw a <syntax-err/>.</p></li>
+
+      <li><p>If the second argument is an empty array, throw a <type-mismatch-err/>.</p></li>
 
       <li><p>If <videoref name="dom-media-networkstate">networkState</videoref> is <videoref name="dom-media-network_empty">NETWORK_EMPTY</videoref>, throw an <invalid-state-err/>.</p>
       <p class="non-normative">In general, applications should wait for an event named <coderef>needkey</coderef> or <videoref name="event-media-loadstart">loadstart</videoref> (per the <resource-fetch-algorithm/>) before calling this method.</p>
@@ -417,7 +432,20 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Schedule a task to handle the call, providing <var title="true">key</var>, <var title="true">initData</var>, and <var title="true">sessionId</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
 <!-- Everything above here except sessionId handling should be the same for all methods. -->
           <li><p>Let <var title="true">key stored</var> be false.</p></li>
           <li><p>Let <var title="true">next message</var> be null.</p></li>
@@ -787,7 +815,7 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
     
     <pre class="idl" id="key-release-manager">
     [Constructor()]
-    interface <precodedfn>KeyReleaseManager</precodedfn> : <precodedfn>EventTarget</precodedfn> {
+    interface <precodedfn>KeyReleaseManager</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
         void <premethodref>getKeyReleases</premethodref>(in DOMString <a href="#key-system">keySystem</a>);
         void <premethodref>addKeyReleaseCommit</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in DOMString <a href="#session-id">sessionId</a>, in Uint8Array message);
     }
@@ -808,7 +836,20 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
       <li><p>Schedule a task to handle the call.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = null<br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
           <li><p>Use <var title="true">handler</var> to generate one or more key release messages, if supported.
             <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
@@ -851,7 +892,20 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
       <li><p>Schedule a task to handle the call, providing <var title="true">sessionId</var> and <var title="true">message</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
-          <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+          <li><p>Load <var title="true">handler</var> if necessary.</p>
+            <dl class="switch">
+              <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+              <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+                <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+                <ul style="list-style-type:none"><li>
+                  <coderef>keySystem</coderef> = <var title="true">keySystem</var><br></br>
+                  <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
+                  <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                  <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                </li></ul>
+              </dd>
+            </dl>
+          </li>
           <li><p>Use <var title="true">handler</var> to commit the message.
             <var title="true">handler</var> should follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
@@ -903,8 +957,20 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
         <dd>Jump to the <i>Key Presence</i> step below.</dd>
       </dl>
       </li>
-      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
-      
+      <li><p>Load <var title="true">handler</var> if necessary.</p>
+        <dl class="switch">
+          <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+          <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+            <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>keySystem</coderef> = <var title="true">key system</var><br></br>
+              <coderef>sessionId</coderef> = null<br></br>
+              <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+              <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+            </li></ul>
+          </dd>
+        </dl>
+      </li>
       <li><p>Use <var title="true">handler</var> to select the key:</p>
         <ol>
           <li><p>Let <var title="">block key ID</var> be null.</p></li>
@@ -1017,7 +1083,20 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
         <dd>Jump to the <i>Need Key</i> step below.</dd>
       </dl>
       </li>
-      <li><p>Load <var title="true">handler</var> if necessary.</p></li>
+      <li><p>Load <var title="true">handler</var> if necessary.</p>
+        <dl class="switch">
+          <dt>If <var title="true">handler</var> fails to load or initialize</dt>
+          <dd><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <a href="#media-element">media element</a> and abort the task.</p>
+            <p>The event is of type <coderef>MediaKeyErrorEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>keySystem</coderef> = <var title="true">key system</var><br></br>
+              <coderef>sessionId</coderef> = null<br></br>
+              <coderef>errorCode</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+              <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+            </li></ul>
+          </dd>
+        </dl>
+      </li>
       <li><p>Use <var title="true">handler</var> to determine whether the key is known:</p>
         <ol>
           <li><p>Let <var title="">key ID</var> be null.</p></li>
@@ -1102,7 +1181,7 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
     <ul style="list-style-type:none"><li>
       <coderef>keySystem</coderef> = <code>"org.w3.clearkey"</code><br></br>
       <coderef>sessionId</coderef> = a unique numerical string<br></br>
-      <coderef>message</coderef> = a container-specific unique key identifier extracted from the <var title="true">initData</var> parameter (if <var title="true">initData</var> was and null one could not be extracted; otherwise null)<br></br>
+      <coderef>message</coderef> = a container-specific unique key identifier extracted from the <var title="true">initData</var> parameter of <methodref>generateKeyRequest</methodref>. null if <var title="true">initData</var> was null or a key identifier could not be extracted.<br></br>
       <coderef>defaultURL</coderef> = value of the default URL if present in the <videoanchor name="media-data">media data</videoanchor> and null otherwise.
     </li></ul>
 
@@ -1672,7 +1751,7 @@ partial interface <precodedfn prefix="alternate-oo">HTMLMediaElement</precodedfn
     MediaKeySession <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
 };
 
-interface <precodedfn>MediaKeySession</precodedfn> : <precoderef>EventTarget</precoderef> {
+interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
     readonly attribute DOMString <precoderef>keySystem</precoderef>;
     readonly attribute DOMString? <precoderef>sessionId</precoderef>;
     
