@@ -10,26 +10,7 @@
       .non-normative { font-style: italic; color: DarkSlateGrey; }
       .non-normative em { font-style: normal;}
       .non-normative var { font-style: normal;}
-      <!-- For discussion of open issues. -->
-      .issue {
-      padding:    1em;
-      margin: 1em 0em 0em;
-      border: 1px solid #f00;
-      background: #fcc;
-      }
-      .issue::before {
-      content:    "Issue";
-      display:    block;
-      width:  150px;
-      margin: -1.5em 0 0.5em 0;
-      font-weight:    bold;
-      border: 1px solid #f00;
-      background: #fff;
-      padding:    3px 1em;
-      }
     </style>
-
-
   </head>
   <body>
     <div class="head">
@@ -131,8 +112,7 @@
           <li><a href="#faq-source">8.4. Source, Containers, and Streams</a></li>
           <li><a href="#faq-protection">8.5. Content and Key Protection</a></li>
         </ul></li>
-      <li><a href="#open-issues">9. Open Issues</a></li>
-      <li><a href="#revision-history">10. Revision History</a></li>
+      <li><a href="#revision-history">9. Revision History</a></li>
     </ul>
 
 
@@ -187,7 +167,6 @@
     <span class="non-normative">For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".</span>
     <span class="non-normative">Key system providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.</span>
     </p>
-    <p class="issue">It may make sense to provide informal guidelines to avoid these diverging too much. There are probably best practices too. Should platform-specific or <a href="#faq-provider-capabilities">protection capability information</a> be contained in these strings?</p>
 
     <p>If a user agent returns "maybe" or "probably" for any subsystem string, it must return "maybe" when a parent system string is passed to <methodref>canPlayType</methodref>.
     <span class="non-normative">For example, if a user agent returns "maybe" or "probably" for "com.example.somesystem.1_5", it must return "maybe" for "com.example.somesystem".</span>
@@ -214,11 +193,6 @@
     </p>
 
     <p>NOTE: The key acquisition process (calling <methodref>generateKeyRequest</methodref>/<methodref>addKey</methodref>) may be executed multiple times for different sessions (each identified by a <var title="true"><a href="#session-id">sessionId</a></var>).</p>
-    <p class="issue">
-    The current proposal does not support a mechanism to release keys.
-    It is expected that the User Agent and CDM will release keys that are no longer needed as necessary to free resources.
-    No use case for triggering this release from JavaScript has been identified.
-    </p>
 
     <h4 id="initialization-data">1.2.4. Initialization Data</h4>
     <non-normative-section/>
@@ -278,13 +252,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </dl>
     </div>
     
-    <p class="issue" id="canplaytype-capability-detection">
-    The <methodref>canPlayType</methodref> method provides a simple capability detection mechanism for <a href="#key-system">Key System</a> capabilities.
-    If multiple versions of a protection system exist with different capabilities, these can be allocated distinct identifiers by the owner of that Key System.
-    This can be extended even to feature discovery, for example "com.example.somesystem.ignite" and "com.example.somesystem.explode" might identify features of the "com.example.somesystem" keysystem. 
-    It is an open question whether this usage is desirable or sufficient or whether more detailed capability detection mechanisms are needed.
-    </p>
-
     <p>In addition to the steps in the current specification, this method must run the following steps:</p>
     <ol>
       <li><p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
@@ -384,23 +351,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     It may be null.
     </p>
 
-<div class="issue" id="issue-disallow-addkey-only">
-    <p>The proposal currently allows <methodref>addKey</methodref> to be called without calling <methodref>generateKeyRequest</methodref>.
-    This has the advantages that simple use cases, especially for <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>, are fairly straightforward and simple.
-    The disadvantages are that user agents need to support multiple flows and applications written for the simple case are different than those written for the more general case.
-    In addition, some container formats may not support the simple case (i.e. if <var title="true">initData</var> is not easily-parsable to obtain a key ID).
-    </p>
-    It is an open question whether allowing the simple solutions is worth the effects.
-    See <a href="#issue-disallow-addkey-only-example">this example</a> for an illustration of the impact on simple applications.
-</div>
-    <p class="issue" id="issue-remove-addkey-data">
-    It has been proposed that the <var title="true">initData</var> parameter, which would most likely contain inforamation identifying the key or keys needed, be removed from <methodref>addKey</methodref> because any association can be done within the CDM using <var title="true"><a href="#session-id">sessionId</a></var>.
-    (However, see <a href="#issue-correlation">Session Correlation</a>.)
-    Such a change depends on <a href="#issue-disallow-addkey-only">requiring that generateKeyRequest() always be called before addKey()</a>.
-    Assuming that change is made, removing the parameter simplifies the API but hides all association between a key identifier and <var title="true">key</var>.
-    See <a href="#issue-needkey-simple-event-example">this example</a> for an illustration of the impact of this change.
-    </p>
-
     <ol>
       <li><p>If the first or second argument is null, throw a <syntax-err/>.</p></li>
 
@@ -419,15 +369,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         </dl>
       </li>
 
-      <li><p>If <var title="true">sessionId</var> is not null and is unrecognized, throw an <invalid-access-err/>.</p>
-        <p class="issue">
-        Should this be handled here or in the task scheduled in the next step.
-        The advantage of handling it here is that what is likely a programming error is immediately and simply reported via an exception.
-        The disadvantage is that the user agent must store session IDs (and track when they are released) for each Key System rather than letting the CDM manage them.
-        This is inconsistent with the <a href="#goals">goal</a> that the user agent should just pass information.
-        This same issue also applies to <methodref>cancelKeyRequest</methodref>.
-        </p>
-      </li>
+      <li><p>If <var title="true">sessionId</var> is not null and is unrecognized, throw an <invalid-access-err/>.</p></li>
 
       <li><p>Schedule a task to handle the call, providing <var title="true">key</var>, <var title="true">initData</var>, and <var title="true">sessionId</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
@@ -509,7 +451,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                   <coderef>sessionId</coderef> = <var title="true">sessionId</var><br></br>
                   <coderef>message</coderef> = <var title="true">next message</var><br></br>
                   <coderef>defaultURL</coderef> = null
-                  <p class="issue">Is there a reason that this cannot be null?</p>
                 </li></ul>
               </dd>
             </dl>
@@ -541,16 +482,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>If a <coderef>keyadded</coderef> event has already been fired for this <var title="true">sessionId</var>, throw an <invalid-state-err/>.</li>
       <li>Clear any internal state associated with the <var title="true">sessionId</var> (or if this is null with the <var title="true"><a href="#key-system">keySystem</a></var> for this media element).
       This <var title="true">sessionId</var> will now be unrecognized.
-      <p class="issue">Can this step be done synchronously or should a task be queued to do it in the background and a <coderef>needkey</coderef> event fired when done?</p>
       </li>
-      <li>
-        <p class="issue">It is an open question what exactly should happen here.
-        The state of the <a href="#media-element">media element</a> is unknown and it may not have even triggered the original <methodref>generateKeyRequest</methodref> call.
-        Should a <coderef>needkey</coderef> event be fired regardless of the state? What if the <a href="#media-element">media element</a> is not <a href="#waiting-for-a-key">waiting for a key</a>?
-        Should the <a href="#media-element">media element</a> attempt to resume playback if it is <a href="#waiting-for-a-key">waiting for a key</a>, causing an event if appropriate?
-        Should the application be responsible for calling <methodref>generateKeyRequest</methodref> without an event?
-        </p>
-      </li>
+      <li><b>TBD</b></li>
     </ol>
 
     <p>The <codedfn prefix="source">keySystem</codedfn> attribute of <coderef>HTMLSourceElement</coderef> specifies the <a href="#key-system">Key System</a> to be used with the <videoref name="media-resource">media resource</videoref>.
@@ -596,23 +529,13 @@ interface <precodedfn>MediaKeyError</precodedfn> {
         </ol>
       </dd>
     </dl>
-    <p class="issue">It has been suggested that there be a separate error for each of the above cases.
-    This is an option if the community feels that being able to differentiate among them is worthwhile.
-    A single error is consistent with the current broad error codes, though that may be something that should be improved in general.
-    It seems that except for #1, which should only occur in applications that do not support encrypted media, these are all application bugs and not something that would improve the user experience.
-    Any unique handling of the error codes by an application would essentially be describing a bug type.
-    Unique codes might be helpful in tracking down the cause of the bug, but there are probably other options.
-    It is also possible that some of these cases should be reported via <coderef>MediaKeyErrorEvent</coderef>. 
-    </p>
 
     <p>A <coderef>MediaKeyError</coderef> may be one of the following:</p>
     <dl>
       <dt><codedfn>MEDIA_KEYERR_UNKNOWN</codedfn> (numeric value 1)</dt>
       <dd>An unspecified error occurred. This value is used for errors that don't match any of the following codes.</dd>
       <dt><codedfn>MEDIA_KEYERR_CLIENT</codedfn> (numeric value 2)</dt>
-      <dd>The <a href="#key-system">Key System</a> could not be installed or updated.
-        <p class="issue">Should this be two separate errors?</p>
-      </dd>
+      <dd>The <a href="#key-system">Key System</a> could not be installed or updated.</dd>
       <dt><codedfn>MEDIA_KEYERR_SERVICE</codedfn> (numeric value 3)</dt>
       <dd>The message passed into <coderef>addKey</coderef> indicated an error from the license service.</dd>
       <dt><codedfn>MEDIA_KEYERR_OUTPUT</codedfn> (numeric value 4)</dt>
@@ -779,16 +702,6 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
         </tr>
       </tbody>
     </table>
-
-<div class="issue" id="issue-needkey-simple-event">
-    <p>It has been proposed that <coderef>needkey</coderef> be a simple event.
-    In this case, it would not provide any indication of the key that is needed and the application would need to call <methodref>generateKeyRequest</methodref> to get an appropriate message or identifier, including for the <a href="#simple-decryption-clear-key">Clear Key</a> case.
-    Such a change assumes that the <a href="#issue-disallow-addkey-only">consistent flow</a> option is selected. 
-    See <a href="#issue-needkey-simple-event-example">this example</a> for an illustration of the impact of this change.
-    </p>
-    (Because <coderef>sessionId</coderef> is not included in <coderef>needkey</coderef> and is not generated until <methodref>generateKeyRequest</methodref> generates a <coderef>keymessage</coderef> event, this cange would not result in the loss of any correlation.
-    See <a href="#issue-correlation">Session Correlation</a> for a discussion of the general lack of correlation.)
-</div>
 
     <h2 id="key-release">4. Key Release</h2>
     <h3>4.1. Introduction</h3>
@@ -1136,7 +1049,6 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-        <p class="issue">This could be skipped if the key has already been set, but always sending the event seems easier.</p>
         <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This algorithm is merely informative.</p>
       </li>
 
@@ -1235,36 +1147,6 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
 &lt;/body&gt;</pre>
     </div>
 
-<div class="issue" id="issue-disallow-addkey-only-example">
-    <p>The solution below shows what the simple solution above would become if we choose to require a <a href="#issue-disallow-addkey-only">consistent flow</a> for all applications.
-    In this scenario, the serial solution above becomes the event-based solution shown below.
-    The <a href="#issue-needkey-simple-event-example">next example</a> also illustrates the impact.
-    </p>
-    <div class="example">
-      <pre class="code">
-&lt;script&gt;
-  function load() {
-    var video = document.getElementById("video");
-
-    video.<premethodref>generateKeyRequest</premethodref>("org.w3.clearkey", null);
-  }
-
-  function handleMessage(event) {
-    if (event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
-      throw "Unhandled keySystem in event";
-    var video = event.target;
-
-    var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
-    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, null, event.<precoderef>sessionId</precoderef>);
-  }
-&lt;/script&gt;
-
-&lt;body onload="load()"&gt;
-  &lt;video src="foo.webm" autoplay id="video" on<precoderef>keymessage</precoderef>="handleMessage(event)"&gt;&lt;/video&gt;
-&lt;/body&gt;</pre>
-    </div>
-</div>
-
     <h3 class="exampleheader">7.2. Source Known but Key Not Known at Page Load</h3>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <videoanchor name="media-data">media data</videoanchor>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
@@ -1294,53 +1176,6 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
 
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
-
-<div class="issue" id="issue-needkey-simple-event-example">
-    <p>The solution below shows what the solution above would become if we choose to require a <a href="#issue-disallow-addkey-only">consistent flow</a>,  
-    <a href="#issue-needkey-simple-event">make needkey a simple event</a>, and <a href="#issue-remove-addkey-data">removed from the data parameter from addKey()</a>.
-    </p> 
-    <div class="example">
-      <pre class="code">
-&lt;script&gt;
-  function handleKeyNeeded(event) {
-    if (event.<precoderef>keySystem</precoderef> &amp;&amp; event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
-      throw "Unhandled keySystem in event";
-    var video = event.target;
-
-    // Note: The CDM will generate a request for whatever <a href="#initialization-data">Initialization Data</a> it chooses since there is no association with the current event. 
-    video.<premethodref>generateKeyRequest</premethodref>("org.w3.clearkey", null);
-  }
-  
-  function handleMessage(event) {
-    if (event.<precoderef>keySystem</precoderef> != "org.w3.clearkey")
-      throw "Unhandled keySystem in event";
-    var message = event.<precoderef>message</precoderef>;
-    var video = event.target;
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "http://.../getkey", false);
-    xmlhttp.send(message);
-    var key = new Uint8Array(xmlhttp.response);
-    // Note: The CDM will find the <a href="#initialization-data">Initialization Data</a> based on the sessionId.
-    video.<premethodref>addKey</premethodref>("org.w3.clearkey", key, event.<precoderef>sessionId</precoderef>);
-  }
-&lt;/script&gt;
-
-&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="handleMessage(event)"&gt;&lt;/video&gt;</pre>
-    </div>
-
-    <p>Some differences of note:</p>
-    <ul>
-      <li>The example is longer and involves an additional event handler. (This is primarily due to <a href="#issue-disallow-addkey-only">requiring applications to use a consistent flow</a>.)</li>
-      <li>There is no association between the <coderef>needkey</coderef> event and the method calls since <a href="#session-id">Session ID</a> is not created until <methodref>generateKeyRequest</methodref> completes.
-        This is a general problem that the first solution only works around.
-        See <a href="#issue-correlation">Session Correlation</a>.
-      </li>
-      <li>The <a href="#initialization-data">Initialization Data</a> is handled behind the scenes by the CDM and never exposed to the application.</li>
-      <li>The example is much closer to the Other Content Decryption Module version below.</li>
-    </ul>
-</div>
-
 
     <h4 class="exampleheader">7.2.2. Other Content Decryption Module</h4>
     <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
@@ -1529,15 +1364,7 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
     Heartbeat must be supported by the CDM and is implemented in this model by supplying an expiration time or valid duration in the license provided to the CDM.
     Before expiry of this license, the CDM must trigger a new message exchange to obtain an updated license.
     </p>
-<div class="issue">
-    <p>It is an open question whether CDMs should</p>
-    <ul>
-      <li>Use <coderef>keymessage</coderef> to continue the current session</li>
-      <li>OR start a new message exchange procedes in exactly the same way as the initial message exchange, with the exception that the <a href="#key-system">Key System</a> and <a href="#session-id">Session ID</a> are known when the <coderef>needkey</coderef> event is sent.</li>
-    </ul>
-    The latter option may impact the <coderef>MediaKeyNeededEvent</coderef> definition. See the <a href="#issue-multiple-keys">related issue</a>.    
-</div>
-    
+
     <h3 id="faq-use">8.2. Use</h3>
 
     <h4 class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
@@ -1716,139 +1543,8 @@ dictionary <precodedfn>MediaKeyErrorEventInit</precodedfn> : <dom4ref name="even
     <p class="faqanswer">Yes, a user agent could use platform-specific capabilities to protect the rendering path.
     </p>
 
-<h2 id="open-issues">9. Open Issues</h2>
-<non-normative-sections/>
-<p>This section describes some open issues on which comments are requested.</p>
-    <h3 id="issue-api-encapsuation">9.1. API Encapsulation</h3>
-    
-    <div class="issue">
-    <p>It has been suggested that only a single key manager attribute be added to the HTMLMediaElement itself in order to improve encapsulation.
-    For example:
-    </p>
 
-<pre class="idl">
-partial interface <precodedfn prefix="alternate-encapsulation">HTMLMediaElement</precodedfn> {
-    attribute <precoderef>MediaKeyManager</precoderef> <precoderef>keymanager</precoderef>;
-};
-
-interface <precodedfn>MediaKeyManager</precodedfn> {
-  void <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
-  void <premethodref>addKey</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array key, in Uint8Array? initData, in DOMString? <a href="#session-id">sessionId</a>);
-  void <premethodref>cancelKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in DOMString? <a href="#session-id">sessionId</a>);
-};
-</pre>
-</div>
-      
-<h3 id="issue-oo-api-design">9.2. Object-Oriented API Design</h3>
-<div class="issue">
-
-<p>A variant of the API with the same functionality has been suggested in which key exchange 'sessions' are explicitly represented as objects.
-The methods used to supply a key/license or cancel the session become methods on this object, not the <coderef>HTMLMediaElement</coderef> itself.
-</p>
-
-<pre class="idl">
-partial interface <precodedfn prefix="alternate-oo">HTMLMediaElement</precodedfn> {
-    MediaKeySession <premethodref>generateKeyRequest</premethodref>(in DOMString <a href="#key-system">keySystem</a>, in Uint8Array? initData);
-};
-
-interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
-    readonly attribute DOMString <precoderef>keySystem</precoderef>;
-    readonly attribute DOMString? <precoderef>sessionId</precoderef>;
-    
-    void addKey(in Uint8Array key);
-    void cancel();
-};
-</pre>
-
-<p>The following event would be fired at the <coderef>MediaKeySession</coderef> when a message is ready to be sent.</p>
-<pre class="idl">
-[Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
-interface <precodedfn prefix="alternate-oo">MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-    readonly attribute Uint8Array <precoderef>message</precoderef>;
-    readonly attribute DOMString? <precoderef>defaultURL</precoderef>;
-};
-
-dictionary <precodedfn prefix="alternate-oo">MediaKeyMessageEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref>  {
-    Uint8Array <precoderef>message</precoderef>;
-    DOMString? <precoderef>defaultURL</precoderef>;
-};</pre>
-
-<p>Note that in the <coderef>MediaKeySession</coderef> interface, <coderef>sessionId</coderef> is guaranteed to be initialized only after the first <coderef>MediaKeyMessageEvent</coderef>.</p>
-
-<p>The following event would be fired at the <coderef>MediaKeySession</coderef> when the transaction is complete. (It could be replaced by a simple event.)</p>
-<pre class="idl">
-[Constructor(DOMString type)]
-interface <precodedfn prefix="alternate-oo">MediaKeyCompleteEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-};
-</pre>
-
-<p>Finally, the following event would be fired at <coderef>MediaKeySession</coderef> if <methodref>getKeyRequest</methodref> or <methodref>addKey</methodref> results in an error.</p>
-
-<pre class="idl">
-[Constructor(DOMString type, optional <precoderef>MediaKeyErrorEventInit</precoderef> eventInitDict)]
-interface <precodedfn prefix="alternate-oo">MediaKeyErrorEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-    readonly attribute <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
-    readonly attribute unsigned short <precoderef>systemCode</precoderef>;
-};
-
-dictionary <precodedfn prefix="alternate-oo">MediaKeyErrorEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref>  {
-    <precoderef>MediaKeyError</precoderef> <precoderef>errorCode</precoderef>;
-    unsigned short <precoderef>systemCode</precoderef>;
-};</pre>
-</div>
-
-    <h3 id="issue-correlation">9.3. Session Correlation</h3>
-<div class="issue">
-    <p>
-    The current API design allows for multiple parallel key requests to be in flight. Each call to <methodref>generateKeyRequest</methodref> begins a message exchange resulting ultimately in a <coderef>keyadded</coderef> or <coderef>keyerror</coderef> event.
-    The first <coderef>keymessage</coderef> event <em>may</em> contain a <a href="#session-id">Session ID</a> identifying the session.
-    This session ID is later used to enable correlation between messages conveyed in <coderef>keymessage</coderef> and responses added in <coderef>addKey</coderef>.
-    </p>
-    <p>
-    However, the current design does not support correlation between specific <methodref>generateKeyRequest</methodref> calls (and the <coderef>needkey</coderef> event that might have triggered it) and subsequent sessions.
-    If a page knows it needs two keys, it can call <methodref>generateKeyRequest</methodref> twice but there is no way to know which <coderef>keymessage</coderef> or <coderef>keyerror</coderef> results from  each call.
-    This might be particularly important for the error case. Modifications to the API such as those described in <a href="#issue-oo-api-design">Object-Oriented API Design</a> could address this issue.
-    </p>
-</div>
-
-    <h3 id="issue-mediacontroller">9.4. Working with MediaController</h3>
-<div class="issue">
-    <p>
-    HTML5 defines a <videoref name="mediacontroller">MediaController</videoref> that is used to coordinate playback of multiple <a href="#media-element">media elements</a>.
-    The current proposal does not support a scenario where a single key is required for multiple media elements coordinated through a single <videoref name="mediacontroller">MediaController</videoref>.
-    One way to solve this would be to create a new interface that provides the <a href="#extensions">Media Element Extensions</a> and then provide an instance of this interface on both the <coderef>HTMLMediaElement</coderef> and on the <videoref name="mediacontroller">MediaController</videoref> interfaces.
-    The changes outlined in section <a href="#issue-oo-api-design">Object-Oriented API Design</a> might be modified to support this approach.
-    </p>
-</div>
-
-    <h3 id="issue-multiple-keys">9.5. Multiple Keys in a Stream</h3>
-<div class="issue">
-    <p>It is possible that a stream may encounter a different key for a given stream after a key request session as been completed.
-    How this should be handled is not explicitly described; it may be up to the <a href="#key-system">Key System</a> and/or application but that might lead to confusion and inconsistencies.
-    </p>
-
-    <p>One option is to fire a <coderef>keymessage</coderef> to be sent to the server, which would return a new license to provide via <methodref>addKey</methodref>.
-    The same <a href="#session-id">Session ID</a> would be used because <methodref>generateKeyRequest</methodref> is not called again.
-    Note that this means a <coderef>keymessage</coderef> even can occur after a <coderef>keyadded</coderef> event for the same session.
-    </p>
-
-    <p>Another option is to fire a <coderef>needkey</coderef> event and follow the same steps as for the first key.
-    In this case, the application should call <methodref>generateKeyRequest</methodref> to generate the message.
-    This would result in the generation of a new Session ID, which is consistent with the first key.
-    </p>
-    
-    <p>If we select the first option, <coderef>MediaKeyNeededEvent</coderef>, the type of the <coderef>needkey</coderef> event can be simplified because it would never be called with a known <coderef>keySystem</coderef> or <coderef>sessionId</coderef>.
-    If we select the second option, <coderef>keySystem</coderef> should almost certainly be retained on <coderef>MediaKeyNeededEvent</coderef> and <coderef>sessionId</coderef> probably should be retained.
-    </p>
-    
-    <p>This decision should account for other use cases, such as <a href="#faq-heartbeat">heartbeat</a>.
-    For heartbeat and any other CDM-originated message that isn't requesting a new key, it probably makes sense to use the same Session ID and provide the request directly via a <coderef>keymessage</coderef> event.
-    This is essentially the first option above.
-    Selecting the second option for multiple keys does not necessarily mean that heartbeat cannot work differently.
-    </p>
-</div>
-
-    <h2 id="revision-history">10. Revision History</h2>
+    <h2 id="revision-history">9. Revision History</h2>
     <table>
       <thead>
         <tr>
