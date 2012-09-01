@@ -217,15 +217,17 @@
     <pre class="idl">
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   // Adds optional 'keySystem' parameter.
-  DOMString <premethodref>canPlayType</premethodref>(in DOMString type, in DOMstring? <a href="#key-system">keySystem</a>);
+  DOMString <premethodref>canPlayType</premethodref>(DOMString type, DOMstring? <a href="#key-system">keySystem</a>);
 
   // Encrypted Media
-             attribute <precoderef>MediaKeys</precoderef> <precoderef>keys</precoderef>;
+  attribute <precoderef>MediaKeys</precoderef> <precoderef>keys</precoderef>;
+  
+  attribute <EventHandler/> <precoderef>onneedkey</precoderef>;
 };
 
-[<a href="#dom-media-keys-constructor">Constructor</a> (in DOMString <a href="#key-system">keySystem</a>)]
+[<a href="#dom-media-keys-constructor">Constructor</a> (DOMString <a href="#key-system">keySystem</a>)]
 interface <precodedfn>MediaKeys</precodedfn> {
-  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(in DOMString? type, in Uint8Array? initData);
+  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(DOMString? type, Uint8Array? initData);
 
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 };
@@ -239,12 +241,12 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
 
   // session operations
-  void <premethodref>addKey</premethodref>(in Uint8Array key);
+  void <premethodref>addKey</premethodref>(Uint8Array key);
   void <premethodref>close</premethodref>();
 };
 
 partial interface <precodedfn>HTMLSourceElement</precodedfn> {
-             attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
+  attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
 };</pre>
 
     <p>The <methoddfn name="canPlayType">canPlayType(<var title="true">type</var>, <var title="true">keySystem</var>)</methoddfn> method is modified to add an optional second parameter to specify the <a href="#key-system">Key System</a>.</p>
@@ -293,6 +295,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </li>
     </ol>
 
+    <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+    
     <p>The <dfn id="dom-media-keys-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must run the following steps:</p>
 
     <ol>
@@ -329,7 +333,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     </ol>
 
     <p>When destroying a <coderef>MediaKeys</coderef> object, follow the steps in <methodref>close</methodref>.</p>
-
+    
     <p>The <methoddfn name="createSession">createSession(<var title="true">type</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.</p>
 

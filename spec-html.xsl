@@ -124,6 +124,10 @@
     <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/webappapis.html#synchronous-section</xsl:attribute>synchronous section</a>
   </xsl:template>
 
+  <xsl:template match="//EventHandler">
+    <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/webappapis.html#eventhandler</xsl:attribute>EventHandler</a>
+  </xsl:template>
+
   <xsl:template match="//media-element">
     <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/video.html#media-element</xsl:attribute>media element</a>
   </xsl:template>
