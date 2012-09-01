@@ -69,11 +69,15 @@
 
     <h2>Abstract</h2>
 
-    <p>This proposal extends HTMLMediaElement to enable playback of protected content.
-    The proposed API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
-    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.
-    No "DRM" is added to the HTML5 specification, and only simple clear key decryption is required as a common baseline.
-    </p>
+    <p>This proposal extends HTMLMediaElement providing APIs to control playback of protected content.</p>
+    <p>The API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
+    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.</p>
+    <p>This specification does not define a content protection or Digital Rights Management system. Rather, it defines a common API that may be used to discover, select and interact with
+    such systems as well as with simpler content encryption systems. Implementation of Digital Rights Management is not required for compliance with this specification: only the simple
+    clear key system is required to be implemented as a common baseline.</p>
+    <p>The common API supports a simple set of content encryption capabilities, leaving application functions such as authentication and authorization to page authors. This is achieved by
+    requiring content protection system-specific messaging to be mediated by the page rather than assuming out-of-band communication between the encryption system and a license
+    or other server.</p>
 
 
     <h2>Table of Contents</h2>
@@ -1046,18 +1050,18 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
   var licenseUrl;
 
   function selectKeySystem(video) {
-    if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != “”) {
-      licenseUrl = “https://license.example.com/getkey”; // OR “https://example.&lt;My Video Site domain&gt;”
-      if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != “”) {
-        keySystem = “com.example.somesystem.2_0”;
-      } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != “”) {
-        keySystem = “com.example.somesystem.1_5”;
+    if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != â€œâ€) {
+      licenseUrl = â€œhttps://license.example.com/getkeyâ€; // OR â€œhttps://example.&lt;My Video Site domain&gt;â€
+      if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != â€œâ€) {
+        keySystem = â€œcom.example.somesystem.2_0â€;
+      } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != â€œâ€) {
+        keySystem = â€œcom.example.somesystem.1_5â€;
       }
-    } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "foobar") != “” {
-      licenseUrl = “https://license.foobar.com/request”;
-      keySystem = “foobar”;
+    } else if (video.<premethodref>canPlayType</premethodref>("video/webm; codecs='vp8, vorbis'", "foobar") != â€œâ€ {
+      licenseUrl = â€œhttps://license.foobar.com/requestâ€;
+      keySystem = â€œfoobarâ€;
     } else {
-      throw “Key System not supported”;
+      throw â€œKey System not supportedâ€;
     }
   }
 
@@ -1232,7 +1236,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     As shown in the <a href="#examples">examples</a>, the basic use cases are reasonably simple and only require a little setup to get the key and provide it to the user agent.
     We believe most small content sites can add basic protection to their applications with minimal efforts.</p>
     <p class="faqanswer">The more complex cases, such as fast time to first frame and various license management algorithms, require more complex code, but professional-strength content protection is complex and that is to be expected.
-    Professional-strength content protection requires server components and working with one or more content protection vendors, so this isn’t really any more complex.
+    Professional-strength content protection requires server components and working with one or more content protection vendors, so this isnâ€™t really any more complex.
     In fact, if you implement a few solutions, it will work on any browser-based platform, avoiding the need for per-platform solutions on both the server and client.
     The fixed set of interfaces may even lead to more consistent patterns and behavior across various solutions.
     It is generally the large content providers that have more complex requirements, and we believe they will have the appropriate resources to implement applications that meet their requirements.
