@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="main.css" />
     <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/w3c-ed.css" />
     <style type="text/css">
+      div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+      .nonnormative:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This section is non-normative.'; color: black; font-style: italic; border: solid 2px; background: white; padding: 0 0.25em; }
+
       <!-- For inline non-normative text. -->
       .non-normative { font-style: italic; color: DarkSlateGrey; }
       .non-normative em { font-style: normal;}
@@ -16,7 +19,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 1 September 2012</h2>
+      <h2>W3C Editor's Draft 17 September 2012</h2>
       <h2><font color="red">Work in progress. For the latest stable revision, see <a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html">v0.1b</a>.</font></h2>
       <dl>
   <dt>Latest published version:</dt>
@@ -108,16 +111,17 @@
         <li><ul style="list-style-type:none">
           <li><a href="#simple-decryption-clear-key">6.1. Clear Key</a></li>
         </ul></li>
-      <li><a href="#examples">7. Examples</a></li>
-      <li><a href="#faq">8. FAQ</a></li>
+      <li><a href="#containers">7. Container Guidelines</a></li>
+      <li><a href="#examples">8. Examples</a></li>
+      <li><a href="#faq">9. FAQ</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#faq-use-cases">8.1. Use Cases</a></li>
-          <li><a href="#faq-use">8.2. Use</a></li>
-          <li><a href="#faq-api">8.3. API</a></li>
-          <li><a href="#faq-source">8.4. Source, Containers, and Streams</a></li>
-          <li><a href="#faq-protection">8.5. Content and Key Protection</a></li>
+          <li><a href="#faq-use-cases">9.1. Use Cases</a></li>
+          <li><a href="#faq-use">9.2. Use</a></li>
+          <li><a href="#faq-api">9.3. API</a></li>
+          <li><a href="#faq-source">9.4. Source, Containers, and Streams</a></li>
+          <li><a href="#faq-protection">9.5. Content and Key Protection</a></li>
         </ul></li>
-      <li><a href="#revision-history">9. Revision History</a></li>
+      <li><a href="#revision-history">10. Revision History</a></li>
     </ul>
 
 
@@ -913,7 +917,48 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <p>The <var title="true">key</var> parameter of <methodref>addKey</methodref> should be an array of bytes containing the key.</p>
 
 
-    <h2 id="examples">7. Examples</h2>
+    <h2 id="containers">7. Container Guidelines</h2>
+    <p>This document describes behavior independent of specific media containers.
+    The following sections provide container-specific details for implementations that choose to support those containers.
+    </p>
+    
+    <h3 id="webm">7.1 WebM</h3>
+    <div class="nonnormative">
+      <p>This section defines the stream format and Initialization Data for implementations that choose to support <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
+
+      <h4>7.1.1.Stream Format </h4>
+      <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
+      The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
+      </p>
+
+      <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
+      In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
+      In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
+
+      <h4>7.1.2. Detecting Encryption</h4>
+      <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is <a href="#algorithms-encrypted-stream">potentially encrypted</a>.</p>
+
+      <p><a href="#algorithms-enrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.5-Signal-Byte-Format">Signal Byte.</a></p>
+
+      <h4>7.1.3. Initialization Data and Events</h4>
+      <p><a href="#initialization-data">Initialization Data</a> in <a href="#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
+      The current Track is the one being parsed or that contains the block being decrypted.
+      </p>
+
+      <p>Events only contain a single key ID.
+      However, if supported by the key system, multiple key IDs may be bundled by the application before requesting a key and multiple key ID-key pairs may be returned by the license server.
+      </p>
+
+      <p>An event will be fired for each new key ID (in <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a>) encountered for which a key is not already known.</p>
+    </div>
+
+    <h3 id="iso">7.2 ISO Base Media File Format</h3>
+    <div class="nonnormative">
+      <p>TBD</p>
+    </div>
+
+
+    <h2 id="examples">8. Examples</h2>
     <non-normative-sections/>
     <p>This section contains example solutions for various use cases using the proposed extensions.
     These are not the only solutions to these use cases.
@@ -921,7 +966,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
     </p>
 
-    <h3 class="exampleheader">7.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
+    <h3 class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
     <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <methodref>addKey</methodref> call. It also does not handle errors.</p>
 
@@ -956,13 +1001,13 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 class="exampleheader">7.2. Source Known but Key Not Known at Page Load</h3>
+    <h3 class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <videoanchor name="media-data">media data</videoanchor>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
 
     <p class="exampledescription">If any asynchronous operation is required to get the key in <code>handleKeyNeeded()</code>, it could be called a second time if the stream is detected as potentially encrypted before an encrypted block/frame is encountered. In this case, applications may want to handle subsequent calls specially to avoid redundant license requests. This is not shown in the examples below.</p>
 
-    <h4 class="exampleheader">7.2.1. Clear Key Encryption</h4>
+    <h4 class="exampleheader">8.2.1. Clear Key Encryption</h4>
     <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
     <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
 
@@ -1000,7 +1045,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)" on<precoderef>keymessage</precoderef>="handleMessage(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h4 class="exampleheader">7.2.2. Other Content Decryption Module</h4>
+    <h4 class="exampleheader">8.2.2. Other Content Decryption Module</h4>
     <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
 
     <div class="example">
@@ -1039,7 +1084,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="examples-selecting-key-system" class="exampleheader">7.3. Selecting a Supported Key System</h3>
+    <h3 id="examples-selecting-key-system" class="exampleheader">8.3. Selecting a Supported Key System</h3>
     <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using <methodref>canPlayType</methodref> and selecting one.
     </p>
 
@@ -1100,7 +1145,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 class="exampleheader">7.4. Using All Events</h3>
+    <h3 class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used along with asynchronous XHR.</p>
     <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <methodref>addKey</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1166,10 +1211,10 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     </div>
 
 
-    <h2 id="faq">8. FAQ</h2>
+    <h2 id="faq">9. FAQ</h2>
     <non-normative-sections/>
 
-    <h3 id="faq-use-cases">8.1. Use Cases</h3>
+    <h3 id="faq-use-cases">9.1. Use Cases</h3>
 
     <h4 class="faqquestion">What use cases does this support?</h4>
     <p class="faqanswer">Everything from user-generated content to be shared with family (user is not an adversary) to online radio to feature-length movies.</p>
@@ -1202,7 +1247,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     Before expiry of this license, the CDM must trigger a new message exchange to obtain an updated license.
     </p>
 
-    <h3 id="faq-use">8.2. Use</h3>
+    <h3 id="faq-use">9.2. Use</h3>
 
     <h4 class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
     <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <methodref>createSession</methodref> to be included in the license request.</p>
@@ -1245,7 +1290,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     They can also provide a <a href="#faq-cdm-library">JavaScript libraries</a> for their solution that can be integrated into any application.
     An application would then basically select a solution and delegate a lot of the work to the appropriate library.</p>
 
-    <h3 id="faq-api">8.3. API</h3>
+    <h3 id="faq-api">9.3. API</h3>
 
     <h4 class="faqquestion">How is the decryption algorithm specified?</h4>
     <p class="faqanswer">This is container specific. A container may standardize on a specific algorithm (i.e. AES-128) and/or allow it to be specified. The user agent must know and/or detect the appropriate algorithm to use with the key provided by this API.</p>
@@ -1307,7 +1352,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     The exact algorithm is covered in <methodref>addKey</methodref>.
     </p>
 
-    <h3 id="faq-source">8.4. Source, Containers, and Streams</h3>
+    <h3 id="faq-source">9.4. Source, Containers, and Streams</h3>
 
     <h4 class="faqquestion">What containers and codecs are supported?</h4>
     <p class="faqanswer">Containers and codecs are not specified. A user agent may support decryption of whichever container and codec combination(s) it wishes.</p>
@@ -1341,7 +1386,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <h4 class="faqquestion">What cipher and parameters should be used for <a href="#simple-decryption">Simple Decryption</a>? Which must the user agent support?</h4>
     <p class="faqanswer">As in the above question, these are either implicit in or specified by the container. User agents must support any default or baseline ciphers and parameters in the container specification. Practically, user agents should support all ciphers and parameters commonly used with the container.</p>
 
-    <h3 id="faq-protection">8.5. Content and Key Protection</h3>
+    <h3 id="faq-protection">9.5. Content and Key Protection</h3>
 
     <h4 class="faqquestion">Can I ensure the content key is protected without working with a content protection provider?</h4>
     <p class="faqanswer">No. Protecting the content key would require that the browser's media stack have some secret that cannot easily be obtained. This is the type of thing DRM solutions provide. Establishing a standard mechanism to support this is beyond the scope of HTML5 standards and should be deferred to specific user agent solutions. In addition, it is not something that fully open source browsers could natively support.</p>
