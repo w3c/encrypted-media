@@ -238,11 +238,11 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
 
 [<a href="#dom-media-keys-constructor">Constructor</a> (DOMString <a href="#key-system">keySystem</a>)]
 interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
+  readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
+
   <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(DOMString? type, Uint8Array? initData);
 
   static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMString type, DOMstring <a href="#key-system">keySystem</a>);
-
-  readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
 };
 
 interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventtarget">EventTarget</a> {
@@ -262,38 +262,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
   attribute DOMString <a href="#dom-sourcekeysystem">keySystem</a>;
 };</pre>
 
-    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
-    <div class="example">
-      <p>The following list shows some examples.</p>
-      <dl>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
-        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
-        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
-      </dl>
-    </div>
-    
-    <p>It must run the following steps:</p>
-    
-    <ol>
-      <li>
-<p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
-        <dl class="switch">
-          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>
-</dt>
-          <dd>Return false.</dd>
-          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
-          <dd>Return false.</dd>
-          <dt>Otherwise</dt>
-          <dd>Return true.</dd>
-        </dl>
-      </li>
-    </ol>
-
     <p>The <dfn id="dom-keys"><code>keys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://dev.w3.org/html5/spec/video.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
     <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys</code></dfn> method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use. When calling this method, the media element must run the following steps:</p>
     
@@ -306,7 +274,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     </ol>
 
     <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-    
+
     <p>The <dfn id="dom-media-keys-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must run the following steps:</p>
 
     <ol>
@@ -346,6 +314,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>When destroying a <code><a href="#dom-mediakeys">MediaKeys</a></code> object, follow the steps in <code><a href="#dom-close">close()</a></code>.</p>
     
+    <p>The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+
     <p>The <dfn id="dom-createsession"><code>createSession(type, initData)</code></dfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.</p>
 
@@ -414,9 +384,39 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>Return the new object to the caller.</li>
     </ol>
 
-    <p>The <dfn id="dom-error"><code>error</code></dfn> attribute is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> representing the current error state of the session. It is null if there is no error.</p>
+    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
+    <div class="example">
+      <p>The following list shows some examples.</p>
+      <dl>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
+      </dl>
+    </div>
+    
+    <p>It must run the following steps:</p>
+    
+    <ol>
+      <li>
+<p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>
+</dt>
+          <dd>Return false.</dd>
+          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
+          <dd>Return false.</dd>
+          <dt>Otherwise</dt>
+          <dd>Return true.</dd>
+        </dl>
+      </li>
+    </ol>
 
-    <p>The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+    <p>The <dfn id="dom-error"><code>error</code></dfn> attribute is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> representing the current error state of the session. It is null if there is no error.</p>
 
     <p>The <dfn id="dom-sessionid"><code>sessionId</code></dfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 

@@ -234,11 +234,11 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 
 [<a href="#dom-media-keys-constructor">Constructor</a> (DOMString <a href="#key-system">keySystem</a>)]
 interface <precodedfn>MediaKeys</precodedfn> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+
   <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(DOMString? type, Uint8Array? initData);
 
   static bool <premethodref>isTypeSupported</premethodref>(DOMString type, DOMstring <a href="#key-system">keySystem</a>);
-
-  readonly attribute DOMString <precoderef>keySystem</precoderef>;
 };
 
 interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
@@ -258,36 +258,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
   attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
 };</pre>
 
-    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">type</var>, <var title="true">keySystem</var>)</methoddfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
-    <div class="example">
-      <p>The following list shows some examples.</p>
-      <dl>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
-        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
-        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
-      </dl>
-    </div>
-    
-    <p>It must run the following steps:</p>
-    
-    <ol>
-      <li><p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
-        <dl class="switch">
-          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a></dt>
-          <dd>Return false.</dd>
-          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
-          <dd>Return false.</dd>
-          <dt>Otherwise</dt>
-          <dd>Return true.</dd>
-        </dl>
-      </li>
-    </ol>
-
     <p>The <codedfn>keys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
     <p>The <methoddfn name="setMediaKeys">setMediaKeys</methoddfn> method provides the <coderef>MediaKeys</coderef> to use. When calling this method, the media element must run the following steps:</p>
     
@@ -299,7 +269,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     </ol>
 
     <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-    
+
     <p>The <dfn id="dom-media-keys-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must run the following steps:</p>
 
     <ol>
@@ -337,6 +307,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>When destroying a <coderef>MediaKeys</coderef> object, follow the steps in <methodref>close</methodref>.</p>
     
+    <p>The <codedfn>keySystem</codedfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+
     <p>The <methoddfn name="createSession">createSession(<var title="true">type</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.</p>
 
@@ -400,9 +372,37 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>Return the new object to the caller.</li>
     </ol>
 
-    <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
+    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">type</var>, <var title="true">keySystem</var>)</methoddfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
+    <div class="example">
+      <p>The following list shows some examples.</p>
+      <dl>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
+        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
+      </dl>
+    </div>
+    
+    <p>It must run the following steps:</p>
+    
+    <ol>
+      <li><p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a></dt>
+          <dd>Return false.</dd>
+          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
+          <dd>Return false.</dd>
+          <dt>Otherwise</dt>
+          <dd>Return true.</dd>
+        </dl>
+      </li>
+    </ol>
 
-    <p>The <codedfn>keySystem</codedfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+    <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
