@@ -19,7 +19,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 8 January 2013</h2>
+      <h2>W3C Editor's Draft 12 January 2013</h2>
       <h2><font color="red">Work in progress. For the latest stable revision, see <a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html">v0.1b</a>.</font></h2>
       <dl>
   <dt>Latest published version:</dt>
@@ -203,7 +203,7 @@
 
     <p class="non-normative">Applications should always provide the session ID from an event in subsequent calls for this key or license.
     (This is a best practice, even if the current Key System does not support session IDs.)
-    This may mean that the application must associate a server response with the session ID and provide them both to <methodref>addKey</methodref>.
+    This may mean that the application must associate a server response with the session ID and provide them both to <methodref>update</methodref>.
     </p>
 
     <h4 id="initialization-data">1.2.4. Initialization Data</h4>
@@ -255,7 +255,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
 
   // session operations
-  void <premethodref>addKey</premethodref>(Uint8Array key);
+  void <premethodref>update</premethodref>(Uint8Array key);
   void <premethodref>close</premethodref>();
 };
 
@@ -418,7 +418,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <methoddfn name="addKey">addKey(<var title="true">key</var>)</methoddfn> method must run the following steps:</p>
+    <p>The <methoddfn name="update">update(<var title="true">key</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">key</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.
     It may be a raw key or a license containing a key.
     The contents may also vary depending on the container, key length, etc.</p>
@@ -498,8 +498,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </li>
     </ol>
 
-    <p>The key acquisition process <em>may</em> involve the web page handling <coderef>keymessage</coderef> events, sending the message to a Key System-specific service, and calling <coderef>addKey</coderef> with the response message.
-    <coderef>addKey</coderef> calls may generate <coderef>keyadded</coderef> or <coderef>keymessage</coderef> events.
+    <p>The key acquisition process <em>may</em> involve the web page handling <coderef>keymessage</coderef> events, sending the message to a Key System-specific service, and calling <coderef>update</coderef> with the response message.
+    <coderef>update</coderef> calls may generate <coderef>keyadded</coderef> or <coderef>keymessage</coderef> events.
     During the process, the web page may wish to cancel the acquisition process.
     <span class="non-normative">For example, if the page cannot contact the license service because of network issues it may wish to fallback to an alternative key system.</span>
     The page calls <methodref>close</methodref> to cancel the a key acquisition session.
@@ -567,7 +567,7 @@ interface <precodedfn>MediaKeyError</precodedfn> {
       <dt><codedfn>MEDIA_KEYERR_CLIENT</codedfn> (numeric value 2)</dt>
       <dd>The <a href="#key-system">Key System</a> could not be installed or updated.</dd>
       <dt><codedfn>MEDIA_KEYERR_SERVICE</codedfn> (numeric value 3)</dt>
-      <dd>The message passed into <coderef>addKey</coderef> indicated an error from the license service.</dd>
+      <dd>The message passed into <coderef>update</coderef> indicated an error from the license service.</dd>
       <dt><codedfn>MEDIA_KEYERR_OUTPUT</codedfn> (numeric value 4)</dt>
       <dd>There is no available output device with the required characteristics for the content protection system.</dd>
       <dt><codedfn>MEDIA_KEYERR_HARDWARECHANGE</codedfn> (numeric value 5)</dt>
@@ -650,7 +650,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
         <tr>
           <td><codedfn>keyadded</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
-          <td>A key has been added as the result of a <methodref>addKey</methodref> call.
+          <td>A key has been added as the result of a <methodref>update</methodref> call.
           </td>
           <td><!-- No Preconditions. --></td>
         </tr>
@@ -665,7 +665,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
           <td><coderef>MediaKeyMessageEvent</coderef></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
-            <span class="non-normative">For example, a key request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>addKey</methodref> call.</span>
+            <span class="non-normative">For example, a key request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
           </td>
           <td><!-- No Preconditions. --></td>
         </tr>
@@ -920,7 +920,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       <coderef>destinationURL</coderef> = value of the default URL if present in the <videoanchor name="media-data">media data</videoanchor> and null otherwise.
     </li></ul>
 
-    <p>The <var title="true">key</var> parameter of <methodref>addKey</methodref> should be an array of bytes containing the key.</p>
+    <p>The <var title="true">key</var> parameter of <methodref>update</methodref> should be an array of bytes containing the key.</p>
 
 
     <h2 id="containers">7. Container Guidelines</h2>
@@ -989,7 +989,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 
     <h3 class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
-    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <methodref>addKey</methodref> call. It also does not handle errors.</p>
+    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <methodref>update</methodref> call. It also does not handle errors.</p>
 
     <div class="example">
       <pre class="code">
@@ -1013,7 +1013,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     var keySession = event.target;
 
     var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
-    keySession.<premethodref>addKey</premethodref>(key);
+    keySession.<premethodref>update</premethodref>(key);
   }
 &lt;/script&gt;
 
@@ -1059,7 +1059,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     xmlhttp.open("POST", "http://.../getkey", false);
     xmlhttp.send(message);
     var key = new Uint8Array(xmlhttp.response);
-    keySession.<premethodref>addKey</premethodref>(key);
+    keySession.<premethodref>update</premethodref>(key);
   }
 &lt;/script&gt;
 
@@ -1098,7 +1098,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     xmlhttp.open("POST", "http://.../getkey", false);
     xmlhttp.send(request);
     var license = new Uint8Array(xmlhttp.response);
-    keySession.<premethodref>addKey</premethodref>(license);
+    keySession.<premethodref>update</premethodref>(license);
   }
 &lt;/script&gt;
 
@@ -1159,7 +1159,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     xmlhttp.open("POST", licenseUrl, false);
     xmlhttp.send(request);
     var license = new Uint8Array(xmlhttp.response);
-    keySession.<premethodref>addKey</premethodref>(license);
+    keySession.<premethodref>update</premethodref>(license);
   }
 &lt;/script&gt;
 
@@ -1168,7 +1168,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 
     <h3 class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used along with asynchronous XHR.</p>
-    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <methodref>addKey</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
     <div class="example">
       <pre class="code">
@@ -1178,7 +1178,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 
   function handleMessageResponse() {
     var license = new Uint8Array(xmlhttp.response);
-    this.keySession.<premethodref>addKey</premethodref>(license);
+    this.keySession.<premethodref>update</premethodref>(license);
   }
   
   function sendMessage(message, keySession) {
@@ -1274,7 +1274,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <methodref>createSession</methodref> to be included in the license request.</p>
 
     <h4 class="faqquestion">How do I resume playback after receiving the <coderef>needkey</coderef> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
-    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <methodref>addKey</methodref> and processed.</p>
+    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <methodref>update</methodref> and processed.</p>
 
     <h4 class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
     <p class="faqanswer">Yes, this will likely be necessary to support all or a majority of user agents.
@@ -1367,10 +1367,10 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <h4 class="faqquestion">The same <coderef>needkey</coderef> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
     <p class="faqanswer">The same event was used intentionally to reduce the complexity of applications. Ideally, they would not need to know.</p>
 
-    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <methodref>addKey</methodref>?</h4>
+    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <methodref>update</methodref>?</h4>
     <p class="faqanswer">The CDM will replace previous entries, updating the overall key ordering to reflect that this key ID was most recently added.
     In other words, simply replacing the existing key data is not sufficient.
-    The exact algorithm is covered in <methodref>addKey</methodref>.
+    The exact algorithm is covered in <methodref>update</methodref>.
     </p>
 
     <h3 id="faq-source">9.4. Source, Containers, and Streams</h3>
@@ -1380,7 +1380,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <methodref>canPlayType</methodref>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
 
     <h4 class="faqquestion">What if a container/codec does not support indicating the stream or a frame/block is encrypted?</h4>
-    <p class="faqanswer">The application must use <methodref>addKey</methodref> to indicate the stream is encrypted and provide the key before decoding starts.</p>
+    <p class="faqanswer">The application must use <methodref>update</methodref> to indicate the stream is encrypted and provide the key before decoding starts.</p>
 
     <h4 class="faqquestion">Must the container provide Initialization Data or a content key ID?</h4>
     <p class="faqanswer">This is ideal, but the API would also support the application sending the <a href="#initialization-data">Initialization Data</a> or ID directly to the server or providing it to the <a href="#cdm">CDM</a> via <methodref>createSession</methodref>.</p>
@@ -1425,7 +1425,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     </p>
 
 
-    <h2 id="revision-history">9. Revision History</h2>
+    <h2 id="revision-history">10. Revision History</h2>
     <table>
       <thead>
         <tr>

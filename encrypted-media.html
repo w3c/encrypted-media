@@ -20,7 +20,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 8 January 2013</h2>
+      <h2>W3C Editor's Draft 12 January 2013</h2>
       <h2><font color="red">Work in progress. For the latest stable revision, see <a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html">v0.1b</a>.</font></h2>
       <dl>
   <dt>Latest published version:</dt>
@@ -207,7 +207,7 @@
 
     <p class="non-normative">Applications should always provide the session ID from an event in subsequent calls for this key or license.
     (This is a best practice, even if the current Key System does not support session IDs.)
-    This may mean that the application must associate a server response with the session ID and provide them both to <code><a href="#dom-addkey">addKey()</a></code>.
+    This may mean that the application must associate a server response with the session ID and provide them both to <code><a href="#dom-update">update()</a></code>.
     </p>
 
     <h4 id="initialization-data">1.2.4. Initialization Data</h4>
@@ -259,7 +259,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
   readonly attribute DOMString <a href="#dom-sessionid">sessionId</a>;
 
   // session operations
-  void <a href="#dom-addkey">addKey</a>(Uint8Array key);
+  void <a href="#dom-update">update</a>(Uint8Array key);
   void <a href="#dom-close">close</a>();
 };
 
@@ -432,7 +432,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>The <dfn id="dom-sessionid"><code>sessionId</code></dfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <dfn id="dom-addkey"><code>addKey(key)</code></dfn> method must run the following steps:</p>
+    <p>The <dfn id="dom-update"><code>update(key)</code></dfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">key</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.
     It may be a raw key or a license containing a key.
     The contents may also vary depending on the container, key length, etc.</p>
@@ -519,8 +519,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       </li>
     </ol>
 
-    <p>The key acquisition process <em>may</em> involve the web page handling <code><a href="#dom-keymessage">keymessage</a></code> events, sending the message to a Key System-specific service, and calling <code><a href="#dom-addkey">addKey</a></code> with the response message.
-    <code><a href="#dom-addkey">addKey</a></code> calls may generate <code><a href="#dom-keyadded">keyadded</a></code> or <code><a href="#dom-keymessage">keymessage</a></code> events.
+    <p>The key acquisition process <em>may</em> involve the web page handling <code><a href="#dom-keymessage">keymessage</a></code> events, sending the message to a Key System-specific service, and calling <code><a href="#dom-update">update</a></code> with the response message.
+    <code><a href="#dom-update">update</a></code> calls may generate <code><a href="#dom-keyadded">keyadded</a></code> or <code><a href="#dom-keymessage">keymessage</a></code> events.
     During the process, the web page may wish to cancel the acquisition process.
     <span class="non-normative">For example, if the page cannot contact the license service because of network issues it may wish to fallback to an alternative key system.</span>
     The page calls <code><a href="#dom-close">close()</a></code> to cancel the a key acquisition session.
@@ -597,7 +597,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
       <dd>The <a href="#key-system">Key System</a> could not be installed or updated.</dd>
       <dt>
 <dfn id="dom-media_keyerr_service"><code>MEDIA_KEYERR_SERVICE</code></dfn> (numeric value 3)</dt>
-      <dd>The message passed into <code><a href="#dom-addkey">addKey</a></code> indicated an error from the license service.</dd>
+      <dd>The message passed into <code><a href="#dom-update">update</a></code> indicated an error from the license service.</dd>
       <dt>
 <dfn id="dom-media_keyerr_output"><code>MEDIA_KEYERR_OUTPUT</code></dfn> (numeric value 4)</dt>
       <dd>There is no available output device with the required characteristics for the content protection system.</dd>
@@ -690,7 +690,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
         <tr>
           <td><dfn id="dom-keyadded"><code>keyadded</code></dfn></td>
           <td><code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a></code></td>
-          <td>A key has been added as the result of a <code><a href="#dom-addkey">addKey()</a></code> call.
+          <td>A key has been added as the result of a <code><a href="#dom-update">update()</a></code> call.
           </td>
           <td></td>
         </tr>
@@ -705,7 +705,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
           <td><code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
-            <span class="non-normative">For example, a key request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-addkey">addKey()</a></code> call.</span>
+            <span class="non-normative">For example, a key request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-update">update()</a></code> call.</span>
           </td>
           <td></td>
         </tr>
@@ -976,7 +976,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       <code><a href="#dom-destinationurl">destinationURL</a></code> = value of the default URL if present in the <a href="http://dev.w3.org/html5/spec/video.html#media-data">media data</a> and null otherwise.
     </li></ul>
 
-    <p>The <var title="true">key</var> parameter of <code><a href="#dom-addkey">addKey()</a></code> should be an array of bytes containing the key.</p>
+    <p>The <var title="true">key</var> parameter of <code><a href="#dom-update">update()</a></code> should be an array of bytes containing the key.</p>
 
 
     <h2 id="containers">7. Container Guidelines</h2>
@@ -1045,7 +1045,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
-    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <code><a href="#dom-addkey">addKey()</a></code> call. It also does not handle errors.</p>
+    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <code><a href="#dom-update">update()</a></code> call. It also does not handle errors.</p>
 
     <div class="example">
       <pre class="code">
@@ -1069,7 +1069,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     var keySession = event.target;
 
     var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
-    keySession.<a href="#dom-addkey">addKey</a>(key);
+    keySession.<a href="#dom-update">update</a>(key);
   }
 &lt;/script&gt;
 
@@ -1115,7 +1115,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     xmlhttp.open("POST", "http://.../getkey", false);
     xmlhttp.send(message);
     var key = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-addkey">addKey</a>(key);
+    keySession.<a href="#dom-update">update</a>(key);
   }
 &lt;/script&gt;
 
@@ -1154,7 +1154,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     xmlhttp.open("POST", "http://.../getkey", false);
     xmlhttp.send(request);
     var license = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-addkey">addKey</a>(license);
+    keySession.<a href="#dom-update">update</a>(license);
   }
 &lt;/script&gt;
 
@@ -1215,7 +1215,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     xmlhttp.open("POST", licenseUrl, false);
     xmlhttp.send(request);
     var license = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-addkey">addKey</a>(license);
+    keySession.<a href="#dom-update">update</a>(license);
   }
 &lt;/script&gt;
 
@@ -1224,7 +1224,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used along with asynchronous XHR.</p>
-    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <code><a href="#dom-addkey">addKey()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
     <div class="example">
       <pre class="code">
@@ -1234,7 +1234,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
   function handleMessageResponse() {
     var license = new Uint8Array(xmlhttp.response);
-    this.keySession.<a href="#dom-addkey">addKey</a>(license);
+    this.keySession.<a href="#dom-update">update</a>(license);
   }
   
   function sendMessage(message, keySession) {
@@ -1330,7 +1330,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <code><a href="#dom-createsession">createSession()</a></code> to be included in the license request.</p>
 
     <h4 class="faqquestion">How do I resume playback after receiving the <code><a href="#dom-needkey">needkey</a></code> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
-    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <code><a href="#dom-addkey">addKey()</a></code> and processed.</p>
+    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <code><a href="#dom-update">update()</a></code> and processed.</p>
 
     <h4 class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
     <p class="faqanswer">Yes, this will likely be necessary to support all or a majority of user agents.
@@ -1424,10 +1424,10 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <h4 class="faqquestion">The same <code><a href="#dom-needkey">needkey</a></code> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
     <p class="faqanswer">The same event was used intentionally to reduce the complexity of applications. Ideally, they would not need to know.</p>
 
-    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <code><a href="#dom-addkey">addKey()</a></code>?</h4>
+    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <code><a href="#dom-update">update()</a></code>?</h4>
     <p class="faqanswer">The CDM will replace previous entries, updating the overall key ordering to reflect that this key ID was most recently added.
     In other words, simply replacing the existing key data is not sufficient.
-    The exact algorithm is covered in <code><a href="#dom-addkey">addKey()</a></code>.
+    The exact algorithm is covered in <code><a href="#dom-update">update()</a></code>.
     </p>
 
     <h3 id="faq-source">9.4. Source, Containers, and Streams</h3>
@@ -1437,7 +1437,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <code><a href="#dom-canplaytype">canPlayType()</a></code>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
 
     <h4 class="faqquestion">What if a container/codec does not support indicating the stream or a frame/block is encrypted?</h4>
-    <p class="faqanswer">The application must use <code><a href="#dom-addkey">addKey()</a></code> to indicate the stream is encrypted and provide the key before decoding starts.</p>
+    <p class="faqanswer">The application must use <code><a href="#dom-update">update()</a></code> to indicate the stream is encrypted and provide the key before decoding starts.</p>
 
     <h4 class="faqquestion">Must the container provide Initialization Data or a content key ID?</h4>
     <p class="faqanswer">This is ideal, but the API would also support the application sending the <a href="#initialization-data">Initialization Data</a> or ID directly to the server or providing it to the <a href="#cdm">CDM</a> via <code><a href="#dom-createsession">createSession()</a></code>.</p>
@@ -1482,7 +1482,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     </p>
 
 
-    <h2 id="revision-history">9. Revision History</h2>
+    <h2 id="revision-history">10. Revision History</h2>
     <table>
       <thead>
         <tr>
