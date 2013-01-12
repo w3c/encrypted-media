@@ -186,10 +186,6 @@
     <span class="non-normative">Key System providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.</span>
     </p>
 
-    <p>If a user agent returns "maybe" or "probably" for any subsystem string, it must return "maybe" when a parent system string is passed to <code><a href="#dom-canplaytype">canPlayType()</a></code>.
-    <span class="non-normative">For example, if a user agent returns "maybe" or "probably" for "com.example.somesystem.1_5", it must return "maybe" for "com.example.somesystem".</span>
-    </p>
-
     <h4 id="session-id">1.2.3. Session ID</h4>
     <p>A session ID is an optional string ID used to associate calls related to a key/license lifetime, starting with the request.
     <span class="non-normative">It is a local binding between a request and key/license.
@@ -228,14 +224,11 @@
 
 
     <h2 id="extensions">2. Media Element Extensions</h2>
-    <p>We extend <dfn id="media-element" title="media element"><a href="http://dev.w3.org/html5/spec/video.html#media-element">media element</a></dfn> to allow decryption key acquisition to be handled in JavaScript. We also extend <code><a href="#dom-canplaytype">canPlayType()</a></code> to provide <em>basic</em> information about the <a href="#key-system">Key Systems</a> supported by the user agent.</p>
+    <p>We extend <dfn id="media-element" title="media element"><a href="http://dev.w3.org/html5/spec/video.html#media-element">media element</a></dfn> to allow decryption key acquisition to be handled in JavaScript.</p>
     <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
 
     <pre class="idl">
 partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
-  // Adds optional 'keySystem' parameter.
-  DOMString <a href="#dom-canplaytype">canPlayType</a>(DOMString type, DOMstring? <a href="#key-system">keySystem</a>);
-
   // Encrypted Media
   readonly attribute <a href="#dom-mediakeys">MediaKeys</a> <a href="#dom-keys">keys</a>;
   void <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a> mediaKeys);
@@ -246,6 +239,8 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
 [<a href="#dom-media-keys-constructor">Constructor</a> (DOMString <a href="#key-system">keySystem</a>)]
 interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(DOMString? type, Uint8Array? initData);
+
+  static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMString type, DOMstring <a href="#key-system">keySystem</a>);
 
   readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
 };
@@ -267,43 +262,36 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
   attribute DOMString <a href="#dom-sourcekeysystem">keySystem</a>;
 };</pre>
 
-    <p>The <dfn id="dom-canplaytype"><code>canPlayType(type, keySystem)</code></dfn> method is modified to add an optional second parameter to specify the <a href="#key-system">Key System</a>.</p>
-
+    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
     <div class="example">
-      <p>The following list shows some examples of how to use the <var title="true">keySystem</var> parameter in <code><a href="#dom-canplaytype">canPlayType()</a></code> calls.</p>
+      <p>The following list shows some examples.</p>
       <dl>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
-        <dd><pre class="code">video.canPlayType(null, "com.example.somesystem")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
         <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
-        <dd><pre class="code">video.canPlayType(null, "com.example.somesystem.1_5")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
         <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
-        <dt>Returns whether the user agent supports the container and codec(s) specified by <var title="true">mimeType</var> but not whether encrypted streams can be decrypted.
-        This is no different from the current specification.</dt>
-        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>)</pre></dd>
-        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, null)</pre></dd>
-        <dd><pre class="code">video.canPlayType(<var title="true">mimeType</var>, "")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
       </dl>
     </div>
     
-    <p>In addition to the steps in the current specification, this method must run the following steps:</p>
+    <p>It must run the following steps:</p>
     
     <ol>
       <li>
 <p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
         <dl class="switch">
-          <dt>If <var title="true">keySystem</var> is null</dt>
-          <dd>Continue to the next step.</dd>
           <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>
 </dt>
-          <dd>Return the empty string.</dd>
+          <dd>Return false.</dd>
           <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
-          <dd>Return the empty string.</dd>
+          <dd>Return false.</dd>
+          <dt>Otherwise</dt>
+          <dd>Return true.</dd>
         </dl>
       </li>
-      <li><p>Return "maybe" or "probably" as appropriate per the existing specification of <code><a href="http://dev.w3.org/html5/spec/video.html#dom-navigator-canplaytype">canPlayType()</a></code>.</p></li>
     </ol>
 
     <p>The <dfn id="dom-keys"><code>keys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://dev.w3.org/html5/spec/video.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
@@ -1162,7 +1150,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     </div>
 
     <h3 id="examples-selecting-key-system" class="exampleheader">8.3. Selecting a Supported Key System</h3>
-    <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using <code><a href="#dom-canplaytype">canPlayType()</a></code> and selecting one.
+    <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using the <code><a href="#dom-istypesupported">isTypeSupported()</a></code> and selecting one.
     </p>
 
     <div class="example">
@@ -1171,15 +1159,15 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
   var keySystem;
   var licenseUrl;
 
-  function selectKeySystem(video) {
-    if (video.<a href="#dom-canplaytype">canPlayType</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != "") {
-      licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-      if (video.<a href="#dom-canplaytype">canPlayType</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != "") {
+  function selectKeySystem() {
+    if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != "") {
+      licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
+      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != "") {
         keySystem = "com.example.somesystem.2_0";
-      } else if (video.<a href="#dom-canplaytype">canPlayType</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != "") {
-        keySystem = "com.example.somesystem.1_5";
+      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != "") {
+        keySystem = "com.example.somesystem.1_5";
       }
-    } else if (video.<a href="#dom-canplaytype">canPlayType</a>("video/webm; codecs='vp8, vorbis'", "foobar") != "" {
+    } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "foobar") != "" {
       licenseUrl = "https://license.foobar.com/request";
       keySystem = "foobar";
     } else {
@@ -1192,7 +1180,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     var initData = event.<a href="#dom-initdata">initData</a>;
 
     if (!video.<a href="#dom-keys">keys</a>) {
-      selectKeySystem(video);
+      selectKeySystem();
       video.<a href="#dom-keys">keys</a> = video.<a href="#dom-mediakeys">MediaKeys</a>(keySystem);
     }
     if (!video.<a href="#dom-keys">keys</a>)
@@ -1268,7 +1256,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     var initData = event.<a href="#dom-initdata">initData</a>;
 
     if (!video.<a href="#dom-keys">keys</a>) {
-      selectKeySystem(video);  // See previous example for implementation.
+      selectKeySystem();  // See previous example for implementation.
       video.<a href="#dom-keys">keys</a> = video.<a href="#dom-mediakeys">MediaKeys</a>(keySystem);
     }
     if (!video.<a href="#dom-keys">keys</a>)
@@ -1340,13 +1328,12 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <p class="faqanswer">No.</p>
 
     <h4 class="faqquestion">How do I add support for a CDM to my application?</h4>
-    <p id="faq-cdm-library" class="faqanswer">We envision <a href="#cdm">CDM</a> providers creating JavaScript libraries that application developers can include. <code><a href="#dom-canplaytype">canPlayType()</a></code> can then be used to select from supported libraries.</p>
+    <p id="faq-cdm-library" class="faqanswer">We envision <a href="#cdm">CDM</a> providers creating JavaScript libraries that application developers can include. <code><a href="#dom-istypesupported">isTypeSupported()</a></code> can then be used to select from supported libraries.</p>
 
     <h4 id="faq-provider-capabilities" class="faqquestion">How do I determine if the UA supports specific capabilities for a given provider?</h4>
     <p class="faqanswer">This is vendor-/<a href="#key-system">Key System</a>-specific.</p>
-    <p class="faqanswer">Obtaining this information could take time and is open-ended, so it is not appropriate for <code><a href="#dom-canplaytype">canPlayType()</a></code>.
-    There is also no way for <code><a href="#dom-canplaytype">canPlayType()</a></code> to attest to capabilities anyway.
-    Some basic Key System feature detection may be <a href="canplaytype-capability-detection">available via canPlayType()</a>.
+    <p class="faqanswer">Obtaining this information could take time and is open-ended, so it is not appropriate for <code><a href="#dom-istypesupported">isTypeSupported()</a></code>.
+    There is also no way for <code><a href="#dom-istypesupported">isTypeSupported()</a></code> to attest to capabilities anyway.
     </p>
 
     <h4 class="faqquestion">What is a license URL (<code>licenseUrl</code>) in the examples?</h4>
@@ -1385,19 +1372,6 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       <li>Reduces the complexity and size of the CDM.</li>
     </ul>
 
-    <h4 class="faqquestion">Why does <code><a href="#dom-canplaytype">canPlayType()</a></code> need to be modified? Why doesn't it provide more information?</h4>
-    <p class="faqanswer">The modifications allow applications to detect whether the user agent is capable of supporting the application's encrypted content (at any level of protection) and to allow the application to branch to the appropriate code and/or select a <a href="#faq-cdm-library">CDM library</a>.</p>
-    <p class="faqanswer">At the same time, we do not want to put too much burden on <code><a href="#dom-canplaytype">canPlayType()</a></code> and it must remain a synchronous method that can be processed from static data. See the <a href="#faq-provider-capabilities">related question</a>.</p>
-
-    <h4 class="faqquestion">Why does <code><a href="#dom-canplaytype">canPlayType()</a></code> need a second parameter? Why not just add Key System to the <code>type</code> parameter string (or MIME type)?</h4>
-    <p class="faqanswer">This could have gone either way, and the behavior of both existing user agents and those that implement these extensions would be the same. (Existing user agents ignore it in both cases.)
-    The main reason for using a separate parameter is that the <a href="#key-system">Key System</a> is not part of the MIME type (see the <a href="#faq-key-system-mime-type">related question</a>), and the <code>type</code> parameter is generally used interchangeably with the MIME type.
-    Separating the Key System from the MIME type should avoid confusion.
-    </p>
-    <p class="faqanswer">The downside is that the same <code>type</code> string cannot be used for both <code><a href="#dom-canplaytype">canPlayType()</a></code> and the source element's <code><a href="http://dev.w3.org/html5/spec/video.html#attr-source-type">type</a></code> attribute.
-    Instead, the Key System is passed as a second parameter to <code><a href="#dom-canplaytype">canPlayType()</a></code> and as a separate attribute to the source element.
-    </p>
-
     <h4 id="faq-key-system-mime-type" class="faqquestion">Why isn't the <a href="#key-system">Key System</a> part of the MIME type (like codecs)?</h4>
     <p class="faqanswer">In many cases (especially the direction the content providers and standards are moving), the stream is not specific to any one Key System or provider. Multiple Key Systems could be used to decrypt the same generic stream. Thus, the <a href="#key-system">Key System</a> is not information about the file and should not be part of the MIME type.</p>
     <p class="faqanswer">One could argue that the encryption algorithm (e.g. AES-128) and configuration should be in the MIME type. That is not required for this proposal, so it is not addressed here.</p>
@@ -1434,7 +1408,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h4 class="faqquestion">What containers and codecs are supported?</h4>
     <p class="faqanswer">Containers and codecs are not specified. A user agent may support decryption of whichever container and codec combination(s) it wishes.</p>
-    <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <code><a href="#dom-canplaytype">canPlayType()</a></code>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
+    <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <code><a href="#dom-istypesupported">isTypeSupported()</a></code>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
 
     <h4 class="faqquestion">What if a container/codec does not support indicating the stream or a frame/block is encrypted?</h4>
     <p class="faqanswer">The application must use <code><a href="#dom-update">update()</a></code> to indicate the stream is encrypted and provide the key before decoding starts.</p>
