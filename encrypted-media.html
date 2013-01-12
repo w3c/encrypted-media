@@ -384,7 +384,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>Return the new object to the caller.</li>
     </ol>
 
-    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> supports <var title="true">type</var>.</p>
+    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">type</var>(s).</p>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
@@ -402,18 +402,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p>It must run the following steps:</p>
     
     <ol>
-      <li>
-<p>Check whether the <a href="#key-system">Key System</a> is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:</p>
-        <dl class="switch">
-          <dt>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>
-</dt>
-          <dd>Return false.</dd>
-          <dt>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified in the rest of the <var title="true">type</var> string.</dt>
-          <dd>Return false.</dd>
-          <dt>Otherwise</dt>
-          <dd>Return true.</dd>
-        </dl>
-      </li>
+      <li><p>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return false and abort these steps.</p></li>
+      <li><p>If <var title="true">type</var> is null or an empty string, return true and abort these steps.</p></li>
+      <li><p>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified by <var title="true">type</var>, return false and abort these steps.</p></li>
+      <li><p>Return true.</p></li>
     </ol>
 
     <p>The <dfn id="dom-error"><code>error</code></dfn> attribute is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> representing the current error state of the session. It is null if there is no error.</p>
@@ -1160,14 +1152,14 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
   var licenseUrl;
 
   function selectKeySystem() {
-    if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem") != "") {
+    if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem")) {
       licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0") != "") {
+      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0")) {
         keySystem = "com.example.somesystem.2_0";
-      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5") != "") {
+      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5")) {
         keySystem = "com.example.somesystem.1_5";
       }
-    } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "foobar") != "" {
+    } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "foobar")) {
       licenseUrl = "https://license.foobar.com/request";
       keySystem = "foobar";
     } else {
