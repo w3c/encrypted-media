@@ -117,7 +117,7 @@
       <li><a href="#containers">7. Container Guidelines</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#webm">7.1. WebM</a></li>
-          <li><a href="#iso">7.2. ISO Base Media File Format using the "cenc" protection scheme</a></li>
+          <li><a href="#iso">7.2. ISO Base Media File Format</a></li>
         </ul></li>
       <li><a href="#examples">8. Examples</a></li>
       <li><a href="#faq">9. FAQ</a></li>
@@ -1009,26 +1009,26 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       <p>An event will be fired for each new key ID (in <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a>) encountered for which a key is not already known.</p>
     </div>
 
-    <h3 id="iso">7.2 ISO Base Media File Format using the "cenc" protection scheme</h3>
+    <h3 id="iso">7.2 ISO Base Media File Format</h3>
     <div class="nonnormative">
-      <p>This section defines the stream format and initialization data for implementations that choose to support Common Encryption ("cenc") protected ISO Base Media File Format (ISOBMFF) content.</p>
+      <p>This section defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content.</p>
 
       <h4>7.2.1 Stream format</h4>
-      <p>Under the "cenc" protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
+      <p>The stream format is dependent upon the protection scheme, as defined in the scheme type box ('schm').</p>
+      <p>For example, under the common encryption ("cenc") protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
 
       <h4>7.2.2 Detecting Encryption</h4>
-      <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to ‘encv’ for video or ‘enca’ for audio, with a scheme information box (‘sinf’) added to the sample entry in the sample description box (‘stsd’). The scheme information box (‘sinf’) will contain a scheme type box (‘schm’) with a scheme_type field set to a value of "cenc" (Common Encryption).</p>
-      <p>With ISOBMFF common encryption, the "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding track encryption box (‘tenc’) and the sample group associated with the sample.</p>
-      <p>The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box (‘tenc’). This default state may be modified by the IsEncrypted flag in the Sample Group Description Box (‘sgpd’), pointed to by an index in the Sample to Group Box (‘sbgp’).</p>
-      <p>For complete information see ISO/IEC 23001-7:2012.</p>
+      <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a scheme information box ('sinf') added to the sample entry in the sample description box ('stsd'). The scheme information box ('sinf') will contain a scheme type box ('schm') with a scheme_type field set to the 4CC value of the protection scheme.</p>
+      <p>Additionally, if the protection scheme is common encryption ("cenc"), the "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding track encryption box ('tenc') and the sample group associated with the sample. In this case the default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the Sample Group Description Box ('sgpd'), pointed to by an index in the Sample to Group Box ('sbgp').</p>
+      <p>For complete information about "cenc" see ISO/IEC 23001-7:2012.</p>
 
       <h4>7.2.3 Initialization Data and Events</h4>
-      <p>Under the "cenc" protection scheme, ISOBFF media content can be decrypted by multiple Key Systems. The file may contain protection system specific header ('pssh') boxes for one or more Key Systems, each containing a SystemID identifying the Key System. These multiple ‘pssh’ boxes are concatenated into a single Initialization Data and returned with the needkey event.</p>
-      <p>In a file encrypted with Common Encryption, each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the Track Encryption Box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common Encryption files may contain a mixture of encrypted and unencrypted samples. Playback of unencrypted samples should not be impeded by unavailability of the keys needed to decrypt other samples in the same file or track.</p>
+      <p>For ISOBMFF the InitData begins with a the protection scheme information box ('sinf'). The 'sinf' includes the scheme type box ('schm'), giving the scheme_type, and the scheme information box ('schi').</p>
+      <p>If this scheme_type is common encryption ("cenc"), the scheme information box will also contain the track encryption box ('tenc'), giving the defaults for IsEncrypted, IV_size and KID for that track. In addition, one or more protection system specific heder boxes ('pssh') will be concatenated after the 'sinf' box.</p>
+      <p>In a file encrypted with common encryption, each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples. Playback of unencrypted samples should not be impeded by unavailability of the keys needed to decrypt other samples in the same file or track.</p>
       <p>Note that if there is already an active Key System CDM and the key storage for that Key System already contains the key associated with the Key ID, there is no need to generate a needkey event.</p>
-
     </div>
-
+    
 
     <h2 id="examples">8. Examples</h2>
     <p><i>This section and its subsections are non-normative.</i></p>
