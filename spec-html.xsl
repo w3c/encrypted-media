@@ -52,12 +52,12 @@
   </xsl:template>
 
   <xsl:template match="//videoref">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a></code>
+    <code><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a></code>
   </xsl:template>
 
   <!-- videoref without <code> -->
   <xsl:template match="//videoanchor">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
 
   <xsl:template match="//dom4ref">
@@ -65,15 +65,15 @@
   </xsl:template>
 
   <xsl:template match="//media-element-load-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#media-element-load-algorithm</xsl:attribute>media element load algorithm</a>
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#media-element-load-algorithm</xsl:attribute>media element load algorithm</a>
   </xsl:template>
 
   <xsl:template match="//resource-selection-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#concept-media-load-algorithm</xsl:attribute>resource selection algorithm</a>
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-algorithm</xsl:attribute>resource selection algorithm</a>
   </xsl:template>
 
   <xsl:template match="//resource-fetch-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#concept-media-load-resource</xsl:attribute>resource fetch algorithm</a>
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource</xsl:attribute>resource fetch algorithm</a>
   </xsl:template>
 
   <xsl:template match="//not-supported-err">
@@ -97,19 +97,19 @@
   </xsl:template>
 
   <xsl:template match="//readystate">
-    <code title="dom-media-readyState"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#dom-media-readystate</xsl:attribute>readyState</a></code>
+    <code title="dom-media-readyState"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate</xsl:attribute>readyState</a></code>
   </xsl:template>
 
   <xsl:template match="//have-metadata">
-    <code title="dom-media-HAVE_METADATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#dom-media-have_metadata</xsl:attribute>HAVE_METADATA</a></code>
+    <code title="dom-media-HAVE_METADATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata</xsl:attribute>HAVE_METADATA</a></code>
   </xsl:template>
 
   <xsl:template match="//have-future-data">
-    <code title="dom-media-HAVE_FUTURE_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#dom-media-have_future_data</xsl:attribute>HAVE_FUTURE_DATA</a></code>
+    <code title="dom-media-HAVE_FUTURE_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_future_data</xsl:attribute>HAVE_FUTURE_DATA</a></code>
   </xsl:template>
 
   <xsl:template match="//have-enough-data">
-    <code title="dom-media-HAVE_ENOUGH_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#dom-media-have_enough_data</xsl:attribute>HAVE_ENOUGH_DATA</a></code>
+    <code title="dom-media-HAVE_ENOUGH_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_enough_data</xsl:attribute>HAVE_ENOUGH_DATA</a></code>
   </xsl:template>
 
   <xsl:template match="//queue-a-task">
@@ -129,7 +129,7 @@
   </xsl:template>
 
   <xsl:template match="//media-element">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/video.html#media-element</xsl:attribute>media element</a>
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#media-element</xsl:attribute>media element</a>
   </xsl:template>
 
   <xsl:template match="//ascii-encoding">
