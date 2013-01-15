@@ -4,7 +4,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Encrypted Media Extensions</title>
     <link rel="stylesheet" href="video-working-draft.css">
-    <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD">
     <style type="text/css">
       div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
@@ -593,7 +592,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
     </dl>
 
     <p>The <dfn id="dom-systemcode"><code>systemCode</code></dfn> attribute of a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object is a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.
-    <span class="non-normative">This allows a more granular status to be returned than the more general <code><a href="#dom-errorcode">errorCode</a></code>.</span>
+    <span class="non-normative">This allows a more granular status to be returned than the more general <code><a href="#dom-code">code</a></code>.</span>
     It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
     </p>
     </div>
@@ -1256,7 +1255,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
   }
 
   function handleKeyError(event) {
-    // Report event.target.error.<a href="#dom-code">code</a> and event.target.error.<a href="#dom-systecode">systeCode</a>,
+    // Report event.target.error.<a href="#dom-code">code</a> and event.target.error.<a href="#dom-systemcode">systemCode</a>,
     // and do some bookkeeping with event.target.<a href="#dom-sessionid">sessionId</a> if necessary.
   }
 
@@ -1384,11 +1383,6 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <h4 id="faq-key-system-mime-type" class="faqquestion">Why isn't the <a href="#key-system">Key System</a> part of the MIME type (like codecs)?</h4>
     <p class="faqanswer">In many cases (especially the direction the content providers and standards are moving), the stream is not specific to any one Key System or provider. Multiple Key Systems could be used to decrypt the same generic stream. Thus, the <a href="#key-system">Key System</a> is not information about the file and should not be part of the MIME type.</p>
     <p class="faqanswer">One could argue that the encryption algorithm (e.g. AES-128) and configuration should be in the MIME type. That is not required for this proposal, so it is not addressed here.</p>
-
-    <h4 id="faq-new-method-fails" class="faqquestion">Will my application be informed if a call to one of the <a href="#dom-htmlmediaelement">new methods</a> fails?</h4>
-    <p class="faqanswer">Errors that occur during synchronous portion of the algorithms will be thrown.
-    For asynchronous portions (i.e. when a task is scheduled), a <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> will be fired.
-    </p>
 
     <h4 id="faq-why-additional-events" class="faqquestion">Why do we need additional events?</h4>
     <p class="faqanswer">While many use case could be implemented without an additional event (by requiring the app to provide all the information up front), some use cases may be better handled by an event.</p>
