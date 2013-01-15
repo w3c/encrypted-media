@@ -5,7 +5,7 @@
     <title>Encrypted Media Extensions</title>
     <link rel="stylesheet" href="video-working-draft.css">
     <link rel="stylesheet" href="main.css">
-    <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/w3c-ed.css">
+    <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD">
     <style type="text/css">
       div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
       .nonnormative:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This section is non-normative.'; color: black; font-style: italic; border: solid 2px; background: white; padding: 0 0.25em; }
@@ -20,9 +20,11 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2>W3C Editor's Draft 14 January 2013</h2>
+      <h2 id="draft-date">W3C Working Draft 24 January 2013</h2>
       <dl>
-        <dt>Latest published version:</dt>
+        <dt>This Version:</dt>
+        <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20130124/">http://www.w3.org/TR/2013/WD-encrypted-media-20130124/</a></dd>
+        <dt>Latest Published Version:</dt>
         <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
         <dt>Latest editor's draft:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html</a></dd>
@@ -41,9 +43,22 @@
       </dl>
     </div>
 
-    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#Copyright">Copyright</a> © 2012 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/2002/ipr-notice-20021231#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+    <hr>
 
-    <h2>Status of this Document</h2>
+    <h2>Abstract</h2>
+
+    <p>This proposal extends HTMLMediaElement providing APIs to control playback of protected content.</p>
+    <p>The API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
+    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.</p>
+    <p>This specification does not define a content protection or Digital Rights Management system. Rather, it defines a common API that may be used to discover, select and interact with
+    such systems as well as with simpler content encryption systems. Implementation of Digital Rights Management is not required for compliance with this specification: only the simple
+    clear key system is required to be implemented as a common baseline.</p>
+    <p>The common API supports a simple set of content encryption capabilities, leaving application functions such as authentication and authorization to page authors. This is achieved by
+    requiring content protection system-specific messaging to be mediated by the page rather than assuming out-of-band communication between the encryption system and a license
+    or other server.</p>
+ 
+    <h2>Status of This Document</h2>
 
     <p><em>
       This section describes the status of this document at the time of its publication. Other documents may supersede this document.
@@ -73,22 +88,9 @@
       </p>
 
 
-    <h2>Abstract</h2>
+    <h2 id="toc">Table of Contents</h2>
 
-    <p>This proposal extends HTMLMediaElement providing APIs to control playback of protected content.</p>
-    <p>The API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
-    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.</p>
-    <p>This specification does not define a content protection or Digital Rights Management system. Rather, it defines a common API that may be used to discover, select and interact with
-    such systems as well as with simpler content encryption systems. Implementation of Digital Rights Management is not required for compliance with this specification: only the simple
-    clear key system is required to be implemented as a common baseline.</p>
-    <p>The common API supports a simple set of content encryption capabilities, leaving application functions such as authentication and authorization to page authors. This is achieved by
-    requiring content protection system-specific messaging to be mediated by the page rather than assuming out-of-band communication between the encryption system and a license
-    or other server.</p>
-
-
-    <h2>Table of Contents</h2>
-
-    <ul id="toc" style="list-style-type:none">
+    <ul style="list-style-type:none">
       <li><a href="#introduction">1. Introduction</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#goals">1.1 Goals</a></li>
@@ -719,7 +721,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     </table>
 
     <h2 id="key-release">4. Key Release</h2>
-    <h3>4.1. Introduction</h3>
+    <h3 id="key-release-intro">4.1. Introduction</h3>
     <p><i>This section is non-normative.</i></p>
     <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
     This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
@@ -983,7 +985,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <div class="nonnormative">
       <p>This section defines the stream format and Initialization Data for implementations that choose to support <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
 
-      <h4>7.1.1.Stream Format </h4>
+      <h4 id="webm-stream-format">7.1.1.Stream Format </h4>
       <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
       The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
       </p>
@@ -992,12 +994,12 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
       In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
 
-      <h4>7.1.2. Detecting Encryption</h4>
+      <h4 id="webm-detect-encrypt">7.1.2. Detecting Encryption</h4>
       <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is <a href="#algorithms-encrypted-stream">potentially encrypted</a>.</p>
 
       <p><a href="#algorithms-enrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.5-Signal-Byte-Format">Signal Byte.</a></p>
 
-      <h4>7.1.3. Initialization Data and Events</h4>
+      <h4 id="webm-init-data">7.1.3. Initialization Data and Events</h4>
       <p><a href="#initialization-data">Initialization Data</a> in <a href="#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
       The current Track is the one being parsed or that contains the block being decrypted.
       </p>
@@ -1013,16 +1015,16 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <div class="nonnormative">
       <p>This section defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content.</p>
 
-      <h4>7.2.1 Stream format</h4>
+      <h4 id="iso-stream-format">7.2.1 Stream format</h4>
       <p>The stream format is dependent upon the protection scheme, as defined in the scheme type box ('schm').</p>
       <p>For example, under the common encryption ("cenc") protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
 
-      <h4>7.2.2 Detecting Encryption</h4>
+      <h4 id="iso-detect-encrypt">7.2.2 Detecting Encryption</h4>
       <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a scheme information box ('sinf') added to the sample entry in the sample description box ('stsd'). The scheme information box ('sinf') will contain a scheme type box ('schm') with a scheme_type field set to the 4CC value of the protection scheme.</p>
       <p>Additionally, if the protection scheme is common encryption ("cenc"), the "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding track encryption box ('tenc') and the sample group associated with the sample. In this case the default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the Sample Group Description Box ('sgpd'), pointed to by an index in the Sample to Group Box ('sbgp').</p>
       <p>For complete information about "cenc" see ISO/IEC 23001-7:2012.</p>
 
-      <h4>7.2.3 Initialization Data and Events</h4>
+      <h4 id="iso-init-data">7.2.3 Initialization Data and Events</h4>
       <p>For ISOBMFF the InitData begins with a the protection scheme information box ('sinf'). The 'sinf' includes the scheme type box ('schm'), giving the scheme_type, and the scheme information box ('schi').</p>
       <p>If this scheme_type is common encryption ("cenc"), the scheme information box will also contain the track encryption box ('tenc'), giving the defaults for IsEncrypted, IV_size and KID for that track. In addition, one or more protection system specific heder boxes ('pssh') will be concatenated after the 'sinf' box.</p>
       <p>In a file encrypted with common encryption, each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples. Playback of unencrypted samples should not be impeded by unavailability of the keys needed to decrypt other samples in the same file or track.</p>
@@ -1038,7 +1040,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
     </p>
 
-    <h3 class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
+    <h3 id="example-source-and-key-known" class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
     <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <code><a href="#dom-update">update()</a></code> call. It also does not handle errors.</p>
 
@@ -1073,13 +1075,13 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
+    <h3 id="example-source-known-but-key-not-known" class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <a href="http://www.w3.org/TR/html5/video.html#media-data">media data</a>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
 
     <p class="exampledescription">If any asynchronous operation is required to get the key in <code>handleKeyNeeded()</code>, it could be called a second time if the stream is detected as potentially encrypted before an encrypted block/frame is encountered. In this case, applications may want to handle subsequent calls specially to avoid redundant license requests. This is not shown in the examples below.</p>
 
-    <h4 class="exampleheader">8.2.1. Clear Key Encryption</h4>
+    <h4 id="example-clear-key" class="exampleheader">8.2.1. Clear Key Encryption</h4>
     <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
     <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
 
@@ -1117,7 +1119,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h4 class="exampleheader">8.2.2. Other Content Decryption Module</h4>
+    <h4 id="example-other-cdm" class="exampleheader">8.2.2. Other Content Decryption Module</h4>
     <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
 
     <div class="example">
@@ -1217,7 +1219,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 class="exampleheader">8.4. Using All Events</h3>
+    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used along with asynchronous XHR.</p>
     <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1288,7 +1290,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 id="faq-use-cases">9.1. Use Cases</h3>
 
-    <h4 class="faqquestion">What use cases does this support?</h4>
+    <h4 id="faq-what-use-cases" class="faqquestion">What use cases does this support?</h4>
     <p class="faqanswer">Everything from user-generated content to be shared with family (user is not an adversary) to online radio to feature-length movies.</p>
 
     <h4 id="faq-adaptive-streaming" class="faqquestion">Is this proposal compatible with adaptive streaming?</h4>
@@ -1321,20 +1323,20 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 id="faq-use">9.2. Use</h3>
 
-    <h4 class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
+    <h4 id="faq-send-a-token" class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
     <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <code><a href="#dom-createsession">createSession()</a></code> to be included in the license request.</p>
 
-    <h4 class="faqquestion">How do I resume playback after receiving the <code><a href="#dom-needkey">needkey</a></code> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
+    <h4 id="faq-resume-playback" class="faqquestion">How do I resume playback after receiving the <code><a href="#dom-needkey">needkey</a></code> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
     <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <code><a href="#dom-update">update()</a></code> and processed.</p>
 
-    <h4 class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
+    <h4 id="faq-multiple-cdms" class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
     <p class="faqanswer">Yes, this will likely be necessary to support all or a majority of user agents.
     An application could also use different <a href="#key-system">Key Systems</a> on a single user agent for different purposes.</p>
 
-    <h4 class="faqquestion">Can an <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> use multiple <a href="#key-system">Key System</a>s at the same time?</h4>
+    <h4 id="faq-multiple-key-systems" class="faqquestion">Can an <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> use multiple <a href="#key-system">Key System</a>s at the same time?</h4>
     <p class="faqanswer">No.</p>
 
-    <h4 class="faqquestion">How do I add support for a CDM to my application?</h4>
+    <h4 id="faq-add-cdm" class="faqquestion">How do I add support for a CDM to my application?</h4>
     <p id="faq-cdm-library" class="faqanswer">We envision <a href="#cdm">CDM</a> providers creating JavaScript libraries that application developers can include. <code><a href="#dom-istypesupported">isTypeSupported()</a></code> can then be used to select from supported libraries.</p>
 
     <h4 id="faq-provider-capabilities" class="faqquestion">How do I determine if the UA supports specific capabilities for a given provider?</h4>
@@ -1343,11 +1345,11 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     There is also no way for <code><a href="#dom-istypesupported">isTypeSupported()</a></code> to attest to capabilities anyway.
     </p>
 
-    <h4 class="faqquestion">What is a license URL (<code>licenseUrl</code>) in the examples?</h4>
+    <h4 id="faq-license-url" class="faqquestion">What is a license URL (<code>licenseUrl</code>) in the examples?</h4>
     <p class="faqanswer">This is the URL for a server capable of providing the key for the stream, usually using the <a href="#initialization-data">Initialization Data</a> and often after verifying the requesting user.
     The URL is application- and/or <a href="#key-system">Key System</a>-specific and may be a content provider or a Key System provider depending on the solution.</p>
 
-    <h4 class="faqquestion">This is too complex and hard to use.</h4>
+    <h4 id="faq-too-complex" class="faqquestion">This is too complex and hard to use.</h4>
     <p class="faqanswer">That's not a question, but we'll try to address it anyway.
     As shown in the <a href="#examples">examples</a>, the basic use cases are reasonably simple and only require a little setup to get the key and provide it to the user agent.
     We believe most small content sites can add basic protection to their applications with minimal efforts.</p>
@@ -1363,10 +1365,10 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 id="faq-api">9.3. API</h3>
 
-    <h4 class="faqquestion">How is the decryption algorithm specified?</h4>
+    <h4 id="faq-decrypt-algm" class="faqquestion">How is the decryption algorithm specified?</h4>
     <p class="faqanswer">This is container specific. A container may standardize on a specific algorithm (i.e. AES-128) and/or allow it to be specified. The user agent must know and/or detect the appropriate algorithm to use with the key provided by this API.</p>
 
-    <h4 class="faqquestion">What are the advantages of doing license/key exchange in the application?</h4>
+    <h4 id="faq-advantage-key-exchange" class="faqquestion">What are the advantages of doing license/key exchange in the application?</h4>
     <p class="faqanswer">Advantages include:</p>
     <ul>
       <li>
@@ -1383,29 +1385,29 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <p class="faqanswer">In many cases (especially the direction the content providers and standards are moving), the stream is not specific to any one Key System or provider. Multiple Key Systems could be used to decrypt the same generic stream. Thus, the <a href="#key-system">Key System</a> is not information about the file and should not be part of the MIME type.</p>
     <p class="faqanswer">One could argue that the encryption algorithm (e.g. AES-128) and configuration should be in the MIME type. That is not required for this proposal, so it is not addressed here.</p>
 
-    <h4 class="faqquestion">Will my application be informed if a call to one of the <a href="#dom-htmlmediaelement">new methods</a> fails?</h4>
+    <h4 id="faq-new-method-fails" class="faqquestion">Will my application be informed if a call to one of the <a href="#dom-htmlmediaelement">new methods</a> fails?</h4>
     <p class="faqanswer">Errors that occur during synchronous portion of the algorithms will be thrown.
     For asynchronous portions (i.e. when a task is scheduled), a <code><a href="#dom-mediakeyerrorevent">MediaKeyErrorEvent</a></code> will be fired.
     </p>
 
-    <h4 class="faqquestion">Why do we need additional events?</h4>
+    <h4 id="faq-why-additional-events" class="faqquestion">Why do we need additional events?</h4>
     <p class="faqanswer">While many use case could be implemented without an additional event (by requiring the app to provide all the information up front), some use cases may be better handled by an event.</p>
 
-    <h4 class="faqquestion">Why do we need a new <code><a href="#dom-mediaerror">MediaError</a></code> code?</h4>
+    <h4 id="faq-why-new-error-code" class="faqquestion">Why do we need a new <code><a href="#dom-mediaerror">MediaError</a></code> code?</h4>
     <p class="faqanswer">Without a new error code (<code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code>), it is not possible for user agents to clearly indicate to an application that playback failed because the content was encrypted and user agents will likely need to fire a <code>MEDIA_ERR_DECODE</code> or <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>, which would be confusing.</p>
 
-    <h4 class="faqquestion">Will adding a new error code to <code><a href="#dom-mediaerror">MediaError</a></code> break existing applications?</h4>
+    <h4 id="faq-error-break-apps" class="faqquestion">Will adding a new error code to <code><a href="#dom-mediaerror">MediaError</a></code> break existing applications?</h4>
     <p class="faqanswer">Applications that are not aware of the new error code (<code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code>) may not correctly handle it, but they should still be able to detect that an error has occurred because a) an error event is fired and b) <var title="">media</var> . <code title="dom-media-error"><code><a href="http://www.w3.org/TR/html5/video.html#mediaerror">error</a></code></code> is not null.</p>
 
-    <h4 class="faqquestion">What happens if a response to the <code><a href="#dom-needkey">needkey</a></code> event from a <a href="#algorithms-encrypted-stream">encountering a potentially encrypted stream</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
+    <h4 id="faq-response-needkey" class="faqquestion">What happens if a response to the <code><a href="#dom-needkey">needkey</a></code> event from a <a href="#algorithms-encrypted-stream">encountering a potentially encrypted stream</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
     <p class="faqanswer">The <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a> will proceed as normal.
     If no appropriate key has been provided, a second <code><a href="#dom-needkey">needkey</a></code> event will be fired and decoding will stop.
     </p>
 
-    <h4 class="faqquestion">The same <code><a href="#dom-needkey">needkey</a></code> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
+    <h4 id="faq-same-needkey" class="faqquestion">The same <code><a href="#dom-needkey">needkey</a></code> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
     <p class="faqanswer">The same event was used intentionally to reduce the complexity of applications. Ideally, they would not need to know.</p>
 
-    <h4 class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <code><a href="#dom-update">update()</a></code>?</h4>
+    <h4 id="faq-same-initdata-update" class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <code><a href="#dom-update">update()</a></code>?</h4>
     <p class="faqanswer">The CDM will replace previous entries, updating the overall key ordering to reflect that this key ID was most recently added.
     In other words, simply replacing the existing key data is not sufficient.
     The exact algorithm is covered in <code><a href="#dom-update">update()</a></code>.
@@ -1413,7 +1415,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 id="faq-source">9.4. Source, Containers, and Streams</h3>
 
-    <h4 class="faqquestion">What containers and codecs are supported?</h4>
+    <h4 id="faq-container-codec-support" class="faqquestion">What containers and codecs are supported?</h4>
     <p class="faqanswer">Containers and codecs are not specified. A user agent may support decryption of whichever container and codec combination(s) it wishes.</p>
     <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <code><a href="#dom-istypesupported">isTypeSupported()</a></code>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
 
@@ -1432,33 +1434,33 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <h4 id="faq-adaptive-streaming-multiple-keys" class="faqquestion">Can I use different keys for each stream (<a href="#faq-adaptive-streaming">adaptive streaming</a>)?</h4>
     <p class="faqanswer">Yes, though you may want to consider the complexity and performance drawbacks. For the best user experience, you will want to provide keys for the streams to the user agent before the switch.</p>
 
-    <h4 class="faqquestion">What elements of the source are encrypted?</h4>
+    <h4 id="faq-elements-encrypted" class="faqquestion">What elements of the source are encrypted?</h4>
     <p class="faqanswer">This depends on the container/codec being used. This proposal should support all cases, including entirely encrypted streams, individual frames encrypted separately, groups of frames encrypted, and portions of frames encrypted.
     If not all blocks or frames are encrypted, the user agent should be able to easily detect this, either based on an indication in the container or the block/frame.</p>
 
-    <h4 class="faqquestion">Must all blocks/frames in a stream be encrypted?</h4>
+    <h4 id="faq-all-blocks-encrypted" class="faqquestion">Must all blocks/frames in a stream be encrypted?</h4>
     <p class="faqanswer">No, subject to container/codec limitations.</p>
 
-    <h4 class="faqquestion">What cipher and parameters should be used for decryption?</h4>
+    <h4 id="faq-ciphers-parameters" class="faqquestion">What cipher and parameters should be used for decryption?</h4>
     <p class="faqanswer">The cipher and parameters should be implicit in or specified by the container. If some are optional, the application must know what is supported by the <a href="#cdm">CDM</a>.</p>
 
-    <h4 class="faqquestion">What cipher and parameters should be used for <a href="#simple-decryption">Simple Decryption</a>? Which must the user agent support?</h4>
+    <h4 id="faq-simple-decryption" class="faqquestion">What cipher and parameters should be used for <a href="#simple-decryption">Simple Decryption</a>? Which must the user agent support?</h4>
     <p class="faqanswer">As in the above question, these are either implicit in or specified by the container. User agents must support any default or baseline ciphers and parameters in the container specification. Practically, user agents should support all ciphers and parameters commonly used with the container.</p>
 
     <h3 id="faq-protection">9.5. Content and Key Protection</h3>
 
-    <h4 class="faqquestion">Can I ensure the content key is protected without working with a content protection provider?</h4>
+    <h4 id="faq-ensure-protected" class="faqquestion">Can I ensure the content key is protected without working with a content protection provider?</h4>
     <p class="faqanswer">No. Protecting the content key would require that the browser's media stack have some secret that cannot easily be obtained. This is the type of thing DRM solutions provide. Establishing a standard mechanism to support this is beyond the scope of HTML5 standards and should be deferred to specific user agent solutions. In addition, it is not something that fully open source browsers could natively support.</p>
     <p class="faqanswer">Content protected using this proposal without a content protection provider is still more secure and a higher barrier than providing an unencrypted file over HTTP or HTTPS. We would also argue that it is no less secure than encrypted HLS. For long streams, <a href="#faq-key-rotation">key rotation</a> can provide additional protection.</p>
     <p class="faqanswer">It is also possible to extend the proposed specification in the future to support a more robust basic case <strong>without changing the API</strong>.</p>
 
-    <h4 class="faqquestion">Can a user agent support multiple content protection providers?</h4>
+    <h4 id="faq-multiple-cdm-support" class="faqquestion">Can a user agent support multiple content protection providers?</h4>
     <p class="faqanswer">Yes. The application will query the user agent's capabilities and select the <a href="#key-system">Key System</a> to use.</p>
 
-    <h4 class="faqquestion">Can a user agent protect the compressed content?</h4>
+    <h4 id="faq-protect-compressed" class="faqquestion">Can a user agent protect the compressed content?</h4>
     <p class="faqanswer">Yes, this proposal naturally supports such protection.</p>
 
-    <h4 class="faqquestion">Can a user agent protect the rendering path or protect the uncompressed content after decoding?</h4>
+    <h4 id="faq-protect-rendering" class="faqquestion">Can a user agent protect the rendering path or protect the uncompressed content after decoding?</h4>
     <p class="faqanswer">Yes, a user agent could use platform-specific capabilities to protect the rendering path.
     </p>
 
