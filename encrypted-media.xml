@@ -902,8 +902,23 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       <coderef>destinationURL</coderef> = value of the default URL if present in the <videoanchor name="media-data">media data</videoanchor> and null otherwise.
     </li></ul>
 
-    <p>The <var title="true">key</var> parameter of <methodref>update</methodref> should be an array of bytes containing the key.</p>
+    <p>The <var title="true">key</var> parameter of <methodref>update</methodref> should be a JSON Web Key (JWK) representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-jones-jose-json-private-and-symmetric-key">IETF Internet-draft JSON Private and Symmetric Key specification</a>. The JSON string is encoded into the Uint8Array parameter using <ascii-encoding />.</p>
+    <p>When the JWK 'key type' ("kty") member value is 'octet sequence' ("oct"), the 'key value' ("k") member will be a base64 encoding of the octet sequence containing the symmetric key value.</p>
+    <p>For example, the following contains a single symmetric key represented as a JWK, designated as being for use with the AES Key Wrap algorithm (line breaks for readability, only).</p>
 
+    <div class="example">
+      <pre class="code">
+{
+  "keys": 
+    [{
+      "kty":"oct",
+      "alg":"A128KW",
+      "kid":"67ef0gd8pvfd0=",
+      "k":"GawgguFyGrWKav7AX4VKUg"
+    }]
+}</pre>
+    </div>
+    
 
     <h2 id="containers">7. Container Guidelines</h2>
     <p>This document describes behavior independent of specific media containers.
@@ -994,7 +1009,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
   function handleMessage(event) {
     var keySession = event.target;
 
-    var key = new Uint8Array([ 0xaa, 0xbb, 0xcc, ... ]);
+    var key = new Uint8Array([ ... ]);
     keySession.<premethodref>update</premethodref>(key);
   }
 &lt;/script&gt;

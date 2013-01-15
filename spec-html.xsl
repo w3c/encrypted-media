@@ -132,6 +132,10 @@
     <a><xsl:attribute name="href">http://dev.w3.org/html5/spec/video.html#media-element</xsl:attribute>media element</a>
   </xsl:template>
 
+  <xsl:template match="//ascii-encoding">
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#ascii-compatible-character-encoding</xsl:attribute>ASCII-compatible character encoding</a>
+  </xsl:template>
+
   <xsl:template match="//non-normative-section">
     <p><i>This section is non-normative.</i></p>
   </xsl:template>
