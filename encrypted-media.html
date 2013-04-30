@@ -19,7 +19,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 26 February 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 30 April 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html</a></dd>
@@ -438,29 +438,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <li>
 <p>For each <var title="true">individual key</var> in <var title="true">key</var>, store the <var title="true">individual key</var>.</p>
                 <ol>
-                  <li><p>Let <var title="true">key ID</var> be null.</p></li>
-                  <li><p>If there is a key ID associated with the <var title="true">individual key</var>, let <var title="true">key ID</var> be that ID.</p></li>
+                  <li><p>Let <var title="true">key ID</var> be the key ID associated with the <var title="true">individual key</var>.</p></li>
                   <li>
 <p>Store the <var title="true">individual key</var> by following the steps for the first matching condition from the following list:</p>  
-                    <dl class="switch">
-                      <dt>If <var title="true">key ID</var> is not null</dt>
-                      <dd>
-                        <ol>
-                          <li><p>Clear any stored key not associated with a key ID.</p></li>
-                          <li><p>If a stored key already exists for <var title="true">key ID</var>, delete that key.</p></li>
-                          <li><p>Store the <var title="true">individual key</var>, license, and/or license information indexed by <var title="true">key ID</var>. <span class="non-normative">The replacement algorithm is <a href="#key-system">Key System</a>-dependent.</span></p></li>
-                        </ol>
-                      </dd>
-                      <dt>Otherwise</dt>
-                      <dd>
-                        <ol>
-                          <li><p>Clear all stored keys.</p></li>
-                          <li><p>Store the <var title="true">individual key</var>, license, and/or license information with no associated key ID.</p></li>
-                        </ol>
-                      </dd>
-                    </dl>
-                    <p class="non-normative">At most one key may be stored if key IDs are not used.</p>
-                    <p class="non-normative">Clearing keys avoids needing to handle a mixture of keys with and without IDs in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>.</p>
+                    <ol>
+                      <li><p>If a stored key already exists for <var title="true">key ID</var>, delete that key.</p></li>
+                      <li><p>Store the <var title="true">individual key</var>, license, and/or license information indexed by <var title="true">key ID</var>. <span class="non-normative">The replacement algorithm is <a href="#key-system">Key System</a>-dependent.</span></p></li>
+                    </ol>
                     <p class="non-normative">Note: It is recommended that CDMs support a standard and reasonably high minimum number of cached keys/licenses (with IDs) per <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object as well as a standard replacement algorithm.
                     This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                     </p>
@@ -749,9 +733,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <ol>
       <li><p>Let <var title="">cdm</var> be null.</p></li>
-      <li><p>Let <var title="">block initData</var> be null.</p></li>
       <li><p>Let <var title="">block key</var> be null.</p></li>
-      <li><p>If the block (or its parent entity) has <a href="#initialization-data">Initialization Data</a>, let <var title="">block initData</var> be that initialization data.</p></li>
       <li>
 <p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
       <dl class="switch">
@@ -764,40 +746,8 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       <li>
 <p>Use <var title="true">cdm</var> to select the key:</p>
         <ol>
-          <li><p>Let <var title="">block key ID</var> be null.</p></li>
-          <li><p>If <var title="">block initData</var> is not null and contains a key ID, let <var title="">block key ID</var> be that ID.</p></li>
-          <li>
-<p>Select the key by following the steps for the first matching condition from the following list:</p>  
-          <dl class="switch">
-            <dt>If <var title="">block key ID</var> is not null</dt>
-            <dd>
-            <p>Select the key by using <var title="true">cdm</var> to follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If <var title="true">cdm</var>  has a key cached for <var title="">block key ID</var>
-</dt>
-              <dd>Let <var title="">block key</var> be the matching cached key.</dd>
-              <dt>If <var title="true">cdm</var> has a key cached with no ID <span class="non-normative">(there can be one at most)</span>
-</dt>
-              <dd>Let <var title="">block key</var> be the single cached key.</dd>
-              <dt>Otherwise (<var title="true">cdm</var> has no keys cached OR has one or more keys cached, none of which have a matching key ID)</dt>
-              <dd>Jump to the <i>Key Presence</i> step below.</dd>
-            </dl>
-            </dd>
-            <dt>Otherwise</dt>
-            <dd>
-            <p>Select the key by using <var title="true">cdm</var> to follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If <var title="true">cdm</var> has a single key cached (with or without a key ID)</dt>
-              <dd>Let <var title="">block key</var> be the single cached key.</dd>
-              <dt>If <var title="true">cdm</var> has more than one key cached <span class="non-normative">(all would have IDs)</span>
-</dt>
-              <dd>Abort media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a> and run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Key Presence</i> step below.</dd>
-            </dl>
-            </dd>
-          </dl>
-          </li>
+          <li><p>Let <var title="">block key ID</var> be be the key ID for the current block.</p></li>
+          <li><p>If <var title="true">cdm</var> has a key cached for <var title="">block key ID</var>, let <var title="">block key</var> be the matching cached key.</p></li>
         </ol>
       </li>
       <li>
