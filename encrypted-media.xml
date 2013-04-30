@@ -107,7 +107,7 @@
       <li><a href="#algorithms">5. Algorithms</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#algorithms-enrypted-block">5.1. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-encrypted-stream">5.2. Potentially Encrypted Stream Encountered</a></li>
+          <li><a href="#algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</a></li>
           <li><a href="#algorithms-load">5.3. Addition to Media Element Load Algorithm</a></li>
         </ul></li>
       <li><a href="#simple-decryption">6. Simple Decryption</a></li>
@@ -769,11 +769,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
         </dd>
         <dt>If there is an event handler for <coderef>needkey</coderef></dt>
         <dd>
-        <queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.
-        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
-        <ul style="list-style-type:none"><li>
-          <coderef>initData</coderef> = <var title="">block initData</var>
-        </li></ul>
+        <p>Take no action.</p>
         <p class="non-normative">The <a href="#media-element">media element</a> is said to be <videoref name="potentially-playing">potentially playing</videoref>
         unless playback stops because the stream cannot be decrypted, in which case the <a href="#media-element">media element</a> is said to be <a href="#waiting-for-a-key">waiting for a key</a>.
         </p>
@@ -810,7 +806,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
-    <h3 id="algorithms-encrypted-stream">5.2. Potentially Encrypted Stream Encountered</h3>
+    <h3 id="algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -943,7 +939,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
 
       <h4 id="webm-detect-encrypt">7.1.2. Detecting Encryption</h4>
-      <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is <a href="#algorithms-encrypted-stream">potentially encrypted</a>.</p>
+      <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is potentially encrypted. Each time a new value is encountered in a ContentEncKeyID element, the <a href="#algorithms-encrypted-stream">First Time a Key Reference is Encountered</a> algorithm shall be invoked with the value in that element as <var title="">initData</var>.</p>
 
       <p><a href="#algorithms-enrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
 
@@ -1026,8 +1022,6 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <h3 id="example-source-known-but-key-not-known" class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <videoanchor name="media-data">media data</videoanchor>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
-
-    <p class="exampledescription">If any asynchronous operation is required to get the key in <code>handleKeyNeeded()</code>, it could be called a second time if the stream is detected as potentially encrypted before an encrypted block/frame is encountered. In this case, applications may want to handle subsequent calls specially to avoid redundant license requests. This is not shown in the examples below.</p>
 
     <h4 id="example-clear-key" class="exampleheader">8.2.1. Clear Key Encryption</h4>
     <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
@@ -1336,15 +1330,10 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <p class="faqanswer">Without a new error code (<coderef>MEDIA_ERR_ENCRYPTED</coderef>), it is not possible for user agents to clearly indicate to an application that playback failed because the content was encrypted and user agents will likely need to fire a <code>MEDIA_ERR_DECODE</code> or <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>, which would be confusing.</p>
 
     <h4 id="faq-error-break-apps" class="faqquestion">Will adding a new error code to <coderef>MediaError</coderef> break existing applications?</h4>
-    <p class="faqanswer">Applications that are not aware of the new error code (<coderef>MEDIA_ERR_ENCRYPTED</coderef>) may not correctly handle it, but they should still be able to detect that an error has occurred because a) an error event is fired and b) <var title="">media</var> . <code title="dom-media-error"><videoref name="mediaerror">error</videoref></code> is not null.</p>
+    <p class="faqanswer">Applications that are not aware of the new error code (<coderef>MEDIA_ERR_ENCRYPTED</coderef>) may not correctly handle it, but they should still be able to detect that an error has occurred because a) an error event is fired and b) <var title="">media</var>. <code title="dom-media-error"><videoref name="mediaerror">error</videoref></code> is not null.</p>
 
-    <h4 id="faq-response-needkey" class="faqquestion">What happens if a response to the <coderef>needkey</coderef> event from a <a href="#algorithms-encrypted-stream">encountering a potentially encrypted stream</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
-    <p class="faqanswer">The <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a> will proceed as normal.
-    If no appropriate key has been provided, a second <coderef>needkey</coderef> event will be fired and decoding will stop.
-    </p>
-
-    <h4 id="faq-same-needkey" class="faqquestion">The same <coderef>needkey</coderef> event with the same attributes is fired for both <a href="#algorithms-enrypted-block">Encrypted Block Encountered</a> and <a href="#algorithms-encrypted-stream">Potentially Encrypted Stream Encountered</a>. How can an application distinguish between the two?</h4>
-    <p class="faqanswer">The same event was used intentionally to reduce the complexity of applications. Ideally, they would not need to know.</p>
+    <h4 id="faq-response-needkey" class="faqquestion">What happens if a response to the <coderef>needkey</coderef> event from the <a href="#algorithms-encrypted-stream">First Time a Key Reference is Encountered</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
+    <p class="faqanswer">The <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a> will proceed as normal.</p>
 
     <h4 id="faq-same-initdata-update" class="faqquestion">What if a key/license for the same <a href="#initialization-data">Initialization Data</a> (i.e. key ID) is provided more than once to <methodref>update</methodref>?</h4>
     <p class="faqanswer">The CDM will replace previous entries, updating the overall key ordering to reflect that this key ID was most recently added.
