@@ -1055,10 +1055,14 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     var message = event.<a href="#dom-message">message</a>;
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "http://.../getkey", false);
+    xmlhttp.open("POST", "http://.../getkey");
+    xmlhttp.onreadystatechange = function() {
+      if(xmlhttp.readyState==4) {
+        var key = new Uint8Array(xmlhttp.response);
+        keySession.<a href="#dom-update">update</a>(key);
+      }
+    }
     xmlhttp.send(message);
-    var key = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-update">update</a>(key);
   }
 &lt;/script&gt;
 
@@ -1094,10 +1098,14 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       throw "Could not create license request";
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "http://.../getkey", false);
+    xmlhttp.open("POST", "http://.../getkey");
+    xmlhttp.onreadystatechange = function() {
+      if(xmlhttp.readyState==4) {
+        var license = new Uint8Array(xmlhttp.response);
+        keySession.<a href="#dom-update">update</a>(license);
+      }
+    }
     xmlhttp.send(request);
-    var license = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-update">update</a>(license);
   }
 &lt;/script&gt;
 
@@ -1155,10 +1163,14 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       throw "Could not create license request";
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", licenseUrl, false);
+    xmlhttp.open("POST", licenseUrl);
+    xmlhttp.onreadystatechange = function() {
+      if(xmlhttp.readyState==4) {
+        var license = new Uint8Array(xmlhttp.response);
+        keySession.<a href="#dom-update">update</a>(license);
+      }
+    }
     xmlhttp.send(request);
-    var license = new Uint8Array(xmlhttp.response);
-    keySession.<a href="#dom-update">update</a>(license);
   }
 &lt;/script&gt;
 
@@ -1184,7 +1196,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     xmlhttp = new XMLHttpRequest();
     xmlhttp.keySession = keySession;
     xmlhttp.onreadystatechange = handleMessageResponse;
-    xmlhttp.open("POST", licenseUrl, true);
+    xmlhttp.open("POST", licenseUrl);
     xmlhttp.send(message);
   }
 
