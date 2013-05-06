@@ -147,8 +147,8 @@
       <li><a href="#key-release">4. Key Release</a></li>
       <li><a href="#algorithms">5. Algorithms</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#algorithms-enrypted-block">5.1. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</a></li>
+          <li><a href="#algorithms-encrypted-stream">5.1. First Time a Key Reference is Encountered</a></li>
+          <li><a href="#algorithms-enrypted-block">5.2. Encrypted Block Encountered</a></li>
           <li><a href="#algorithms-load">5.3. Addition to Media Element Load Algorithm</a></li>
         </ul></li>
       <li><a href="#simple-decryption">6. Simple Decryption</a></li>
@@ -774,7 +774,70 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h2 id="algorithms">5. Algorithms</h2>
 
-    <h3 id="algorithms-enrypted-block">5.1. Encrypted Block Encountered</h3>
+    <h3 id="algorithms-encrypted-stream">5.1. First Time a Key Reference is Encountered</h3>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
+
+    <ol>
+      <li><p>Let <var title="">cdm</var> be null.</p></li>
+      <li><p>Let <var title="">initData</var> be null.</p></li>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
+      <li>
+<p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
+      <dl class="switch">
+        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null</dt>
+        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
+        <dt>Otherwise</dt>
+        <dd>Jump to the <i>Need Key</i> step below.</dd>
+      </dl>
+      </li>
+      <li>
+<p>Use <var title="true">cdm</var> to determine whether the key is known:</p>
+        <ol>
+          <li><p>Let <var title="">key ID</var> be null.</p></li>
+          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
+          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
+          <li>
+<p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
+          <dl class="switch">
+            <dt>If <var title="">key ID</var> is not null</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a key cached for <var title="">key ID</var>
+</dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+            <dt>Otherwise</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a single key cached (with or without a key ID)</dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+          </dl>
+          </li>
+        </ol>
+      </li>
+      <li>
+<p><i>Need Key</i>: <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+        <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
+      </li>
+
+      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
+    </ol>
+
+    <h3 id="algorithms-enrypted-block">5.2. Encrypted Block Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
 
     <ol>
@@ -849,69 +912,6 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     </li>
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
-
-    <h3 id="algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</h3>
-    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
-
-    <ol>
-      <li><p>Let <var title="">cdm</var> be null.</p></li>
-      <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
-      <li>
-<p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
-      <dl class="switch">
-        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null</dt>
-        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
-        <dt>Otherwise</dt>
-        <dd>Jump to the <i>Need Key</i> step below.</dd>
-      </dl>
-      </li>
-      <li>
-<p>Use <var title="true">cdm</var> to determine whether the key is known:</p>
-        <ol>
-          <li><p>Let <var title="">key ID</var> be null.</p></li>
-          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
-          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
-          <li>
-<p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
-          <dl class="switch">
-            <dt>If <var title="">key ID</var> is not null</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a key cached for <var title="">key ID</var>
-</dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-            <dt>Otherwise</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a single key cached (with or without a key ID)</dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-          </dl>
-          </li>
-        </ol>
-      </li>
-      <li>
-<p><i>Need Key</i>: <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
-        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
-        <ul style="list-style-type:none"><li>
-          <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
-        </li></ul>
-        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-        <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
-      </li>
-
-      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
-    </ol>
 
     <h3 id="algorithms-load">5.3. Addition to Media Element Load Algorithm</h3>
     <p>The following step is added to the existing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element-load-algorithm">media element load algorithm</a>:</p>
