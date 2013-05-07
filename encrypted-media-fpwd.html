@@ -4,6 +4,44 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Encrypted Media Extensions</title>
     <link rel="stylesheet" href="video-working-draft.css">
+    <style>/* --- ISSUES/NOTES --- */
+    div.issue-title, div.note-title {
+        padding-right:  1em;
+        min-width: 7.5em;
+        color: #b9ab2d;
+    }
+    div.issue-title { color: #e05252; }
+    div.note-title { color: #52e052; }
+    div.issue-title span, div.note-title span {
+        text-transform: uppercase;
+    }
+    div.note, div.issue {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+    .note > p:first-child, .issue > p:first-child { margin-top: 0 }
+    .issue, .note {
+        padding: .5em;
+        border-left-width: .5em;
+        border-left-style: solid;
+    }
+    div.issue, div.note {
+        padding: 0.5em;
+        margin: 1em 0;
+        position: relative;
+        clear: both;
+    }
+    span.note, span.issue { padding: .1em .5em .15em; }
+    
+    .issue {
+        border-color: #e05252;
+        background: #fbe9e9;
+    }
+    .note {
+        border-color: #52e052;
+        background: #e9fbe9;
+    }
+    </style>
     <style type="text/css">
       div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
       .nonnormative:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This section is non-normative.'; color: black; font-style: italic; border: solid 2px; background: white; padding: 0 0.25em; }
@@ -17,12 +55,12 @@
   </head>
   <body>
     <div class="head">
-      <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
+      <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Working Draft 9 May 2013</h2>
+      <h2 id="draft-date">W3C Working Draft 10 May 2013</h2>
       <dl>
         <dt>This Version:</dt>
-        <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20130509/">http://www.w3.org/TR/2013/WD-encrypted-media-20130509/</a></dd>
+        <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20130510/">http://www.w3.org/TR/2013/WD-encrypted-media-20130510/</a></dd>
         <dt>Latest Published Version:</dt>
         <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
         <dt>Latest editor's draft:</dt>
@@ -106,13 +144,13 @@
           <li><a href="#event-definitions">3.1 Event Definitions</a></li>
           <li><a href="#event-summary">3.2 Event Summary</a></li>
         </ul></li>
-      <li><a href="#key-release">4. Key Release</a></li>
-      <li><a href="#algorithms">5. Algorithms</a></li>
+      <li><a href="#algorithms">4. Algorithms</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#algorithms-enrypted-block">5.1. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</a></li>
-          <li><a href="#algorithms-load">5.3. Addition to Media Element Load Algorithm</a></li>
+          <li><a href="#algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</a></li>
+          <li><a href="#algorithms-enrypted-block">4.2. Encrypted Block Encountered</a></li>
+          <li><a href="#algorithms-load">4.3. Addition to Media Element Load Algorithm</a></li>
         </ul></li>
+      <li><a href="#key-release">5. Key Release</a></li>
       <li><a href="#simple-decryption">6. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#simple-decryption-clear-key">6.1. Clear Key</a></li>
@@ -123,15 +161,7 @@
           <li><a href="#iso">7.2. ISO Base Media File Format</a></li>
         </ul></li>
       <li><a href="#examples">8. Examples</a></li>
-      <li><a href="#faq">9. FAQ</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#faq-use-cases">9.1. Use Cases</a></li>
-          <li><a href="#faq-use">9.2. Use</a></li>
-          <li><a href="#faq-api">9.3. API</a></li>
-          <li><a href="#faq-source">9.4. Source, Containers, and Streams</a></li>
-          <li><a href="#faq-protection">9.5. Content and Key Protection</a></li>
-        </ul></li>
-      <li><a href="#revision-history">10. Revision History</a></li>
+      <li><a href="#revision-history">9. Revision History</a></li>
     </ul>
 
 
@@ -289,6 +319,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
       <li>
 <p>Load <var title="true">cdm</var> if necessary.</p>
+        <div class="issue">
+<div class="issue-title"><span>Issue 1</span></div>
+<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20991">Bug 20991</a> - The CDM should be loaded asynchronously.</p>
+</div>
         <dl class="switch">
           <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
           <dd><ol>
@@ -507,6 +541,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     </ol>
 
     <h3 id="error-codes">2.1. Error Codes</h3>
+    <div class="issue">
+<div class="issue-title"><span>Issue 2</span></div>
+<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> and <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=16857">Bug 16857</a> - Some errors may change or be removed.</p>
+</div>
     <p><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#mediaerror">MediaError</a></code> is extended, and a new error type is added.</p>
     <pre class="idl">
 partial interface <dfn id="dom-mediaerror">MediaError</dfn> {
@@ -705,30 +743,73 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       </tbody>
     </table>
 
-    <h2 id="key-release">4. Key Release</h2>
-    <p class="non-normative">Note: it is an open issue whether further normative specification of this feature is required. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p>
-    <h3 id="key-release-intro">4.1. Introduction</h3>
-    <p><i>This section is non-normative.</i></p>
-    <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
-    This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
-    Use cases for such proof include any service where is it necessary for the service to know, reliably, which granted keys/licences are still available for use by the user and which have been deleted.
-    Examples include a service with restrictions on the number of concurrent streams available to a user or a service where content is available on a rental basis, for use offline.
-    </p>
-    
-    <p>Secure proof of key release must necessarily involve the CDM due to the relative ease with which scripts may be modified.
-    The CDM must provide a message asserting, in a CDM-specific form, that a specific key or license has been destroyed.
-    Such messages must be cached in the CDM until acknowledgement of their delivery to the service has been received.
-    This acknowledgement must also be in the form of a CDM-specific message.
-    </p>
-    
-    <p>The mechanism for secure proof of key release operates outside the scope of any <a href="#media-element">media element</a>.
-    This is because proof-of-release messages may be cached in CDMs after the associated media elements have been destroyed.
-    Proof-of-key-release messages are subject to the same origin policy: they shall only be delivered to scripts with the same origin as the script which created the media element that provided the key/license.
-    </p>
 
-    <h2 id="algorithms">5. Algorithms</h2>
+    <h2 id="algorithms">4. Algorithms</h2>
 
-    <h3 id="algorithms-enrypted-block">5.1. Encrypted Block Encountered</h3>
+    <h3 id="algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</h3>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
+
+    <ol>
+      <li><p>Let <var title="">cdm</var> be null.</p></li>
+      <li><p>Let <var title="">initData</var> be null.</p></li>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
+      <li>
+<p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
+      <dl class="switch">
+        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null</dt>
+        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
+        <dt>Otherwise</dt>
+        <dd>Jump to the <i>Need Key</i> step below.</dd>
+      </dl>
+      </li>
+      <li>
+<p>Use <var title="true">cdm</var> to determine whether the key is known:</p>
+        <ol>
+          <li><p>Let <var title="">key ID</var> be null.</p></li>
+          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
+          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
+          <li>
+<p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
+          <dl class="switch">
+            <dt>If <var title="">key ID</var> is not null</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a key cached for <var title="">key ID</var>
+</dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+            <dt>Otherwise</dt>
+            <dd>
+            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If there is a single key cached (with or without a key ID)</dt>
+              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
+              <dt>Otherwise</dt>
+              <dd>Jump to the <i>Need Key</i> step below.</dd>
+            </dl>
+            </dd>
+          </dl>
+          </li>
+        </ol>
+      </li>
+      <li>
+<p><i>Need Key</i>: <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+        <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
+      </li>
+
+      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
+    </ol>
+
+    <h3 id="algorithms-enrypted-block">4.2. Encrypted Block Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
 
     <ol>
@@ -804,70 +885,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
-    <h3 id="algorithms-encrypted-stream">5.2. First Time a Key Reference is Encountered</h3>
-    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
-
-    <ol>
-      <li><p>Let <var title="">cdm</var> be null.</p></li>
-      <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
-      <li>
-<p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
-      <dl class="switch">
-        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null</dt>
-        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
-        <dt>Otherwise</dt>
-        <dd>Jump to the <i>Need Key</i> step below.</dd>
-      </dl>
-      </li>
-      <li>
-<p>Use <var title="true">cdm</var> to determine whether the key is known:</p>
-        <ol>
-          <li><p>Let <var title="">key ID</var> be null.</p></li>
-          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
-          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
-          <li>
-<p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
-          <dl class="switch">
-            <dt>If <var title="">key ID</var> is not null</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a key cached for <var title="">key ID</var>
-</dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-            <dt>Otherwise</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a single key cached (with or without a key ID)</dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-          </dl>
-          </li>
-        </ol>
-      </li>
-      <li>
-<p><i>Need Key</i>: <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
-        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
-        <ul style="list-style-type:none"><li>
-          <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
-        </li></ul>
-        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-        <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
-      </li>
-
-      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
-    </ol>
-
-    <h3 id="algorithms-load">5.3. Addition to Media Element Load Algorithm</h3>
+    <h3 id="algorithms-load">4.3. Addition to Media Element Load Algorithm</h3>
     <p>The following step is added to the existing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element-load-algorithm">media element load algorithm</a>:</p>
     <ul>
       <li>
@@ -875,6 +893,28 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       <p class="non-normative">This also means the <code><a href="#dom-keys">keys</a></code> attribute will be cleared when the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-src">src</a></code> attribute is set or changed per <a href="http://www.w3.org/TR/html5/embedded-content-0.html#location-of-the-media-resource">Location of the media resource</a></p>
       </li>
     </ul>
+
+
+    <h2 id="key-release">5. Key Release</h2>
+    <p class="non-normative">Note: it is an open issue whether further normative specification of this feature is required. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p>
+    <h3 id="key-release-intro">5.1. Introduction</h3>
+    <p><i>This section is non-normative.</i></p>
+    <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
+    This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
+    Use cases for such proof include any service where is it necessary for the service to know, reliably, which granted keys/licences are still available for use by the user and which have been deleted.
+    Examples include a service with restrictions on the number of concurrent streams available to a user or a service where content is available on a rental basis, for use offline.
+    </p>
+    
+    <p>Secure proof of key release must necessarily involve the CDM due to the relative ease with which scripts may be modified.
+    The CDM must provide a message asserting, in a CDM-specific form, that a specific key or license has been destroyed.
+    Such messages must be cached in the CDM until acknowledgement of their delivery to the service has been received.
+    This acknowledgement must also be in the form of a CDM-specific message.
+    </p>
+    
+    <p>The mechanism for secure proof of key release operates outside the scope of any <a href="#media-element">media element</a>.
+    This is because proof-of-release messages may be cached in CDMs after the associated media elements have been destroyed.
+    Proof-of-key-release messages are subject to the same origin policy: they shall only be delivered to scripts with the same origin as the script which created the media element that provided the key/license.
+    </p>
 
 
     <h2 id="simple-decryption">6. Simple Decryption</h2>
@@ -1243,168 +1283,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     </div>
 
 
-    <h2 id="faq">9. FAQ</h2>
-    <p><i>This section and its subsections are non-normative.</i></p>
-
-    <h3 id="faq-use-cases">9.1. Use Cases</h3>
-
-    <h4 id="faq-what-use-cases" class="faqquestion">What use cases does this support?</h4>
-    <p class="faqanswer">Everything from user-generated content to be shared with family (user is not an adversary) to online radio to feature-length movies.</p>
-
-    <h4 id="faq-adaptive-streaming" class="faqquestion">Is this proposal compatible with adaptive streaming?</h4>
-    <p class="faqanswer">Yes, this proposal is compatible with both "Type 1" and "Type 3" <a href="http://www.w3.org/2011/webtv/wiki/MPTF/HTML_adaptive_calls">adaptive streaming modes</a> as defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web &amp; TV Interest Group</a>.</p>
-    <ul>
-      <li>If adaptive streaming is handled within the user agent (Type 1), the adaptive implementation can expose the events and methods needed to provide key(s) for the streams via the APIs in this proposal.</li>
-      <li>If adaptive streaming is handled in the application/JavaScript (Type 3), behavior should be very similar to the non-adaptive case.
-      For example, the <a href="http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html">Media Source Extensions</a> allow the application to provide a dynamic <code>src</code>, which could be encrypted and handled just like a normal stream.
-      </li>
-    </ul>
-
-    <h4 id="faq-key-rotation" class="faqquestion">Is key rotation supported?</h4>
-    <p class="faqanswer">Yes.</p>
-
-    <h4 id="sourceelement" class="faqquestion">Can I let the user agent select the appropriate CDM using <code>&lt;source&gt;</code> elements?</h4>
-    <p class="faqanswer">Yes, using the <code><a href="#dom-sourcekeysystem">keySystem</a></code> attribute of the <code><a href="#dom-htmlsourceelement">HTMLSourceElement</a></code>.
-    When used with <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-source-type">type</a></code> attribute, this will select the first <code>&lt;source&gt;</code> element (container, codec, and <a href="#key-system">Key System</a>) that the user agent might support.
-    </p>
-
-    <h4 id="faq-heartbeat" class="faqquestion">Is a heartbeat supported?</h4>
-    <p class="faqanswer">Yes.</p>
-    <p class="faqanswer">Heartbeat is a mode of operation where the <a href="#cdm">Content Decryption Module</a> requires to receive an explicit heartbeat message from its server on a regular basis, otherwise decryption is blocked.
-    This enables use-cases requiring strict online control of access to the content.
-    Heartbeat must be supported by the CDM and is implemented in this model by supplying an expiration time or valid duration in the license provided to the CDM.
-    Before expiry of this license, the CDM must trigger a new message exchange to obtain an updated license.
-    </p>
-
-    <h3 id="faq-use">9.2. Use</h3>
-
-    <h4 id="faq-send-a-token" class="faqquestion">Can I send a token for the signed-in user with the license request?</h4>
-    <p class="faqanswer">Yes. The application can add this to the license request (sent via <code>XMLHttpRequest</code> in the <a href="#examples">examples</a>) or send it to the <a href="#cdm">CDM</a> via <code><a href="#dom-createsession">createSession()</a></code> to be included in the license request.</p>
-
-    <h4 id="faq-resume-playback" class="faqquestion">How do I resume playback after receiving the <code><a href="#dom-needkey">needkey</a></code> event in the <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a>?</h4>
-    <p class="faqanswer">Assuming there are no other issues, playback will resume when the needed key is provided by <code><a href="#dom-update">update()</a></code> and processed.</p>
-
-    <h4 id="faq-multiple-cdms" class="faqquestion">Can an application use multiple content protection providers / Key Systems?</h4>
-    <p class="faqanswer">Yes, this will likely be necessary to support all or a majority of user agents.
-    An application could also use different <a href="#key-system">Key Systems</a> on a single user agent for different purposes.</p>
-
-    <h4 id="faq-multiple-key-systems" class="faqquestion">Can an <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> use multiple <a href="#key-system">Key System</a>s at the same time?</h4>
-    <p class="faqanswer">No.</p>
-
-    <h4 id="faq-add-cdm" class="faqquestion">How do I add support for a CDM to my application?</h4>
-    <p id="faq-cdm-library" class="faqanswer">We envision <a href="#cdm">CDM</a> providers creating JavaScript libraries that application developers can include. <code><a href="#dom-istypesupported">isTypeSupported()</a></code> can then be used to select from supported libraries.</p>
-
-    <h4 id="faq-provider-capabilities" class="faqquestion">How do I determine if the UA supports specific capabilities for a given provider?</h4>
-    <p class="faqanswer">This is vendor-/<a href="#key-system">Key System</a>-specific.</p>
-    <p class="faqanswer">Obtaining this information could take time and is open-ended, so it is not appropriate for <code><a href="#dom-istypesupported">isTypeSupported()</a></code>.
-    There is also no way for <code><a href="#dom-istypesupported">isTypeSupported()</a></code> to attest to capabilities anyway.
-    </p>
-
-    <h4 id="faq-license-url" class="faqquestion">What is a license URL (<code>licenseUrl</code>) in the examples?</h4>
-    <p class="faqanswer">This is the URL for a server capable of providing the key for the stream, usually using the <a href="#initialization-data">Initialization Data</a> and often after verifying the requesting user.
-    The URL is application- and/or <a href="#key-system">Key System</a>-specific and may be a content provider or a Key System provider depending on the solution.</p>
-
-    <h4 id="faq-too-complex" class="faqquestion">This is too complex and hard to use.</h4>
-    <p class="faqanswer">That's not a question, but we'll try to address it anyway.
-    As shown in the <a href="#examples">examples</a>, the basic use cases are reasonably simple and only require a little setup to get the key and provide it to the user agent.
-    We believe most small content sites can add basic protection to their applications with minimal efforts.</p>
-    <p class="faqanswer">The more complex cases, such as fast time to first frame and various license management algorithms, require more complex code, but professional-strength content protection is complex and that is to be expected.
-    Professional-strength content protection requires server components and working with one or more content protection vendors, so this isn't really any more complex.
-    In fact, if you implement a few solutions, it will work on any browser-based platform, avoiding the need for per-platform solutions on both the server and client.
-    The fixed set of interfaces may even lead to more consistent patterns and behavior across various solutions.
-    It is generally the large content providers that have more complex requirements, and we believe they will have the appropriate resources to implement applications that meet their requirements.
-    </p>
-    <p class="faqanswer">Providers of <a href="#cdm">content decryption modules</a> will need to provide detailed specifications for actions and events to guide content providers in designing the algorithms in their applications.
-    They can also provide a <a href="#faq-cdm-library">JavaScript libraries</a> for their solution that can be integrated into any application.
-    An application would then basically select a solution and delegate a lot of the work to the appropriate library.</p>
-
-    <h3 id="faq-api">9.3. API</h3>
-
-    <h4 id="faq-decrypt-algm" class="faqquestion">How is the decryption algorithm specified?</h4>
-    <p class="faqanswer">This is container specific. A container may standardize on a specific algorithm (i.e. AES-128) and/or allow it to be specified. The user agent must know and/or detect the appropriate algorithm to use with the key provided by this API.</p>
-
-    <h4 id="faq-advantage-key-exchange" class="faqquestion">What are the advantages of doing license/key exchange in the application?</h4>
-    <p class="faqanswer">Advantages include:</p>
-    <ul>
-      <li>
-<a href="#simple-decryption">Simple Decryption</a> works in the same way as more advanced solutions and without additional APIs.</li>
-      <li>The user agent is not responsible for deciding which decryption mechanism to use.</li>
-      <li>The application has full control (i.e. of deciding what streams to offer) and does not need to rely on errors from (or a detailed API to) the <a href="#cdm">CDM</a>.</li>
-      <li>The application can manage its own license protocol, authentication refresh, key rotation etc. without relying on changes to or specific use cases being implemented in each user agent's CDM (as long as the appropriate primitives are available in the CDM).</li>
-      <li>Error handling can be tailored to the application without needing to expose status information and failure conditions from the CDM through the API.</li>
-      <li>The content provider can decide whether and what to proxy to the (potentially third-party) license server without client modifications.</li>
-      <li>Reduces the complexity and size of the CDM.</li>
-    </ul>
-
-    <h4 id="faq-key-system-mime-type" class="faqquestion">Why isn't the <a href="#key-system">Key System</a> part of the MIME type (like codecs)?</h4>
-    <p class="faqanswer">In many cases (especially the direction the content providers and standards are moving), the stream is not specific to any one Key System or provider. Multiple Key Systems could be used to decrypt the same generic stream. Thus, the <a href="#key-system">Key System</a> is not information about the file and should not be part of the MIME type.</p>
-    <p class="faqanswer">One could argue that the encryption algorithm (e.g. AES-128) and configuration should be in the MIME type. That is not required for this proposal, so it is not addressed here.</p>
-
-    <h4 id="faq-why-additional-events" class="faqquestion">Why do we need additional events?</h4>
-    <p class="faqanswer">While many use case could be implemented without an additional event (by requiring the app to provide all the information up front), some use cases may be better handled by an event.</p>
-
-    <h4 id="faq-why-new-error-code" class="faqquestion">Why do we need a new <code><a href="#dom-mediaerror">MediaError</a></code> code?</h4>
-    <p class="faqanswer">Without a new error code (<code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code>), it is not possible for user agents to clearly indicate to an application that playback failed because the content was encrypted and user agents will likely need to fire a <code>MEDIA_ERR_DECODE</code> or <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>, which would be confusing.</p>
-
-    <h4 id="faq-error-break-apps" class="faqquestion">Will adding a new error code to <code><a href="#dom-mediaerror">MediaError</a></code> break existing applications?</h4>
-    <p class="faqanswer">Applications that are not aware of the new error code (<code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code>) may not correctly handle it, but they should still be able to detect that an error has occurred because a) an error event is fired and b) <var title="">media</var>. <code title="dom-media-error"><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#mediaerror">error</a></code></code> is not null.</p>
-
-    <h4 id="faq-response-needkey" class="faqquestion">What happens if a response to the <code><a href="#dom-needkey">needkey</a></code> event from the <a href="#algorithms-encrypted-stream">First Time a Key Reference is Encountered</a> is not received before <a href="#algorithms-enrypted-block">encountering an encrypted block</a>?</h4>
-    <p class="faqanswer">The <a href="#algorithms-enrypted-block">Encrypted Block Encountered algorithm</a> will proceed as normal.</p>
-
-    <h4 id="faq-same-initdata-update" class="faqquestion">What if a key/license for the same key ID is provided more than once to <code><a href="#dom-update">update()</a></code>?</h4>
-    <p class="faqanswer">The CDM will replace previous entries, updating the overall key ordering to reflect that this key ID was most recently added.
-    In other words, simply replacing the existing key data is not sufficient.
-    The exact algorithm is covered in <code><a href="#dom-update">update()</a></code>.
-    </p>
-
-    <h3 id="faq-source">9.4. Source, Containers, and Streams</h3>
-
-    <h4 id="faq-container-codec-support" class="faqquestion">What containers and codecs are supported?</h4>
-    <p class="faqanswer">Containers and codecs are not specified. A user agent may support decryption of whichever container and codec combination(s) it wishes.</p>
-    <p class="faqanswer">If a user agent support decryption of a container/codec combination (as reported by <code><a href="#dom-istypesupported">isTypeSupported()</a></code>), it must also support <a href="#simple-decryption">Simple Decryption</a> of that combination.</p>
-
-    <h4 id="faq-container-code-indicate" class="faqquestion">What if a container/codec does not support indicating the stream or a frame/block is encrypted?</h4>
-    <p class="faqanswer">The application must use <code><a href="#dom-update">update()</a></code> to indicate the stream is encrypted and provide the key before decoding starts.</p>
-
-    <h4 id="faq-must-init-data" class="faqquestion">Must the container provide Initialization Data or a content key ID?</h4>
-    <p class="faqanswer">Yes.</p>
-
-    <h4 id="faq-adaptive-streaming-multiple-keys" class="faqquestion">Can I use different keys for each stream (<a href="#faq-adaptive-streaming">adaptive streaming</a>)?</h4>
-    <p class="faqanswer">Yes, though you may want to consider the complexity and performance drawbacks. For the best user experience, you will want to provide keys for the streams to the user agent before the switch.</p>
-
-    <h4 id="faq-elements-encrypted" class="faqquestion">What elements of the source are encrypted?</h4>
-    <p class="faqanswer">This depends on the container/codec being used. This proposal should support all cases, including entirely encrypted streams, individual frames encrypted separately, groups of frames encrypted, and portions of frames encrypted.
-    If not all blocks or frames are encrypted, the user agent should be able to easily detect this, either based on an indication in the container or the block/frame.</p>
-
-    <h4 id="faq-all-blocks-encrypted" class="faqquestion">Must all blocks/frames in a stream be encrypted?</h4>
-    <p class="faqanswer">No, subject to container/codec limitations.</p>
-
-    <h4 id="faq-ciphers-parameters" class="faqquestion">What cipher and parameters should be used for decryption?</h4>
-    <p class="faqanswer">The cipher and parameters should be implicit in or specified by the container. If some are optional, the application must know what is supported by the <a href="#cdm">CDM</a>.</p>
-
-    <h4 id="faq-simple-decryption" class="faqquestion">What cipher and parameters should be used for <a href="#simple-decryption">Simple Decryption</a>? Which must the user agent support?</h4>
-    <p class="faqanswer">As in the above question, these are either implicit in or specified by the container. User agents must support any default or baseline ciphers and parameters in the container specification. Practically, user agents should support all ciphers and parameters commonly used with the container.</p>
-
-    <h3 id="faq-protection">9.5. Content and Key Protection</h3>
-
-    <h4 id="faq-ensure-protected" class="faqquestion">Can I ensure the content key is protected without working with a content protection provider?</h4>
-    <p class="faqanswer">No. Protecting the content key would require that the browser's media stack have some secret that cannot easily be obtained. This is the type of thing DRM solutions provide. Establishing a standard mechanism to support this is beyond the scope of HTML5 standards and should be deferred to specific user agent solutions. In addition, it is not something that fully open source browsers could natively support.</p>
-    <p class="faqanswer">Content protected using this proposal without a content protection provider is still more secure and a higher barrier than providing an unencrypted file over HTTP or HTTPS. We would also argue that it is no less secure than encrypted HLS. For long streams, <a href="#faq-key-rotation">key rotation</a> can provide additional protection.</p>
-    <p class="faqanswer">It is also possible to extend the proposed specification in the future to support a more robust basic case <strong>without changing the API</strong>.</p>
-
-    <h4 id="faq-multiple-cdm-support" class="faqquestion">Can a user agent support multiple content protection providers?</h4>
-    <p class="faqanswer">Yes. The application will query the user agent's capabilities and select the <a href="#key-system">Key System</a> to use.</p>
-
-    <h4 id="faq-protect-compressed" class="faqquestion">Can a user agent protect the compressed content?</h4>
-    <p class="faqanswer">Yes, this proposal naturally supports such protection.</p>
-
-    <h4 id="faq-protect-rendering" class="faqquestion">Can a user agent protect the rendering path or protect the uncompressed content after decoding?</h4>
-    <p class="faqanswer">Yes, a user agent could use platform-specific capabilities to protect the rendering path.
-    </p>
-
-
-    <h2 id="revision-history">10. Revision History</h2>
+    <h2 id="revision-history">9. Revision History</h2>
     <table>
       <thead>
         <tr>
