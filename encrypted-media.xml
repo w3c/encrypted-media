@@ -141,13 +141,13 @@
           <li><a href="#event-definitions">3.1 Event Definitions</a></li>
           <li><a href="#event-summary">3.2 Event Summary</a></li>
         </ul></li>
-      <li><a href="#key-release">4. Key Release</a></li>
-      <li><a href="#algorithms">5. Algorithms</a></li>
+      <li><a href="#algorithms">4. Algorithms</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#algorithms-encrypted-stream">5.1. First Time a Key Reference is Encountered</a></li>
-          <li><a href="#algorithms-enrypted-block">5.2. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-load">5.3. Addition to Media Element Load Algorithm</a></li>
+          <li><a href="#algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</a></li>
+          <li><a href="#algorithms-enrypted-block">4.2. Encrypted Block Encountered</a></li>
+          <li><a href="#algorithms-load">4.3. Addition to Media Element Load Algorithm</a></li>
         </ul></li>
+      <li><a href="#key-release">5. Key Release</a></li>
       <li><a href="#simple-decryption">6. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#simple-decryption-clear-key">6.1. Clear Key</a></li>
@@ -706,30 +706,10 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       </tbody>
     </table>
 
-    <h2 id="key-release">4. Key Release</h2>
-    <p class="non-normative">Note: it is an open issue whether further normative specification of this feature is required. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p>
-    <h3 id="key-release-intro">4.1. Introduction</h3>
-    <non-normative-section/>
-    <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
-    This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
-    Use cases for such proof include any service where is it necessary for the service to know, reliably, which granted keys/licences are still available for use by the user and which have been deleted.
-    Examples include a service with restrictions on the number of concurrent streams available to a user or a service where content is available on a rental basis, for use offline.
-    </p>
-    
-    <p>Secure proof of key release must necessarily involve the CDM due to the relative ease with which scripts may be modified.
-    The CDM must provide a message asserting, in a CDM-specific form, that a specific key or license has been destroyed.
-    Such messages must be cached in the CDM until acknowledgement of their delivery to the service has been received.
-    This acknowledgement must also be in the form of a CDM-specific message.
-    </p>
-    
-    <p>The mechanism for secure proof of key release operates outside the scope of any <a href="#media-element">media element</a>.
-    This is because proof-of-release messages may be cached in CDMs after the associated media elements have been destroyed.
-    Proof-of-key-release messages are subject to the same origin policy: they shall only be delivered to scripts with the same origin as the script which created the media element that provided the key/license.
-    </p>
 
-    <h2 id="algorithms">5. Algorithms</h2>
+    <h2 id="algorithms">4. Algorithms</h2>
 
-    <h3 id="algorithms-encrypted-stream">5.1. First Time a Key Reference is Encountered</h3>
+    <h3 id="algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -787,7 +767,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
     </ol>
 
-    <h3 id="algorithms-enrypted-block">5.2. Encrypted Block Encountered</h3>
+    <h3 id="algorithms-enrypted-block">4.2. Encrypted Block Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -858,13 +838,35 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
-    <h3 id="algorithms-load">5.3. Addition to Media Element Load Algorithm</h3>
+    <h3 id="algorithms-load">4.3. Addition to Media Element Load Algorithm</h3>
     <p>The following step is added to the existing <media-element-load-algorithm/>:</p>
     <ul>
       <li><p>Clear the <coderef>keys</coderef> attribute for this <a href="#media-element">media element</a>.</p>
       <p class="non-normative">This also means the <coderef>keys</coderef> attribute will be cleared when the <videoref name="attr-media-src">src</videoref> attribute is set or changed per <videoanchor name="location-of-the-media-resource">Location of the media resource</videoanchor></p>
       </li>
     </ul>
+
+
+    <h2 id="key-release">5. Key Release</h2>
+    <p class="non-normative">Note: it is an open issue whether further normative specification of this feature is required. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p>
+    <h3 id="key-release-intro">5.1. Introduction</h3>
+    <non-normative-section/>
+    <p>The above sections provide for delivery of key/license information to a <a href="#cdm">Content Decryption Module</a>.
+    This section provides for management of the entire key/license lifecycle, that is, secure proof of key release.
+    Use cases for such proof include any service where is it necessary for the service to know, reliably, which granted keys/licences are still available for use by the user and which have been deleted.
+    Examples include a service with restrictions on the number of concurrent streams available to a user or a service where content is available on a rental basis, for use offline.
+    </p>
+    
+    <p>Secure proof of key release must necessarily involve the CDM due to the relative ease with which scripts may be modified.
+    The CDM must provide a message asserting, in a CDM-specific form, that a specific key or license has been destroyed.
+    Such messages must be cached in the CDM until acknowledgement of their delivery to the service has been received.
+    This acknowledgement must also be in the form of a CDM-specific message.
+    </p>
+    
+    <p>The mechanism for secure proof of key release operates outside the scope of any <a href="#media-element">media element</a>.
+    This is because proof-of-release messages may be cached in CDMs after the associated media elements have been destroyed.
+    Proof-of-key-release messages are subject to the same origin policy: they shall only be delivered to scripts with the same origin as the script which created the media element that provided the key/license.
+    </p>
 
 
     <h2 id="simple-decryption">6. Simple Decryption</h2>
