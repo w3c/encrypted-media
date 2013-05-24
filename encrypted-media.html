@@ -275,7 +275,7 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
 
   <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(DOMString type, Uint8Array initData);
 
-  static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMString type, DOMstring <a href="#key-system">keySystem</a>);
+  static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, DOMString? type);
 };
 
 interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventtarget">EventTarget</a> {
@@ -419,18 +419,18 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>Return the new object to the caller.</li>
     </ol>
 
-    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(type, keySystem)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">type</var>(s).</p>
+    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(keySystem, type)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">type</var>(s).</p>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem")</pre></dd>
         <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(null, "com.example.somesystem.1_5")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem.1_5")</pre></dd>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "com.example.somesystem")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">mimeType</var>)</pre></dd>
         <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported(<var title="true">mimeType</var>, "org.w3.clearkey")</pre></dd>
+        <dd><pre class="code">MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">mimeType</var>)</pre></dd>
       </dl>
     </div>
     
@@ -1161,16 +1161,16 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
   var licenseUrl;
 
   function selectKeySystem() {
-    if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem")) {
+    if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.2_0")) {
+      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem.2_0", "video/webm; codecs='vp8, vorbis'")) {
         keySystem = "com.example.somesystem.2_0";
-      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "com.example.somesystem.1_5")) {
+      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem.1_5", "video/webm; codecs='vp8, vorbis'")) {
         keySystem = "com.example.somesystem.1_5";
       }
-    } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("video/webm; codecs='vp8, vorbis'", "foobar")) {
+    } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.foobar", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.foobar.com/request";
-      keySystem = "foobar";
+      keySystem = "com.foobar";
     } else {
       throw "Key System not supported";
     }
