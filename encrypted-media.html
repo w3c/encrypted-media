@@ -57,7 +57,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 28 May 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 4 June 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -256,6 +256,12 @@
     This data has a container-specific format and is assumed to contain one or more generic or Key System-specific sets of initialization information.
     </p>
 
+    <h4 id="cross-origin-support">1.2.5. Cross Origin Support</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <code><a href="#dom-needkey">needkey</a></code>
+    and <code><a href="#dom-keymessage">keymessage</a></code> events, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> needs to be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page or
+    use the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-img-crossorigin">crossorigin</a> attribute on the
+    media element and CORS headers on the media data response to authorize cross-origin information exposure.
+    </p>
 
     <h2 id="extensions">2. Media Element Extensions</h2>
     <p>We extend <dfn id="media-element" title="media element"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element">media element</a></dfn> to allow decryption key acquisition to be handled in JavaScript.</p>
@@ -379,7 +385,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use <var title="true">cdm</var> to generate a key request and follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
-              <dt>If a request is successfully generated</dt>
+              <dt>If a request is successfully generated and the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>
+</dt>
               <dd>
               <ol>
                 <li>
@@ -491,6 +498,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>If <var title="true">did store key</var> is true and the <a href="#media-element">media element</a> is <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
           </li>
+          <li><p>If <var title="true">next message</var> is not null and the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is not <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>, jump to the <i>Error</i> step below and perform the task failed steps.</p></li>
           <li>
 <p>If <var title="true">next message</var> is not null, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keymessage">keymessage</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p>
              <p>The event is of type <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> and has:</p>
@@ -501,7 +509,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>If <var title="true">did store key</var> is true, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyadded">keyadded</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
           <li>
-<p>If any of the preceding steps in the task failed</p>
+<p><i>Error</i>: If any of the preceding steps in the task failed</p>
               <ol>
                 <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
@@ -585,7 +593,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
           <li>The media element's <code><a href="#dom-keys">keys</a></code> attribute is null</li>
         </ol>
       </dd>
-      <p class="non-normative">Applications that support encrypted media should provide a <code><a href="#dom-needkey">needkey</a></code> handle and/or call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> no later than when <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided.</p>
+      <p class="non-normative">Applications that support encrypted media should provide a <code><a href="#dom-needkey">needkey</a></code> handler and/or call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> no later than when <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided.</p>
       <p class="non-normative">If the user agent does not support decryption of this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it should report the same error it would for any other unsupported media data (e.g. <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>).</p>
     </dl>
 
@@ -801,7 +809,15 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
         </ol>
       </li>
       <li>
-<p><i>Need Key</i>: <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
+<p><i>Need Key</i>:</p>
+        <dl class="switch">
+          <dt>If the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>
+</dt>
+          <dd>
+<a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</dd>
+          <dt>Otherwise</dt>
+          <dd>Abort media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a> and run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error.</dd>
+        </dl>
         <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
         <ul style="list-style-type:none"><li>
           <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
@@ -848,7 +864,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
           </dl>
           <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
         </dd>
-        <dt>If there is an event handler for <code><a href="#dom-needkey">needkey</a></code>
+        <dt>If there is an event handler for <code><a href="#dom-needkey">needkey</a></code> and the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>
 </dt>
         <dd>
         <p>Take no action.</p>

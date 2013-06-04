@@ -116,6 +116,10 @@
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#queue-a-task</xsl:attribute>queue a task</a>
   </xsl:template>
 
+  <xsl:template match="//Queue-a-task">
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#queue-a-task</xsl:attribute>Queue a task</a>
+  </xsl:template>
+
   <xsl:template match="//fire-a-simple-event">
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event</xsl:attribute>fire a simple event</a>
   </xsl:template>
@@ -134,6 +138,10 @@
 
   <xsl:template match="//ascii-encoding">
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#ascii-compatible-character-encoding</xsl:attribute>ASCII-compatible character encoding</a>
+  </xsl:template>
+
+  <xsl:template match="//cors-same-origin">
+    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin</xsl:attribute>CORS-same-origin</a>
   </xsl:template>
 
   <xsl:template match="//non-normative-section">
