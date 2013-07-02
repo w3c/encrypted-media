@@ -57,7 +57,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 4 June 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 2 July 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -307,11 +307,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     
     <ol>
       <li>
-<p>If loading has not started, throw an <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>.</p>
+<p>If loading has not started, throw an <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p>
       <p class="non-normative">In general, applications should wait for an event named <code><a href="#dom-needkey">needkey</a></code> or <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-loadstart">loadstart</a></code> (per the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>) before calling this method.</p>
       </li>
+      <li><p>If the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is already in use and the user agent is unable to re-use it with this element, throw a <code><a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-quota_exceeded_err">QUOTA_EXCEEDED_ERR</a></code> exception and abort these steps.</p></li>
       <li>Set the <code><a href="#dom-keys">keys</a></code> attribute of the media element to <var>mediaKeys</var>.</li>
     </ol>
+    
+    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element with <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
     <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 

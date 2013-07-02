@@ -96,6 +96,10 @@
     <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-type_mismatch_err</xsl:attribute>TYPE_MISMATCH_ERR</a></code>
   </xsl:template>
 
+  <xsl:template match="//quota-exceeded-err">
+    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-quota_exceeded_err</xsl:attribute>QUOTA_EXCEEDED_ERR</a></code>
+  </xsl:template>
+
   <xsl:template match="//readystate">
     <code title="dom-media-readyState"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate</xsl:attribute>readyState</a></code>
   </xsl:template>

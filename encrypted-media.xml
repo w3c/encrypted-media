@@ -56,7 +56,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 4 June 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 2 July 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -302,11 +302,14 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <p>The <methoddfn name="setMediaKeys">setMediaKeys</methoddfn> method provides the <coderef>MediaKeys</coderef> to use. When calling this method, the media element must run the following steps:</p>
     
     <ol>
-      <li><p>If loading has not started, throw an <invalid-state-err/>.</p>
+      <li><p>If loading has not started, throw an <invalid-state-err/> exception and abort these steps.</p>
       <p class="non-normative">In general, applications should wait for an event named <coderef>needkey</coderef> or <videoref name="event-media-loadstart">loadstart</videoref> (per the <resource-fetch-algorithm/>) before calling this method.</p>
       </li>
+      <li><p>If the <coderef>MediaKeys</coderef> object is already in use and the user agent is unable to re-use it with this element, throw a <quota-exceeded-err/> exception and abort these steps.</p></li>
       <li>Set the <coderef>keys</coderef> attribute of the media element to <var>mediaKeys</var>.</li>
     </ol>
+    
+    <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects created by <methodref>createSession</methodref> may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element with <methodref>setMediaKeys</methodref>.</p>
 
     <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
