@@ -215,12 +215,14 @@
     </p>
 
     <p>A Key System string is always a reverse domain name. <span class="non-normative">For example, "com.example.somesystem".</span>
-    Within a given system <span class="non-normative">("somesystem" in the example)</span>, subsystems may be defined as determined by the key system provider.
-    <span class="non-normative">For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".</span>
-    <span class="non-normative">Key System providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.</span>
+    Key System strings are compared using case-sensitive matching. <span class="non-normative">It is recommended that CDMs use simple lower-case ASCII key system strings.</span></p>
+
+    <p class="non-normative">
+    Within a given system ("somesystem" in the example), subsystems may be defined as determined by the key system provider.
+    For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".
+    Key System providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.
     </p>
 
-    <p>Key System strings are compared using case-sensitive matching. <span class="non-normative">It is recommended that CDMs use simple lower-case ASCII key system strings.</span></p>
 
     <h4 id="session-id">1.2.3. Session ID</h4>
     <p>A session ID is an optional string ID used to associate calls related to a key/license lifetime, starting with the request.
@@ -438,8 +440,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <dl>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem")</pre></dd>
-        <dt>Returns whether version 1.5 of the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System 1.5.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem.1_5")</pre></dd>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">mimeType</var>)</pre></dd>
         <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
@@ -1190,11 +1190,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
   function selectKeySystem() {
     if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-      if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem.2_0", "video/webm; codecs='vp8, vorbis'")) {
-        keySystem = "com.example.somesystem.2_0";
-      } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.example.somesystem.1_5", "video/webm; codecs='vp8, vorbis'")) {
-        keySystem = "com.example.somesystem.1_5";
-      }
+      keySystem = "com.example.somesystem";
     } else if (<a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-istypesupported">isTypeSupported</a>("com.foobar", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.foobar.com/request";
       keySystem = "com.foobar";
