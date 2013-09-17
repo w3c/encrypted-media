@@ -61,7 +61,7 @@
   </xsl:template>
 
   <xsl:template match="//dom4ref">
-    <a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
+    <a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
 
   <xsl:template match="//media-element-load-algorithm">
@@ -89,19 +89,19 @@
   </xsl:template>
 
   <xsl:template match="//invalid-access-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//invalid-state-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_access_err</xsl:attribute>INVALID_ACCESS_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_access_err</xsl:attribute>INVALID_ACCESS_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//type-mismatch-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-type_mismatch_err</xsl:attribute>TYPE_MISMATCH_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-type_mismatch_err</xsl:attribute>TYPE_MISMATCH_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//quota-exceeded-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-quota_exceeded_err</xsl:attribute>QUOTA_EXCEEDED_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-quota_exceeded_err</xsl:attribute>QUOTA_EXCEEDED_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//readystate">
