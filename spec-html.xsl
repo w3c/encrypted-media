@@ -77,15 +77,15 @@
   </xsl:template>
 
   <xsl:template match="//not-supported-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-not_supported_err</xsl:attribute>NOT_SUPPORTED_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-not_supported_err</xsl:attribute>NOT_SUPPORTED_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//invalid-state-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//syntax-err">
-    <code><a><xsl:attribute name="href">http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-syntax_err</xsl:attribute>SYNTAX_ERR</a></code>
+    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-syntax_err</xsl:attribute>SYNTAX_ERR</a></code>
   </xsl:template>
 
   <xsl:template match="//invalid-access-err">
