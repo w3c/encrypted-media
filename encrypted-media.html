@@ -327,37 +327,36 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>If <var title="true">keySystem</var> is not one of the user agent's supported <a href="#key-system">Key Systems</a>, throw a <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> and abort these steps. Key system string comparison is case-sensitive.</p></li>
 
       <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
-
-      <li>
-<p>Load <var title="true">cdm</var> if necessary.</p>
-        <div class="issue">
-<div class="issue-title"><span>Issue 1</span></div>
-<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20991">Bug 20991</a> - The CDM should be loaded asynchronously.</p>
-</div>
-        <dl class="switch">
-          <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
-          <dd><ol>
-            <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-              <ul style="list-style-type:none"><li>
-                <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
-                <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-              </li></ul>
-            </li>
-            <li><p>Set the new object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
-            <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the new object.</p></li>
-            <li><p>Abort these steps.</p></li>
-          </ol></dd>
-        </dl>
-      </li>
-      
+            
       <li>Create a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object.
         <ol>
           <li><p>Let the <code><a href="#dom-keysystem">keySystem</a></code> attribute be <var title="true">keySystem</var>.</p></li>
         </ol>
       </li>
 
-      <li>Return the new object to the caller.</li>
+      <li>
+        <p>The user agent will asynchronously execute the following steps:</p>
+        <ol>
+          <li><p>Load <var title="true">cdm</var> if necessary.</p></li>
+          <li>
+            <dl class="switch">
+              <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
+              <dd><ol>
+                <li>
+<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
+                  <ul style="list-style-type:none"><li>
+                    <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                    <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                  </li></ul>
+                </li>
+                <li><p>Store this new error object internally with the <codref>MediaKeys</codref> instance being created. This will be used to fire an error against any session created for this instance.</p></li>
+              </ol></dd>
+            </dl>
+          </li>
+        </ol>
+      </li>
+
+      <li>Return the new <code><a href="#dom-mediakeys">MediaKeys</a></code> object to the caller.</li>
     </ol>
 
     <p>When destroying a <code><a href="#dom-mediakeys">MediaKeys</a></code> object, follow the steps in <code><a href="#dom-close">close()</a></code>.</p>
@@ -381,6 +380,11 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       </li>
       
       <li><p>Add the new object to an internal list of session objects.</p></li>
+
+      <li><p>
+        If there is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object that occurred because of an error loading the <var title="true">cdm</var>
+        then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object and abort these steps.
+      </p></li>
 
       <li>
 <p>Schedule a task to generate a key request, providing <var title="true">type</var>, <var title="true">initData</var>, and the new object.</p>

@@ -322,32 +322,35 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">keySystem</var> is not one of the user agent's supported <a href="#key-system">Key Systems</a>, throw a <not-supported-err/> and abort these steps. Key system string comparison is case-sensitive.</p></li>
 
       <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
-
-      <li><p>Load <var title="true">cdm</var> if necessary.</p>
-        <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20991">Bug 20991</a> - The CDM should be loaded asynchronously.</p></div>
-        <dl class="switch">
-          <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
-          <dd><ol>
-            <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
-              <ul style="list-style-type:none"><li>
-                <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
-                <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
-              </li></ul>
-            </li>
-            <li><p>Set the new object's <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
-            <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the new object.</p></li>
-            <li><p>Abort these steps.</p></li>
-          </ol></dd>
-        </dl>
-      </li>
-      
+            
       <li>Create a new <coderef>MediaKeys</coderef> object.
         <ol>
           <li><p>Let the <coderef>keySystem</coderef> attribute be <var title="true">keySystem</var>.</p></li>
         </ol>
       </li>
 
-      <li>Return the new object to the caller.</li>
+      <li>
+        <p>The user agent will asynchronously execute the following steps:</p>
+        <ol>
+          <li><p>Load <var title="true">cdm</var> if necessary.</p></li>
+          <li>
+            <dl class="switch">
+              <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
+              <dd><ol>
+                <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
+                  <ul style="list-style-type:none"><li>
+                    <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                    <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                  </li></ul>
+                </li>
+                <li><p>Store this new error object internally with the <codref>MediaKeys</codref> instance being created. This will be used to fire an error against any session created for this instance.</p></li>
+              </ol></dd>
+            </dl>
+          </li>
+        </ol>
+      </li>
+
+      <li>Return the new <coderef>MediaKeys</coderef> object to the caller.</li>
     </ol>
 
     <p>When destroying a <coderef>MediaKeys</coderef> object, follow the steps in <methodref>close</methodref>.</p>
@@ -371,6 +374,11 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </li>
       
       <li><p>Add the new object to an internal list of session objects.</p></li>
+
+      <li><p>
+        If there is a <coderef>MediaKeyError</coderef> stored with the <coderef>MediaKeys</coderef> object that occurred because of an error loading the <var title="true">cdm</var>
+        then <queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <coderef>MediaKeySession</coderef> object and abort these steps.
+      </p></li>
 
       <li><p>Schedule a task to generate a key request, providing <var title="true">type</var>, <var title="true">initData</var>, and the new object.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
