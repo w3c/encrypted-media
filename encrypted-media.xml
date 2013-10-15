@@ -128,8 +128,7 @@
     <ul style="list-style-type:none">
       <li><a href="#introduction">1. Introduction</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#goals">1.1 Goals</a></li>
-          <li><a href="#definitions">1.2. Definitions</a></li>
+          <li><a href="#definitions">1.1. Definitions</a></li>
         </ul></li>
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
@@ -174,38 +173,17 @@
     This is just an example flow and is not intended to show all possible communication or uses.</p>
     <img src="stack_overview.png" alt="A generic stack implemented using the proposed APIs" height="700"></img>
 
-    <h3 id="goals">1.1 Goals</h3>
-    <non-normative-section/>
-    <p>This proposal was designed with the following goals in mind:</p>
-    <ul>
-      <li>Support simple decryption without the need for DRM servers, etc.</li>
-      <li>Support a wide range of media containers and codecs.</li>
-      <li>Support a range of content security models, including software and hardware-based models</li>
-      <li>Stream reusability - the actual encrypted content stream/file for a given container/codec should be identical regardless of the user agent and content decryption and protection mechanism.</li>
-      <li>Support a wide range of use cases.</li>
-      <li>Flexibility (and control) for applications and content providers without requiring client/user agent updates.</li>
-      <li>Minimize additions to HTMLMediaElement and new capabilities added to the user agent.
-      <ul>
-        <li>Defer all information and algorithms about the content decryption and protection solution to the application/server and client <a href="#cdm">content decryption module</a>. The user agent should just pass information.</li>
-        <li>The user agent should not be responsible for communication with license servers.</li>
-        <li>The user agent should not select among content decryption and protection options. The application should make this decision.</li>
-        <li>Note: Applications are already capable of everything required except secure decryption and decode.</li>
-      </ul></li>
-      <li>Compatible with adaptive streaming.</li>
-      <li>Usability.</li>
-    </ul>
-
-    <h3 id="definitions">1.2. Definitions</h3>
+    <h3 id="definitions">1.1. Definitions</h3>
     <p>Text in <span class="non-normative">this font and color</span> is non-normative.</p>
 
-    <h4 id="cdm">1.2.1. Content Decryption Module (CDM)</h4>
+    <h4 id="cdm">1.1.1. Content Decryption Module (CDM)</h4>
     <non-normative-section/>
     <p>The Content Decryption Module (CDM) is a generic term for a part of or add-on to the user agent that provides functionality for one or more <a href="#key-system">Key Systems</a>.
     Implementations may or may not separate the implementations of CDMs and may or may not treat them as separate from the user agent.
     This is transparent to the API and application.
     A user agent may support one or more CDMs.</p>
 
-    <h4 id="key-system">1.2.2. Key System</h4>
+    <h4 id="key-system">1.1.2. Key System</h4>
     <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
     Key System strings provide unique identification of a Key System.
     They are used by the user agent to select the <a href="#cdm">Content Decryption Modules</a> and identify the source of a key-related event.
@@ -222,7 +200,7 @@
     </p>
 
 
-    <h4 id="session-id">1.2.3. Session ID</h4>
+    <h4 id="session-id">1.1.3. Session ID</h4>
     <p>A Session ID is a string ID that can be used to associate calls related to a key/license lifetime, starting with the request.
     <span class="non-normative">It is a local binding between a request and key/license.
     It does not associate keys or licenses for different streams (i.e. audio and video).</span>
@@ -237,7 +215,7 @@
     <p>Each SessionID shall be unique within the browsing context in which it was created. If secure proof of key release is supported each Session ID shall
     be unique within the origin. Note that this last requirement implies that Session IDs shall be unique over time including across browsing sessions.</p>
 
-    <h4 id="initialization-data">1.2.4. Initialization Data</h4>
+    <h4 id="initialization-data">1.1.4. Initialization Data</h4>
     <non-normative-section/>
     <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
     It should always allow unique identification of the key or keys needed to decrypt the content, possibly after being parsed by a CDM or server.
@@ -253,7 +231,7 @@
     This data has a container-specific format and is assumed to contain one or more generic or Key System-specific sets of initialization information.
     </p>
 
-    <h4 id="cross-origin-support">1.2.5. Cross Origin Support</h4>
+    <h4 id="cross-origin-support">1.1.5. Cross Origin Support</h4>
     <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>needkey</coderef>
     and <coderef>keymessage</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
