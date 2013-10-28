@@ -89,10 +89,6 @@
   </xsl:template>
 
   <xsl:template match="//invalid-access-err">
-    <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
-  </xsl:template>
-
-  <xsl:template match="//invalid-state-err">
     <code><a><xsl:attribute name="href">https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_access_err</xsl:attribute>INVALID_ACCESS_ERR</a></code>
   </xsl:template>
 
