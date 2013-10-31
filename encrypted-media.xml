@@ -55,7 +55,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 28 October 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 30 October 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -213,7 +213,7 @@
     </p>
 
     <p>A new Session ID is generated each time the user agent successfully initializes a <coderef>MediaKeySession</coderef> object.
-    It must be valid before the <coderef>MediaKeySession</coderef> enters the <coderef>PENDING</coderef> or <coderef>READY</coderef> states and the user agent fires the associated events.
+    It must be valid before the <coderef>MediaKeySession</coderef> enters the <coderef prefix="state">PENDING</coderef> or <coderef prefix="state">READY</coderef> states and the user agent fires the associated events.
     </p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
@@ -238,7 +238,7 @@
 
     <h4 id="cross-origin-support">1.1.6. Cross Origin Support</h4>
     <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>needkey</coderef>
-    and <coderef>keymessage</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
+    and <coderef prefix="event">message</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
     </p>
@@ -351,7 +351,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>Create a new <coderef>MediaKeySession</coderef> object.
         <ol>
           <li><p>Let the <coderef>keySystem</coderef> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <coderef>CREATED</coderef>.</p></li>
+          <li><p>Let the state of the session be <coderef prefix="state">CREATED</coderef>.</p></li>
         </ol>
       </li>
       
@@ -359,7 +359,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
       <li><p>
         If there is a <coderef>MediaKeyError</coderef> stored with the <coderef>MediaKeys</coderef> object that occurred because of an error loading the <var title="true">cdm</var>
-        then <queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <coderef>MediaKeySession</coderef> object and abort these steps.
+        then <queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <coderef>MediaKeySession</coderef> object and abort these steps.
       </p></li>
 
       <li><p>Schedule a task to initialize the session, providing <var title="true">type</var>, <var title="true">initData</var>, and the new object.</p>
@@ -394,7 +394,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 </li>
                 <li><p>Set the <coderef>MediaKeySession</coderef> object's <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
                 <li><p>Let the state of the session be <coderef prefix="state">ERROR</coderef>.</p></li>
-                <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+                <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
                 <li><p>Abort the task.</p></li>
               </ol>
           </li>
@@ -403,9 +403,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <coderef>PENDING</coderef>.</p></li>
+                  <li><p>Let the state of the session be <coderef prefix="state">PENDING</coderef>.</p></li>
                   <li>
-                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keymessage</coderef> at the new object.</p>
+                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the new object.</p>
                     <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
                     <ul style="list-style-type:none"><li>
                       <coderef>message</coderef> = <var title="true">request</var><br></br>
@@ -417,8 +417,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <coderef>READY</coderef>.</p></li>
-                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyready</coderef> at the new object.</p></li>
+                  <li><p>Let the state of the session be <coderef prefix="state">READY</coderef>.</p></li>
+                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">ready</coderef> at the new object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -461,7 +461,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <ol>
       <li><p>If the argument is null or an empty array, throw an <invalid-access-err/>.</p></li>
-      <li><p>If the session is not in the <coderef>PENDING</coderef> state, throw an <invalid-state-err/>.</p></li>
+      <li><p>If the session is not in the <coderef prefix="state">PENDING</coderef> state, throw an <invalid-state-err/>.</p></li>
 
       <li><p>Schedule a task to handle the call, providing <var title="true">key</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
@@ -505,7 +505,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 </li>
                 <li><p>Set the <coderef>MediaKeySession</coderef> object's <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
                 <li><p>Let the state of the session be <coderef prefix="state">ERROR</coderef>.</p></li>
-                <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyerror</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+                <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
                 <li><p>Abort the task.</p></li>
               </ol>
           </li>
@@ -514,9 +514,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <coderef>PENDING</coderef>.</p></li>
+                  <li><p>Let the state of the session be <coderef prefix="state">PENDING</coderef>.</p></li>
                   <li>
-                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keymessage</coderef> at the <coderef>MediaKeySession</coderef> object.</p>
+                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <coderef>MediaKeySession</coderef> object.</p>
                     <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
                     <ul style="list-style-type:none"><li>
                       <coderef>message</coderef> = <var title="true">request</var><br></br>
@@ -528,8 +528,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <coderef>READY</coderef>.</p></li>
-                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef>keyready</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+                  <li><p>Let the state of the session be <coderef prefix="state">READY</coderef>.</p></li>
+                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">ready</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -631,20 +631,20 @@ interface <precodedfn>MediaKeyError</precodedfn> {
       </thead>
       <tbody>
         <tr>
-          <td><codedfn>CREATED</codedfn></td>
+          <td><codedfn prefix="state">CREATED</codedfn></td>
           <td>The <coderef>MediaKeySession</coderef> has been created with a <methodref>createSession</methodref> call.</td>
         </tr>
         <tr>
-          <td><codedfn>PENDING</codedfn></td>
-          <td>A <coderef>keymessage</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. A call to <methodref>update</methodref> is expected next. The <a href="#media-element">media element</a> may block waiting for a key if encrypted data is encountered.</td>
+          <td><codedfn prefix="state">PENDING</codedfn></td>
+          <td>A <coderef prefix="event">message</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. A call to <methodref>update</methodref> is expected next. The <a href="#media-element">media element</a> may block waiting for a key if encrypted data is encountered.</td>
         </tr>
         <tr>
-          <td><codedfn>READY</codedfn></td>
-          <td>A <coderef>keyready</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <a href="#media-element">media element</a> should not need to block waiting for a key if encrypted data associated with this session is encountered.</td>
+          <td><codedfn prefix="state">READY</codedfn></td>
+          <td>A <coderef prefix="event">ready</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <a href="#media-element">media element</a> should not need to block waiting for a key if encrypted data associated with this session is encountered.</td>
         </tr>
         <tr>
           <td><codedfn prefix="state">ERROR</codedfn></td>
-          <td>A <coderef>keyerror</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <coderef>error</coderef> attribute of the session holds information about the most recent error.</td>
+          <td>A <coderef prefix="event">error</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <coderef>error</coderef> attribute of the session holds information about the most recent error.</td>
         </tr>
       </tbody>
     </table>
@@ -732,26 +732,26 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
       </thead>
       <tbody>
         <tr>
-          <td><codedfn>keyerror</codedfn></td>
+          <td><codedfn prefix="event">error</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
           <td>An error occurs in the session. The session moves to the <coderef prefix="state">ERROR</coderef> state.</td>
           <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
-          <td><codedfn>keymessage</codedfn></td>
+          <td><codedfn prefix="event">message</codedfn></td>
           <td><coderef>MediaKeyMessageEvent</coderef></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
             <span class="non-normative">For example, a key request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
-            The session moves to the <coderef>PENDING</coderef> state.
+            The session moves to the <coderef prefix="state">PENDING</coderef> state.
           </td>
           <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
-          <td><codedfn>keyready</codedfn></td>
+          <td><codedfn prefix="event">ready</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
           <td>
-            The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <coderef>READY</coderef> state.
+            The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <coderef prefix="state">READY</coderef> state.
           </td>
           <td><!-- No Preconditions. --></td>
         </tr>
@@ -1107,7 +1107,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<precoderef>keymessage</precoderef>",handleMessage,false);
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>",handleMessage,false);
   }
 
   function handleMessage(event) {
@@ -1147,7 +1147,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<precoderef>keymessage</precoderef>",handleMessage,false);
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>",handleMessage,false);
   }
 
   function handleMessage(event) {
@@ -1188,7 +1188,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<precoderef>keymessage</precoderef>",licenseRequestReady,false);
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>",licenseRequestReady,false);
   }
 
   function licenseRequestReady(event) {
@@ -1249,7 +1249,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<precoderef>keymessage</precoderef>",licenseRequestReady,false);
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>",licenseRequestReady,false);
   }
   
   function licenseRequestReady(event) {
@@ -1275,7 +1275,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
 
     <h3 id="example-using-all-events" class="exampleheader">10.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
-    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+    <p class="exampledescription">Note that <code>handleMessage</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
     <div class="example">
       <pre class="code">
@@ -1296,7 +1296,7 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     xmlhttp.send(message);
   }
 
-  function handleKeyMessage(event) {
+  function handleMessage(event) {
     var keySession = event.target;
     var message = event.<precoderef>message</precoderef>;
     if (!message)
@@ -1305,11 +1305,11 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     sendMessage(message, keySession);
   }
 
-  function handleKeyReady(event) {
+  function handleReady(event) {
     // Do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
   }
 
-  function handleKeyError(event) {
+  function handleError(event) {
     // Report event.target.error.<precoderef>code</precoderef> and event.target.error.<precoderef>systemCode</precoderef>,
     // and do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
   }
@@ -1329,9 +1329,9 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<precoderef>keymessage</precoderef>",handleKeyMessage,false);
-    keySession.addEventListener("<precoderef>keyready</precoderef>",handleKeyReady,false);
-    keySession.addEventListener("<precoderef>keyerror</precoderef>",handleKeyError,false);
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>",handleMessage,false);
+    keySession.addEventListener("<precoderef prefix="event">ready</precoderef>",handleReady,false);
+    keySession.addEventListener("<precoderef prefix="event">error</precoderef>",handleError,false);
   }
 &lt;/script&gt;
 

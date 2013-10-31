@@ -56,7 +56,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 28 October 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 30 October 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -216,7 +216,7 @@
     </p>
 
     <p>A new Session ID is generated each time the user agent successfully initializes a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
-    It must be valid before the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> enters the <code><a href="#dom-pending">PENDING</a></code> or <code><a href="#dom-ready">READY</a></code> states and the user agent fires the associated events.
+    It must be valid before the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> enters the <code><a href="#dom-statepending">PENDING</a></code> or <code><a href="#dom-stateready">READY</a></code> states and the user agent fires the associated events.
     </p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
@@ -241,7 +241,7 @@
 
     <h4 id="cross-origin-support">1.1.6. Cross Origin Support</h4>
     <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <code><a href="#dom-needkey">needkey</a></code>
-    and <code><a href="#dom-keymessage">keymessage</a></code> events, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page.
+    and <code><a href="#dom-eventmessage">message</a></code> events, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page.
     If <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is cross-origin with the embedding document, authors should use the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-crossorigin">crossorigin</a> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> response to make it <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>.
     </p>
@@ -356,7 +356,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>Create a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
         <ol>
           <li><p>Let the <code><a href="#dom-keysystem">keySystem</a></code> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <code><a href="#dom-created">CREATED</a></code>.</p></li>
+          <li><p>Let the state of the session be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
         </ol>
       </li>
       
@@ -364,7 +364,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
       <li><p>
         If there is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object that occurred because of an error loading the <var title="true">cdm</var>
-        then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object and abort these steps.
+        then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object and abort these steps.
       </p></li>
 
       <li>
@@ -406,7 +406,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 </li>
                 <li><p>Set the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
                 <li><p>Let the state of the session be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
                 <li><p>Abort the task.</p></li>
               </ol>
           </li>
@@ -416,9 +416,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-pending">PENDING</a></code>.</p></li>
+                  <li><p>Let the state of the session be <code><a href="#dom-statepending">PENDING</a></code>.</p></li>
                   <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keymessage">keymessage</a></code> at the new object.</p>
+                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventmessage">message</a></code> at the new object.</p>
                     <p>The event is of type <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> and has:</p>
                     <ul style="list-style-type:none"><li>
                       <code><a href="#dom-message">message</a></code> = <var title="true">request</var><br>
@@ -430,8 +430,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-ready">READY</a></code>.</p></li>
-                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyready">keyready</a></code> at the new object.</p></li>
+                  <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -474,7 +474,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <ol>
       <li><p>If the argument is null or an empty array, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code>.</p></li>
-      <li><p>If the session is not in the <code><a href="#dom-pending">PENDING</a></code> state, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>.</p></li>
+      <li><p>If the session is not in the <code><a href="#dom-statepending">PENDING</a></code> state, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code>.</p></li>
 
       <li>
 <p>Schedule a task to handle the call, providing <var title="true">key</var>.</p>
@@ -525,7 +525,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 </li>
                 <li><p>Set the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
                 <li><p>Let the state of the session be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyerror">keyerror</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
                 <li><p>Abort the task.</p></li>
               </ol>
           </li>
@@ -535,9 +535,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-pending">PENDING</a></code>.</p></li>
+                  <li><p>Let the state of the session be <code><a href="#dom-statepending">PENDING</a></code>.</p></li>
                   <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keymessage">keymessage</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p>
+                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventmessage">message</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p>
                     <p>The event is of type <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> and has:</p>
                     <ul style="list-style-type:none"><li>
                       <code><a href="#dom-message">message</a></code> = <var title="true">request</var><br>
@@ -549,8 +549,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-ready">READY</a></code>.</p></li>
-                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-keyready">keyready</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                  <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -667,20 +667,20 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
       </thead>
       <tbody>
         <tr>
-          <td><dfn id="dom-created"><code>CREATED</code></dfn></td>
+          <td><dfn id="dom-statecreated"><code>CREATED</code></dfn></td>
           <td>The <code><a href="#dom-mediakeysession">MediaKeySession</a></code> has been created with a <code><a href="#dom-createsession">createSession()</a></code> call.</td>
         </tr>
         <tr>
-          <td><dfn id="dom-pending"><code>PENDING</code></dfn></td>
-          <td>A <code><a href="#dom-keymessage">keymessage</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. A call to <code><a href="#dom-update">update()</a></code> is expected next. The <a href="#media-element">media element</a> may block waiting for a key if encrypted data is encountered.</td>
+          <td><dfn id="dom-statepending"><code>PENDING</code></dfn></td>
+          <td>A <code><a href="#dom-eventmessage">message</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. A call to <code><a href="#dom-update">update()</a></code> is expected next. The <a href="#media-element">media element</a> may block waiting for a key if encrypted data is encountered.</td>
         </tr>
         <tr>
-          <td><dfn id="dom-ready"><code>READY</code></dfn></td>
-          <td>A <code><a href="#dom-keyready">keyready</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. The <a href="#media-element">media element</a> should not need to block waiting for a key if encrypted data associated with this session is encountered.</td>
+          <td><dfn id="dom-stateready"><code>READY</code></dfn></td>
+          <td>A <code><a href="#dom-eventready">ready</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. The <a href="#media-element">media element</a> should not need to block waiting for a key if encrypted data associated with this session is encountered.</td>
         </tr>
         <tr>
           <td><dfn id="dom-stateerror"><code>ERROR</code></dfn></td>
-          <td>A <code><a href="#dom-keyerror">keyerror</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. The <code><a href="#dom-error">error</a></code> attribute of the session holds information about the most recent error.</td>
+          <td>A <code><a href="#dom-eventerror">error</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. The <code><a href="#dom-error">error</a></code> attribute of the session holds information about the most recent error.</td>
         </tr>
       </tbody>
     </table>
@@ -776,26 +776,26 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
       </thead>
       <tbody>
         <tr>
-          <td><dfn id="dom-keyerror"><code>keyerror</code></dfn></td>
+          <td><dfn id="dom-eventerror"><code>error</code></dfn></td>
           <td><code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a></code></td>
           <td>An error occurs in the session. The session moves to the <code><a href="#dom-stateerror">ERROR</a></code> state.</td>
           <td></td>
         </tr>
         <tr>
-          <td><dfn id="dom-keymessage"><code>keymessage</code></dfn></td>
+          <td><dfn id="dom-eventmessage"><code>message</code></dfn></td>
           <td><code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
             <span class="non-normative">For example, a key request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-update">update()</a></code> call.</span>
-            The session moves to the <code><a href="#dom-pending">PENDING</a></code> state.
+            The session moves to the <code><a href="#dom-statepending">PENDING</a></code> state.
           </td>
           <td></td>
         </tr>
         <tr>
-          <td><dfn id="dom-keyready"><code>keyready</code></dfn></td>
+          <td><dfn id="dom-eventready"><code>ready</code></dfn></td>
           <td><code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a></code></td>
           <td>
-            The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <code><a href="#dom-ready">READY</a></code> state.
+            The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <code><a href="#dom-stateready">READY</a></code> state.
           </td>
           <td></td>
         </tr>
@@ -1172,7 +1172,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<a href="#dom-keymessage">keymessage</a>",handleMessage,false);
+    keySession.addEventListener("<a href="#dom-eventmessage">message</a>",handleMessage,false);
   }
 
   function handleMessage(event) {
@@ -1212,7 +1212,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<a href="#dom-keymessage">keymessage</a>",handleMessage,false);
+    keySession.addEventListener("<a href="#dom-eventmessage">message</a>",handleMessage,false);
   }
 
   function handleMessage(event) {
@@ -1253,7 +1253,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<a href="#dom-keymessage">keymessage</a>",licenseRequestReady,false);
+    keySession.addEventListener("<a href="#dom-eventmessage">message</a>",licenseRequestReady,false);
   }
 
   function licenseRequestReady(event) {
@@ -1314,7 +1314,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<a href="#dom-keymessage">keymessage</a>",licenseRequestReady,false);
+    keySession.addEventListener("<a href="#dom-eventmessage">message</a>",licenseRequestReady,false);
   }
   
   function licenseRequestReady(event) {
@@ -1340,7 +1340,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
 
     <h3 id="example-using-all-events" class="exampleheader">10.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
-    <p class="exampledescription">Note that <code>handleKeyMessage</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+    <p class="exampledescription">Note that <code>handleMessage</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
     <div class="example">
       <pre class="code">
@@ -1361,7 +1361,7 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     xmlhttp.send(message);
   }
 
-  function handleKeyMessage(event) {
+  function handleMessage(event) {
     var keySession = event.target;
     var message = event.<a href="#dom-message">message</a>;
     if (!message)
@@ -1370,11 +1370,11 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     sendMessage(message, keySession);
   }
 
-  function handleKeyReady(event) {
+  function handleReady(event) {
     // Do some bookkeeping with event.target.<a href="#dom-sessionid">sessionId</a> if necessary.
   }
 
-  function handleKeyError(event) {
+  function handleError(event) {
     // Report event.target.error.<a href="#dom-code">code</a> and event.target.error.<a href="#dom-systemcode">systemCode</a>,
     // and do some bookkeeping with event.target.<a href="#dom-sessionid">sessionId</a> if necessary.
   }
@@ -1394,9 +1394,9 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
     if (!keySession)
       throw "Could not create key session";
 
-    keySession.addEventListener("<a href="#dom-keymessage">keymessage</a>",handleKeyMessage,false);
-    keySession.addEventListener("<a href="#dom-keyready">keyready</a>",handleKeyReady,false);
-    keySession.addEventListener("<a href="#dom-keyerror">keyerror</a>",handleKeyError,false);
+    keySession.addEventListener("<a href="#dom-eventmessage">message</a>",handleMessage,false);
+    keySession.addEventListener("<a href="#dom-eventready">ready</a>",handleReady,false);
+    keySession.addEventListener("<a href="#dom-eventerror">error</a>",handleError,false);
   }
 &lt;/script&gt;
 
