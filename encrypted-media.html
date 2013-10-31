@@ -701,6 +701,17 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
 
     <h3 id="event-definitions">3.1. Event Definitions</h3>
     <pre class="idl">
+[Constructor(DOMString type, optional <a href="#dom-mediakeyneededeventinit">MediaKeyNeededEventInit</a> eventInitDict)]
+interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a> {
+  readonly attribute DOMString <a href="#dom-type">type</a>;
+  readonly attribute Uint8Array? <a href="#dom-initdata">initData</a>;
+};
+
+dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventinit">EventInit</a> {
+  Uint8Array? <a href="#dom-initdata">initData</a>;
+};</pre>
+
+    <pre class="idl">
 [Constructor(DOMString type, optional <a href="#dom-mediakeymessageeventinit">MediaKeyMessageEventInit</a> eventInitDict)]
 interface <dfn id="dom-mediakeymessageevent">MediaKeyMessageEvent</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a> {
   readonly attribute Uint8Array <a href="#dom-message">message</a>;
@@ -712,23 +723,12 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   DOMString? <a href="#dom-destinationurl">destinationURL</a>;
 };</pre>
 
-    <pre class="idl">
-[Constructor(DOMString type, optional <a href="#dom-mediakeyneededeventinit">MediaKeyNeededEventInit</a> eventInitDict)]
-interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#event">Event</a> {
-  readonly attribute Uint8Array? <a href="#dom-initdata">initData</a>;
-  readonly attribute DOMString <a href="#dom-type">type</a>;
-};
-
-dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventinit">EventInit</a> {
-  Uint8Array? <a href="#dom-initdata">initData</a>;
-};</pre>
-
     <dl class="domintro">
      <dt>
-<var title="">event</var> . <code><a href="#dom-destinationurl">destinationURL</a></code>
+<var title="">event</var> . <code><a href="#dom-type">type</a></code>
 </dt>
      <dd>
-       <p>Returns the URL to send the <code><a href="#dom-message">message</a></code> to.</p>
+       <p>Returns the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> related to the event.</p>
      </dd>
      <dt>
 <var title="">event</var> . <code><a href="#dom-initdata">initData</a></code>
@@ -737,32 +737,56 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
        <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
      </dd>
      <dt>
-<var title="">event</var> . <code><a href="#dom-type">type</a></code>
-</dt>
-     <dd>
-       <p>Returns the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> related to the event.</p>
-     </dd>
-     <dt>
 <var title="">event</var> . <code><a href="#dom-message">message</a></code>
 </dt>
      <dd>
        <p>Returns the message <span class="non-normative">(i.e. key request)</span> to send.</p>
      </dd>
+     <dt>
+<var title="">event</var> . <code><a href="#dom-destinationurl">destinationURL</a></code>
+</dt>
+     <dd>
+       <p>Returns the URL to send the <code><a href="#dom-message">message</a></code> to.</p>
+     </dd>
     </dl>
     <div class="impl">
-    <p>The <dfn id="dom-initdata"><code>initData</code></dfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <dfn id="dom-type"><code>type</code></dfn> attribute contains the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> specific to the event. The format of the <code><a href="#dom-initdata">initData</a></code> will depend on the <code><a href="#dom-type">type</a></code>.</p>
+    <p>The <dfn id="dom-initdata"><code>initData</code></dfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <dfn id="dom-message"><code>message</code></dfn> attribute contains a message from the CDM. Messages are Key System-specific. <span class="non-normative">In most cases, it should be sent to a key server.</span></p>
     <p>The <dfn id="dom-destinationurl"><code>destinationURL</code></dfn> is the URL to send the <code><a href="#dom-message">message</a></code> to.
        An application <em>may</em> override this.
        <span class="non-normative">In some cases, it may have been provided by the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</span>
        It may be null.
     </p>
-
-    <p>If a response (i.e. a license) is necessary, applications should use one of the <a href="#dom-htmlmediaelement">new methods</a> to provide the response.</p>
     </div>
 
     <h3 id="event-summary">3.2. Event Summary</h3>
+
+    <p>The following event is fired at <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+          <th>Preconditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><dfn id="dom-needkey"><code>needkey</code></dfn></td>
+          <td><code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code></td>
+          <td>
+            The user agent needs a key or license to begin or continue playback.
+            <br><span class="non-normative"><br>It may have encountered <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
+          </td>
+          <td>
+<code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code title="dom-media-HAVE_METADATA"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
+          <span class="non-normative">It is possible that the element is playing or has played.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <p>The following events are fired at <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</p>
     <table>
@@ -798,32 +822,6 @@ dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> :
             The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <code><a href="#dom-stateready">READY</a></code> state.
           </td>
           <td></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p>The following event is fired at <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code>.</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Event name</th>
-          <th>Interface</th>
-          <th>Dispatched when...</th>
-          <th>Preconditions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><dfn id="dom-needkey"><code>needkey</code></dfn></td>
-          <td><code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code></td>
-          <td>
-            The user agent needs a key or license to begin or continue playback.
-            <br><span class="non-normative"><br>It may have encountered <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
-          </td>
-          <td>
-<code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code title="dom-media-HAVE_METADATA"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
-          <span class="non-normative">It is possible that the element is playing or has played.</span>
-          </td>
         </tr>
       </tbody>
     </table>

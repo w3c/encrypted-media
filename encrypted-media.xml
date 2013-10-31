@@ -665,6 +665,17 @@ interface <precodedfn>MediaKeyError</precodedfn> {
 
     <h3 id="event-definitions">3.1. Event Definitions</h3>
     <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>type</precoderef>;
+  readonly attribute Uint8Array? <precoderef>initData</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  Uint8Array? <precoderef>initData</precoderef>;
+};</pre>
+
+    <pre class="idl">
 [Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
   readonly attribute Uint8Array <precoderef>message</precoderef>;
@@ -676,49 +687,61 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   DOMString? <precoderef>destinationURL</precoderef>;
 };</pre>
 
-    <pre class="idl">
-[Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
-interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-  readonly attribute Uint8Array? <precoderef>initData</precoderef>;
-  readonly attribute DOMString <precoderef>type</precoderef>;
-};
-
-dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
-  Uint8Array? <precoderef>initData</precoderef>;
-};</pre>
-
     <dl class="domintro">
-     <dt><var title="">event</var> . <coderef>destinationURL</coderef></dt>
+     <dt><var title="">event</var> . <coderef>type</coderef></dt>
      <dd>
-       <p>Returns the URL to send the <coderef>message</coderef> to.</p>
+       <p>Returns the MIME type of the <videoanchor name="media-data">media data</videoanchor> related to the event.</p>
      </dd>
      <dt><var title="">event</var> . <coderef>initData</coderef></dt>
      <dd>
        <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
      </dd>
-     <dt><var title="">event</var> . <coderef>type</coderef></dt>
-     <dd>
-       <p>Returns the MIME type of the <videoanchor name="media-data">media data</videoanchor> related to the event.</p>
-     </dd>
      <dt><var title="">event</var> . <coderef>message</coderef></dt>
      <dd>
        <p>Returns the message <span class="non-normative">(i.e. key request)</span> to send.</p>
      </dd>
+     <dt><var title="">event</var> . <coderef>destinationURL</coderef></dt>
+     <dd>
+       <p>Returns the URL to send the <coderef>message</coderef> to.</p>
+     </dd>
     </dl>
     <div class="impl">
-    <p>The <codedfn>initData</codedfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <codedfn>type</codedfn> attribute contains the MIME type of the <videoanchor name="media-data">media data</videoanchor> specific to the event. The format of the <coderef>initData</coderef> will depend on the <coderef>type</coderef>.</p>
+    <p>The <codedfn>initData</codedfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <codedfn>message</codedfn> attribute contains a message from the CDM. Messages are Key System-specific. <span class="non-normative">In most cases, it should be sent to a key server.</span></p>
     <p>The <codedfn>destinationURL</codedfn> is the URL to send the <coderef>message</coderef> to.
        An application <em>may</em> override this.
        <span class="non-normative">In some cases, it may have been provided by the <videoanchor name="media-data">media data</videoanchor>.</span>
        It may be null.
     </p>
-
-    <p>If a response (i.e. a license) is necessary, applications should use one of the <a href="#dom-htmlmediaelement">new methods</a> to provide the response.</p>
     </div>
 
     <h3 id="event-summary">3.2. Event Summary</h3>
+
+    <p>The following event is fired at <coderef>HTMLMediaElement</coderef>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+          <th>Preconditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><codedfn>needkey</codedfn></td>
+          <td><coderef>MediaKeyNeededEvent</coderef></td>
+          <td>
+            The user agent needs a key or license to begin or continue playback.
+            <br></br><span class="non-normative"><br></br>It may have encountered <videoanchor name="media-data">media data</videoanchor> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
+          </td>
+          <td><readystate/> is equal to <have-metadata/> or greater.
+          <span class="non-normative">It is possible that the element is playing or has played.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <p>The following events are fired at <coderef>MediaKeySession</coderef>.</p>
     <table>
@@ -754,31 +777,6 @@ dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eve
             The media element should not be blocked if encrypted data is encountered associated with the initData used to create the session. The session moves to the <coderef prefix="state">READY</coderef> state.
           </td>
           <td><!-- No Preconditions. --></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p>The following event is fired at <coderef>HTMLMediaElement</coderef>.</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Event name</th>
-          <th>Interface</th>
-          <th>Dispatched when...</th>
-          <th>Preconditions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><codedfn>needkey</codedfn></td>
-          <td><coderef>MediaKeyNeededEvent</coderef></td>
-          <td>
-            The user agent needs a key or license to begin or continue playback.
-            <br></br><span class="non-normative"><br></br>It may have encountered <videoanchor name="media-data">media data</videoanchor> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
-          </td>
-          <td><readystate/> is equal to <have-metadata/> or greater.
-          <span class="non-normative">It is possible that the element is playing or has played.</span>
-          </td>
         </tr>
       </tbody>
     </table>
