@@ -346,7 +346,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p>The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <dfn id="dom-createsession"><code>createSession(type, initData)</code></dfn> method must run the following steps:</p>
-    <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.</p>
+    <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
+    <var title="true">type</var> specifies the container type and thus how to interpret <var title="true">initData</var>. 
+    </p>
+    <p class="non-normative">Note: MIME types usually include "audio/" or "video/", and these should be included in <var title="true">type</var> as appropriate.
+    However, user agents and <a href="#cdm">CDMs</a> should not treat sessions created with "audio/" differently than those created with "video/".
+    That is, there is no such thing as an "audio session" or a "video session" - all sessions are used for all media streams processed by <var title="true">cdm</var>.
+    </p>
 
     <ol>
       <li><p>If <var title="true">type</var> contains a MIME type that is not supported or is not supported by the <code><a href="#dom-keysystem">keySystem</a></code>, throw a <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
@@ -378,7 +384,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li>
 <p>Process <var title="true">type</var> and <var title="true">initData</var>.</p>
-              <p class="non-normative">Note: <var title="true">type</var> may be used to determine how to interpret <var title="true">initData</var>.</p>
+              <p class="non-normative">Note: <var title="true">type</var> should be used to determine how to interpret <var title="true">initData</var>.</p>
               </li>
               <li>
 <p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
@@ -708,6 +714,7 @@ interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href=
 };
 
 dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#eventinit">EventInit</a> {
+  DOMString <a href="#dom-type">type</a>;
   Uint8Array? <a href="#dom-initdata">initData</a>;
 };</pre>
 
@@ -751,6 +758,10 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </dl>
     <div class="impl">
     <p>The <dfn id="dom-type"><code>type</code></dfn> attribute contains the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> specific to the event. The format of the <code><a href="#dom-initdata">initData</a></code> will depend on the <code><a href="#dom-type">type</a></code>.</p>
+    <p class="non-normative">Note: MIME types usually include "audio/" or "video/", and user agents should include these in <var title="true">type</var> as appropriate.
+    However, either variant may be returned for any stream of a given MIME type, and this is does not reflect the type(s) of stream(s) in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
+    Applications processing this attribute should handle all such variants.
+    </p>
     <p>The <dfn id="dom-initdata"><code>initData</code></dfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <dfn id="dom-message"><code>message</code></dfn> attribute contains a message from the CDM. Messages are Key System-specific. <span class="non-normative">In most cases, it should be sent to a key server.</span></p>
     <p>The <dfn id="dom-destinationurl"><code>destinationURL</code></dfn> is the URL to send the <code><a href="#dom-message">message</a></code> to.
@@ -891,6 +902,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </dl>
         <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
         <ul style="list-style-type:none"><li>
+          <code><a href="#dom-type">type</a></code> = the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> container format
           <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
