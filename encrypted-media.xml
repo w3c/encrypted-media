@@ -274,7 +274,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
 
   // session operations
-  void <premethodref>update</premethodref>(Uint8Array key);
+  void <premethodref>update</premethodref>(Uint8Array response);
   void <premethodref>close</premethodref>();
 };
 
@@ -458,16 +458,14 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <methoddfn name="update">update(<var title="true">key</var>)</methoddfn> method must run the following steps:</p>
-    <p class="non-normative">Note: The contents of <var title="true">key</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.
-    It may be a raw key or a license containing a key.
-    The contents may also vary depending on the container, key length, etc.</p>
+    <p>The <methoddfn name="update">update(<var title="true">response</var>)</methoddfn> method must run the following steps:</p>
+    <p class="non-normative">Note: The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
 
     <ol>
       <li><p>If the argument is null or an empty array, throw an <invalid-access-err/>.</p></li>
       <li><p>If the session is not in the <coderef prefix="state">PENDING</coderef> state, throw an <invalid-state-err/>.</p></li>
 
-      <li><p>Schedule a task to handle the call, providing <var title="true">key</var>.</p>
+      <li><p>Schedule a task to handle the call, providing <var title="true">response</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
@@ -475,10 +473,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>Process <var title="true">key</var>.</p>
-              <p class="non-normative">Note: For some <a href="#key-system">Key Systems</a>, <var title="true">key</var> may be a license or other structure containing multiple keys.</p>
+              <li><p>Process <var title="true">response</var>.</p>
+              <p class="non-normative">Note: For some <a href="#key-system">Key Systems</a>, <var title="true">response</var> may be a license or other structure containing multiple keys.</p>
               </li>
-              <li><p>For each <var title="true">individual key</var> in <var title="true">key</var>, store the <var title="true">individual key</var>.</p>
+              <li><p>For each <var title="true">individual key</var> in <var title="true">response</var>, store the <var title="true">individual key</var>.</p>
                 <ol>
                   <li><p>Let <var title="true">key ID</var> be the key ID associated with the <var title="true">individual key</var>.</p></li>
                   <li><p>Run the following to store the <var title="true">individual key</var>:</p>  
@@ -952,7 +950,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <coderef>destinationURL</coderef> = value of the default URL if present in the <videoanchor name="media-data">media data</videoanchor> and null otherwise.
     </li></ul>
 
-    <p>The <var title="true">key</var> parameter of <methodref>update</methodref> should be a JSON Web Key (JWK) representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>. The JSON string is encoded into the Uint8Array parameter using <ascii-encoding />.</p>
+    <p>The <var title="true">response</var> parameter of <methodref>update</methodref> should be a JSON Web Key (JWK) representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>. The JSON string is encoded into the Uint8Array parameter using <ascii-encoding />.</p>
     <p>When the JWK 'key type' ("kty") member value is 'octet sequence' ("oct"), the 'key value' ("k") member will be a base64 encoding of the octet sequence containing the symmetric key value.</p>
     <p>For example, the following contains a single symmetric key represented as a JWK, designated as being for use with the AES Key Wrap algorithm (line breaks for readability, only).</p>
 
