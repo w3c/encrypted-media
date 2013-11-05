@@ -301,11 +301,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <ol>
       <li><p>If <var title="true">keySystem</var> is null or an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-
       <li><p>If <var title="true">keySystem</var> is not one of the user agent's supported <a href="#key-system">Key Systems</a>, throw a <not-supported-err/> and abort these steps. Key system string comparison is case-sensitive.</p></li>
-
-      <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
-            
       <li>Create a new <coderef>MediaKeys</coderef> object.
         <ol>
           <li><p>Let the <coderef>keySystem</coderef> attribute be <var title="true">keySystem</var>.</p></li>
@@ -315,6 +311,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>
         <p>The user agent will asynchronously execute the following steps:</p>
         <ol>
+          <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
           <li><p>Load <var title="true">cdm</var> if necessary.</p></li>
           <li>
             <dl class="switch">
@@ -336,8 +333,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>Return the new <coderef>MediaKeys</coderef> object to the caller.</li>
     </ol>
 
-    <p>When destroying a <coderef>MediaKeys</coderef> object, follow the steps in <methodref>close</methodref>.</p>
-    
     <p>The <codedfn>keySystem</codedfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <methoddfn name="createSession">createSession(<var title="true">type</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
@@ -432,6 +427,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         </ol>
       </li>
       <li>Return the new object to the caller.</li>
+      <p class="non-normative">Note: User agents should always fire an event at the returned object in response to this call.
+      For some implementations, it is possible - especially the first time a <a href="#key-system">Key System</a> is used - that the first event will be delayed significantly while the client is initialized, the user responsds to permission requests, etc.
+      Applications should expect and handle such delays.</p> 
     </ol>
 
     <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">type</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">type</var>(s).</p>
@@ -556,6 +554,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol start="6">
       <li><p>&#8987; If <var title="">candidate</var> has a <coderef prefix="source">keySystem</coderef> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <videoref name="attr-source-type">type</videoref>, then end the <synchronous-section/>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
+
+    <p>When destroying a <coderef>MediaKeySession</coderef> object, follow the steps in <methodref>close</methodref>.</p>
 
     <h3 id="error-codes">2.1. Error Codes</h3>
     <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p></div>
