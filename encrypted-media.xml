@@ -799,62 +799,23 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <resource-fetch-algorithm/>:</p>
 
     <ol>
-      <li><p>Let <var title="">cdm</var> be null.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
       <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
-      <li><p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
-      <dl class="switch">
-        <dt>If the media element's <coderef>keys</coderef> attribute is not null</dt>
-        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
-        <dt>Otherwise</dt>
-        <dd>Jump to the <i>Need Key</i> step below.</dd>
-      </dl>
-      </li>
-      <li><p>Use <var title="true">cdm</var> to determine whether the key is known:</p>
-        <ol>
-          <li><p>Let <var title="">key ID</var> be null.</p></li>
-          <li><p>If a key ID for the source is known at this time, let <var title="">key ID</var> be that ID.</p></li>
-          <li><p>If <var title="">initData</var> is not null and contains a key ID, let <var title="">key ID</var> be that ID.</p></li>
-          <li><p>Determine whether the key is already known by following the steps for the first matching condition from the following list:</p>
-          <dl class="switch">
-            <dt>If <var title="">key ID</var> is not null</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a key cached for <var title="">key ID</var></dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-            <dt>Otherwise</dt>
-            <dd>
-            <p>Determine whether the key is known by following the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If there is a single key cached (with or without a key ID)</dt>
-              <dd>Jump to the <i>Continue Normal Flow</i> step below.</dd>
-              <dt>Otherwise</dt>
-              <dd>Jump to the <i>Need Key</i> step below.</dd>
-            </dl>
-            </dd>
-          </dl>
-          </li>
-        </ol>
-      </li>
-      <li><p><i>Need Key</i>:</p>
+      <li><p>Follow the steps for the first matching condition from the following list:</p>
         <dl class="switch">
           <dt>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/></dt>
-          <dd><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</dd>
+          <dd><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.
+            <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
+            <ul style="list-style-type:none"><li>
+              <coderef>type</coderef> = the MIME type of the <videoanchor name="media-data">media data</videoanchor> container format<br></br>
+              <coderef>initData</coderef> = <var title="">initData</var>
+            </li></ul>
+            <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+            <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
+          </dd>
           <dt>Otherwise</dt>
-          <dd>Abort media element's <resource-fetch-algorithm/> and run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error.</dd>
+          <dd>Abort media element's <resource-fetch-algorithm/>, run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error, and abort these steps.</dd>
         </dl>
-        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
-        <ul style="list-style-type:none"><li>
-          <coderef>type</coderef> = the MIME type of the <videoanchor name="media-data">media data</videoanchor> container format
-          <coderef>initData</coderef> = <var title="">initData</var>
-        </li></ul>
-        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-        <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
       </li>
 
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
