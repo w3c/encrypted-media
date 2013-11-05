@@ -469,33 +469,19 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
-          <li><p>Let <var title="true">did store key</var> be false.</p></li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li><p>Process <var title="true">response</var>.</p>
-              <p class="non-normative">Note: For some <a href="#key-system">Key Systems</a>, <var title="true">response</var> may be a license or other structure containing multiple keys.</p>
-              </li>
-              <li><p>For each <var title="true">individual key</var> in <var title="true">response</var>, store the <var title="true">individual key</var>.</p>
-                <ol>
-                  <li><p>Let <var title="true">key ID</var> be the key ID associated with the <var title="true">individual key</var>.</p></li>
-                  <li><p>Run the following to store the <var title="true">individual key</var>:</p>  
-                    <ol>
-                      <li><p>If a stored key already exists for <var title="true">key ID</var>, delete that key.</p></li>
-                      <li><p>Store the <var title="true">individual key</var>, license, and/or license information indexed by <var title="true">key ID</var>. <span class="non-normative">The replacement algorithm is <a href="#key-system">Key System</a>-dependent.</span></p></li>
-                    </ol>
-                    <p class="non-normative">Note: It is recommended that CDMs support a standard and reasonably high minimum number of cached keys/licenses (with IDs) per <coderef>MediaKeySession</coderef> object as well as a standard replacement algorithm.
-                    This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
-                    </p>
-                  </li>
-                  <li><p>Let <var title="true">did store key</var> be true.</p></li>
-                </ol>
-              </li>
+                <p class="non-normative">Note: When <var title="true">response</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely store the key and related data indexed by key ID.</p>
+                <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
+                <p class="non-normative">Note: Keys from different sessions should be stored independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
+                <p class="non-normative">Note: It is recommended that CDMs support a standard and reasonably high minimum number of keys per <coderef>MediaKeySession</coderef> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <coderef>MediaKeySession</coderef> objects.
+                This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
+                </p>
+              </li> 
               <li><p>If another message needs to be sent to the server, let <var title="true">request</var> be that message.</p></li>
             </ol>
-          </li>
-          <li>If <var title="true">did store key</var> is true and the <a href="#media-element">media element</a> is <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.
-            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
           </li>
           <li><p>If any of the preceding steps in the task failed, run the following steps:</p>
               <ol>
@@ -510,6 +496,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
                 <li><p>Abort the task.</p></li>
               </ol>
+          </li>
+          <li>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.
+            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
           </li>
           <li><p>Follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
