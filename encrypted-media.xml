@@ -826,63 +826,60 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         <dd>Run the following steps:
           <ol>
             <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
-            <li><p>If <var title="true">cdm</var> does not have at least one <coderef>MediaKeySession</coderef> in the <coderef prefix="state">PENDING</coderef> or <coderef prefix="state">READY</coderef> state, abort these steps and wait for a signal to resume playback.</p>
+            <li><p>If <var title="true">cdm</var> has at least one <coderef>MediaKeySession</coderef> in the <coderef prefix="state">PENDING</coderef> or <coderef prefix="state">READY</coderef> state, run the following steps:</p>
               <p class="non-normative">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
-              <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
             </li>
-            <li><p>Let <var title="true">block key ID</var> be be the key ID for the current block.</p></li>
-            <li><p>Use <var title="true">cdm</var> to decrypt the block by following the steps for the first matching condition from the following list:</p>
-              <dl class="switch">
-              <dt>If any session has a usable key for <var title="">block key ID</var></dt>
-              <dd>Run the following steps:
-                <ol>
-                  <li><p>Let <var title="">block key</var> be the matching key.</p>
-                    <p class="non-normative">Note: If multiple sessions contain a <em>usable</em> key for <var title="">block key ID</var>, which session is used is <a href="#key-system">Key System</a>-dependent.</p>
-                  </li>
-                  <li><p>Use <var title="true">cdm</var> to decrypt the block using <var title="">block key</var> by following the steps for the first matching condition from the following list:</p>
-                    <dl class="switch">
-                      <dt>If decryption fails</dt>
-                      <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
-                      <dt>Otherwise</dt>
-                      <dd>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span></dd>
-                    </dl>
-                    <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
-                  </li>
-                </ol>
-              </dd>
-              <dt>If any session has an unusable key for <var title="">block key ID</var></dt>
-              <dd>Run the following steps:
-                <ol>
-                  <li><p>Let <var title="">session</var> be the <coderef>MediaKeySession</coderef> object for the session with an unusable key.</p></li>
-                  <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
-                    <ul style="list-style-type:none"><li>
-                      <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
-                      <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
-                    </li></ul>
-                  </li>
-                  <li><p>Set <var title="">session</var>'s <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
-                  <li><p>Let the state of <var title="">session</var> be <coderef prefix="state">ERROR</coderef>.</p></li>
-                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at <var title="">session</var>.</p></li>
-                  <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
-                </ol>
-                <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
-              </dd>
-              <dt>Otherwise <span class="non-normative">(there is no key for <var title="true">block key ID</var> in any session)</span></dt>
-              <dd>Abort these steps and wait for a signal to resume playback.
-                <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
-              </dd>
-              </dl>
-            </li>
+            <ol>
+              <li><p>Let <var title="true">block key ID</var> be be the key ID for the current block.</p></li>
+              <li><p>Use <var title="true">cdm</var> to decrypt the block by following the steps for the first matching condition from the following list:</p>
+                <dl class="switch">
+                <dt>If any session has a usable key for <var title="">block key ID</var></dt>
+                <dd>Run the following steps:
+                  <ol>
+                    <li><p>Let <var title="">block key</var> be the matching key.</p>
+                      <p class="non-normative">Note: If multiple sessions contain a <em>usable</em> key for <var title="">block key ID</var>, which session is used is <a href="#key-system">Key System</a>-dependent.</p>
+                    </li>
+                    <li><p>Use <var title="true">cdm</var> to decrypt the block using <var title="">block key</var> by following the steps for the first matching condition from the following list:</p>
+                      <dl class="switch">
+                        <dt>If decryption fails</dt>
+                        <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
+                        <dt>Otherwise</dt>
+                        <dd>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span></dd>
+                      </dl>
+                      <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
+                    </li>
+                  </ol>
+                </dd>
+                <dt>If any session has an unusable key for <var title="">block key ID</var></dt>
+                <dd>Run the following steps:
+                  <ol>
+                    <li><p>Let <var title="">session</var> be the <coderef>MediaKeySession</coderef> object for the session with an unusable key.</p></li>
+                    <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
+                      <ul style="list-style-type:none"><li>
+                        <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                        <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
+                      </li></ul>
+                    </li>
+                    <li><p>Set <var title="">session</var>'s <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
+                    <li><p>Let the state of <var title="">session</var> be <coderef prefix="state">ERROR</coderef>.</p></li>
+                    <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at <var title="">session</var>.</p></li>
+                  </ol>
+                </dd>
+                <dt><span class="non-normative">Otherwise (there is no key for <var title="true">block key ID</var> in any session)</span></dt>
+                <dd><span class="non-normative">Continue.</span></dd>
+                </dl>
+              </li>
+            </ol>
           </ol>
         </dd>
-        <dt>If there is an event handler for <coderef>needkey</coderef></dt>
-        <dd>
-        <p>Abort these steps and wait for a signal to resume playback.</p>
-        <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
-        </dd>
-        <dt>Otherwise</dt>
-        <dd>Abort the media element's <resource-fetch-algorithm/> and run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error.</dd>
+        <dt>If there is not an event handler for <coderef>needkey</coderef></dt>
+        <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error, and abort these steps.</dd>
       </dl>
+      </li>
+      <li>
+        <p>Abort these steps and wait for a signal to resume playback.</p>
+        <p class="non-normative">There is no usable key for the block.</p>
+        <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
       </li>
     </ol>
 
