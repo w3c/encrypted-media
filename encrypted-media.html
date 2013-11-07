@@ -56,7 +56,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 31 October 2013</h2>
+      <h2 id="draft-date">W3C Editor's Draft 7 November 2013</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -412,6 +412,11 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               </ol>
           </li>
           <li>
+            <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
+            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
+            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e.  no usable key was added)</span>.</p>
+          </li>
+          <li>
 <p>Follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
@@ -515,8 +520,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <li><p>Abort the task.</p></li>
               </ol>
           </li>
-          <li>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.
+          <li>
+            <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
+            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e.  no usable key was added)</span>.</p>
           </li>
           <li>
 <p>Follow the steps for the first matching condition from the following list:</p>
@@ -553,6 +560,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
      <ol>
       <li>Clear any internal state associated with the session, including all keys and licenses.</li>
     </ol>
+    <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
     <p>The <dfn id="dom-sourcekeysystem"><code>keySystem</code></dfn> attribute of <code><a href="#dom-htmlsourceelement">HTMLSourceElement</a></code> specifies the <a href="#key-system">Key System</a> to be used with the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a></code>.
     The <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-algorithm">resource selection algorithm</a> is modified to check the <code><a href="#dom-sourcekeysystem">keySystem</a></code> attribute after the existing <em>step 5</em> of the <em>Otherwise</em> branch of <em>step 6</em>:
@@ -603,13 +611,13 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
     <dl>
       <dt>
 <dfn id="dom-media_err_encrypted"><code>MEDIA_ERR_ENCRYPTED</code></dfn> (numeric value 5)</dt>
-      <dd>The stream could not be played because it is encrypted and one of the following:
+      <dd>The stream could not be played because it is encrypted and one of the following is true:
         <ol>
           <li>The media element does not have a <code><a href="#dom-needkey">needkey</a></code> handler</li>
           <li>The media element's <code><a href="#dom-keys">keys</a></code> attribute is null</li>
         </ol>
         <p class="non-normative">Applications that support encrypted media should provide a <code><a href="#dom-needkey">needkey</a></code> handler and/or call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> no later than when <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided.</p>
-        <p class="non-normative">If the user agent does not support decryption of this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it should report the same error it would for any other unsupported media data (e.g. <code>MEDIA_ERR_SRC_NOT_SUPPORTED</code>).</p>
+        <p class="non-normative">If the user agent does not support decryption of this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it should report the same error it would for any other unsupported media data (e.g. <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-mediaerror-media_err_src_not_supported">MEDIA_ERR_SRC_NOT_SUPPORTED</a></code>).</p>
       </dd>
     </dl>
 
@@ -847,7 +855,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
             <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
           </dd>
           <dt>Otherwise</dt>
-          <dd>Abort media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error, and abort these steps.</dd>
+          <dd>Abort the media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error, and abort these steps.</dd>
         </dl>
       </li>
 
@@ -858,47 +866,79 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
 
     <ol>
-      <li><p>Let <var title="">cdm</var> be null.</p></li>
-      <li><p>Let <var title="">block key</var> be null.</p></li>
       <li>
-<p>Determine whether there is an active <a href="#cdm">CDM</a> by following the steps for the first matching condition from the following list:</p>
-      <dl class="switch">
-        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null</dt>
-        <dd>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</dd>
-        <dt>Otherwise</dt>
-        <dd>Jump to the <i>Key Presence</i> step below.</dd>
-      </dl>
-      </li>
-      <li>
-<p>Use <var title="true">cdm</var> to select the key:</p>
-        <ol>
-          <li><p>Let <var title="">block key ID</var> be be the key ID for the current block.</p></li>
-          <li><p>If <var title="true">cdm</var> has a key cached for <var title="">block key ID</var>, let <var title="">block key</var> be the matching cached key.</p></li>
-        </ol>
-      </li>
-      <li>
-<p><i>Key Presence</i>: Handle the presence of a key by following the steps for the first matching condition from the following list:</p>
-      <dl class="switch">
-        <dt>If <var title="">cdm</var> is not null and <var title="">block key</var> is not null.</dt>
-        <dd>Use <var title="true">cdm</var> to Decrypt the block using <var title="">block key</var> by following the steps for the first matching condition from the following list:
-          <dl class="switch">
-            <dt>If decryption fails</dt>
-            <dd>Abort media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a> and run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error.</dd>
-            <dt>Otherwise</dt>
-            <dd>Continue.</dd>
-          </dl>
-          <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
+<p>Follow the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+        <dt>If the media element's <code><a href="#dom-keys">keys</a></code> attribute is not null:</dt>
+        <dd>Run the following steps:
+          <ol>
+            <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+            <li>
+<p>If <var title="true">cdm</var> does not have at least one <code><a href="#dom-mediakeysession">MediaKeySession</a></code> in the <code><a href="#dom-statepending">PENDING</a></code> or <code><a href="#dom-stateready">READY</a></code> state, abort these steps and wait for a signal to resume playback.</p>
+              <p class="non-normative">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
+              <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
+            </li>
+            <li><p>Let <var title="true">block key ID</var> be be the key ID for the current block.</p></li>
+            <li>
+<p>Use <var title="true">cdm</var> to decrypt the block by following the steps for the first matching condition from the following list:</p>
+              <dl class="switch">
+              <dt>If any session has a usable key for <var title="">block key ID</var>
+</dt>
+              <dd>Run the following steps:
+                <ol>
+                  <li>
+<p>Let <var title="">block key</var> be the matching key.</p>
+                    <p class="non-normative">Note: If multiple sessions contain a <em>usable</em> key for <var title="">block key ID</var>, which session is used is <a href="#key-system">Key System</a>-dependent.</p>
+                  </li>
+                  <li>
+<p>Use <var title="true">cdm</var> to decrypt the block using <var title="">block key</var> by following the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                      <dt>If decryption fails</dt>
+                      <dd>Abort the media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, run the steps to report a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</a></code> error, and abort these steps.</dd>
+                      <dt>Otherwise</dt>
+                      <dd>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span>
+</dd>
+                    </dl>
+                    <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
+                  </li>
+                </ol>
+              </dd>
+              <dt>If any session has an unusable key for <var title="">block key ID</var>
+</dt>
+              <dd>Run the following steps:
+                <ol>
+                  <li><p>Let <var title="">session</var> be the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object for the session with an unusable key.</p></li>
+                  <li>
+<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
+                    <ul style="list-style-type:none"><li>
+                      <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                      <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
+                    </li></ul>
+                  </li>
+                  <li><p>Set <var title="">session</var>'s <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
+                  <li><p>Let the state of <var title="">session</var> be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at <var title="">session</var>.</p></li>
+                  <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
+                </ol>
+                <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
+              </dd>
+              <dt>Otherwise <span class="non-normative">(there is no key for <var title="true">block key ID</var> in any session)</span>
+</dt>
+              <dd>Abort these steps and wait for a signal to resume playback.
+                <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
+              </dd>
+              </dl>
+            </li>
+          </ol>
         </dd>
         <dt>If there is an event handler for <code><a href="#dom-needkey">needkey</a></code>
 </dt>
         <dd>
-        <p>Take no action.</p>
-        <p class="non-normative">The <a href="#media-element">media element</a> is said to be <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>
-        unless playback stops because the stream cannot be decrypted, in which case the <a href="#media-element">media element</a> is said to be <a href="#waiting-for-a-key">waiting for a key</a>.
-        </p>
+        <p>Abort these steps and wait for a signal to resume playback.</p>
+        <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
         </dd>
         <dt>Otherwise</dt>
-        <dd>Abort media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a> and run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error.</dd>
+        <dd>Abort the media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a> and run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error.</dd>
       </dl>
       </li>
     </ol>
