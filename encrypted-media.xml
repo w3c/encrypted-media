@@ -275,7 +275,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 
   // session operations
   void <premethodref>update</premethodref>(Uint8Array response);
-  void <premethodref>close</premethodref>();
+  void <premethodref>release</premethodref>();
 };
 
 partial interface <precodedfn>HTMLSourceElement</precodedfn> {
@@ -540,10 +540,31 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </li>
     </ol>
 
-    <p>The <methoddfn name="close">close()</methoddfn> method causes the key acquisition session to close and all keys to be released. It must run the following steps:</p>
+    <p>The <methoddfn name="release">release()</methoddfn> method allows an application to indicate to the system that it may release any resources associated with the <coderef>MediaKeySession</coderef>. It must run the following steps:</p>
 
      <ol>
-      <li>Clear any internal state associated with the session, including all keys and licenses.</li>
+       <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">CLOSED</coderef> then abort these steps.</p></li>
+       <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">ERROR</coderef>, throw an <invalid-state-err/> exception and abort these steps.</p></li>
+       <li><p>Follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If the <coderef>MediaKeySession</coderef> supports secure key release</dt>
+              <dd>
+                <ol>
+                  <li><p class="issue">TODO: describe secure key release moving the session to PENDING state, firing message event, and then eventually moving to CLOSED. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p></li>
+                </ol>
+              </dd>
+              <dt>Otherwise</dt>
+              <dd>
+                <ol>
+                  <li><p>Implementations may clear the internal state associated with the session, including keys and licences, to release resources but are not required to do so.</p>
+                  <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed. The user agent may coordinate
+                  with the associated CDM to determine whether resources can now be released.</p></li>
+                  <li><p>Let the state of the session be <coderef prefix="state">CLOSED</coderef>.</p></li>
+                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">closed</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+                </ol>
+              </dd>
+            </dl>
+       </li>
     </ol>
     <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
@@ -553,8 +574,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol start="6">
       <li><p>&#8987; If <var title="">candidate</var> has a <coderef prefix="source">keySystem</coderef> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <videoref name="attr-source-type">type</videoref>, then end the <synchronous-section/>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
-
-    <p>When destroying a <coderef>MediaKeySession</coderef> object, follow the steps in <methodref>close</methodref>.</p>
 
     <h3 id="error-codes">2.1. Error Codes</h3>
     <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p></div>
@@ -651,6 +670,10 @@ interface <precodedfn>MediaKeyError</precodedfn> {
           <td><codedfn prefix="state">ERROR</codedfn></td>
           <td>A <coderef prefix="event">error</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <coderef>error</coderef> attribute of the session holds information about the most recent error.</td>
         </tr>
+        <tr>
+          <td><codedfn prefix="state">CLOSED</codedfn></td>
+          <td>A <coderef prefix="event">closed</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. No further events will be fired at the <coderef>MediaKeySession</coderef>.</td>
+        </tr>
       </tbody>
     </table>
     
@@ -658,6 +681,7 @@ interface <precodedfn>MediaKeyError</precodedfn> {
     <h4 id="session-state-transitions">2.3.2 MediaKeySession State Transitions</h4>
     <p>The following diagram shows the possible state transitions and the events fired when changing state:</p>
     <p><img src="session_state.svg" width="528" height="408" alt="State transition diagram"/></p>
+    <p class="issue">TODO: Need to update the state diagram with CLOSED state.</p>
     
     <h3 id="media-element-restictions">2.3 Media Element Restrictions</h3>
     <non-normative-section/>
@@ -913,6 +937,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
+    <p>At any point while decrypting content, the user agent may determine that a <coderef>MediaKeySession</coderef> is no longer needed. It must run the following steps:</p>
+    <ol>
+        <li><p>Let the state of the session be <coderef prefix="state">CLOSED</coderef>.</p></li>
+        <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">closed</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+    </ol>
+  
     <h3 id="algorithms-load">4.3. Addition to Media Element Load Algorithm</h3>
     <p>The following step is added to the existing <media-element-load-algorithm/>:</p>
     <ul>

@@ -278,7 +278,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="https:/
 
   // session operations
   void <a href="#dom-update">update</a>(Uint8Array response);
-  void <a href="#dom-close">close</a>();
+  void <a href="#dom-release">release</a>();
 };
 
 partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
@@ -559,10 +559,34 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       </li>
     </ol>
 
-    <p>The <dfn id="dom-close"><code>close()</code></dfn> method causes the key acquisition session to close and all keys to be released. It must run the following steps:</p>
+    <p>The <dfn id="dom-release"><code>release()</code></dfn> method allows an application to indicate to the system that it may release any resources associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. It must run the following steps:</p>
 
      <ol>
-      <li>Clear any internal state associated with the session, including all keys and licenses.</li>
+       <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateclosed">CLOSED</a></code> then abort these steps.</p></li>
+       <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateerror">ERROR</a></code>, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p></li>
+       <li>
+<p>Follow the steps for the first matching condition from the following list:</p>
+            <dl class="switch">
+              <dt>If the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> supports secure key release</dt>
+              <dd>
+                <ol>
+                  <li><p class="issue">TODO: describe secure key release moving the session to PENDING state, firing message event, and then eventually moving to CLOSED. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p></li>
+                </ol>
+              </dd>
+              <dt>Otherwise</dt>
+              <dd>
+                <ol>
+                  <li>
+<p>Implementations may clear the internal state associated with the session, including keys and licences, to release resources but are not required to do so.</p>
+                  <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed. The user agent may coordinate
+                  with the associated CDM to determine whether resources can now be released.</p>
+</li>
+                  <li><p>Let the state of the session be <code><a href="#dom-stateclosed">CLOSED</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventclosed">closed</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                </ol>
+              </dd>
+            </dl>
+       </li>
     </ol>
     <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
@@ -572,8 +596,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <ol start="6">
       <li><p>⌛ If <var title="">candidate</var> has a <code><a href="#dom-sourcekeysystem">keySystem</a></code> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-source-type">type</a></code>, then end the <a href="http://www.w3.org/TR/html5/webappapis.html#synchronous-section">synchronous section</a>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
-
-    <p>When destroying a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, follow the steps in <code><a href="#dom-close">close()</a></code>.</p>
 
     <h3 id="error-codes">2.1. Error Codes</h3>
     <div class="issue">
@@ -685,6 +707,10 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
           <td><dfn id="dom-stateerror"><code>ERROR</code></dfn></td>
           <td>A <code><a href="#dom-eventerror">error</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. The <code><a href="#dom-error">error</a></code> attribute of the session holds information about the most recent error.</td>
         </tr>
+        <tr>
+          <td><dfn id="dom-stateclosed"><code>CLOSED</code></dfn></td>
+          <td>A <code><a href="#dom-eventclosed">closed</a></code> event has been fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. No further events will be fired at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</td>
+        </tr>
       </tbody>
     </table>
     
@@ -692,6 +718,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
     <h4 id="session-state-transitions">2.3.2 MediaKeySession State Transitions</h4>
     <p>The following diagram shows the possible state transitions and the events fired when changing state:</p>
     <p><img src="session_state.svg" width="528" height="408" alt="State transition diagram"></p>
+    <p class="issue">TODO: Need to update the state diagram with CLOSED state.</p>
     
     <h3 id="media-element-restictions">2.3 Media Element Restrictions</h3>
     <p><i>This section is non-normative.</i></p>
@@ -970,6 +997,12 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
+    <p>At any point while decrypting content, the user agent may determine that a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is no longer needed. It must run the following steps:</p>
+    <ol>
+        <li><p>Let the state of the session be <code><a href="#dom-stateclosed">CLOSED</a></code>.</p></li>
+        <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventclosed">closed</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+    </ol>
+  
     <h3 id="algorithms-load">4.3. Addition to Media Element Load Algorithm</h3>
     <p>The following step is added to the existing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element-load-algorithm">media element load algorithm</a>:</p>
     <ul>
