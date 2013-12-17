@@ -144,7 +144,9 @@
       <li><a href="#algorithms">4. Algorithms</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</a></li>
-          <li><a href="#algorithms-enrypted-block">4.2. Encrypted Block Encountered</a></li>
+          <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
+          <li><a href="#algorithms-queue-message">4.3. Queue a "message" event</a></li>
+          <li><a href="#algorithms-session-close">4.4. Session Close</a></li>
         </ul></li>
       <li><a href="#key-release">5. Key Release</a></li>
       <li><a href="#simple-decryption">6. Simple Decryption</a></li>
@@ -404,17 +406,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <ol>
-                  <li><p>Let the state of the session be <coderef prefix="state">PENDING</coderef>.</p></li>
-                  <li>
-                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the new object.</p>
-                    <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
-                    <ul style="list-style-type:none"><li>
-                      <coderef>message</coderef> = <var title="true">request</var><br></br>
-                      <coderef>destinationURL</coderef> = <var title="true">defaultURL</var>
-                    </li></ul>
-                  </li>
-                </ol>
+                <p>Run the <a href="algorithm-queue-message">Queue a "message" event</a> algorithm with the <var title="true">request</var>
+                and <var title="true">defaultURL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
@@ -512,14 +505,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <coderef prefix="state">PENDING</coderef>.</p></li>
+                  <li><p>Let <var title="true">defaultURL</var> be null.</p></li>
                   <li>
-                    <p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <coderef>MediaKeySession</coderef> object.</p>
-                    <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
-                    <ul style="list-style-type:none"><li>
-                      <coderef>message</coderef> = <var title="true">request</var><br></br>
-                      <coderef>destinationURL</coderef> = null
-                    </li></ul>
+                    <p>Run the <a href="algorithm-queue-message">Queue a "message" event</a> algorithm with the <var title="true">request</var>
+                    and <var title="true">defaultURL</var>.</p>
                   </li>
                 </ol>
               </dd>
@@ -541,28 +530,13 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
      <ol>
        <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">CLOSED</coderef> then abort these steps.</p></li>
        <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">ERROR</coderef>, throw an <invalid-state-err/> exception and abort these steps.</p></li>
-       <li><p>Follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If the <coderef>MediaKeySession</coderef> supports secure key release</dt>
-              <dd>
-                <ol>
-                  <li><p class="issue">TODO: describe secure key release moving the session to PENDING state, firing message event, and then eventually moving to CLOSED. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p></li>
-                </ol>
-              </dd>
-              <dt>Otherwise</dt>
-              <dd>
-                <ol>
-                  <li><p>Implementations may clear the internal state associated with the session, including keys and licences, to release resources but are not required to do so.</p>
-                  <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed. The user agent may coordinate
-                  with the associated CDM to determine whether resources can now be released.</p></li>
-                  <li><p>Let the state of the session be <coderef prefix="state">CLOSED</coderef>.</p></li>
-                  <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">closed</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
-                </ol>
-              </dd>
-            </dl>
+       <li>
+        <p>The user agent may run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <coderef>MediaKeySession</coderef> or schedule other work that later causes the session to be closed.</p>
+        <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application
+         believes the MediaKeySession is no longer needed. The user agent may coordinate with the associated CDM to determine
+         whether resources can now be released.</p>
        </li>
     </ol>
-    <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
     <p>The <codedfn prefix="source">keySystem</codedfn> attribute of <coderef>HTMLSourceElement</coderef> specifies the <a href="#key-system">Key System</a> to be used with the <videoref name="media-resource">media resource</videoref>.
     The <resource-selection-algorithm/> is modified to check the <coderef prefix="source">keySystem</coderef> attribute after the existing <em>step 5</em> of the <em>Otherwise</em> branch of <em>step 6</em>:
@@ -819,7 +793,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
     </ol>
 
-    <h3 id="algorithms-enrypted-block">4.2. Encrypted Block Encountered</h3>
+    <h3 id="algorithms-encrypted-block">4.2. Encrypted Block Encountered</h3>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -910,12 +884,34 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
     </ul>
 
-    <p>At any point while decrypting content, the user agent may determine that a <coderef>MediaKeySession</coderef> is no longer needed. It must run the following steps:</p>
+    <p>At any point while decrypting content, the user agent may determine that a <coderef>MediaKeySession</coderef> is no longer needed. It should run the <a href="#algorithms-session-close">Session Close</a> algorithm on the session.</p>
+
+    <h3 id="algorithms-queue-message">4.3. Queue a "message" event</h3>
+    <p>The Queue a "message" event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef>.
+     The message event includes a <var title="true">request</var> and a <var title="true">defaultURL</var>. The following steps are run:</p>
     <ol>
-        <li><p>Let the state of the session be <coderef prefix="state">CLOSED</coderef>.</p></li>
-        <li><p><queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">closed</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let the state of the session be <coderef prefix="state">PENDING</coderef>.</p></li>
+      <li>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the new object.</p>
+        <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>message</coderef> = <var title="true">request</var><br></br>
+          <coderef>destinationURL</coderef> = <var title="true">defaultURL</var>
+        </li></ul>
+      </li>
     </ol>
+
   
+    <h3 id="algorithms-session-close">4.4. Session Close</h3>
+    <p>The following steps are run when the <coderef>MediaKeySession</coderef> closes:</p>
+
+    <ol>
+      <li><p>Implementations may clear the internal state associated with the <coderef>MediaKeySession</coderef>, including keys and licences, to release resources but are not required to do so.</p></li>
+      <li><p>Let the state of the <coderef>MediaKeySession</coderef> be <coderef prefix="state">CLOSED</coderef>.</p></li>
+      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">closed</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+    </ol>
+    <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
+
     <h2 id="key-release">5. Key Release</h2>
     <p class="non-normative">Note: it is an open issue whether further normative specification of this feature is required. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17199">Bug 17199</a>.</p>
     <h3 id="key-release-intro">5.1. Introduction</h3>
@@ -1094,7 +1090,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <h4 id="webm-detect-encrypt">9.1.2. Detecting Encryption</h4>
       <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is potentially encrypted. Each time a new value is encountered in a ContentEncKeyID element, the <a href="#algorithms-encrypted-stream">First Time a Key Reference is Encountered</a> algorithm shall be invoked with the value in that element as <var title="">initData</var>.</p>
 
-      <p><a href="#algorithms-enrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
+      <p><a href="#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
 
       <h4 id="webm-init-data">9.1.3. Initialization Data and Events</h4>
       <p><a href="#initialization-data">Initialization Data</a> in <a href="#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
