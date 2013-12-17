@@ -573,12 +573,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <h3 id="error-codes">2.1. Error Codes</h3>
     <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p></div>
-    <p><videoref name="mediaerror">MediaError</videoref> is extended, and a new error type is added.</p>
     <pre class="idl">
-partial interface <precodedfn>MediaError</precodedfn> {
-  const unsigned short <precoderef>MEDIA_ERR_ENCRYPTED</precoderef> = 5;
-};
-
 interface <precodedfn>MediaKeyError</precodedfn> {
   const unsigned short <precoderef>MEDIA_KEYERR_UNKNOWN</precoderef> = 1;
   const unsigned short <precoderef>MEDIA_KEYERR_CLIENT</precoderef> = 2;
@@ -600,18 +595,8 @@ interface <precodedfn>MediaKeyError</precodedfn> {
      </dd>
     </dl>
 
-    <p>The <codedfn prefix="mediaerror">code</codedfn> attribute of a <coderef>MediaError</coderef> may additionally return the following:</p>
-    <dl>
-      <dt><codedfn>MEDIA_ERR_ENCRYPTED</codedfn> (numeric value 5)</dt>
-      <dd>The stream could not be played because it is encrypted and one of the following is true:
-        <ol>
-          <li>The media element does not have a <coderef>needkey</coderef> handler</li>
-          <li>The media element's <coderef>keys</coderef> attribute is null</li>
-        </ol>
-        <p class="non-normative">Applications that support encrypted media should provide a <coderef>needkey</coderef> handler and/or call <methodref>setMediaKeys</methodref> no later than when <videoanchor name="media-data">media data</videoanchor> is provided.</p>
-        <p class="non-normative">If the user agent does not support decryption of this <videoanchor name="media-data">media data</videoanchor>, it should report the same error it would for any other unsupported media data (e.g. <videoref name="dom-mediaerror-media_err_src_not_supported">MEDIA_ERR_SRC_NOT_SUPPORTED</videoref>).</p>
-      </dd>
-    </dl>
+    <p class="non-normative">Applications that support encrypted media should provide a <coderef>needkey</coderef> handler and/or call <methodref>setMediaKeys</methodref> no later than when <videoanchor name="media-data">media data</videoanchor> is provided.</p>
+    <p class="non-normative">If the user agent does not support decryption of this <videoanchor name="media-data">media data</videoanchor>, it should report the same error it would for any other unsupported media data (e.g. <videoref name="dom-mediaerror-media_err_src_not_supported">MEDIA_ERR_SRC_NOT_SUPPORTED</videoref>).</p>
 
     <div class="impl">
     <p>The <codedfn>code</codedfn> attribute of a <coderef>MediaKeyError</coderef> object must return the code for the error, which must be one of the following:</p>
@@ -818,22 +803,17 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <ol>
       <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
-      <li><p>Follow the steps for the first matching condition from the following list:</p>
-        <dl class="switch">
-          <dt>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/></dt>
-          <dd><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.
-            <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
-            <ul style="list-style-type:none"><li>
-              <coderef>type</coderef> = the MIME type of the <videoanchor name="media-data">media data</videoanchor> container format<br></br>
-              <coderef>initData</coderef> = <var title="">initData</var>
-            </li></ul>
-            <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-            <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
-          </dd>
-          <dt>Otherwise</dt>
-          <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error, and abort these steps.</dd>
-        </dl>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, let <var title="">initData</var> be that initialization data.</p></li>
+      <li>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>type</coderef> = the MIME type of the <videoanchor name="media-data">media data</videoanchor> container format<br></br>
+          <coderef>initData</coderef> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+        <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
+        <p class="non-normative">Note that if the media is not <cors-same-origin/> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
       </li>
 
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
@@ -895,8 +875,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
             </ol>
           </ol>
         </dd>
-        <dt>If there is not an event handler for <coderef>needkey</coderef></dt>
-        <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <coderef>MEDIA_ERR_ENCRYPTED</coderef> error, and abort these steps.</dd>
       </dl>
       </li>
       <li>

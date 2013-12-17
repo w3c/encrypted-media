@@ -597,12 +597,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <div class="issue-title"><span>Issue 1</span></div>
 <p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p>
 </div>
-    <p><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#mediaerror">MediaError</a></code> is extended, and a new error type is added.</p>
     <pre class="idl">
-partial interface <dfn id="dom-mediaerror">MediaError</dfn> {
-  const unsigned short <a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a> = 5;
-};
-
 interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
   const unsigned short <a href="#dom-media_keyerr_unknown">MEDIA_KEYERR_UNKNOWN</a> = 1;
   const unsigned short <a href="#dom-media_keyerr_client">MEDIA_KEYERR_CLIENT</a> = 2;
@@ -628,19 +623,8 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
      </dd>
     </dl>
 
-    <p>The <dfn id="dom-mediaerrorcode"><code>code</code></dfn> attribute of a <code><a href="#dom-mediaerror">MediaError</a></code> may additionally return the following:</p>
-    <dl>
-      <dt>
-<dfn id="dom-media_err_encrypted"><code>MEDIA_ERR_ENCRYPTED</code></dfn> (numeric value 5)</dt>
-      <dd>The stream could not be played because it is encrypted and one of the following is true:
-        <ol>
-          <li>The media element does not have a <code><a href="#dom-needkey">needkey</a></code> handler</li>
-          <li>The media element's <code><a href="#dom-keys">keys</a></code> attribute is null</li>
-        </ol>
-        <p class="non-normative">Applications that support encrypted media should provide a <code><a href="#dom-needkey">needkey</a></code> handler and/or call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> no later than when <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided.</p>
-        <p class="non-normative">If the user agent does not support decryption of this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it should report the same error it would for any other unsupported media data (e.g. <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-mediaerror-media_err_src_not_supported">MEDIA_ERR_SRC_NOT_SUPPORTED</a></code>).</p>
-      </dd>
-    </dl>
+    <p class="non-normative">Applications that support encrypted media should provide a <code><a href="#dom-needkey">needkey</a></code> handler and/or call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> no later than when <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided.</p>
+    <p class="non-normative">If the user agent does not support decryption of this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it should report the same error it would for any other unsupported media data (e.g. <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-mediaerror-media_err_src_not_supported">MEDIA_ERR_SRC_NOT_SUPPORTED</a></code>).</p>
 
     <div class="impl">
     <p>The <dfn id="dom-code"><code>code</code></dfn> attribute of a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object must return the code for the error, which must be one of the following:</p>
@@ -863,25 +847,17 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <ol>
       <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered, let <var title="">initData</var> be that initialization data.</p></li>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>, let <var title="">initData</var> be that initialization data.</p></li>
       <li>
-<p>Follow the steps for the first matching condition from the following list:</p>
-        <dl class="switch">
-          <dt>If the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>
-</dt>
-          <dd>
-<a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.
-            <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
-            <ul style="list-style-type:none"><li>
-              <code><a href="#dom-type">type</a></code> = the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> container format<br>
-              <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
-            </li></ul>
-            <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
-            <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event is merely informative.</p>
-          </dd>
-          <dt>Otherwise</dt>
-          <dd>Abort the media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error, and abort these steps.</dd>
-        </dl>
+        <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <code><a href="#dom-type">type</a></code> = the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> container format<br>
+          <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
+        <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
+        <p class="non-normative">Note that if the media is not <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
       </li>
 
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
@@ -952,9 +928,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
             </ol>
           </ol>
         </dd>
-        <dt>If there is not an event handler for <code><a href="#dom-needkey">needkey</a></code>
-</dt>
-        <dd>Abort the media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, run the steps to report a <code><a href="#dom-media_err_encrypted">MEDIA_ERR_ENCRYPTED</a></code> error, and abort these steps.</dd>
       </dl>
       </li>
       <li>
