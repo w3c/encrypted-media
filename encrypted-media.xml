@@ -250,7 +250,7 @@
     <pre class="idl">
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   // Encrypted Media
-  readonly attribute <precoderef>MediaKeys</precoderef> <precoderef>keys</precoderef>;
+  readonly attribute <precoderef>MediaKeys</precoderef> <precoderef prefix="attr">mediaKeys</precoderef>;
   void <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef> mediaKeys);
   
   attribute <EventHandler/> <precoderef>onneedkey</precoderef>;
@@ -283,12 +283,12 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
   attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
 };</pre>
 
-    <p>The <codedfn>keys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
+    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
     <p>The <methoddfn name="setMediaKeys">setMediaKeys</methoddfn> method provides the <coderef>MediaKeys</coderef> to use. When calling this method, the media element must run the following steps:</p>
     
     <ol>
       <li><p>If the <coderef>MediaKeys</coderef> object is already in use and the user agent is unable to re-use it with this element, throw a <quota-exceeded-err/> exception and abort these steps.</p></li>
-      <li>Set the <coderef>keys</coderef> attribute of the media element to <var>mediaKeys</var>.</li>
+      <li>Set the <coderef prefix="attr">mediaKeys</coderef> attribute of the media element to <var>mediaKeys</var>.</li>
     </ol>
     
     <p class="non-normative">Note: as a best practice, applications should create a MediaKeys object and call setMediaKeys before providing media data (for example, setting the src attribute of the media element). This avoids potential delays in some implementations.</p>
@@ -883,7 +883,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Follow the steps for the first matching condition from the following list:</p>
         <dl class="switch">
-        <dt>If the media element's <coderef>keys</coderef> attribute is not null:</dt>
+        <dt>If the media element's <coderef prefix="attr">mediaKeys</coderef> attribute is not null:</dt>
         <dd>Run the following steps:
           <ol>
             <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
@@ -1206,12 +1206,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function load() {
     var video = document.getElementById("video");
 
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("org.w3.clearkey"));
     if (!video.<precoderef>keys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef>keys</precoderef>.<premethodref>createSession</premethodref>();
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>();
     if (!keySession)
       throw "Could not create key session";
 
@@ -1245,12 +1245,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function handleKeyNeeded(event) {
     var video = event.target;
 
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("org.w3.clearkey"));
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef>keys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1285,12 +1285,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function handleKeyNeeded(event) {
     var video = event.target;
 
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("com.example.somesystem.1_0"));
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef>keys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1343,14 +1343,14 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function handleKeyNeeded(event) {
     var video = event.target;
 
-    if (!video.<precoderef>keys</precoderef>) {
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
       selectKeySystem();
       video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>(keySystem));
     }
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef>keys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1422,14 +1422,14 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function handleKeyNeeded(event) {
     var video = event.target;
 
-    if (!video.<precoderef>keys</precoderef>) {
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
       selectKeySystem();  // See previous example for implementation.
       video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>(keySystem));
     }
-    if (!video.<precoderef>keys</precoderef>)
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef>keys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>type</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
