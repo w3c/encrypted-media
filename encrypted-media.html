@@ -56,7 +56,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 21 January 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 23 January 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -79,7 +79,7 @@
       </dl>
     </div>
 
-    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2013 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2014 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
     <hr>
 
     <h2>Abstract</h2>
@@ -148,7 +148,7 @@
         <li><ul style="list-style-type:none">
           <li><a href="#algorithms-encrypted-stream">4.1. First Time a Key Reference is Encountered</a></li>
           <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-queue-message">4.3. Queue a "message" event</a></li>
+          <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
           <li><a href="#algorithms-session-close">4.4. Session Close</a></li>
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
@@ -287,14 +287,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 };</pre>
 
     <p>The <dfn id="dom-attrmediakeys"><code>mediaKeys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
-    <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys</code></dfn> method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use. When calling this method, the media element must run the following steps:</p>
+    <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys(mediaKeys</code></dfn> method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use. When calling this method, the media element must run the following steps:</p>
     
     <ol>
       <li><p>If the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is already in use and the user agent is unable to re-use it with this element, throw a <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-quota_exceeded_err">QUOTA_EXCEEDED_ERR</a></code> exception and abort these steps.</p></li>
       <li>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute of the media element to <var>mediaKeys</var>.</li>
     </ol>
     
-    <p class="non-normative">Note: as a best practice, applications should create a MediaKeys object and call setMediaKeys before providing media data (for example, setting the src attribute of the media element). This avoids potential delays in some implementations.</p>
+    <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing media data (for example, setting the src attribute of the media element). This avoids potential delays in some implementations.</p>
     <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element with <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
     <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
@@ -418,7 +418,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="algorithm-queue-message">Queue a "message" event</a> algorithm with the <var title="true">request</var>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm with the <var title="true">request</var>
                 and <var title="true">defaultURL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
@@ -506,7 +506,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="algorithm-queue-message">Queue a "message" event</a> algorithm with the <var title="true">request</var>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm with the <var title="true">request</var>
                 and <var title="true">defaultURL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
@@ -608,7 +608,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <ol>
                   <li><p>Let <var title="true">defaultURL</var> be null.</p></li>
                   <li>
-                    <p>Run the <a href="algorithm-queue-message">Queue a "message" event</a> algorithm with the <var title="true">request</var>
+                    <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm with the <var title="true">request</var>
                     and <var title="true">defaultURL</var>.</p>
                   </li>
                 </ol>
@@ -1028,8 +1028,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <p>At any point while decrypting content, the user agent may determine that a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is no longer needed. It should run the <a href="#algorithms-session-close">Session Close</a> algorithm on the session.</p>
 
-    <h3 id="algorithms-queue-message">4.3. Queue a "message" event</h3>
-    <p>The Queue a "message" event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.
+    <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
+    <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.
      The message event includes a <var title="true">request</var> and a <var title="true">defaultURL</var>. The following steps are run:</p>
     <ol>
       <li><p>Let the state of the session be <code><a href="#dom-statepending">PENDING</a></code>.</p></li>
@@ -1257,7 +1257,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
     </p>
 
-    <h3 id="example-source-and-key-known" class="exampleheader">9.1. Source and Key Known at Page Load (Clear Key Encryption)</h3>
+    <h3 id="example-source-and-key-known" class="exampleheader">9.1. Source and Key Known at Page Load (Clear Key)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
     <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <code><a href="#dom-update">update()</a></code> call. It also does not handle errors.</p>
 
@@ -1296,7 +1296,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
 
-    <h4 id="example-clear-key" class="exampleheader">9.2.1. Clear Key Encryption</h4>
+    <h4 id="example-clear-key" class="exampleheader">9.2.1. Clear Key</h4>
     <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
     <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
 
@@ -1337,7 +1337,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h4 id="example-other-cdm" class="exampleheader">9.2.2. Other Content Decryption Module</h4>
+    <h4 id="example-other-cdm" class="exampleheader">9.2.2. Other Key System</h4>
     <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
 
     <div class="example">
@@ -1441,7 +1441,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <h3 id="example-using-all-events" class="exampleheader">9.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
-    <p class="exampledescription">Note that <code>handleMessage</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+    <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
     <div class="example">
       <pre class="code">
