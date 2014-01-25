@@ -91,7 +91,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 23 January 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 24 January 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -663,15 +663,27 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>The <dfn id="dom-release"><code>release()</code></dfn> method allows an application to indicate to the system that it may release any resources associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. It must run the following steps:</p>
 
-     <ol>
-       <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateclosed">CLOSED</a></code> then abort these steps.</p></li>
-       <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateerror">ERROR</a></code>, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p></li>
-       <li>
-        <p>The user agent may run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> or schedule other work that later causes the session to be closed.</p>
-        <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application
-         believes the MediaKeySession is no longer needed. The user agent may coordinate with the associated CDM to determine
-         whether resources can now be released.</p>
-       </li>
+    <ol>
+      <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateclosed">CLOSED</a></code> then abort these steps.</p></li>
+      <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateerror">ERROR</a></code>, throw an <code><a href="https://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p></li>
+      <li>
+<p>Schedule a task to handle the call.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li>
+<p>Use <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Process the release request.</p>
+                <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed.
+                However, the CDM determines whether resources can now be released.</p>
+              </li>
+              <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</p></li>
+            </ol>
+          </li>
+        </ol>
+      </li>
     </ol>
 
     <p>The <dfn id="dom-sourcekeysystem"><code>keySystem</code></dfn> attribute of <code><a href="#dom-htmlsourceelement">HTMLSourceElement</a></code> specifies the <a href="#key-system">Key System</a> to be used with the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a></code>. The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute must be supported by all HTMLSourceElement as both an IDL attribute and also a content attribute named <dfn id="dom-sourcecontentkeysystem"><code>keysystem</code></dfn>.

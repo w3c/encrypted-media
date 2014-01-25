@@ -90,7 +90,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 23 January 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 24 January 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -638,15 +638,25 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <methoddfn name="release">release()</methoddfn> method allows an application to indicate to the system that it may release any resources associated with the <coderef>MediaKeySession</coderef>. It must run the following steps:</p>
 
-     <ol>
-       <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">CLOSED</coderef> then abort these steps.</p></li>
-       <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">ERROR</coderef>, throw an <invalid-state-err/> exception and abort these steps.</p></li>
-       <li>
-        <p>The user agent may run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <coderef>MediaKeySession</coderef> or schedule other work that later causes the session to be closed.</p>
-        <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application
-         believes the MediaKeySession is no longer needed. The user agent may coordinate with the associated CDM to determine
-         whether resources can now be released.</p>
-       </li>
+    <ol>
+      <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">CLOSED</coderef> then abort these steps.</p></li>
+      <li><p>If the state of the <coderef>MediaKeySession</coderef> is <coderef prefix="state">ERROR</coderef>, throw an <invalid-state-err/> exception and abort these steps.</p></li>
+      <li><p>Schedule a task to handle the call.</p>
+        <p>The user agent will asynchronously execute the following steps in the task:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-media-keys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li><p>Use <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Process the release request.</p>
+                <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed.
+                However, the CDM determines whether resources can now be released.</p>
+              </li>
+              <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <coderef>MediaKeySession</coderef>.</p></li>
+            </ol>
+          </li>
+        </ol>
+      </li>
     </ol>
 
     <p>The <codedfn prefix="source">keySystem</codedfn> attribute of <coderef>HTMLSourceElement</coderef> specifies the <a href="#key-system">Key System</a> to be used with the <videoref name="media-resource">media resource</videoref>. The <codedfn>keySystem</codedfn> attribute must be supported by all HTMLSourceElement as both an IDL attribute and also a content attribute named <codedfn prefix="sourcecontent">keysystem</codedfn>.
