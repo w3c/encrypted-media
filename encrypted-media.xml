@@ -167,7 +167,7 @@
         </ul></li>
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#error-codes">2.1. Error Codes</a></li>
+          <li><a href="#error-codes">2.1. Errors</a></li>
           <li><a href="#session-state">2.2. MediaKeySession States</a></li>
           <li><a href="#media-element-restictions">2.3. Media Element Restrictions</a></li>
         </ul></li>
@@ -353,7 +353,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <dd><ol>
                 <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                    <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br></br>
                     <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -422,7 +422,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <ol>
                 <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                    <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br></br>
                     <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -507,7 +507,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <ol>
                 <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                    <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br></br>
                     <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -604,7 +604,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <ol>
                 <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                    <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br></br>
                     <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -672,52 +672,31 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>&#8987; If <var title="">candidate</var> has a <coderef prefix="source">keySystem</coderef> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <videoref name="attr-source-type">type</videoref>, then end the <synchronous-section/>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
 
-    <h3 id="error-codes">2.1. Error Codes</h3>
-    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p></div>
+    <h3 id="error-codes">2.1. Errors</h3>
+    <h4 id="mediakeyerror">2.1.1. Interface</h4>
     <pre class="idl">
-interface <precodedfn>MediaKeyError</precodedfn> {
-  const unsigned short <precoderef>MEDIA_KEYERR_UNKNOWN</precoderef> = 1;
-  const unsigned short <precoderef>MEDIA_KEYERR_CLIENT</precoderef> = 2;
-  const unsigned short <precoderef>MEDIA_KEYERR_SERVICE</precoderef> = 3;
-  const unsigned short <precoderef>MEDIA_KEYERR_OUTPUT</precoderef> = 4;
-  const unsigned short <precoderef>MEDIA_KEYERR_HARDWARECHANGE</precoderef> = 5;
-  const unsigned short <precoderef>MEDIA_KEYERR_DOMAIN</precoderef> = 6;
-  readonly attribute unsigned short <precoderef>code</precoderef>;
+
+[<a href="#dom-mediakeyerror-constructor">Constructor</a>(DOMString <a href="#mediakeyerror-names">name</a>, unsigned long <precoderef>systemCode</precoderef>, optional DOMString message = "")]
+interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-domerror">DOMError</dom4ref> {
   readonly attribute unsigned long <precoderef>systemCode</precoderef>;
-};</pre>
-    <dl class="domintro">
-     <dt><var title="">session</var> . <var title="">error</var> . <coderef>code</coderef></dt>
-     <dd>
-       <p>Returns the current error's error code, from the list below.</p>
-     </dd>
-     <dt><var title="">session</var> . <var title="">error</var> . <coderef>systemCode</coderef></dt>
-     <dd>
-       <p>Returns the current error's system code.</p>
-     </dd>
-    </dl>
+};
+</pre>
 
     <div class="impl">
-    <p>The <codedfn>code</codedfn> attribute of a <coderef>MediaKeyError</coderef> object must return the code for the error, which must be one of the following:</p>
-    <dl>
-      <dt><codedfn>MEDIA_KEYERR_UNKNOWN</codedfn> (numeric value 1)</dt>
-      <dd>An unspecified error occurred. This value is used for errors that don't match any of the following codes.</dd>
-      <dt><codedfn>MEDIA_KEYERR_CLIENT</codedfn> (numeric value 2)</dt>
-      <dd>The <a href="#key-system">Key System</a> could not be installed or updated.</dd>
-      <dt><codedfn>MEDIA_KEYERR_SERVICE</codedfn> (numeric value 3)</dt>
-      <dd>The message passed into <coderef>update</coderef> indicated an error from the license service.</dd>
-      <dt><codedfn>MEDIA_KEYERR_OUTPUT</codedfn> (numeric value 4)</dt>
-      <dd>There is no available output device with the required characteristics for the content protection system.</dd>
-      <dt><codedfn>MEDIA_KEYERR_HARDWARECHANGE</codedfn> (numeric value 5)</dt>
-      <dd>A hardware configuration change caused a content protection error.</dd>
-      <dt><codedfn>MEDIA_KEYERR_DOMAIN</codedfn> (numeric value 6)</dt>
-      <dd>An error occurred in a multi-device domain licensing configuration. <span class="non-normative">The most common error is a failure to join the domain.</span></dd>
-    </dl>
+    <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must return a new <coderef>MediaKeyError</coderef> whose <coderef>systemCode</coderef> attribute is initialized to <var title="true">systemCode</var> and inherited attributes are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><dom4ref name="dom-domerror">DOMError</dom4ref></code> constructor.</p>
 
     <p>The <codedfn>systemCode</codedfn> attribute of a <coderef>MediaKeySession</coderef> object is a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.
-    <span class="non-normative">This allows a more granular status to be returned than the more general <coderef>code</coderef>.</span>
+    <span class="non-normative">This allows a more granular status to be returned than the more general <a href="#mediakeyerror-names">name</a>.</span>
     It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
     </p>
     </div>
+
+    <h4 id="mediakeyerror-names">2.1.2. Errors Names</h4>
+
+    <p>The <dfn id="error-names-table">error names table</dfn> below lists all the allowed error names for the <code><dom4ref name="dom-domerror-name">name</dom4ref></code> attribute along with a description.
+    In addition, any of the standard <dom4ref name="error-names-0">error names</dom4ref> are allowed.</p>
+
+    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The additional error names are yet to be defined.</p></div>
 
     <h3 id="session-state">2.3 MediaKeySession States</h3>
     <non-normative-section/>
@@ -965,7 +944,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
                     <li><p>Let <var title="">session</var> be the <coderef>MediaKeySession</coderef> object for the session with an unusable key.</p></li>
                     <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
                       <ul style="list-style-type:none"><li>
-                        <coderef>code</coderef> = the appropriate <coderef>MediaKeyError</coderef> code<br></br>
+                        <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br></br>
                         <coderef>systemCode</coderef> = a Key System-specific value, if provided, and 0 otherwise
                       </li></ul>
                     </li>
@@ -1465,7 +1444,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   }
 
   function handleError(event) {
-    // Report event.target.error.<precoderef>code</precoderef> and event.target.error.<precoderef>systemCode</precoderef>,
+    // Report event.target.error.name and event.target.error.<precoderef>systemCode</precoderef>,
     // and do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
   }
 

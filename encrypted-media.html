@@ -170,7 +170,7 @@
         </ul></li>
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#error-codes">2.1. Error Codes</a></li>
+          <li><a href="#error-codes">2.1. Errors</a></li>
           <li><a href="#session-state">2.2. MediaKeySession States</a></li>
           <li><a href="#media-element-restictions">2.3. Media Element Restrictions</a></li>
         </ul></li>
@@ -357,7 +357,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
                     <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -433,7 +433,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
                     <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -525,7 +525,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
                     <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -628,7 +628,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
                   <ul style="list-style-type:none"><li>
-                    <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
                     <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
                   </li></ul>
                 </li>
@@ -699,66 +699,34 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>⌛ If <var title="">candidate</var> has a <code><a href="#dom-sourcekeysystem">keySystem</a></code> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-source-type">type</a></code>, then end the <a href="http://www.w3.org/TR/html5/webappapis.html#synchronous-section">synchronous section</a>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
 
-    <h3 id="error-codes">2.1. Error Codes</h3>
-    <div class="issue">
-<div class="issue-title"><span>Issue 1</span></div>
-<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - Some errors may change or be removed.</p>
-</div>
+    <h3 id="error-codes">2.1. Errors</h3>
+    <h4 id="mediakeyerror">2.1.1. Interface</h4>
     <pre class="idl">
-interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> {
-  const unsigned short <a href="#dom-media_keyerr_unknown">MEDIA_KEYERR_UNKNOWN</a> = 1;
-  const unsigned short <a href="#dom-media_keyerr_client">MEDIA_KEYERR_CLIENT</a> = 2;
-  const unsigned short <a href="#dom-media_keyerr_service">MEDIA_KEYERR_SERVICE</a> = 3;
-  const unsigned short <a href="#dom-media_keyerr_output">MEDIA_KEYERR_OUTPUT</a> = 4;
-  const unsigned short <a href="#dom-media_keyerr_hardwarechange">MEDIA_KEYERR_HARDWARECHANGE</a> = 5;
-  const unsigned short <a href="#dom-media_keyerr_domain">MEDIA_KEYERR_DOMAIN</a> = 6;
-  readonly attribute unsigned short <a href="#dom-code">code</a>;
+
+[<a href="#dom-mediakeyerror-constructor">Constructor</a>(DOMString <a href="#mediakeyerror-names">name</a>, unsigned long <a href="#dom-systemcode">systemCode</a>, optional DOMString message = "")]
+interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> : <a href="http://www.w3.org/TR/dom/#interface-domerror">DOMError</a> {
   readonly attribute unsigned long <a href="#dom-systemcode">systemCode</a>;
-};</pre>
-    <dl class="domintro">
-     <dt>
-<var title="">session</var> . <var title="">error</var> . <code><a href="#dom-code">code</a></code>
-</dt>
-     <dd>
-       <p>Returns the current error's error code, from the list below.</p>
-     </dd>
-     <dt>
-<var title="">session</var> . <var title="">error</var> . <code><a href="#dom-systemcode">systemCode</a></code>
-</dt>
-     <dd>
-       <p>Returns the current error's system code.</p>
-     </dd>
-    </dl>
+};
+</pre>
 
     <div class="impl">
-    <p>The <dfn id="dom-code"><code>code</code></dfn> attribute of a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object must return the code for the error, which must be one of the following:</p>
-    <dl>
-      <dt>
-<dfn id="dom-media_keyerr_unknown"><code>MEDIA_KEYERR_UNKNOWN</code></dfn> (numeric value 1)</dt>
-      <dd>An unspecified error occurred. This value is used for errors that don't match any of the following codes.</dd>
-      <dt>
-<dfn id="dom-media_keyerr_client"><code>MEDIA_KEYERR_CLIENT</code></dfn> (numeric value 2)</dt>
-      <dd>The <a href="#key-system">Key System</a> could not be installed or updated.</dd>
-      <dt>
-<dfn id="dom-media_keyerr_service"><code>MEDIA_KEYERR_SERVICE</code></dfn> (numeric value 3)</dt>
-      <dd>The message passed into <code><a href="#dom-update">update</a></code> indicated an error from the license service.</dd>
-      <dt>
-<dfn id="dom-media_keyerr_output"><code>MEDIA_KEYERR_OUTPUT</code></dfn> (numeric value 4)</dt>
-      <dd>There is no available output device with the required characteristics for the content protection system.</dd>
-      <dt>
-<dfn id="dom-media_keyerr_hardwarechange"><code>MEDIA_KEYERR_HARDWARECHANGE</code></dfn> (numeric value 5)</dt>
-      <dd>A hardware configuration change caused a content protection error.</dd>
-      <dt>
-<dfn id="dom-media_keyerr_domain"><code>MEDIA_KEYERR_DOMAIN</code></dfn> (numeric value 6)</dt>
-      <dd>An error occurred in a multi-device domain licensing configuration. <span class="non-normative">The most common error is a failure to join the domain.</span>
-</dd>
-    </dl>
+    <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must return a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> whose <code><a href="#dom-systemcode">systemCode</a></code> attribute is initialized to <var title="true">systemCode</var> and inherited attributes are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><a href="http://www.w3.org/TR/dom/#dom-domerror">DOMError</a></code> constructor.</p>
 
     <p>The <dfn id="dom-systemcode"><code>systemCode</code></dfn> attribute of a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object is a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.
-    <span class="non-normative">This allows a more granular status to be returned than the more general <code><a href="#dom-code">code</a></code>.</span>
+    <span class="non-normative">This allows a more granular status to be returned than the more general <a href="#mediakeyerror-names">name</a>.</span>
     It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
     </p>
     </div>
+
+    <h4 id="mediakeyerror-names">2.1.2. Errors Names</h4>
+
+    <p>The <dfn id="error-names-table">error names table</dfn> below lists all the allowed error names for the <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> attribute along with a description.
+    In addition, any of the standard <a href="http://www.w3.org/TR/dom/#error-names-0">error names</a> are allowed.</p>
+
+    <div class="issue">
+<div class="issue-title"><span>Issue 1</span></div>
+<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The additional error names are yet to be defined.</p>
+</div>
 
     <h3 id="session-state">2.3 MediaKeySession States</h3>
     <p><i>This section is non-normative.</i></p>
@@ -1024,7 +992,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
                     <li>
 <p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
                       <ul style="list-style-type:none"><li>
-                        <code><a href="#dom-code">code</a></code> = the appropriate <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> code<br>
+                        <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
                         <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
                       </li></ul>
                     </li>
@@ -1528,7 +1496,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   }
 
   function handleError(event) {
-    // Report event.target.error.<a href="#dom-code">code</a> and event.target.error.<a href="#dom-systemcode">systemCode</a>,
+    // Report event.target.error.name and event.target.error.<a href="#dom-systemcode">systemCode</a>,
     // and do some bookkeeping with event.target.<a href="#dom-sessionid">sessionId</a> if necessary.
   }
 
