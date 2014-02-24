@@ -91,7 +91,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 21 February 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 24 February 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -100,6 +100,7 @@
         <dt>Latest editor's draft:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
         <dt>Previous Versions:</dt>
+        <dd><a href="http://www.w3.org/TR/2014/WD-encrypted-media-20140218/">http://www.w3.org/TR/2014/WD-encrypted-media-20140218/</a></dd>
         <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20130510/">http://www.w3.org/TR/2013/WD-encrypted-media-20130510/</a></dd>
         <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20131022/">http://www.w3.org/TR/2013/WD-encrypted-media-20131022/</a></dd>
         <dt>Editors:</dt>
@@ -289,12 +290,20 @@
     <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
 
     <pre class="idl">
+enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> {
+  "<dfn id="dom-waitingfornone">none</dfn>",
+  "<dfn id="dom-waitingfordata">data</dfn>",
+  "<dfn id="dom-waitingforkey">key</dfn>"
+};
+
 partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
   // Encrypted Media
   readonly attribute <a href="#dom-mediakeys">MediaKeys</a> <a href="#dom-attrmediakeys">mediaKeys</a>;
   void <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a> mediaKeys);
   
   attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onneedkey">onneedkey</a>;
+
+  readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
 };
 
 [<a href="#dom-mediakeys-constructor">Constructor</a>(DOMString <a href="#key-system">keySystem</a>)]
@@ -334,6 +343,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
     <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element with <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
+
+    <p>The <dfn id="dom-waitingfor"><code>waitingFor</code></dfn> attribute indicates what the media element is waiting for if anything (indicated by the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> and <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
     <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
@@ -1046,6 +1057,20 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     the user agent has reached a point in the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a></code> that must be decrypted for the resource to continue and the <a href="#cdm">CDM</a> does not have the necessary key.
     </li>
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
+
+    <li>
+      <p>It is possible for media element to be playing media and encounter content that requires media keys/decryption keys.  To accommodate changes caused by key status, apply the first appropriate substeps from the following list:</p>
+
+      <dl>
+        <dt>If media element was previously playing and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingfornone">none</a></code>":</dt>
+        <dd>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</dd>
+        <dd>If a media key(s) /decryption key(s) is needed to continue playback for any selected video track(s), enabled audio track(s), or "showing" or "hidden" text track(s), and the element has not ended playback, the user agent must set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingforkey">key</a></code>", queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element, and queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> at the element.</dd>
+        <dt>If media element was previously waiting and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingfordata">data</a></code>":</dt>
+        <dd>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</dd>
+        <dt>If media element was previously waiting and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingforkey">key</a></code>":</dt>
+        <dd>If a media key(s) /decryption key(s) becomes available for playback to proceed, the user agent must set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>", queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element, and queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> at the element.</dd>
+      </dl>
+    </li>
     </ul>
 
     <p>At any point while decrypting content, the user agent may determine that a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is no longer needed. It should run the <a href="#algorithms-session-close">Session Close</a> algorithm on the session.</p>
