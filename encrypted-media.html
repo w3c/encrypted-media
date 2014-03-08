@@ -91,7 +91,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 24 February 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 7 March 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -265,13 +265,13 @@
     <h4 id="initialization-data">1.1.5. Initialization Data</h4>
     <p><i>This section is non-normative.</i></p>
     <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
-    It should always allow unique identification of the key or keys needed to decrypt the content, possibly after being parsed by a CDM or server.
+    It should always allow unique identification of the key(s) needed to decrypt the content.
     </p>
 
     <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a key request message.
     This block could be as simple as a key or content ID to send to a server or as complex as an opaque Key System-specific collection of data.
     This initialization information may be obtained in some application-specific way or may be stored with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
-    Container formats may provide for storage of such information, possibly for multiple <a href="#key-system">Key Systems</a> in a single media file.
+    Container specifications may provide for storage of such information.
     </p>
 
     <p>Initialization data found in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-needkey">needkey</a></code> event.
@@ -321,7 +321,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
   readonly attribute <a href="#dom-mediakeyerror">MediaKeyError</a>? <a href="#dom-error">error</a>;
 
   // session properties
-  readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
+  readonly attribute DOMString <a href="#dom-sessionkeysystem">keySystem</a>;
   readonly attribute DOMString <a href="#dom-sessionid">sessionId</a>;
 
   // session operations
@@ -385,7 +385,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>Return the new <code><a href="#dom-mediakeys">MediaKeys</a></code> object to the caller.</li>
     </ol>
 
-    <p>The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+    <p>The <dfn id="dom-keysystem"><code>keySystem</code></dfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <dfn id="dom-createsession"><code>createSession(contentType, initData)</code></dfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
@@ -399,17 +399,19 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <ol>
       <li><p>If <var title="true">contentType</var> is null or an empty string, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
       <li><p>If <var title="true">initData</var> is null or an empty array, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">contentType</var> contains a MIME type that is not supported or is not supported by the <code><a href="#dom-keysystem">keySystem</a></code>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
+      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
 
       <li>Create a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
         <ol>
-          <li><p>Let the <code><a href="#dom-keysystem">keySystem</a></code> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
+          <li><p>Let the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute of the new object be <code><a href="#dom-keysystem">keySystem</a></code>.</p></li>
+          <li><p>Let the state of the new object be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
         </ol>
       </li>
       
       <li>
-<p>Schedule a task to initialize the session, providing <var title="true">contentType</var>, <var title="true">initData</var>, and the new object.</p>
+<p>Schedule a task to initialize the session, providing <var title="true">initDataFormat</var>, <var title="true">initData</var>, and the new object.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
@@ -423,10 +425,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li>
-<p>Process <var title="true">contentType</var> and <var title="true">initData</var>.</p>
-              <p class="non-normative">Note: <var title="true">contentType</var> should be used to determine how to interpret <var title="true">initData</var>.</p>
-              </li>
+              <li><p>Process <var title="true">initData</var>, interpreting it per <var title="true">initDataFormat</var>.</p></li>
               <li>
 <p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
@@ -498,12 +497,12 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>The <dfn id="dom-loadsession"><code>loadSession(sessionId)</code></dfn> method must run the following steps:</p>
     <ol>
-      <li><p>If the <code><a href="#dom-keysystem">keySystem</a></code> does not support loading previous sessions, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support loading previous sessions, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
       <li><p>If <var title="true">sessionId</var> is null or an empty string, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
       <li>Create a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
         <ol>
-          <li><p>Let the <code><a href="#dom-keysystem">keySystem</a></code> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
+          <li><p>Let the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute of the new object be <code><a href="#dom-keysystem">keySystem</a></code>.</p></li>
+          <li><p>Let the state of the new object be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
         </ol>
       </li>
       
@@ -581,7 +580,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>Return the new object to the caller.</p></li>
     </ol>
 
-    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(keySystem, contentType)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">contentType</var>(s).</p>
+    <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(keySystem, contentType)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the container and codec(s) specified by <var title="true">contentType</var>.</p>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
@@ -600,11 +599,17 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>If <var title="true">keySystem</var> is null or an empty string, return false and abort these steps.</p></li>
       <li><p>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return false and abort these steps. Key system string comparison is case-sensitive.</p></li>
       <li><p>If <var title="true">contentType</var> is null or an empty string, return true and abort these steps.</p></li>
-      <li><p>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, return false and abort these steps.</p></li>
+      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>If the user agent does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
+      <li><p>If the CDM specified by <var title="true">keySystem</var> does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
+      <li><p>If neither the CDM specified by <var title="true">keySystem</var> nor the user agent support all codec(s) specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
       <li><p>Return true.</p></li>
     </ol>
 
     <p>The <dfn id="dom-error"><code>error</code></dfn> attribute is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> representing the current error state of the session. It is null if there is no error.</p>
+
+    <p>The <dfn id="dom-sessionkeysystem"><code>keySystem</code></dfn> attribute identifies the <a href="#key-system">Key System</a> of the <code><a href="#dom-mediakeys">MediaKeys</a></code> that created the session.</p>
 
     <p>The <dfn id="dom-sessionid"><code>sessionId</code></dfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
@@ -947,7 +952,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
         <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
         <ul style="list-style-type:none"><li>
-          <code><a href="#dom-contenttype">contentType</a></code> = the MIME type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> container format<br>
+          <code><a href="#dom-contenttype">contentType</a></code> = the MIME type corresponding to the container type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a><br>
           <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>

@@ -90,7 +90,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 24 February 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 7 March 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -262,13 +262,13 @@
     <h4 id="initialization-data">1.1.5. Initialization Data</h4>
     <non-normative-section/>
     <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
-    It should always allow unique identification of the key or keys needed to decrypt the content, possibly after being parsed by a CDM or server.
+    It should always allow unique identification of the key(s) needed to decrypt the content.
     </p>
 
     <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a key request message.
     This block could be as simple as a key or content ID to send to a server or as complex as an opaque Key System-specific collection of data.
     This initialization information may be obtained in some application-specific way or may be stored with the <videoanchor name="media-data">media data</videoanchor>.
-    Container formats may provide for storage of such information, possibly for multiple <a href="#key-system">Key Systems</a> in a single media file.
+    Container specifications may provide for storage of such information.
     </p>
 
     <p>Initialization data found in the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
@@ -318,7 +318,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   readonly attribute <precoderef>MediaKeyError</precoderef>? <precoderef>error</precoderef>;
 
   // session properties
-  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+  readonly attribute DOMString <precoderef prefix="session">keySystem</precoderef>;
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
 
   // session operations
@@ -381,7 +381,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li>Return the new <coderef>MediaKeys</coderef> object to the caller.</li>
     </ol>
 
-    <p>The <codedfn>keySystem</codedfn> attribute is an identifier for the <a href="#key-system">Key System</a> being used.</p>
+    <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <methoddfn name="createSession">createSession(<var title="true">contentType</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
@@ -395,16 +395,18 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol>
       <li><p>If <var title="true">contentType</var> is null or an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
       <li><p>If <var title="true">initData</var> is null or an empty array, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">contentType</var> contains a MIME type that is not supported or is not supported by the <coderef>keySystem</coderef>, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, throw a <not-supported-err/> exception and abort these steps.</p></li>
 
       <li>Create a new <coderef>MediaKeySession</coderef> object.
         <ol>
-          <li><p>Let the <coderef>keySystem</coderef> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <coderef prefix="state">CREATED</coderef>.</p></li>
+          <li><p>Let the <coderef prefix="session">keySystem</coderef> attribute of the new object be <coderef>keySystem</coderef>.</p></li>
+          <li><p>Let the state of the new object be <coderef prefix="state">CREATED</coderef>.</p></li>
         </ol>
       </li>
       
-      <li><p>Schedule a task to initialize the session, providing <var title="true">contentType</var>, <var title="true">initData</var>, and the new object.</p>
+      <li><p>Schedule a task to initialize the session, providing <var title="true">initDataFormat</var>, <var title="true">initData</var>, and the new object.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
@@ -417,9 +419,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
           <li><p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>Process <var title="true">contentType</var> and <var title="true">initData</var>.</p>
-              <p class="non-normative">Note: <var title="true">contentType</var> should be used to determine how to interpret <var title="true">initData</var>.</p>
-              </li>
+              <li><p>Process <var title="true">initData</var>, interpreting it per <var title="true">initDataFormat</var>.</p></li>
               <li><p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
                   <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using <var title="true">initData</var>.</p>
@@ -485,12 +485,12 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <methoddfn name="loadSession">loadSession(<var title="true">sessionId</var>)</methoddfn> method must run the following steps:</p>
     <ol>
-      <li><p>If the <coderef>keySystem</coderef> does not support loading previous sessions, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support loading previous sessions, throw a <not-supported-err/> exception and abort these steps.</p></li>
       <li><p>If <var title="true">sessionId</var> is null or an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
       <li>Create a new <coderef>MediaKeySession</coderef> object.
         <ol>
-          <li><p>Let the <coderef>keySystem</coderef> attribute be <var title="true">keySystem</var>.</p></li>
-          <li><p>Let the state of the session be <coderef prefix="state">CREATED</coderef>.</p></li>
+          <li><p>Let the <coderef prefix="session">keySystem</coderef> attribute of the new object be <coderef>keySystem</coderef>.</p></li>
+          <li><p>Let the state of the new object be <coderef prefix="state">CREATED</coderef>.</p></li>
         </ol>
       </li>
       
@@ -562,7 +562,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return the new object to the caller.</p></li>
     </ol>
 
-    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">contentType</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the specified container and codec <var title="true">contentType</var>(s).</p>
+    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">contentType</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the container and codec(s) specified by <var title="true">contentType</var>.</p>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
@@ -581,11 +581,17 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">keySystem</var> is null or an empty string, return false and abort these steps.</p></li>
       <li><p>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return false and abort these steps. Key system string comparison is case-sensitive.</p></li>
       <li><p>If <var title="true">contentType</var> is null or an empty string, return true and abort these steps.</p></li>
-      <li><p>If the <a href="#key-system">Key System</a> specified by <var title="true">keySystem</var> does not support decrypting the container and/or codec specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, return false and abort these steps.</p></li>
+      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>If the user agent does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
+      <li><p>If the CDM specified by <var title="true">keySystem</var> does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
+      <li><p>If neither the CDM specified by <var title="true">keySystem</var> nor the user agent support all codec(s) specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
       <li><p>Return true.</p></li>
     </ol>
 
     <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
+
+    <p>The <codedfn prefix="session">keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> of the <coderef>MediaKeys</coderef> that created the session.</p>
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
@@ -908,7 +914,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
         <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
         <ul style="list-style-type:none"><li>
-          <coderef>contentType</coderef> = the MIME type of the <videoanchor name="media-data">media data</videoanchor> container format<br></br>
+          <coderef>contentType</coderef> = the MIME type corresponding to the container type of the <videoanchor name="media-data">media data</videoanchor><br></br>
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
