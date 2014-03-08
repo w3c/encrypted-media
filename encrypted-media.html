@@ -313,7 +313,7 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(DOMString contentType, Uint8Array initData);
   <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-loadsession">loadSession</a>(DOMString sessionId);
 
-  static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, DOMString? contentType);
+  static bool <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString contentType);
 };
 
 interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://www.w3.org/TR/dom/#eventtarget">EventTarget</a> {
@@ -978,9 +978,10 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 <p>If <var title="true">cdm</var> has at least one <code><a href="#dom-mediakeysession">MediaKeySession</a></code> in the <code><a href="#dom-statepending">PENDING</a></code> or <code><a href="#dom-stateready">READY</a></code> state, run the following steps:</p>
               <p class="non-normative">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
             <ol>
-              <li><p>Let <var title="true">block key ID</var> be be the key ID for the current block.</p></li>
+              <li><p>Let <var title="true">block key ID</var> be the key ID of the current block <span class="non-normative">(as specified by the container)</span>.</p></li>
               <li>
 <p>Use <var title="true">cdm</var> to decrypt the block by following the steps for the first matching condition from the following list:</p>
+                <p class="non-normative">In the following steps, a key is considered usable if it is valid as determined by the CDM. For example, a key is not usable if its license has expired.</p>
                 <dl class="switch">
                 <dt>If any session has a usable key for <var title="">block key ID</var>
 </dt>
