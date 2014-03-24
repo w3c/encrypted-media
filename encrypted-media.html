@@ -1030,8 +1030,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </li>
     </ul>
 
-    <p>At any point while decrypting content, the user agent may determine that a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is no longer needed. It should run the <a href="#algorithms-session-close">Session Close</a> algorithm on the session.</p>
-
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
     Requests to run this algorithm include a target <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
@@ -1070,14 +1068,16 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </ol>
 
     <h3 id="algorithms-session-close">4.5. Session Close</h3>
-    <p>The following steps are run when the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> closes:</p>
-
+    <p>The Session Close algorithm is run when the CDM closes the session associated with a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p>
+    <p class="non-normative">The CDM may close a session at any point, such as in response to a <code><a href="#dom-release">release()</a></code> call, when the session is no longer needed, or when resources are lost.
+    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
+    </p>
+    <p>The following steps are run:</p>
     <ol>
-      <li><p>Implementations may clear the internal state associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>, including keys and licences, to release resources but are not required to do so.</p></li>
-      <li><p>Let the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> be <code><a href="#dom-stateclosed">CLOSED</a></code>.</p></li>
-      <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventclose">close</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li><p>Let the <var title="true">session</var> be the associated <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li><p>Let the state of the <var title="true">session</var> be <code><a href="#dom-stateclosed">CLOSED</a></code>.</p></li>
+      <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventclose">close</a></code> at the <var title="true">session</var>.</p></li>
     </ol>
-    <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
     <p>All user agents must support the simple decryption capabilities described in this section regardless of whether they support a more advanced <a href="#cdm">CDM</a>.

@@ -985,8 +985,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </li>
     </ul>
 
-    <p>At any point while decrypting content, the user agent may determine that a <coderef>MediaKeySession</coderef> is no longer needed. It should run the <a href="#algorithms-session-close">Session Close</a> algorithm on the session.</p>
-
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
     Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
@@ -1024,14 +1022,16 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </ol>
 
     <h3 id="algorithms-session-close">4.5. Session Close</h3>
-    <p>The following steps are run when the <coderef>MediaKeySession</coderef> closes:</p>
-
+    <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
+    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>release</methodref> call, when the session is no longer needed, or when resources are lost.
+    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
+    </p>
+    <p>The following steps are run:</p>
     <ol>
-      <li><p>Implementations may clear the internal state associated with the <coderef>MediaKeySession</coderef>, including keys and licences, to release resources but are not required to do so.</p></li>
-      <li><p>Let the state of the <coderef>MediaKeySession</coderef> be <coderef prefix="state">CLOSED</coderef>.</p></li>
-      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">close</coderef> at the <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">CLOSED</coderef>.</p></li>
+      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">close</coderef> at the <var title="true">session</var>.</p></li>
     </ol>
-    <p class="non-normative">Note: Keys in other sessions should be unaffected, even if they have overlapping key IDs.</p>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
     <p>All user agents must support the simple decryption capabilities described in this section regardless of whether they support a more advanced <a href="#cdm">CDM</a>.
