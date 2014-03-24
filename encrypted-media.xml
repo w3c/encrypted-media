@@ -288,11 +288,7 @@
     <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
 
     <pre class="idl">
-enum <precodedfn>MediaWaitingFor</precodedfn> {
-  "<precodedfn prefix="waitingfor">none</precodedfn>",
-  "<precodedfn prefix="waitingfor">data</precodedfn>",
-  "<precodedfn prefix="waitingfor">key</precodedfn>"
-};
+enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
 
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   // Encrypted Media
@@ -342,9 +338,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
     <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects created by <methodref>createSession</methodref> may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element with <methodref>setMediaKeys</methodref>.</p>
 
-    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
-
     <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+
+    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
     <p>The <dfn id="dom-mediakeys-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must run the following steps:</p>
 
@@ -970,16 +966,17 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
 
     <li>
-      <p>It is possible for media element to be playing media and encounter content that requires media keys/decryption keys.  To accommodate changes caused by key status, apply the first appropriate substeps from the following list:</p>
+      <p>It is possible for a media element to be playing media and encounter content that requires decryption keys.  To accommodate changes caused by key status, apply the first appropriate substeps from the following list:</p>
 
-      <dl>
+      <dl class="switch">
         <dt>If media element was previously playing and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">none</coderef>":</dt>
-        <dd>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</dd>
-        <dd>If a media key(s) /decryption key(s) is needed to continue playback for any selected video track(s), enabled audio track(s), or "showing" or "hidden" text track(s), and the element has not ended playback, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">key</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-waiting">waiting</videoref> at the element.</dd>
+        <dd>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".
+        <br/>If decryption key(s) are needed to continue playback for any selected video track(s), enabled audio track(s), or "showing" or "hidden" text track(s), and the element has not ended playback, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">key</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-waiting">waiting</videoref> at the element.
+        </dd>
         <dt>If media element was previously waiting and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">data</coderef>":</dt>
         <dd>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</dd>
         <dt>If media element was previously waiting and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">key</coderef>":</dt>
-        <dd>If a media key(s) /decryption key(s) becomes available for playback to proceed, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-canplay">canplay</videoref> at the element.</dd>
+        <dd>If decryption key(s) become available that allow playback to proceed, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-canplay">canplay</videoref> at the element.</dd>
       </dl>
     </li>
     </ul>
