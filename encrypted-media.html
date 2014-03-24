@@ -91,7 +91,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 7 March 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 24 March 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -188,7 +188,8 @@
           <li><a href="#algorithms-initdata-encountered">4.1. Initialization Data Encountered</a></li>
           <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
           <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
-          <li><a href="#algorithms-session-close">4.4. Session Close</a></li>
+          <li><a href="#algorithms-queue-error">4.4. Queue an "error" Event</a></li>
+          <li><a href="#algorithms-session-close">4.5. Session Close</a></li>
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
@@ -364,21 +365,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
           <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
-          <li>
-            <dl class="switch">
-              <dt>If <var title="true">cdm</var> fails to load or initialize</dt>
-              <dd><ol>
-                <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-                  <ul style="list-style-type:none"><li>
-                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
-                    <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-                  </li></ul>
-                </li>
-                <li><p>Store this new error object internally with the <code><a href="#dom-mediakeys">MediaKeys</a></code> instance being created. This will be used to fire an error against any session created for this instance.</p></li>
-              </ol></dd>
-            </dl>
-          </li>
+          <li><p>If <var title="true">cdm</var> fails to load or initialize, store the appropriate <a href="#mediakeyerror-names">error name</a> and system code internally with the <code><a href="#dom-mediakeys">MediaKeys</a></code> instance being created.
+          This will be used to fire an error against the first session created for this instance.
+          If no system code is provided, store 0.
+          </p></li>
         </ol>
       </li>
 
@@ -415,12 +405,16 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
-          <li><p>
-            If there is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object that occurred because of an error during the  loading the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task
-            then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object and abort these steps.
-          </p></li>
+          <li>
+<p>If error information is stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
+            <ol>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Clear the error information stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Abort the task</p></li>
+            </ol>
+          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
-          <li><p>Let <var title="true">defaultURL</var> be null.</p></li>
+          <li><p>Let <var title="true">default URL</var> be null.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
           <li>
 <p>Use <var title="true">cdm</var> to execute the following steps:</p>
@@ -434,7 +428,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                     <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via <var title="true">initData</var>.</p>
                     <p class="non-normative">Note: <var title="true">request</var> may be a request for multiple keys, depending on the <var title="true"><a href="#key-system">keySystem</a></var> and/or <var title="true">initData</var>. This is transparent to the application.</p>                
                   </li>
-                  <li><p>If <var title="true">initData</var> indicates a default URL relevant to <var title="true">keySystem</var>, let <var title="true">defaultURL</var> be that URL.</p></li> 
+                  <li><p>If <var title="true">initData</var> indicates a default URL relevant to <var title="true">keySystem</var>, let <var title="true">default URL</var> be that URL.</p></li>
                 </ol>
               </li>
             </ol>
@@ -442,19 +436,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li><p>Let the <code><a href="#dom-sessionid">sessionId</a></code> attribute be a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
-              <ol>
-                <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-                  <ul style="list-style-type:none"><li>
-                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
-                    <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-                  </li></ul>
-                </li>
-                <li><p>Set the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
-                <li><p>Let the state of the session be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
-                <li><p>Abort the task.</p></li>
-              </ol>
+            <ol>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Abort the task</p></li>
+            </ol>
           </li>
           <li>
             <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
@@ -466,18 +451,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object with:</p>
-                <ul style="list-style-type:none"><li>
-                  <code><a href="#dom-message">message</a></code> = <var title="true">request</var><br>
-                  <code><a href="#dom-destinationurl">destinationURL</a></code> = <var title="true">defaultURL</var>
-                </li></ul>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and <var title="true">default URL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
                   <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
                   <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
+                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
                     <p class="non-normative">Note: this step makes it possible for a MediaKeySession to transition from the CREATED state to the READY state.
                     User agents might do this as an optimization but, even if this is done, all MediaKeySession instances must appear distinct regardless of the underlying implementation.</p>
                   </li>
@@ -511,12 +492,16 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
-          <li><p>
-            If there is a <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object that occurred because of an error during the  loading the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task
-            then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object and abort these steps.
-          </p></li>
+          <li>
+<p>If error information is stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
+            <ol>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Clear the error information stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Abort these steps</p></li>
+            </ol>
+          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
-          <li><p>Let <var title="true">destinationURL</var> be null.</p></li>
+          <li><p>Let <var title="true">destination URL</var> be null.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
           <li>
 <p>Use <var title="true">cdm</var> to execute the following steps:</p>
@@ -526,7 +511,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
                   <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using <var title="true">sessionId</var>.</p></li>
-                  <li><p>If the stored data for <var title="true">sessionId</var> indicates a destination URL relevant to <var title="true">keySystem</var>, let <var title="true">destinationURL</var> be that URL.</p></li> 
+                  <li><p>If the stored data for <var title="true">sessionId</var> indicates a destination URL relevant to <var title="true">keySystem</var>, let <var title="true">destination URL</var> be that URL.</p></li>
                 </ol>
               </li>
             </ol>
@@ -534,19 +519,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">sessionId</var></p></li>
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
-              <ol>
-                <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-                  <ul style="list-style-type:none"><li>
-                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
-                    <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-                  </li></ul>
-                </li>
-                <li><p>Set the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
-                <li><p>Let the state of the session be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
-                <li><p>Abort the task.</p></li>
-              </ol>
+            <ol>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Abort the task</p></li>
+            </ol>
           </li>
           <li>
             <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
@@ -558,18 +534,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object with:</p>
-                <ul style="list-style-type:none"><li>
-                  <code><a href="#dom-message">message</a></code> = <var title="true">request</var><br>
-                  <code><a href="#dom-destinationurl">destinationURL</a></code> = <var title="true">destinationURL</var>
-                </li></ul>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
                   <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
                   <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
+                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
                   </li>
                 </ol>
               </dd>
@@ -643,19 +615,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
-              <ol>
-                <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-                  <ul style="list-style-type:none"><li>
-                    <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
-                    <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-                  </li></ul>
-                </li>
-                <li><p>Set the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object's <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
-                <li><p>Let the state of the session be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
-                <li><p>Abort the task.</p></li>
-              </ol>
+            <ol>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Abort the task</p></li>
+            </ol>
           </li>
           <li>
             <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
@@ -667,17 +630,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object with:</p>
-                <ul style="list-style-type:none"><li>
-                  <code><a href="#dom-message">message</a></code> = <var title="true">request</var><br>
-                  <code><a href="#dom-destinationurl">destinationURL</a></code> = null
-                </li></ul>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and null.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
                   <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
-                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -731,7 +690,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> : <a href="http://www.
     <div class="impl">
     <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must return a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> whose <code><a href="#dom-systemcode">systemCode</a></code> attribute is initialized to <var title="true">systemCode</var> and inherited attributes are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><a href="http://www.w3.org/TR/dom/#dom-domerror">DOMError</a></code> constructor.</p>
 
-    <p>The <dfn id="dom-systemcode"><code>systemCode</code></dfn> attribute of a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object is a <a href="#key-system">Key System</a>-dependent status code for the error that occurred.
+    <p>The <dfn id="dom-systemcode"><code>systemCode</code></dfn> attribute of a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object is a <a href="#key-system">Key System</a>-specific value for the error that occurred.
     <span class="non-normative">This allows a more granular status to be returned than the more general <a href="#mediakeyerror-names">name</a>.</span>
     It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
     </p>
@@ -1008,17 +967,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 </dt>
                 <dd>Run the following steps:
                   <ol>
-                    <li><p>Let <var title="">session</var> be the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object for the session with an unusable key.</p></li>
-                    <li>
-<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
-                      <ul style="list-style-type:none"><li>
-                        <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = the appropriate <a href="#mediakeyerror-names">error name</a><br>
-                        <code><a href="#dom-systemcode">systemCode</a></code> = a Key System-specific value, if provided, and 0 otherwise
-                      </li></ul>
-                    </li>
-                    <li><p>Set <var title="">session</var>'s <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
-                    <li><p>Let the state of <var title="">session</var> be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
-                    <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at <var title="">session</var>.</p></li>
+                    <li><p>Let <var title="true">session</var> be the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object associated with that session.</p></li>
+                    <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+                    <li><p>Abort the task</p></li>
                   </ol>
                 </dd>
                 <dt><span class="non-normative">Otherwise (there is no key for <var title="true">block key ID</var> in any session)</span></dt>
@@ -1083,23 +1034,42 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
-    Requests to run this algorithm include a target <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, a <var title="true">request</var>, and a <var title="true">destinationURL</var>.
-    The following steps are run:</p>
+    Requests to run this algorithm include a target <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
+    </p>
+    <p>The following steps are run:</p>
     <ol>
-      <li><p>Let <var title="true">session</var> be the specified <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
-      <li><p>Let the state of <var title="true">session</var> be <code><a href="#dom-statepending">PENDING</a></code>.</p></li>
+      <li><p>Let the <var title="true">session</var> be the specified <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li><p>Let the state of the <var title="true">session</var> be <code><a href="#dom-statepending">PENDING</a></code>.</p></li>
       <li>
-        <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventmessage">message</a></code> at <var title="true">session</var>.</p>
+        <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventmessage">message</a></code> at the <var title="true">session</var>.</p>
         <p>The event is of type <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> and has:</p>
         <ul style="list-style-type:none"><li>
           <code><a href="#dom-message">message</a></code> = the specified <var title="true">request</var><br>
-          <code><a href="#dom-destinationurl">destinationURL</a></code> = the specified <var title="true">destinationURL</var>
+          <code><a href="#dom-destinationurl">destinationURL</a></code> = the specified <var title="true">destination URL</var>
         </li></ul>
       </li>
     </ol>
 
-  
-    <h3 id="algorithms-session-close">4.4. Session Close</h3>
+    <h3 id="algorithms-queue-error">4.4. Queue an "error" Event</h3>
+    <p>The Queue an "error" Event algorithm is run when the CDM needs to queue an error event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
+    Requests to run this algorithm include a target <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, an <var title="true">error name</var>, and a <var title="true">system code</var>.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the specified <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li>
+<p>Create a new <code><a href="#dom-mediakeyerror">MediaKeyError</a></code> object with the following attributes:</p>
+        <ul style="list-style-type:none"><li>
+          <code><a href="http://www.w3.org/TR/dom/#dom-domerror-name">name</a></code> = <var title="true">error name</var><br>
+          <code><a href="#dom-systemcode">systemCode</a></code> = <var title="true">system code</var>
+        </li></ul>
+      </li>
+      <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-error">error</a></code> attribute to the error object created in the previous step.</p></li>
+      <li><p>Let the state of the <var title="true">session</var> be <code><a href="#dom-stateerror">ERROR</a></code>.</p></li>
+      <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <var title="true">session</var>.</p></li>
+    </ol>
+
+    <h3 id="algorithms-session-close">4.5. Session Close</h3>
     <p>The following steps are run when the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> closes:</p>
 
     <ol>
