@@ -356,7 +356,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>If <var title="true">keySystem</var> is not one of the user agent's supported <a href="#key-system">Key Systems</a>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> and abort these steps. Key system string comparison is case-sensitive.</p></li>
       <li>Create a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object.
         <ol>
-          <li><p>Let the <code><a href="#dom-keysystem">keySystem</a></code> attribute be <var title="true">keySystem</var>.</p></li>
+          <li><p>Set the <code><a href="#dom-keysystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
         </ol>
       </li>
 
@@ -392,23 +392,23 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
       <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
       <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
-
-      <li>Create a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
+      <li>Let <var title="true">session</var> be a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, and initialize it as follows:
         <ol>
-          <li><p>Let the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute of the new object be <code><a href="#dom-keysystem">keySystem</a></code>.</p></li>
-          <li><p>Let the state of the new object be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
+          <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
+          <li><p>Set the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute to the value of the <code><a href="#dom-mediakeys">MediaKeys</a></code> object's <code><a href="#dom-keysystem">keySystem</a></code> attribute.</p></li>
+          <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to the empty string.</p></li>
+          <li><p>Let the state be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
         </ol>
       </li>
-      
       <li>
-<p>Schedule a task to initialize the session, providing <var title="true">initDataFormat</var>, <var title="true">initData</var>, and the new object.</p>
+<p>Schedule a task to process the <var title="true">initData</var>, providing <var title="true">session</var>, <var title="true">initDataFormat</var>, and <var title="true">initData</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
           <li>
 <p>If error information is stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
               <li><p>Clear the error information stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
               <li><p>Abort the task</p></li>
             </ol>
@@ -419,25 +419,25 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>Process <var title="true">initData</var>, interpreting it per <var title="true">initDataFormat</var>.</p></li>
+              <li><p>Process the <var title="true">initData</var>, interpreting it per <var title="true">initDataFormat</var>.</p></li>
               <li>
 <p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
                   <li>
-<p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using <var title="true">initData</var>.</p>
-                    <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via <var title="true">initData</var>.</p>
-                    <p class="non-normative">Note: <var title="true">request</var> may be a request for multiple keys, depending on the <var title="true"><a href="#key-system">keySystem</a></var> and/or <var title="true">initData</var>. This is transparent to the application.</p>                
+<p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using the <var title="true">initData</var>.</p>
+                    <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var title="true">initData</var>.</p>
+                    <p class="non-normative">Note: <var title="true">request</var> may be a request for multiple keys, depending on the <var title="true"><a href="#key-system">keySystem</a></var> and/or the <var title="true">initData</var>. This is transparent to the application.</p>                
                   </li>
-                  <li><p>If <var title="true">initData</var> indicates a default URL relevant to <var title="true">keySystem</var>, let <var title="true">default URL</var> be that URL.</p></li>
+                  <li><p>If the <var title="true">initData</var> indicates a default URL relevant to <var title="true">keySystem</var>, let <var title="true">default URL</var> be that URL.</p></li>
                 </ol>
               </li>
             </ol>
           </li>
-          <li><p>Let the <code><a href="#dom-sessionid">sessionId</a></code> attribute be a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
+          <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-sessionid">sessionId</a></code> attribute to a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
               <li><p>Abort the task</p></li>
             </ol>
           </li>
@@ -451,14 +451,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and <var title="true">default URL</var>.</p>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
+                  <li><p>Let the state of the <var title="true">session</var> be <code><a href="#dom-stateready">READY</a></code>.</p></li>
                   <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
+                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <var title="true">session</var>.</p>
                     <p class="non-normative">Note: this step makes it possible for a MediaKeySession to transition from the CREATED state to the READY state.
                     User agents might do this as an optimization but, even if this is done, all MediaKeySession instances must appear distinct regardless of the underlying implementation.</p>
                   </li>
@@ -480,22 +480,23 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <ol>
       <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support loading previous sessions, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
       <li><p>If <var title="true">sessionId</var> is null or an empty string, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
-      <li>Create a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
+      <li>Let <var title="true">session</var> be a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, and initialize it as follows:
         <ol>
-          <li><p>Let the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute of the new object be <code><a href="#dom-keysystem">keySystem</a></code>.</p></li>
-          <li><p>Let the state of the new object be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
+          <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
+          <li><p>Set the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute to the value of the <code><a href="#dom-mediakeys">MediaKeys</a></code> object's <code><a href="#dom-keysystem">keySystem</a></code> attribute.</p></li>
+          <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to the empty string.</p></li>
+          <li><p>Let the state be <code><a href="#dom-statecreated">CREATED</a></code>.</p></li>
         </ol>
       </li>
-      
       <li>
-<p>Schedule a task to initialize the session, providing <var title="true">sessionId</var> and the new object.</p>
+<p>Schedule a task to load the session, providing <var title="true">session</var> and <var title="true">sessionId</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
           <li>
 <p>If error information is stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the <a href="#mediakeyerror-names">error name</a> and system code that were stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
               <li><p>Clear the error information stored with the <code><a href="#dom-mediakeys">MediaKeys</a></code> object.</p></li>
               <li><p>Abort these steps</p></li>
             </ol>
@@ -510,17 +511,17 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <li>
 <p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
-                  <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using <var title="true">sessionId</var>.</p></li>
-                  <li><p>If the stored data for <var title="true">sessionId</var> indicates a destination URL relevant to <var title="true">keySystem</var>, let <var title="true">destination URL</var> be that URL.</p></li>
+                  <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using the <var title="true">sessionId</var>.</p></li>
+                  <li><p>If the stored data for the <var title="true">sessionId</var> indicates a destination URL relevant to <var title="true">keySystem</var>, let <var title="true">destination URL</var> be that URL.</p></li>
                 </ol>
               </li>
             </ol>
           </li>
-          <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">sessionId</var></p></li>
+          <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">sessionId</var></p></li>
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
               <li><p>Abort the task</p></li>
             </ol>
           </li>
@@ -534,15 +535,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
-                  <li>
-                    <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the new object.</p>
-                  </li>
+                  <li><p>Let the state of the <var title="true">session</var> be <code><a href="#dom-stateready">READY</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <var title="true">session</var>.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -616,7 +615,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>If any of the preceding steps in the task failed, run the following steps:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on this object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
               <li><p>Abort the task</p></li>
             </ol>
           </li>
@@ -630,13 +629,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <dl class="switch">
               <dt>If <var title="true">request</var> is not null</dt>
               <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, providing <var title="true">request</var> and null.</p>
+                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on this object, providing <var title="true">request</var> and null.</p>
               </dd>
               <dt>Otherwise</dt>
               <dd>
                 <ol>
-                  <li><p>Let the state of the session be <code><a href="#dom-stateready">READY</a></code>.</p></li>
-                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+                  <li><p>Let the state of this object be <code><a href="#dom-stateready">READY</a></code>.</p></li>
+                  <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventready">ready</a></code> at this object.</p></li>
                 </ol>
               </dd>
             </dl>
@@ -645,11 +644,11 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       </li>
     </ol>
 
-    <p>The <dfn id="dom-release"><code>release()</code></dfn> method allows an application to indicate to the system that it may release any resources associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>. It must run the following steps:</p>
+    <p>The <dfn id="dom-release"><code>release()</code></dfn> method allows an application to indicate to the system that it may release any resources associated with this object. It must run the following steps:</p>
 
     <ol>
-      <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateclosed">CLOSED</a></code> then abort these steps.</p></li>
-      <li><p>If the state of the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> is <code><a href="#dom-stateerror">ERROR</a></code>, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p></li>
+      <li><p>If the state of this object is <code><a href="#dom-stateclosed">CLOSED</a></code> then abort these steps.</p></li>
+      <li><p>If the state of this object is <code><a href="#dom-stateerror">ERROR</a></code>, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_state_err">INVALID_STATE_ERR</a></code> exception and abort these steps.</p></li>
       <li>
 <p>Schedule a task to handle the call.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
@@ -660,10 +659,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li>
                 <p>Process the release request.</p>
-                <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the MediaKeySession is no longer needed.
+                <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the session is no longer needed.
                 However, the CDM determines whether resources can now be released.</p>
               </li>
-              <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm for the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</p></li>
+              <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
             </ol>
           </li>
         </ol>
