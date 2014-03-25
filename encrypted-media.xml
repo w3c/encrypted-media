@@ -262,18 +262,18 @@
 
     <h4 id="initialization-data">1.1.5. Initialization Data</h4>
     <non-normative-section/>
-    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
+    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a license request.
     It should always allow unique identification of the key(s) needed to decrypt the content.
     </p>
 
-    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a key request message.
-    This block could be as simple as a key or content ID to send to a server or as complex as an opaque Key System-specific collection of data.
-    This initialization information may be obtained in some application-specific way or may be stored with the <videoanchor name="media-data">media data</videoanchor>.
-    Container specifications may provide for storage of such information.
+    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
+    This block could be a simple key or content ID or a more complex structure containing such information.
+    <a href="#containers">Container Guidelines</a> provides specific information for common containers.
     </p>
 
-    <p>Initialization data found in the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
-    This data has a container-specific format and is assumed to contain one or more generic or Key System-specific sets of initialization information.
+    <p>
+    This initialization information may be obtained in some application-specific way or provided with the <videoanchor name="media-data">media data</videoanchor>.
+    Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
     </p>
 
     <h4 id="cross-origin-support">1.1.6. Cross Origin Support</h4>
@@ -285,7 +285,6 @@
 
     <h2 id="extensions">2. Media Element Extensions</h2>
     <p>We extend <dfn id="media-element" title="media element"><media-element/></dfn> to allow decryption key acquisition to be handled in JavaScript.</p>
-    <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
 
     <pre class="idl">
 enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
@@ -770,7 +769,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
      </dd>
      <dt><var title="">event</var> . <coderef>message</coderef></dt>
      <dd>
-       <p>Returns the message <span class="non-normative">(i.e. key request)</span> to send.</p>
+       <p>Returns the message <span class="non-normative">(i.e. license request)</span> to send.</p>
      </dd>
      <dt><var title="">event</var> . <coderef>destinationURL</coderef></dt>
      <dd>
@@ -842,7 +841,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           <td><coderef>MediaKeyMessageEvent</coderef></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
-            <span class="non-normative">For example, a key request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
+            <span class="non-normative">For example, a license request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
             The session moves to the <coderef prefix="state">PENDING</coderef> state.
           </td>
           <td><!-- No Preconditions. --></td>

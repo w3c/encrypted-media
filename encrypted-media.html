@@ -265,18 +265,18 @@
 
     <h4 id="initialization-data">1.1.5. Initialization Data</h4>
     <p><i>This section is non-normative.</i></p>
-    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a key request.
+    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a license request.
     It should always allow unique identification of the key(s) needed to decrypt the content.
     </p>
 
-    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a key request message.
-    This block could be as simple as a key or content ID to send to a server or as complex as an opaque Key System-specific collection of data.
-    This initialization information may be obtained in some application-specific way or may be stored with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
-    Container specifications may provide for storage of such information.
+    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
+    This block could be a simple key or content ID or a more complex structure containing such information.
+    <a href="#containers">Container Guidelines</a> provides specific information for common containers.
     </p>
 
-    <p>Initialization data found in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-needkey">needkey</a></code> event.
-    This data has a container-specific format and is assumed to contain one or more generic or Key System-specific sets of initialization information.
+    <p>
+    This initialization information may be obtained in some application-specific way or provided with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
+    Initialization data found with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-needkey">needkey</a></code> event.
     </p>
 
     <h4 id="cross-origin-support">1.1.6. Cross Origin Support</h4>
@@ -288,7 +288,6 @@
 
     <h2 id="extensions">2. Media Element Extensions</h2>
     <p>We extend <dfn id="media-element" title="media element"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element">media element</a></dfn> to allow decryption key acquisition to be handled in JavaScript.</p>
-    <p class="non-normative">Note: For some <a href="#cdm">CDMs</a>, "key" and "key request" correspond to "license" and "license request", respectively.</p>
 
     <pre class="idl">
 enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waitingfornone">none</dfn>", "<dfn id="dom-waitingfordata">data</dfn>", "<dfn id="dom-waitingforkey">key</dfn>" };
@@ -804,7 +803,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 <var title="">event</var> . <code><a href="#dom-message">message</a></code>
 </dt>
      <dd>
-       <p>Returns the message <span class="non-normative">(i.e. key request)</span> to send.</p>
+       <p>Returns the message <span class="non-normative">(i.e. license request)</span> to send.</p>
      </dd>
      <dt>
 <var title="">event</var> . <code><a href="#dom-destinationurl">destinationURL</a></code>
@@ -879,7 +878,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           <td><code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code></td>
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
-            <span class="non-normative">For example, a key request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-update">update()</a></code> call.</span>
+            <span class="non-normative">For example, a license request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-update">update()</a></code> call.</span>
             The session moves to the <code><a href="#dom-statepending">PENDING</a></code> state.
           </td>
           <td></td>
