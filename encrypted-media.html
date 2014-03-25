@@ -91,7 +91,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 24 March 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 25 March 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -499,18 +499,20 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">destination URL</var> be null.</p></li>
+          <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the <code><a href="#dom-mediakeys">MediaKeys</a></code> object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
           <li>
 <p>Use <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li>
-<p>If there is no data stored for the <var title="true">sessionId</var>, run the following steps:</p>
+<p>If there is no data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>, run the following steps:</p>
                 <ol>
                   <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, "<code><a href="http://www.w3.org/TR/dom/#notfounderror">NotFoundError</a></code>" and 0.</p></li>
                   <li><p>Abort the task.</p></li>
                 </ol>
               </li>
-              <li><p>Let <var title="true">session data</var> be the data stored for the <var title="true">sessionId</var>.</p></li>
+              <li><p>Let <var title="true">session data</var> be the data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>.
+              This must not include data from other origin(s) or that is not associated with an origin.</p></li>
               <li><p>Load the <var title="true">session data</var> and associate it with the <var title="true">session</var>.</p></li>
               <li>
 <p>If a message exchange is required:</p>
