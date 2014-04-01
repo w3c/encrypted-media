@@ -197,13 +197,8 @@
         </ul></li>
       <li><a href="#security">6. Security Considerations</a></li>
       <li><a href="#privacy">7. Privacy Considerations</a></li>
-      <li><a href="#containers">8. Container Guidelines</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#webm">8.1. WebM</a></li>
-          <li><a href="#iso">8.2. ISO Base Media File Format</a></li>
-        </ul></li>
-      <li><a href="#examples">9. Examples</a></li>
-      <li><a href="#revision-history">10. Revision History</a></li>
+      <li><a href="#examples">8. Examples</a></li>
+      <li><a href="#revision-history">9. Revision History</a></li>
     </ul>
 
 
@@ -275,12 +270,17 @@
 
     <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
     This block could be a simple key or content ID or a more complex structure containing such information.
-    <a href="#containers">Container Guidelines</a> provides specific information for common containers.
     </p>
 
     <p>The format of the initialization data depends upon the type of container. Containers may support more than one format
       of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
-      format the initialization data is provided in.
+      format the initialization data is provided in. Initialization data type strings are always matched case-sensitively. It is
+      recommended that initialization data type strings are lower-case ASCII strings.
+    </p>
+
+    <p>
+      The <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>
+      provides the mapping from initialization data type string to the specification for each format.
     </p>
 
     <p>
@@ -1250,65 +1250,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </dl>
 
     </div>
-    <h2 id="containers">8. Container Guidelines</h2>
-    <p>This document describes behavior independent of specific media containers.
-    The following sections provide container-specific details for implementations that choose to support those containers.
-    </p>
-    
-    <h3 id="webm">8.1 WebM</h3>
-    <div class="nonnormative">
-      <p>This section defines the stream format and Initialization Data for implementations that choose to support <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
 
-      <h4 id="webm-stream-format">8.1.1.Stream Format </h4>
-      <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
-      The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
-      </p>
-
-      <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
-      In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
-      In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
-
-      <h4 id="webm-detect-encrypt">8.1.2. Detecting Encryption</h4>
-      <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is potentially encrypted. Each time a new value is encountered in a ContentEncKeyID element, the <a href="#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with the value in that element as <var title="">initData</var>.</p>
-
-      <p><a href="#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
-
-      <h4 id="webm-init-data">8.1.3. Initialization Data and Events</h4>
-      <p><a href="#initialization-data">Initialization Data</a> in <a href="#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
-      The current Track is the one being parsed or that contains the block being decrypted.
-      </p>
-
-      <p>Events only contain a single key ID.
-      However, if supported by the key system, multiple key IDs may be bundled by the application before requesting a key and multiple key ID-key pairs may be returned by the license server.
-      </p>
-
-      <p>An event will be fired for each new key ID (in <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a>) encountered.</p>
-    </div>
-
-    <h3 id="iso">8.2 ISO Base Media File Format</h3>
-    <div class="nonnormative">
-      <div class="issue">
-<div class="issue-title"><span>Issue 4</span></div>Note: There is an open issue about how initialization data should be extracted from ISO BMFF content. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17673">Bug 17673</a>.</div>
-      <p>This section defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content.</p>
-
-      <h4 id="iso-stream-format">8.2.1 Stream format</h4>
-      <p>The stream format is dependent upon the protection scheme, as defined in the scheme type box ('schm').</p>
-      <p>For example, under the common encryption ("cenc") protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
-
-      <h4 id="iso-detect-encrypt">8.2.2 Detecting Encryption</h4>
-      <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a scheme information box ('sinf') added to the sample entry in the sample description box ('stsd'). The scheme information box ('sinf') will contain a scheme type box ('schm') with a scheme_type field set to the 4CC value of the protection scheme.</p>
-      <p>Additionally, if the protection scheme is common encryption ("cenc"), the "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding track encryption box ('tenc') and the sample group associated with the sample. In this case the default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the Sample Group Description Box ('sgpd'), pointed to by an index in the Sample to Group Box ('sbgp').</p>
-      <p>For complete information about "cenc" see ISO/IEC 23001-7:2012.</p>
-
-      <h4 id="iso-init-data">8.2.3 Initialization Data and Events</h4>
-      <p>For ISOBMFF the InitData begins with a the protection scheme information box ('sinf'). The 'sinf' includes the scheme type box ('schm'), giving the scheme_type, and the scheme information box ('schi').</p>
-      <p>If this scheme_type is common encryption ("cenc"), the scheme information box will also contain the track encryption box ('tenc'), giving the defaults for IsEncrypted, IV_size and KID for that track. In addition, one or more protection system specific heder boxes ('pssh') will be concatenated after the 'sinf' box.</p>
-      <p>In a file encrypted with common encryption, each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples. Playback of unencrypted samples should not be impeded by unavailability of the keys needed to decrypt other samples in the same file or track.</p>
-      <p>Note that if there is already an active Key System CDM and the key storage for that Key System already contains the key associated with the Key ID, there is no need to generate a needkey event.</p>
-    </div>
-    
-
-    <h2 id="examples">9. Examples</h2>
+    <h2 id="examples">8. Examples</h2>
     <p><i>This section and its subsections are non-normative.</i></p>
     <p>This section contains example solutions for various use cases using the proposed extensions.
     These are not the only solutions to these use cases.
@@ -1316,7 +1259,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
     </p>
 
-    <h3 id="example-source-and-key-known" class="exampleheader">9.1. Source and Key Known at Page Load (Clear Key)</h3>
+    <h3 id="example-source-and-key-known" class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key)</h3>
     <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
     <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <code><a href="#dom-update">update()</a></code> call. It also does not handle errors.</p>
 
@@ -1351,11 +1294,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 id="example-source-known-but-key-not-known" class="exampleheader">9.2. Source Known but Key Not Known at Page Load</h3>
+    <h3 id="example-source-known-but-key-not-known" class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
     <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
     If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
 
-    <h4 id="example-clear-key" class="exampleheader">9.2.1. Clear Key</h4>
+    <h4 id="example-clear-key" class="exampleheader">8.2.1. Clear Key</h4>
     <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
     <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
 
@@ -1396,7 +1339,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h4 id="example-other-cdm" class="exampleheader">9.2.2. Other Key System</h4>
+    <h4 id="example-other-cdm" class="exampleheader">8.2.2. Other Key System</h4>
     <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
 
     <div class="example">
@@ -1438,7 +1381,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="examples-selecting-key-system" class="exampleheader">9.3. Selecting a Supported Key System</h3>
+    <h3 id="examples-selecting-key-system" class="exampleheader">8.3. Selecting a Supported Key System</h3>
     <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using the <code><a href="#dom-istypesupported">isTypeSupported()</a></code> and selecting one.
     </p>
 
@@ -1498,7 +1441,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="example-using-all-events" class="exampleheader">9.4. Using All Events</h3>
+    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
     <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1563,7 +1506,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </div>
 
 
-    <h2 id="revision-history">10. Revision History</h2>
+    <h2 id="revision-history">9. Revision History</h2>
     <table>
       <thead>
         <tr>
