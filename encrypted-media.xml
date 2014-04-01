@@ -90,7 +90,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 25 March 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 1 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -275,6 +275,11 @@
     <a href="#containers">Container Guidelines</a> provides specific information for common containers.
     </p>
 
+    <p>The format of the initialization data depends upon the type of container. Containers may support more than one format
+      of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
+      format the initialization data is provided in.
+    </p>
+
     <p>
     This initialization information may be obtained in some application-specific way or provided with the <videoanchor name="media-data">media data</videoanchor>.
     Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
@@ -307,7 +312,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 
-  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(DOMString contentType, Uint8Array initData);
+  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(DOMString initDataType, Uint8Array initData);
   <precoderef>MediaKeySession</precoderef> <premethodref>loadSession</premethodref>(DOMString sessionId);
 
   static bool <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString contentType);
@@ -373,21 +378,19 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
-    <p>The <methoddfn name="createSession">createSession(<var title="true">contentType</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
+    <p>The <methoddfn name="createSession">createSession(<var title="true">initDataType</var>, <var title="true">initData</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
-    <var title="true">contentType</var> specifies the container type and thus how to interpret <var title="true">initData</var>. 
+    <var title="true">initDataType</var> is the <a href="#initialization-data-type">initialization data type</a> that indicates how to interpret <var title="true">initData</var>. 
     </p>
-    <p class="non-normative">Note: MIME types usually include "audio/" or "video/", and these should be included in <var title="true">contentType</var> as appropriate.
-    However, user agents and <a href="#cdm">CDMs</a> should not treat sessions created with "audio/" differently than those created with "video/".
+    <p class="non-normative">Note: User agents and <a href="#cdm">CDMs</a> should not treat sessions created with audio data differently than those created with video data.
     That is, there is no such thing as an "audio session" or a "video session" - all sessions are used for all media streams processed by <var title="true">cdm</var>.
     </p>
 
     <ol>
-      <li><p>If <var title="true">contentType</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">initDataType</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
       <li><p>If <var title="true">initData</var> is null or an empty array, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, throw a <not-supported-err/> exception and abort these steps.</p></li>
-      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
-      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">initDataType</var> contains an invalid or unrecognized <a href="#initialization-data-type">initialization data type</a>, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataType</var>, throw a <not-supported-err/> exception and abort these steps.</p></li>
       <li>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:
         <ol>
           <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
@@ -396,7 +399,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Let the state be <coderef prefix="state">CREATED</coderef>.</p></li>
         </ol>
       </li>
-      <li><p>Schedule a task to process the <var title="true">initData</var>, providing <var title="true">session</var>, <var title="true">initDataFormat</var>, and <var title="true">initData</var>.</p>
+      <li><p>Schedule a task to process the <var title="true">initData</var>, providing <var title="true">session</var>, <var title="true">initDataType</var>, and <var title="true">initData</var>.</p>
         <p>The user agent will asynchronously execute the following steps in the task:</p>
         <ol>
           <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
@@ -412,7 +415,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>Process the <var title="true">initData</var>, interpreting it per <var title="true">initDataFormat</var>.</p></li>
+              <li><p>Process the <var title="true">initData</var>, interpreting it per <var title="true">initDataType</var>.</p></li>
               <li><p>If a message exchange <span class="non-normative">(e.g. a license request)</span> is required:</p>
                 <ol>
                   <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using the <var title="true">initData</var>.</p>
@@ -562,7 +565,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return false and abort these steps. Key system string comparison is case-sensitive.</p></li>
       <li><p>If <var title="true">contentType</var> was not provided or is an empty string, return true and abort these steps.</p></li>
       <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, return false and abort these steps.</p></li>
-      <li><p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li>
+        <div class="issue"><div class="issue-title"><span>Issue 5</span></div><p class="">isTypeSupported needs to be updated including using initDataType. This includes the discussion in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24873">Bug 24873</a>.</p></div>
+        <p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p>
+      </li>
       <li><p>If the user agent does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
       <li><p>If the CDM specified by <var title="true">keySystem</var> does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
       <li><p>If neither the CDM specified by <var title="true">keySystem</var> nor the user agent support all codec(s) specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
@@ -741,12 +747,12 @@ interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-dome
     <pre class="idl">
 [Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-  readonly attribute DOMString <precoderef>contentType</precoderef>;
+  readonly attribute DOMString <precoderef>initDataType</precoderef>;
   readonly attribute Uint8Array? <precoderef>initData</precoderef>;
 };
 
 dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
-  DOMString <precoderef>contentType</precoderef>;
+  DOMString <precoderef>initDataType</precoderef>;
   Uint8Array? <precoderef>initData</precoderef>;
 };</pre>
 
@@ -763,9 +769,9 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 };</pre>
 
     <dl class="domintro">
-     <dt><var title="">event</var> . <coderef>contentType</coderef></dt>
+     <dt><var title="">event</var> . <coderef>initDataType</coderef></dt>
      <dd>
-       <p>Returns the MIME type of the <videoanchor name="media-data">media data</videoanchor> related to the event.</p>
+       <p>Returns a string indicating the  <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
      </dd>
      <dt><var title="">event</var> . <coderef>initData</coderef></dt>
      <dd>
@@ -781,11 +787,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
      </dd>
     </dl>
     <div class="impl">
-    <p>The <codedfn>contentType</codedfn> attribute contains the MIME type of the <videoanchor name="media-data">media data</videoanchor> specific to the event. The format of the <coderef>initData</coderef> will depend on the <coderef>contentType</coderef>.</p>
-    <p class="non-normative">Note: MIME types usually include "audio/" or "video/", and user agents should include these in <var title="true">contentType</var> as appropriate.
-    However, either variant may be returned for any stream of a given MIME type, and this is does not reflect the type(s) of stream(s) in the <videoanchor name="media-data">media data</videoanchor>.
-    Applications processing this attribute should handle all such variants.
-    </p>
+    <p>The <codedfn>initDataType</codedfn> attribute contains a string indicating the <a href="#initialization-data-type">initialization data type</a> specific to the event. The format of the <coderef>initData</coderef> will vary according to the <coderef>initDataType</coderef>.</p>
     <p>The <codedfn>initData</codedfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
     <p>The <codedfn>message</codedfn> attribute contains a message from the CDM. Messages are Key System-specific. <span class="non-normative">In most cases, it should be sent to a key server.</span></p>
     <p>The <codedfn>destinationURL</codedfn> is the URL to send the <coderef>message</coderef> to.
@@ -877,12 +879,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <ol>
       <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, let <var title="">initData</var> be that initialization data.</p></li>
+      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, let <var title="">initData</var> be that initialization data. Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a>.</p></li>
       <li>
         <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
         <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
         <ul style="list-style-type:none"><li>
-          <coderef>contentType</coderef> = the MIME type corresponding to the container type of the <videoanchor name="media-data">media data</videoanchor><br></br>
+          <coderef>initDataType</coderef> = <var title="">initDataType</var><br></br>
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
@@ -1316,7 +1318,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>contentType</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1356,7 +1358,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>contentType</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1416,7 +1418,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>contentType</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
@@ -1495,7 +1497,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
       throw "Could not create MediaKeys";
 
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>contentType</precoderef>, event.<precoderef>initData</precoderef>);
+    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
     if (!keySession)
       throw "Could not create key session";
 
