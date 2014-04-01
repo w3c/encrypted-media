@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" typeof="bibo:Document " about="" property="dcterms:language" content="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ISO Common Encryption EME Stream Format and Initialization Data</title>
+    
+    
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+  <body class="h-entry" style="" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption EME Stream Format and Initialization Data</h1>
+  
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-04-01T22:37:39.000Z" id="w3c-editor-s-draft-01-april-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-04-01">01 April 2014</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR//">http://www.w3.org/TR//</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
+    
+    
+    
+    
+      
+    
+    
+    
+    <dt>Editors:</dt>
+    <dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><span property="foaf:name" class="p-name fn">David Dorwin</span>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.google.com/">Google Inc.</a></span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Adrian Bateman</span>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.microsoft.com/">Microsoft Corporation</a></span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Mark Watson</span>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.netflix.com/">Netflix Inc.</a></span>
+</dd>
+
+    
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2014
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), 
+        
+        All Rights Reserved.
+        
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        
+          <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
+        
+        rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+
+    <div class="issue"><div class="issue-title" aria-level="1" role="heading" id="h_issue_1"><span>Issue 1</span></div><div class="">Note: There is an open issue about how initialization data should be extracted from ISO BMFF content. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17673">Bug 17673</a>.</div></div>
+    <p>This specification defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content.</p>
+
+    <section id="iso-stream-format" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_iso-stream-format"><span class="secno">1. </span>Stream format</h2>
+      <p>The stream format is dependent upon the protection scheme, as defined in the scheme type box ('schm').</p>
+      <p>For example, under the common encryption ("cenc") protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
+    </section>
+
+    <section id="iso-stream-format" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_iso-stream-format"><span class="secno">2. </span>Detecting Encryption</h2>
+      <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a scheme information box ('sinf') added to the sample entry in the sample description box ('stsd'). The scheme information box ('sinf') will contain a scheme type box ('schm') with a scheme_type field set to the 4CC value of the protection scheme.</p>
+      <p>Additionally, if the protection scheme is common encryption ("cenc"), the "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding track encryption box ('tenc') and the sample group associated with the sample. In this case the default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the Sample Group Description Box ('sgpd'), pointed to by an index in the Sample to Group Box ('sbgp').</p>
+      <p>For complete information about "cenc" see ISO/IEC 23001-7:2012.</p>
+    </section>
+
+    <section id="iso-init-data" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_iso-init-data"><span class="secno">3. </span>Initialization Data and Events</h2>
+      <p>For ISOBMFF the InitData begins with a the protection scheme information box ('sinf'). The 'sinf' includes the scheme type box ('schm'), giving the scheme_type, and the scheme information box ('schi').</p>
+      <p>If this scheme_type is common encryption ("cenc"), the scheme information box will also contain the track encryption box ('tenc'), giving the defaults for IsEncrypted, IV_size and KID for that track. In addition, one or more protection system specific heder boxes ('pssh') will be concatenated after the 'sinf' box.</p>
+      <p>In a file encrypted with common encryption, each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples. Playback of unencrypted samples should not be impeded by unavailability of the keys needed to decrypt other samples in the same file or track.</p>
+      <p>Note that if there is already an active Key System CDM and the key storage for that Key System already contains the key associated with the Key ID, there is no need to generate a needkey event.</p>
+    </section>
+  
+
+</body></html>

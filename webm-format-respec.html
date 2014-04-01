@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>WebM Stream EME Format and Initialization Data</title>
+    <script src="respec-w3c-common.js" class="remove"></script>
+    <script class="remove">
+      var respecConfig = {
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus: "ED",
+
+      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      shortName: "",
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI:           "http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html",
+
+      // if this is a LCWD, uncomment and set the end of its review period
+      // lcEnd: "2009-08-05",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+      { name: "David Dorwin",  url: "",
+      company: "Google Inc.", companyURL: "http://www.google.com/" },
+      { name: "Adrian Bateman", url: "",
+      company: "Microsoft Corporation", companyURL: "http://www.microsoft.com/" },
+      { name: "Mark Watson", url: "",
+      company: "Netflix Inc.", companyURL: "http://www.netflix.com/" },
+      ],
+
+      // name of the WG
+      wg:           "HTML Working Group",
+
+      // URI of the public WG page
+      wgURI:        "http://www.w3.org/html/wg/",
+
+      // name (without the @w3c.org) of the public mailing to which comments are due
+      wgPublicList: "public-html-media",
+
+      // URI of the patent status for this WG, for Rec-track documents
+      // !!!! IMPORTANT !!!!
+      // This is important for Rec-track documents, do not copy a patent URI from a random
+      // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+      // Team Contact.
+      wgPatentURI: "http://www.w3.org/2004/01/pp-impl/40318/status",
+
+      noIDLIn: true,
+
+      scheme: "https",
+
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+      };
+    </script>
+  </head>
+  <body>
+
+  <p>This specification defines the stream format and Initialization Data for implementations that choose to support <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
+
+  <section id="webm-stream-format">
+    <h1>Stream Format </h1>
+    <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
+    The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
+    </p>
+
+    <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
+    In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
+    In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
+  </section>
+
+  <section id="webm-detect-encrypt">
+    <h1>Detecting Encryption</h1>
+    <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is potentially encrypted. Each time a new value is encountered in a ContentEncKeyID element, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with the value in that element as <var title="">initData</var>.</p>
+
+    <p><a href="encrypted-media.html#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
+  </section>
+
+  <section id="webm-init-data">
+    <h1>Initialization Data and Events</h1>
+    <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> in <a href="encrypted-media.html#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
+    The current Track is the one being parsed or that contains the block being decrypted.
+    </p>
+
+    <p>Events only contain a single key ID.
+    However, if supported by the key system, multiple key IDs may be bundled by the application before requesting a key and multiple key ID-key pairs may be returned by the license server.
+    </p>
+
+    <p>An event will be fired for each new key ID (in <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a>) encountered.</p>
+  </section>
+
+  </body>
+</html>
