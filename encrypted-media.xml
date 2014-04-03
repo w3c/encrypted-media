@@ -389,8 +389,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol>
       <li><p>If <var title="true">initDataType</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
       <li><p>If <var title="true">initData</var> is null or an empty array, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">initDataType</var> contains an invalid or unrecognized <a href="#initialization-data-type">initialization data type</a>, throw a <not-supported-err/> exception and abort these steps.</p></li>
-      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataType</var>, throw a <not-supported-err/> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, throw a <not-supported-err/> exception and abort these steps.</p></li>
       <li>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:
         <ol>
           <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
@@ -771,7 +770,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <dl class="domintro">
      <dt><var title="">event</var> . <coderef>initDataType</coderef></dt>
      <dd>
-       <p>Returns a string indicating the  <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+       <p>Returns a string indicating the <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
      </dd>
      <dt><var title="">event</var> . <coderef>initData</coderef></dt>
      <dd>
@@ -878,8 +877,15 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <resource-fetch-algorithm/>:</p>
 
     <ol>
+      <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, let <var title="">initData</var> be that initialization data. Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a>.</p></li>
+      <li>
+        <p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, run the following steps:</p>
+        <ol>
+          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of that initialization data.</p></li>
+          <li><p>Let <var title="">initData</var> be that initialization data.</p></li>
+        </ol>
+      </li>
       <li>
         <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
         <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>

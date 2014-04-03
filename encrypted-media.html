@@ -392,8 +392,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <ol>
       <li><p>If <var title="true">initDataType</var> is an empty string, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
       <li><p>If <var title="true">initData</var> is null or an empty array, throw an <code><a href="http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err">INVALID_ACCESS_ERR</a></code> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">initDataType</var> contains an invalid or unrecognized <a href="#initialization-data-type">initialization data type</a>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
-      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataType</var>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code>, throw a <code><a href="http://www.w3.org/TR/dom/#dom-domexception-not_supported_err">NOT_SUPPORTED_ERR</a></code> exception and abort these steps.</p></li>
       <li>Let <var title="true">session</var> be a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object, and initialize it as follows:
         <ol>
           <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
@@ -804,7 +803,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 <var title="">event</var> . <code><a href="#dom-initdatatype">initDataType</a></code>
 </dt>
      <dd>
-       <p>Returns a string indicating the  <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+       <p>Returns a string indicating the <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
      </dd>
      <dt>
 <var title="">event</var> . <code><a href="#dom-initdata">initData</a></code>
@@ -918,8 +917,15 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a source that may contain encrypted blocks or streams during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
 
     <ol>
+      <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
-      <li><p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>, let <var title="">initData</var> be that initialization data. Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a>.</p></li>
+      <li>
+        <p>If <a href="#initialization-data">Initialization Data</a> was encountered and if the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>, run the following steps:</p>
+        <ol>
+          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of that initialization data.</p></li>
+          <li><p>Let <var title="">initData</var> be that initialization data.</p></li>
+        </ol>
+      </li>
       <li>
         <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
         <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
