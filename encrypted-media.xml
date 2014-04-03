@@ -90,7 +90,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 2 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 3 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -214,9 +214,8 @@
     <p>Text in <span class="non-normative">this font and color</span> is non-normative.</p>
 
     <h4 id="cdm">1.1.1. Content Decryption Module (CDM)</h4>
-    <non-normative-section/>
-    <p>The Content Decryption Module (CDM) is a generic term for a part of or add-on to the user agent that provides functionality for one or more <a href="#key-system">Key Systems</a>.
-    Implementations may or may not separate the implementations of CDMs and may or may not treat them as separate from the user agent.
+    <p>The Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a href="#key-system">Key Systems</a>.</p>
+    <p class="non-normative">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
     This is transparent to the API and application.
     A user agent may support one or more CDMs.</p>
 
@@ -228,7 +227,7 @@
     </p>
 
     <p>A Key System string is always a reverse domain name. <span class="non-normative">For example, "com.example.somesystem".</span>
-    Key System strings are compared using case-sensitive matching. <span class="non-normative">It is recommended that CDMs use simple lower-case ASCII key system strings.</span></p>
+    Key System strings are compared using case-sensitive matching. It is recommended that CDMs use simple lower-case ASCII key system strings.</p>
 
     <p class="non-normative">
     Within a given system ("somesystem" in the example), subsystems may be defined as determined by the key system provider.
@@ -259,33 +258,51 @@
     <span class="non-normative">(Note: Some use cases may require that Session IDs be unique within the origin over time, including across browsing sessions.)</span>
     </p>
 
-    <h4 id="initialization-data">1.1.5. Initialization Data</h4>
-    <non-normative-section/>
-    <p>Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">Content Decryption Modules</a> to generate a license request.
-    It should always allow unique identification of the key(s) needed to decrypt the content.
+    <h4 id="decryption-key">1.1.5. Key</h4>
+    <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within <videoanchor name="media-data">media data</videoanchor>.
+    Each key is uniquely identified by a <a href="#decryption-key-id">key ID</a>.
+    A key is associated with the <a href="#key-session">session</a> used to provide it to the CDM. (The same key may be present in multiple sessions.)
+    Such keys may only be provided to the <a href="#cdm">CDM</a> via an <methodref>update</methodref> call. (They may later be loaded by <methodref>loadSession</methodref> as part of the stored session data.)
+    </p>
+    
+    <h4 id="decryption-key-id">1.1.6. Key ID</h4>
+    <p>A <a href="#decryption-key">key</a> is associated with a key ID, which uniquely identifies a key.
+    The container specifies the ID of the key that can decrypt a block or set of blocks within the <videoanchor name="media-data">media data</videoanchor>.
+    <a href="#initialization-data">Initialization Data</a> may contain key ID(s) to identify the keys that are needed to decrypt the media data.
+    However, there is no requirement that Initialization Data contain any or all key IDs used in the <videoanchor name="media-data">media data</videoanchor> or <videoanchor name="media-resource">media resource</videoanchor>.
+    <a href="#license">Licenses</a> provided to the CDM associate each key with a key ID so the <a href="#cdm">CDM</a> can select the appropriate key when decrypting an encrypted block of media data.
     </p>
 
-    <p><a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
+    <h4 id="license">1.1.7. License</h4>
+    <p>A license is a key system-specific message that includes one or more decryption <a href="#decryption-key">key(s)</a> - each associated with a <a href="#decryption-key-id">key ID</a> - and potentially other information about key usage.</p>
+
+    <h4 id="initialization-data">1.1.8. Initialization Data</h4>
+    <p class="non-normative">
+    <a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
     This block could be a simple key or content ID or a more complex structure containing such information.
-    </p>
-
-    <p>The format of the initialization data depends upon the type of container. Containers may support more than one format
-      of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
-      format the initialization data is provided in. Initialization data type strings are always matched case-sensitively. It is
-      recommended that initialization data type strings are lower-case ASCII strings.
-    </p>
-
-    <p>
-      The <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>
-      provides the mapping from initialization data type string to the specification for each format.
-    </p>
-
-    <p>
+    It should always allow unique identification of the key(s) needed to decrypt the content.
     This initialization information may be obtained in some application-specific way or provided with the <videoanchor name="media-data">media data</videoanchor>.
+    </p>
+
+    <p>
+    Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">CDMs</a> to generate a license request.
     Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
     </p>
 
-    <h4 id="cross-origin-support">1.1.6. Cross Origin Support</h4>
+    <p>
+    The format of the initialization data depends upon the type of container, and containers may support more than one format
+    of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
+    format the initialization data is provided in. Initialization data type strings are always matched case-sensitively. It is
+    recommended that initialization data type strings are lower-case ASCII strings.
+    </p>
+
+    <p>
+    The <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>
+    provides the mapping from initialization data type string to the specification for each format.
+    </p>
+
+
+    <h4 id="cross-origin-support">1.1.9. Cross Origin Support</h4>
     <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>needkey</coderef>
     and <coderef prefix="event">message</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
