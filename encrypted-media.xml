@@ -74,6 +74,13 @@
         border-color: #52e052;
         background: #e9fbe9;
     }
+    .noteHeader {
+      font-weight: bold;
+      display: block;
+      color: #005a9c;
+      color: black;
+      padding-top: 0.5em;
+    }
     </style>
     <style type="text/css">
       div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
@@ -90,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 3 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 14 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -171,8 +178,8 @@
         </ul></li>
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#error-codes">2.1. Errors</a></li>
-          <li><a href="#session-state">2.2. MediaKeySession States</a></li>
+          <li><a href="#exceptions">2.1. Exceptions</a></li>
+          <li><a href="#error-codes">2.2. Errors</a></li>
           <li><a href="#media-element-restictions">2.3. Media Element Restrictions</a></li>
         </ul></li>
       <li><a href="#events">3. Events</a></li>
@@ -250,9 +257,7 @@
     <span class="non-normative">(The underlying content protection client or server do not necessarily need to support Session IDs.)</span>
     </p>
 
-    <p>A new Session ID is generated each time the user agent successfully initializes a <coderef>MediaKeySession</coderef> object.
-    It must be valid before the <coderef>MediaKeySession</coderef> enters the <coderef prefix="state">PENDING</coderef> or <coderef prefix="state">READY</coderef> states and the user agent fires the associated events.
-    </p>
+    <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
     <span class="non-normative">(Note: Some use cases may require that Session IDs be unique within the origin over time, including across browsing sessions.)</span>
@@ -318,20 +323,20 @@ enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor"
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   // Encrypted Media
   readonly attribute <precoderef>MediaKeys</precoderef> <precoderef prefix="attr">mediaKeys</precoderef>;
-  void <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef> mediaKeys);
+  Promise&lt;any&gt; <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef> mediaKeys);
   
   attribute <EventHandler/> <precoderef>onneedkey</precoderef>;
 
   readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
 };
 
-[<a href="#dom-mediakeys-constructor">Constructor</a>(DOMString <a href="#key-system">keySystem</a>)]
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 
-  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(DOMString initDataType, Uint8Array initData);
-  <precoderef>MediaKeySession</precoderef> <premethodref>loadSession</premethodref>(DOMString sessionId);
+  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString initDataType, Uint8Array initData);
+  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>loadSession</premethodref>(DOMString sessionId);
 
+  static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
   static bool <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString contentType);
 };
 
@@ -342,22 +347,40 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   // session properties
   readonly attribute DOMString <precoderef prefix="session">keySystem</precoderef>;
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
+  readonly attribute Promise&lt;any&gt; <precoderef>close</precoderef>;
 
   // session operations
-  void <premethodref>update</premethodref>(Uint8Array response);
-  void <premethodref>release</premethodref>();
+  Promise&lt;any&gt; <premethodref>update</premethodref>(Uint8Array response);
+  Promise&lt;any&gt; <premethodref>release</premethodref>();
 };
 
+<div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class="">Extensions to <precoderef>HTMLSourceElement</precoderef> may be at risk as discussed in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=23827">Bug 23827</a>.</p></div>
 partial interface <precodedfn>HTMLSourceElement</precodedfn> {
   attribute DOMString <precoderef prefix="source">keySystem</precoderef>;
 };</pre>
 
+    <div class="note"><div class="noteHeader">Note</div>
+      <p>All errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+      <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+    </div>
+
+<!-- Begin HTMLMediaElement -->
     <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
-    <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn> method provides the <coderef>MediaKeys</coderef> to use. When calling this method, the media element must run the following steps:</p>
+    <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <coderef>MediaKeys</coderef> to use when decrypting media data during playback. It must run the following steps:</p>
     
     <ol>
-      <li><p>If the <coderef>MediaKeys</coderef> object is already in use and the user agent is unable to re-use it with this element, throw a <quota-exceeded-err/> exception and abort these steps.</p></li>
-      <li>Set the <coderef prefix="attr">mediaKeys</coderef> attribute of the media element to <var>mediaKeys</var>.</li>
+      <li><p>If <var>mediaKeys</var> and the <coderef prefix="attr">mediaKeys</coderef> attribute are the same object, return a promise resolved with <code>undefined</code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>If <var>mediaKeys</var> is already in use and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
+          <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null and the user agent or CDM do not support removing the association, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
+          <li><p>TODO: Add more steps per <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24216">Bug 24216</a>.</p></li> 
+          <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to <var>mediaKeys</var>.</p></li>
+          <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
     
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
@@ -367,30 +390,29 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
-    <p>The <dfn id="dom-mediakeys-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must run the following steps:</p>
+<!-- Begin MediaKeys -->
+    <p>The <methoddfn name="create">create(<var title="true">keySystem</var>)</methoddfn> method must run the following steps:</p>
 
     <ol>
-      <li><p>If <var title="true">keySystem</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">keySystem</var> is not one of the user agent's supported <a href="#key-system">Key Systems</a>, throw a <not-supported-err/> and abort these steps. Key system string comparison is case-sensitive.</p></li>
-      <li>Create a new <coderef>MediaKeys</coderef> object.
-        <ol>
-          <li><p>Set the <coderef>keySystem</coderef> attribute to <var title="true">keySystem</var>.</p></li>
-        </ol>
-      </li>
-
-      <li>
-        <p>Schedule a task to execute the following steps:</p>
+      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The keySystem parameter is empty."</p></li>
+      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The key system <var title="true">keySystem</var> is not supported." Key system string comparison is case-sensitive.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
           <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
-          <li><p>If <var title="true">cdm</var> fails to load or initialize, save the appropriate <a href="#mediakeyerror-names">error name</a> and system code internally with the <coderef>MediaKeys</coderef> instance being created.
-          This will be used to fire an error against the first session created for this instance.
-          If no system code is provided, use 0.
-          </p></li>
+          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+
+          <li>
+            <p>Let <var title="true">media keys</var> be a new <coderef>MediaKeys</coderef> object, and initialize it as follows:</p>
+            <ol>
+              <li><p>Set the <coderef>keySystem</coderef> attribute to <var title="true">keySystem</var>.</p></li>
+            </ol>
+          </li>
+          <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
         </ol>
       </li>
-
-      <li>Return the new <coderef>MediaKeys</coderef> object to the caller.</li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
     <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
@@ -404,31 +426,15 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     </p>
 
     <ol>
-      <li><p>If <var title="true">initDataType</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">initData</var> is null or an empty array, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, throw a <not-supported-err/> exception and abort these steps.</p></li>
-      <li>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:
+      <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initDataType parameter is empty."</p></li>
+      <li><p>If <var title="true">initData</var> is null or an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is<code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initData parameter is empty."</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data type <var title="true">initDataType</var> is not supported by the key system."</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
-          <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
-          <li><p>Set the <coderef>sessionId</coderef> attribute to the empty string.</p></li>
-          <li><p>Let the state be <coderef prefix="state">CREATED</coderef>.</p></li>
-        </ol>
-      </li>
-      <li><p>Schedule a task to process the <var title="true">initData</var>, providing <var title="true">session</var>, <var title="true">initDataType</var>, and <var title="true">initData</var>.</p>
-        <p>The user agent will asynchronously execute the following steps in the task:</p>
-        <ol>
-          <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
-          <li><p>If error information is saved with the <coderef>MediaKeys</coderef> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
-            <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the <a href="#mediakeyerror-names">error name</a> and system code that were saved with the <coderef>MediaKeys</coderef> object.</p></li>
-              <li><p>Clear the error information saved with the <coderef>MediaKeys</coderef> object.</p></li>
-              <li><p>Abort the task.</p></li>
-            </ol>
-          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">default URL</var> be null.</p></li>
-          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li><p>Process the <var title="true">initData</var>, interpreting it per <var title="true">initDataType</var>.</p></li>
@@ -436,91 +442,45 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 <ol>
                   <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> using the <var title="true">initData</var>.</p>
                     <p><var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var title="true">initData</var>.</p>
-                    <p class="non-normative">Note: <var title="true">request</var> may be a request for multiple keys, depending on the <var title="true"><a href="#key-system">keySystem</a></var> and/or the <var title="true">initData</var>. This is transparent to the application.</p>                
                   </li>
                   <li><p>If the <var title="true">initData</var> indicates a default URL relevant to <var title="true">keySystem</var>, let <var title="true">default URL</var> be that URL.</p></li>
                 </ol>
               </li>
             </ol>
           </li>
-          <li><p>Set the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute to a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
-          <li><p>If any of the preceding steps in the task failed, run the following steps:</p>
+          <li><p>Let the <var title="true">session ID</var> be a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
+          <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
-              <li><p>Abort the task.</p></li>
+              <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
+              <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
+              <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session ID</var>.</p></li>
             </ol>
           </li>
-          <li>
-            <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.</p>
-            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
-            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e.  no usable key was added)</span>.</p>
-          </li>
-          <li><p>Follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If <var title="true">request</var> is not null</dt>
-              <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p>
-              </dd>
-              <dt>Otherwise</dt>
-              <dd>
-                <ol>
-                  <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">READY</coderef>.</p></li>
-                  <li>
-                    <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">ready</coderef> at the <var title="true">session</var>.</p>
-                    <p class="non-normative">Note: this step makes it possible for a MediaKeySession to transition from the CREATED state to the READY state.
-                    User agents might do this as an optimization but, even if this is done, all MediaKeySession instances must appear distinct regardless of the underlying implementation.</p>
-                  </li>
-                </ol>
-              </dd>
-            </dl>
-          </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
+          <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
       </li>
-      <li><p>Return the new object to the caller.</p>
-        <p class="non-normative">Note: User agents should always fire an event at the returned object in response to this call.
-        For some implementations, it is possible - especially the first time a <a href="#key-system">Key System</a> is used - that the first event will be delayed significantly while the client is initialized, the user responds to permission requests, etc.
-        Applications should expect and handle such delays.</p>
-      </li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
     <p>The <methoddfn name="loadSession">loadSession(<var title="true">sessionId</var>)</methoddfn> method must run the following steps:</p>
     <ol>
-      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support loading previous sessions, throw a <not-supported-err/> exception and abort these steps.</p></li>
-      <li><p>If <var title="true">sessionId</var> is an empty string, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef> attribute does not support loading previous sessions, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The operation is not supported by the key system."</p></li>
+      <li><p>If <var title="true">sessionId</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The sessionId parameter is empty."</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
-          <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
-          <li><p>Set the <coderef>sessionId</coderef> attribute to the empty string.</p></li>
-          <li><p>Let the state be <coderef prefix="state">CREATED</coderef>.</p></li>
-        </ol>
-      </li>
-      <li><p>Schedule a task to load the session, providing <var title="true">session</var> and <var title="true">sessionId</var>.</p>
-        <p>The user agent will asynchronously execute the following steps in the task:</p>
-        <ol>
-          <li><p>Wait for the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task to complete.</p></li>
-          <li><p>If error information is saved with the <coderef>MediaKeys</coderef> object because of an error during the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a> task:</p>
-            <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the <a href="#mediakeyerror-names">error name</a> and system code that were saved with the <coderef>MediaKeys</coderef> object.</p></li>
-              <li><p>Clear the error information saved with the <coderef>MediaKeys</coderef> object.</p></li>
-              <li><p>Abort the task.</p></li>
-            </ol>
-          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">destination URL</var> be null.</p></li>
           <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the <coderef>MediaKeys</coderef> object's <code><dom4ref name="document">Document</dom4ref></code>.</p></li>
-          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>If there is no data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>, run the following steps:</p>
-                <ol>
-                  <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, "<code><dom4ref name="notfounderror">NotFoundError</dom4ref></code>" and 0.</p></li>
-                  <li><p>Abort the task.</p></li>
-                </ol>
-              </li>
+              <li><p>If there is no data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>, resolve <var>promise</var> with <code>undefined</code>.</p></li><!-- "undefined" per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
               <li><p>Let <var title="true">session data</var> be the data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>.
               This must not include data from other origin(s) or that is not associated with an origin.</p></li>
-              <li><p>Load the <var title="true">session data</var> and associate it with the <var title="true">session</var>.</p></li>
+              <li><p>Load the <var title="true">session data</var>.</p></li>
               <li><p>If a message exchange is required:</p>
                 <ol>
                   <li><p>Let <var title="true">request</var> be a request generated by the <a href="#cdm">CDM</a> based on the <var title="true">session data</var>.</p></li>
@@ -529,36 +489,24 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               </li>
             </ol>
           </li>
-          <li><p>Set the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var></p></li>
-          <li><p>If any of the preceding steps in the task failed, run the following steps:</p>
+          <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
             <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
-              <li><p>Abort the task.</p></li>
+              <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
+              <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
+              <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
             </ol>
           </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
             <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.</p>
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
-            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e.  no usable key was added)</span>.</p>
+            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
-          <li><p>Follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If <var title="true">request</var> is not null</dt>
-              <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p>
-              </dd>
-              <dt>Otherwise</dt>
-              <dd>
-                <ol>
-                  <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">READY</coderef>.</p></li>
-                  <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">ready</coderef> at the <var title="true">session</var>.</p></li>
-                </ol>
-              </dd>
-            </dl>
-          </li>
+          <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
+          <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
       </li>
-      <li><p>Return the new object to the caller.</p></li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
     <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">contentType</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the container and codec(s) specified by <var title="true">contentType</var>.</p>
@@ -582,7 +530,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">contentType</var> was not provided or is an empty string, return true and abort these steps.</p></li>
       <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, return false and abort these steps.</p></li>
       <li>
-        <div class="issue"><div class="issue-title"><span>Issue 5</span></div><p class="">isTypeSupported needs to be updated including using initDataType. This includes the discussion in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24873">Bug 24873</a>.</p></div>
+        <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class="">isTypeSupported needs to be updated including using initDataType. This includes the discussion in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24873">Bug 24873</a>.</p></div>
         <p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p>
       </li>
       <li><p>If the user agent does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
@@ -591,24 +539,27 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return true.</p></li>
     </ol>
 
+<!-- Begin MediaKeySession -->
     <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
 
     <p>The <codedfn prefix="session">keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> of the <coderef>MediaKeys</coderef> that created the session.</p>
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
+    <p>The <codedfn>close</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
+    This promise can only be fulfilled and is never rejected.</p>
+
     <p>The <methoddfn name="update">update(<var title="true">response</var>)</methoddfn> method must run the following steps:</p>
     <p class="non-normative">Note: The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
 
     <ol>
-      <li><p>If <var title="true">response</var> is null or an empty array, throw an <invalid-access-err/> exception and abort these steps.</p></li>
-      <li><p>If the session is not in the <coderef prefix="state">PENDING</coderef> state, throw an <invalid-state-err/>.</p></li>
-
-      <li><p>Schedule a task to handle the call, providing <var title="true">response</var>.</p>
-        <p>The user agent will asynchronously execute the following steps in the task:</p>
+      <li><p>If <var title="true">response</var> is null or an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The response parameter is empty."</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
+          <li><p>Let <var title="true">destination URL</var> be null.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li><p>Process <var title="true">response</var>.</p>
@@ -619,48 +570,35 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                 </p>
               </li> 
-              <li><p>If another message needs to be sent to the server, let <var title="true">request</var> be that message.</p></li>
+              <li><p>If another message needs to be sent to the server, execute the following steps:</p>
+                <ol>
+                  <li><p>Let <var title="true">request</var> be that message.</p></li>
+                  <li><p>If there is a specific destination URL for the message, let <var title="true">destination URL</var> be that URL.</p></li>
+                </ol>
+              </li>
             </ol>
           </li>
-          <li><p>If any of the preceding steps in the task failed, run the following steps:</p>
-            <ol>
-              <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on this object, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
-              <li><p>Abort the task.</p></li>
-            </ol>
-          </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
             <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.</p>
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
-            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e.  no usable key was added)</span>.</p>
+            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
-          <li><p>Follow the steps for the first matching condition from the following list:</p>
-            <dl class="switch">
-              <dt>If <var title="true">request</var> is not null</dt>
-              <dd>
-                <p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on this object, providing <var title="true">request</var> and null.</p>
-              </dd>
-              <dt>Otherwise</dt>
-              <dd>
-                <ol>
-                  <li><p>Let the state of this object be <coderef prefix="state">READY</coderef>.</p></li>
-                  <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">ready</coderef> at this object.</p></li>
-                </ol>
-              </dd>
-            </dl>
-          </li>
-      </ol>
+          <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
+          <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+        </ol>
       </li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
     <p>The <methoddfn name="release">release()</methoddfn> method allows an application to indicate to the system that it may release any resources associated with this object. It must run the following steps:</p>
 
     <ol>
-      <li><p>If the state of this object is <coderef prefix="state">CLOSED</coderef> then abort these steps.</p></li>
-      <li><p>If the state of this object is <coderef prefix="state">ERROR</coderef>, throw an <invalid-state-err/> exception and abort these steps.</p></li>
-      <li><p>Schedule a task to handle the call.</p>
-        <p>The user agent will asynchronously execute the following steps in the task:</p>
+      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise fulfilled with <code>undefined</code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in the <a href="#dom-mediakeys-constructor"><code>MediaKeys</code> constructor</a>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li>
@@ -671,10 +609,13 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
             </ol>
           </li>
+          <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
       </li>
+      <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
+<!-- Begin HTMLSourceElement -->
     <p>The <codedfn prefix="source">keySystem</codedfn> attribute of <coderef>HTMLSourceElement</coderef> specifies the <a href="#key-system">Key System</a> to be used with the <videoref name="media-resource">media resource</videoref>. The <coderef prefix="source">keySystem</coderef> attribute must be supported by all HTMLSourceElement as both an IDL attribute and also a content attribute named <codedfn prefix="sourcecontent">keysystem</codedfn>.
     The <resource-selection-algorithm/> is modified to check the <coderef prefix="source">keySystem</coderef> attribute after the existing <em>step 5</em> of the <em>Otherwise</em> branch of <em>step 6</em>:
     </p>
@@ -682,10 +623,43 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>&#8987; If <var title="">candidate</var> has a <coderef prefix="source">keySystem</coderef> attribute whose value represents a <a href="#key-system">Key System</a> that the user agent knows it cannot use with <videoref name="attr-source-type">type</videoref>, then end the <synchronous-section/>, and jump down to the <i title="">failed</i> step below.</p></li>
     </ol>
 
-    <h3 id="error-codes">2.1. Errors</h3>
-    <h4 id="mediakeyerror">2.1.1. Interface</h4>
-    <pre class="idl">
+    <h3 id="exceptions">2.1. Exceptions</h3>
+    <p>The methods report errors by rejecting the the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
+    The following <dom4ref name="dom-domerror-name">DOMException names from DOM4</dom4ref> are used with messages as shown in the following table.
+    In cases where the exact name is not specified in the algorithm, the message may differ to reflect the actual error.
+    </p>
 
+    <!-- TODO: Some of the method algorithms refer to Error Names from the next section. Combine these sections and/or change the references to use this section. -->
+    <table>
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <th>Possible Messages (optional)</th>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
+          <td>
+            The existing MediaKeys object cannot be removed.<br/>
+            The key system <em>name</em> is not supported.<br/>
+            The initialization data type <em>type</em> is not supported by the key system.<br/>
+            The operation is not supported by the key system.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
+          <td>The <em>name</em> parameter is empty.</td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
+          <td>The MediaKeys object cannot be used with additional HTMLMediaElements.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="error-codes">2.2. Errors</h3>
+    <div class="issue"><div class="issue-title"><span>Issue 3</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The future of error events and MediaKeyError is uncertain.</p></div>
+    <h4 id="mediakeyerror">2.2.1. Interface</h4>
+    <pre class="idl">
 [<a href="#dom-mediakeyerror-constructor">Constructor</a>(DOMString <a href="#mediakeyerror-names">name</a>, unsigned long <precoderef>systemCode</precoderef>, optional DOMString message = "")]
 interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-domerror">DOMError</dom4ref> {
   readonly attribute unsigned long <precoderef>systemCode</precoderef>;
@@ -701,55 +675,32 @@ interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-dome
     </p>
     </div>
 
-    <h4 id="mediakeyerror-names">2.1.2. Error Names</h4>
+    <h4 id="mediakeyerror-names">2.2.2. Error Names</h4>
 
-    <p>The <dfn id="error-names-table">error names table</dfn> below lists all the allowed error names for the <code><dom4ref name="dom-domerror-name">name</dom4ref></code> attribute along with a description.
-    In addition, any of the standard <dom4ref name="error-names-0">error names</dom4ref> are allowed.</p>
+    <p>The tables below list all the allowed error names for the <code><dom4ref name="dom-domerror-name">name</dom4ref></code> attribute along with a description. The message may be key system-specific.</p>
 
-    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The additional error names are yet to be defined.</p></div>
+    <div class="issue"><div class="issue-title"><span>Issue 4</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The additional error names are yet to be defined.</p></div>
 
-    <h3 id="session-state">2.2 MediaKeySession States</h3>
-    <non-normative-sections/>
-    <p>Each <coderef>MediaKeySession</coderef> maintains an internal state that determines what events may be fired.</p>
-    <h4 id="session-state-list">2.2.1 MediaKeySession State Definitions</h4>
-    <p>The following table describes the possible states:</p>
-    
+    <p>The following <dom4ref name="dom-domerror-name">DOMException names from DOM4</dom4ref> may be used as shown in the following table:</p>
     <table>
-      <thead>
-        <tr>
-          <th>State name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
       <tbody>
         <tr>
-          <td><codedfn prefix="state">CREATED</codedfn></td>
-          <td>The <coderef>MediaKeySession</coderef> has been created with a <methodref>createSession</methodref> call.</td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="state">PENDING</codedfn></td>
-          <td>A <coderef prefix="event">message</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. A call to <methodref>update</methodref> is expected next. The <a href="#media-element">media element</a> may block waiting for a key if encrypted data is encountered.</td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="state">READY</codedfn></td>
-          <td>A <coderef prefix="event">ready</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <a href="#media-element">media element</a> should not need to block waiting for a key if encrypted data associated with this session is encountered.</td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="state">ERROR</codedfn></td>
-          <td>A <coderef prefix="event">error</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. The <coderef>error</coderef> attribute of the session holds information about the most recent error.</td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="state">CLOSED</codedfn></td>
-          <td>A <coderef prefix="event">close</coderef> event has been fired at the <coderef>MediaKeySession</coderef>. No further events will be fired at the <coderef>MediaKeySession</coderef>.</td>
+          <th>Name</th>
+          <th>Use</th>
         </tr>
       </tbody>
     </table>
-    
-    
-    <h4 id="session-state-transitions">2.2.2 MediaKeySession State Transitions</h4>
-    <p>The following diagram shows the possible state transitions and the events fired when changing state:</p>
-    <p><img src="session_state.svg" width="631" height="408" alt="State transition diagram"/></p>
-    
+
+    <p>The following new DOMException names are defined by this specification:</p>
+    <table>
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <th>Use</th>
+        </tr>
+      </tbody>
+    </table>
+
     <h3 id="media-element-restictions">2.3 Media Element Restrictions</h3>
     <non-normative-section/>
     <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
@@ -855,7 +806,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         <tr>
           <td><codedfn prefix="event">error</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
-          <td>An error occurs in the session. The session moves to the <coderef prefix="state">ERROR</coderef> state.</td>
+          <td>An error occurs in the session.</td>
           <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
@@ -864,23 +815,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           <td>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
             <span class="non-normative">For example, a license request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
-            The session moves to the <coderef prefix="state">PENDING</coderef> state.
-          </td>
-          <td><!-- No Preconditions. --></td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="event">ready</codedfn></td>
-          <td><code><dom4ref name="event">Event</dom4ref></code></td>
-          <td>
-            The CDM currently has all the information it needs to use keys/licenses from this session. The session moves to the <coderef prefix="state">READY</coderef> state.
-          </td>
-          <td><!-- No Preconditions. --></td>
-        </tr>
-        <tr>
-          <td><codedfn prefix="event">close</codedfn></td>
-          <td><code><dom4ref name="event">Event</dom4ref></code></td>
-          <td>
-            The session is no longer needed. The session moves to the <coderef prefix="state">CLOSED</coderef> state.
           </td>
           <td><!-- No Preconditions. --></td>
         </tr>
@@ -925,8 +859,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>If the media element's <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
         <ol>
           <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object referenced by that atribute.</p></li>
-          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded during the <a href="#dom-mediakeys-constructor">initialization</a> of the <var title="true">media keys</var>.</p></li>
-          <li><p>If at least one <coderef>MediaKeySession</coderef> created by the <var title="true">media keys</var> is in the <coderef prefix="state">PENDING</coderef> or <coderef prefix="state">READY</coderef> state, run the following steps:</p>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded during the <a href="#dom-mediakeys-create">initialization</a> of the <var title="true">media keys</var>.</p></li>
+          <li><p>If there is at least one <coderef>MediaKeySession</coderef> created by the <var title="true">media keys</var> on which the <a href="#algorithms-session-close">Session Close</a> algorithm has not been run, run the following steps:</p>
             <p class="non-normative">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
             <ol>
               <li><p>Let the <var title="true">block key ID</var> be the key ID of the current block <span class="non-normative">(as specified by the container)</span>.</p></li>
@@ -1028,7 +962,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">PENDING</coderef>.</p></li>
       <li>
         <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
         <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
@@ -1053,7 +986,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         </li></ul>
       </li>
       <li><p>Set the <var title="true">session</var>'s <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
-      <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">ERROR</coderef>.</p></li>
       <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <var title="true">session</var>.</p></li>
     </ol>
 
@@ -1064,9 +996,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </p>
     <p>The following steps are run:</p>
     <ol>
-      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Let the state of the <var title="true">session</var> be <coderef prefix="state">CLOSED</coderef>.</p></li>
-      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">close</coderef> at the <var title="true">session</var>.</p></li>
+      <li><p>Let <var>promise</var> be the <coderef>close</coderef> attribute of the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
@@ -1118,7 +1049,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h2 id="security">6. Security Considerations</h2>
     <div class="nonnormative">
 
-    <div class="issue"><div class="issue-title"><span>Issue 2</span></div>Note: This section is not final and review is welcome.</div>
+    <div class="issue"><div class="issue-title"><span>Issue 5</span></div>Note: This section is not final and review is welcome.</div>
 
     <p>Key system implementations must consider initialization data, key data and media data as potential attack vectors and must take care to safely parse, decrypt etc. initialization data, key data and media data. User Agents may want to validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering). </p>
     <p>User Agents should treat key data and media data as untrusted content and use appropriate safeguards to mitigate any associated threats.</p>
@@ -1129,7 +1060,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h2 id="privacy">7. Privacy Considerations</h2>
     <div class="nonnormative">
 
-    <div class="issue"><div class="issue-title"><span>Issue 3</span></div>Note: This section is not final and review is welcome.</div>
+    <div class="issue"><div class="issue-title"><span>Issue 6</span></div>Note: This section is not final and review is welcome.</div>
  
     <p>The presence or use of Key Systems on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself, or within messages from Key Systems and (b) user-specific information that may be persistently stored on the users device.</p>
     <p>User Agents should take responsibility for providing users with adequate control over their own privacy. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to implement appropriate techniques to ensure users have control over their privacy, including but not limited to the techniques described below.</p>
@@ -1232,8 +1163,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </p>
 
     <h3 id="example-source-and-key-known" class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key)</h3>
-    <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text key</a> are hard-coded in the page.</p>
-    <p class="exampledescription">This example is very simple because it does not care when the key has been added or associating that event with the <methodref>update</methodref> call. It also does not handle errors.</p>
+    <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text license</a> are hard-coded in the page.
+    Only one session will ever be created.</p>
 
     <div class="example">
       <pre class="code">
@@ -1241,23 +1172,35 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function load() {
     var video = document.getElementById("video");
 
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("org.w3.clearkey"));
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      throw "Could not create MediaKeys";
-
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>();
-    if (!keySession)
-      throw "Could not create key session";
-
-    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
+      <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>("org.w3.clearkey").then(
+        function(createdMediaKeys) {
+          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+        },
+        console.error.bind(console, "Unable to create MediaKeys")
+      ).then(
+        function() {
+          var initData = new Uint8Array([ ... ]);
+          return video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>("webm", initData);
+        },
+        console.error.bind(console, "Unable to set MediaKeys")
+      ).then(
+        function(keySession) {
+          keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+        },
+        console.error.bind(console, "Unable to create key session")
+      );
+    }
   }
 
   function handleMessage(event) {
     var keySession = event.target;
 
-    var key = new Uint8Array([ ... ]);
-    keySession.<premethodref>update</premethodref>(key);
+    var license = new Uint8Array([ ... ]);
+    keySession.<premethodref>update</premethodref>(license).then(
+      null,
+      console.error.bind(console, "update() failed")
+    );
   }
 &lt;/script&gt;
 
@@ -1266,95 +1209,9 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 id="example-source-known-but-key-not-known" class="exampleheader">8.2. Source Known but Key Not Known at Page Load</h3>
-    <p class="exampledescription">In this case, the <a href="#initialization-data">Initialization Data</a> is contained in the <videoanchor name="media-data">media data</videoanchor>.
-    If this was not the case, <code>handleKeyNeeded()</code> could obtain and provide it instead of getting it from the event.</p>
-
-    <h4 id="example-clear-key" class="exampleheader">8.2.1. Clear Key</h4>
-    <p class="exampledescription">This solution uses the <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a>.</p>
-    <p class="exampledescription">As with the previous example, this one is very simple because it does not care when the key has been added or handle errors.</p>
-
-    <div class="example">
-      <pre class="code">
-&lt;script&gt;
-  function handleKeyNeeded(event) {
-    var video = event.target;
-
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("org.w3.clearkey"));
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      throw "Could not create MediaKeys";
-
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
-    if (!keySession)
-      throw "Could not create key session";
-
-    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-  }
-
-  function handleMessage(event) {
-    var keySession = event.target;
-    var message = event.<precoderef>message</precoderef>;
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "http://.../getkey");
-    xmlhttp.onreadystatechange = function() {
-      if(xmlhttp.readyState==4) {
-        var key = new Uint8Array(xmlhttp.response);
-        keySession.<premethodref>update</premethodref>(key);
-      }
-    }
-    xmlhttp.send(message);
-  }
-&lt;/script&gt;
-
-&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
-    </div>
-
-    <h4 id="example-other-cdm" class="exampleheader">8.2.2. Other Key System</h4>
-    <p class="exampledescription">This solution uses more advanced decryption from a fictitious <a href="#cdm">content decryption module</a> called Some System.</p>
-
-    <div class="example">
-      <pre class="code">
-&lt;script&gt;
-  function handleKeyNeeded(event) {
-    var video = event.target;
-
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>("com.example.somesystem.1_0"));
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      throw "Could not create MediaKeys";
-
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
-    if (!keySession)
-      throw "Could not create key session";
-
-    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
-  }
-
-  function licenseRequestReady(event) {
-    var keySession = event.target;
-    var request = event.<precoderef>message</precoderef>;
-    if (!request)
-      throw "Could not create license request";
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "http://.../getkey");
-    xmlhttp.onreadystatechange = function() {
-      if(xmlhttp.readyState==4) {
-        var license = new Uint8Array(xmlhttp.response);
-        keySession.<premethodref>update</premethodref>(license);
-      }
-    }
-    xmlhttp.send(request);
-  }
-&lt;/script&gt;
-
-&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
-    </div>
-
-    <h3 id="examples-selecting-key-system" class="exampleheader">8.3. Selecting a Supported Key System</h3>
-    <p class="exampledescription">Below is an example of detecting supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> and selecting one.
+    <h3 id="examples-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
+    <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> method then uses
+    the <a href="#initialization-data">Initialization Data</a> from the <videoanchor name="media-data">media data</videoanchor> to generate the license request and send it to the appropriate license server.
     </p>
 
     <div class="example">
@@ -1377,33 +1234,60 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   function handleKeyNeeded(event) {
     var video = event.target;
-
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
+    if (video.mediaKeysObject === undefined) {
       selectKeySystem();
-      video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>(keySystem));
+      video.mediaKeysObject = null; // Prevent entering this path again.
+      video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
+      <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+        function(createdMediaKeys) {
+          video.mediaKeysObject = createdMediaKeys;
+          for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
+            var data = video.pendingSessionData[i];
+            createSession(video.mediaKeysObject, data.initDataType, data.initData);
+          }
+          video.pendingSessionData = [];
+
+          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+        },
+        console.error.bind(console, "Unable to create MediaKeys")
+      ).then(
+        null,
+        console.error.bind(console, "Unable to set MediaKeys")
+      );
     }
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      throw "Could not create MediaKeys";
-
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
-    if (!keySession)
-      throw "Could not create key session";
-
-    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
+    addSession(video, event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
   }
-  
+
+  function addSession(video, initDataType, initData) {
+    if (video.mediaKeysObject) {
+      createSession(video.mediaKeysObject, initDataType, initData);
+    } else {
+      video.pendingSessionData.push({initDataType: initDataType, initData: initData});
+    }
+  }
+
+  function createSession(mediaKeys, initDataType, initData) {
+    mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData).then(
+      function(keySession) {
+        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
+      },
+      console.error.bind(console, "Unable to create key session")
+    );
+  }
+
   function licenseRequestReady(event) {
     var keySession = event.target;
     var request = event.<precoderef>message</precoderef>;
-    if (!request)
-      throw "Could not create license request";
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("POST", licenseUrl);
     xmlhttp.onreadystatechange = function() {
-      if(xmlhttp.readyState==4) {
+      if (xmlhttp.readyState == 4) {
         var license = new Uint8Array(xmlhttp.response);
-        keySession.<premethodref>update</premethodref>(license);
+        keySession.<premethodref>update</premethodref>(license).then(
+          null,
+          console.error.bind(console, "update() failed")
+        );
       }
     }
     xmlhttp.send(request);
@@ -1413,7 +1297,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
+    <h3 id="example-using-all-events" class="exampleheader">8.3. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
     <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1423,54 +1307,50 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   var keySystem;
   var licenseUrl;
 
-  function handleMessageResponse() {
-    var license = new Uint8Array(xmlhttp.response);
-    this.keySession.<premethodref>update</premethodref>(license);
+  // See the previous example for implementations of these functions.
+  function selectKeySystem() { ... }
+  function handleKeyNeeded(event) { ... }
+  function addSession(video, initDataType, initData) { ... }
+
+  // This replaces the implementation in the previous example.
+  function createSession(mediaKeys, initDataType, initData) {
+    mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData).then(
+      function(keySession) {
+        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+        keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
+        keySession.close.then(
+          console.log.bind(console, "Session closed")
+        );
+      },
+      console.error.bind(console, "Unable to create key session")
+    );
+  }
+
+  function handleMessageResponse(keySession, response) {
+    var license = new Uint8Array(response);
+    keySession.<premethodref>update</premethodref>(license).then(
+      null,
+      console.error.bind(console, "update() failed")
+    );
   }
   
   function sendMessage(message, keySession) {
     xmlhttp = new XMLHttpRequest();
-    xmlhttp.keySession = keySession;
-    xmlhttp.onreadystatechange = handleMessageResponse;
     xmlhttp.open("POST", licenseUrl);
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4)
+        handleMessageResponse(keySession, xmlhttp.response);
+    }
     xmlhttp.send(message);
   }
 
   function handleMessage(event) {
-    var keySession = event.target;
-    var message = event.<precoderef>message</precoderef>;
-    if (!message)
-      throw "Invalid key message";
-  
-    sendMessage(message, keySession);
-  }
-
-  function handleReady(event) {
-    // Do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
+    sendMessage(event.<precoderef>message</precoderef>, event.target);
   }
 
   function handleError(event) {
     // Report event.target.error.name and event.target.error.<precoderef>systemCode</precoderef>,
     // and do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
-  }
-
-  function handleKeyNeeded(event) {
-    var video = event.target;
-
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
-      selectKeySystem();  // See previous example for implementation.
-      video.<premethodref>setMediaKeys</premethodref>(new <precoderef>MediaKeys</precoderef>(keySystem));
-    }
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>)
-      throw "Could not create MediaKeys";
-
-    var keySession = video.<precoderef prefix="attr">mediaKeys</precoderef>.<premethodref>createSession</premethodref>(event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
-    if (!keySession)
-      throw "Could not create key session";
-
-    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-    keySession.addEventListener("<precoderef prefix="event">ready</precoderef>", handleReady, false);
-    keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
   }
 &lt;/script&gt;
 
@@ -1487,6 +1367,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>14 April 2014</td>
+          <td>Use promises.</td>
+        </tr>
         <tr>
           <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/ef65c237d053/encrypted-media/encrypted-media.html">1 April 2014</a></td>
           <td>Moved Container Guidelines to the <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>.</td>

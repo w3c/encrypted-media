@@ -76,22 +76,6 @@
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource</xsl:attribute>resource fetch algorithm</a>
   </xsl:template>
 
-  <xsl:template match="//not-supported-err">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/dom/#dom-domexception-not_supported_err</xsl:attribute>NOT_SUPPORTED_ERR</a></code>
-  </xsl:template>
-
-  <xsl:template match="//invalid-state-err">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/dom/#dom-domexception-invalid_state_err</xsl:attribute>INVALID_STATE_ERR</a></code>
-  </xsl:template>
-
-  <xsl:template match="//invalid-access-err">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/dom/#dom-domexception-invalid_access_err</xsl:attribute>INVALID_ACCESS_ERR</a></code>
-  </xsl:template>
-
-  <xsl:template match="//quota-exceeded-err">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/dom/#dom-domexception-quota_exceeded_err</xsl:attribute>QUOTA_EXCEEDED_ERR</a></code>
-  </xsl:template>
-
   <xsl:template match="//readystate">
     <code title="dom-media-readyState"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate</xsl:attribute>readyState</a></code>
   </xsl:template>
