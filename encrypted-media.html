@@ -98,7 +98,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 14 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 15 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -326,7 +326,7 @@ enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waiting
 partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
   // Encrypted Media
   readonly attribute <a href="#dom-mediakeys">MediaKeys</a> <a href="#dom-attrmediakeys">mediaKeys</a>;
-  Promise&lt;any&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a> mediaKeys);
+  Promise&lt;any&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
   
   attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onneedkey">onneedkey</a>;
 
@@ -381,9 +381,33 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>
 <p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If <var>mediaKeys</var> is already in use and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
-          <li><p>If the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute is not null and the user agent or CDM do not support removing the association, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
-          <li><p>TODO: Add more steps per <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24216">Bug 24216</a>.</p></li> 
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
+          <li>
+<p>If the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
+            <ol>
+              <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code> and that has the message "The existing MediaKeys object cannot be removed at this time."</p></li>
+              <li><p>Stop using the CDM instance represented by the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
+              <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+            </ol>
+          </li>
+          <li>
+<p>If <var>mediaKeys</var> is not null, run the following steps:</p>
+            <ol>
+              <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</p></li>
+              <li>
+<p>If the preceding step failed, run the following steps:</p>
+                <ol>
+                  <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to null.</p></li>
+                  <li><p>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+                </ol>
+              </li>
+              <li>
+<p>If the media element is <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
+                <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
+              </li>
+            </ol>
+          </li>
           <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to <var>mediaKeys</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
@@ -391,8 +415,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
     
+    <p class="non-normative">Note: Support for clearing or replacing the associated <code><a href="#dom-mediakeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
-    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element with <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
+    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
     <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
@@ -671,6 +696,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             The initialization data type <em>type</em> is not supported by the key system.<br>
             The operation is not supported by the key system.
           </td>
+        </tr>
+        <tr>
+          <td><dfn id="InvalidStateError"><code>InvalidStateError</code></dfn></td>
+          <td>The existing MediaKeys object cannot be removed at this time.</td>
         </tr>
         <tr>
           <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
@@ -1421,7 +1450,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       </thead>
       <tbody>
         <tr>
-          <td>14 April 2014</td>
+          <td><a href="https://dvcs.w3.org/hg/html-media/raw-file/9842af174b80/encrypted-media/encrypted-media.html">14 April 2014</a></td>
           <td>Use promises.</td>
         </tr>
         <tr>

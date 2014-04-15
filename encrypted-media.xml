@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 14 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 15 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -323,7 +323,7 @@ enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor"
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   // Encrypted Media
   readonly attribute <precoderef>MediaKeys</precoderef> <precoderef prefix="attr">mediaKeys</precoderef>;
-  Promise&lt;any&gt; <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef> mediaKeys);
+  Promise&lt;any&gt; <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef>? mediaKeys);
   
   attribute <EventHandler/> <precoderef>onneedkey</precoderef>;
 
@@ -373,9 +373,29 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If <var>mediaKeys</var> is already in use and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
-          <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null and the user agent or CDM do not support removing the association, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
-          <li><p>TODO: Add more steps per <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24216">Bug 24216</a>.</p></li> 
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
+          <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
+            <ol>
+              <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code> and that has the message "The existing MediaKeys object cannot be removed at this time."</p></li>
+              <li><p>Stop using the CDM instance represented by the <coderef prefix="attr">mediaKeys</coderef> attribute to decrypt <videoanchor name="media-data">media data</videoanchor> and remove the association with the media element.</p></li>
+              <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+            </ol>
+          </li>
+          <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
+            <ol>
+              <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <videoanchor name="media-data">media data</videoanchor>.</p></li>
+              <li><p>If the preceding step failed, run the following steps:</p>
+                <ol>
+                  <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
+                  <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+                </ol>
+              </li>
+              <li><p>If the media element is <a href="#waiting-for-a-key">waiting for a key</a>, <queue-a-task/> to attempt to resume playback.</p>
+                <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
+              </li>
+            </ol>
+          </li>
           <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to <var>mediaKeys</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
@@ -383,8 +403,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
     
+    <p class="non-normative">Note: Support for clearing or replacing the associated <coderef>MediaKeys</coderef> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
-    <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects created by <methodref>createSession</methodref> may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element with <methodref>setMediaKeys</methodref>.</p>
+    <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects created by <methodref>createSession</methodref> may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
 
     <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
@@ -644,6 +665,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             The initialization data type <em>type</em> is not supported by the key system.<br/>
             The operation is not supported by the key system.
           </td>
+        </tr>
+        <tr>
+          <td><dfn id="InvalidStateError"><code>InvalidStateError</code></dfn></td>
+          <td>The existing MediaKeys object cannot be removed at this time.</td>
         </tr>
         <tr>
           <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
@@ -1368,7 +1393,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </thead>
       <tbody>
         <tr>
-          <td>14 April 2014</td>
+          <td><a href="https://dvcs.w3.org/hg/html-media/raw-file/9842af174b80/encrypted-media/encrypted-media.html">14 April 2014</a></td>
           <td>Use promises.</td>
         </tr>
         <tr>
