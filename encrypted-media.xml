@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 15 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 17 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -1222,8 +1222,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     var keySession = event.target;
 
     var license = new Uint8Array([ ... ]);
-    keySession.<premethodref>update</premethodref>(license).then(
-      null,
+    keySession.<premethodref>update</premethodref>(license).catch(
       console.error.bind(console, "update() failed")
     );
   }
@@ -1275,8 +1274,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
         },
         console.error.bind(console, "Unable to create MediaKeys")
-      ).then(
-        null,
+      ).catch(
         console.error.bind(console, "Unable to set MediaKeys")
       );
     }
@@ -1309,8 +1307,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4) {
         var license = new Uint8Array(xmlhttp.response);
-        keySession.<premethodref>update</premethodref>(license).then(
-          null,
+        keySession.<premethodref>update</premethodref>(license).catch(
           console.error.bind(console, "update() failed")
         );
       }
@@ -1353,9 +1350,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   function handleMessageResponse(keySession, response) {
     var license = new Uint8Array(response);
-    keySession.<premethodref>update</premethodref>(license).then(
-      null,
-      console.error.bind(console, "update() failed")
+    keySession.<premethodref>update</premethodref>(license).catch(
+      function(err) {
+        console.error("update() failed: " + err);
+      }
     );
   }
   
