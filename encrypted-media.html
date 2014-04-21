@@ -468,6 +468,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>
 <p>Run the following steps asynchronously:</p>
         <ol>
+          <li>
+<p>If the <var title="true">list of active session Initialization Data</var> for this object includes an entry for the <var title="true">initDataType</var>-<var title="true">initData</var> pair, resolve <var>promise</var> with <code>null</code>.</p>
+            <p class="non-normative">In other words, do not create a session if a non-closed session already exists for this <var title="true">initData</var>.</p>
+          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">default URL</var> be null.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <code><a href="#dom-create">create()</a></code>.</p></li>
@@ -498,10 +502,12 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <li><p>Set the <code><a href="#dom-sessionkeysystem">keySystem</a></code> attribute to the value of the <code><a href="#dom-mediakeys">MediaKeys</a></code> object's <code><a href="#dom-keysystem">keySystem</a></code> attribute.</p></li>
               <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">session ID</var>.</p></li>
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
+              <li><p>Let the session initData be the <var title="true">initDataType</var>-<var title="true">initData</var> pair.</p></li>
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
+          <li><p>Add an entry for the <var title="true">initDataType</var>-<var title="true">initData</var> pair to the <var title="true">list of active session Initialization Data</var> for this object.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
       </li>
@@ -1093,7 +1099,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p>If <var title="true">sessionType</var> is <code>"persistent"</code>, the CDM must have cleared all stored session data associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p>
     <p>The following steps are run:</p>
     <ol>
-      <li><p>Let <var>promise</var> be the <code><a href="#dom-close">close</a></code> attribute of the associated <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li><p>Let the <var title="true">session</var> be the associated <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
+      <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li>
+      <li><p>Let <var>promise</var> be the <code><a href="#dom-close">close</a></code> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
 
@@ -1371,7 +1379,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<a href="#dom-createsession">createSession</a>(initDataType, initData).then(
       function(keySession) {
-        keySession.addEventListener("<a href="#dom-eventmessage">message</a>", licenseRequestReady, false);
+        if (keySession) {
+          keySession.addEventListener("<a href="#dom-eventmessage">message</a>", licenseRequestReady, false);
+        } else {
+          console.log("A session already exists for the initData");
+        }
       }
     ).catch(
       console.error.bind(console, "Unable to create or initialize key session")
@@ -1456,6 +1468,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<a href="#dom-createsession">createSession</a>(initDataType, initData).then(
       function(keySession) {
+        if (!keySession)
+          return; // A session already exists for the initData.
         keySession.addEventListener("<a href="#dom-eventmessage">message</a>", handleMessage, false);
         keySession.addEventListener("<a href="#dom-eventerror">error</a>", handleError, false);
         keySession.close.then(
@@ -1531,6 +1545,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<a href="#dom-createsession">createSession</a>(initDataType, initData, "persistent").then(
       function(keySession) {
+        if (!keySession)
+          return; // A session already exists for the initData.
         keySession.addEventListener("<a href="#dom-eventmessage">message</a>", handleMessage, false);
         keySession.addEventListener("<a href="#dom-eventerror">error</a>", handleError, false);
         keySession.close.then(
