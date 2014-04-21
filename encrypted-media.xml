@@ -1239,7 +1239,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 id="examples-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
+    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> method then uses
     the <a href="#initialization-data">Initialization Data</a> from the <videoanchor name="media-data">media data</videoanchor> to generate the license request and send it to the appropriate license server.
     </p>
@@ -1325,7 +1325,45 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="example-using-all-events" class="exampleheader">8.3. Using All Events</h3>
+    <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
+    <p class="exampledescription">Initialization is much simpler if needkey events do not need to be handled during MediaKeys initialization.
+    This can be accomplished either by providing the <a href="#initialization-data">Initialization Data</a> in other ways or setting the source after the MediaKeys object has been created.
+    This example does the latter.
+    </p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var mediaKeys;
+
+  // See the previous example for implementations of these functions.
+  function selectKeySystem() { ... }
+  function createSession(mediaKeys, initDataType, initData) { ... }
+  function licenseRequestReady(event) { ... }
+
+  function handleKeyNeeded(event) {
+    createSession(mediaKeys, event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
+  }
+
+  selectKeySystem();
+  <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or initialize key session")
+  );
+&lt;/script&gt;
+
+&lt;video id="v" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
     <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1334,11 +1372,11 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var mediaKeys;
 
-  // See the previous example for implementations of these functions.
+  // See previous examples for implementations of these functions.
   function selectKeySystem() { ... }
   function handleKeyNeeded(event) { ... }
-  function addSession(video, initDataType, initData) { ... }
 
   // This replaces the implementation in the previous example.
   function createSession(mediaKeys, initDataType, initData) {
@@ -1363,7 +1401,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       }
     );
   }
-  
+
   function sendMessage(message, keySession) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.open("POST", licenseUrl);
@@ -1382,9 +1420,21 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     // Report event.target.error.name and event.target.error.<precoderef>systemCode</precoderef>,
     // and do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
   }
+
+  selectKeySystem();
+  <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or use new MediaKeys")
+  );
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
+&lt;video id="v" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
 

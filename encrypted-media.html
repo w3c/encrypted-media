@@ -1296,7 +1296,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;/body&gt;</pre>
     </div>
 
-    <h3 id="examples-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
+    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <code><a href="#dom-istypesupported">isTypeSupported()</a></code> method then uses
     the <a href="#initialization-data">Initialization Data</a> from the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> to generate the license request and send it to the appropriate license server.
     </p>
@@ -1382,7 +1382,45 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
-    <h3 id="example-using-all-events" class="exampleheader">8.3. Using All Events</h3>
+    <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
+    <p class="exampledescription">Initialization is much simpler if needkey events do not need to be handled during MediaKeys initialization.
+    This can be accomplished either by providing the <a href="#initialization-data">Initialization Data</a> in other ways or setting the source after the MediaKeys object has been created.
+    This example does the latter.
+    </p>
+
+    <div class="example">
+      <pre class="code">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var mediaKeys;
+
+  // See the previous example for implementations of these functions.
+  function selectKeySystem() { ... }
+  function createSession(mediaKeys, initDataType, initData) { ... }
+  function licenseRequestReady(event) { ... }
+
+  function handleKeyNeeded(event) {
+    createSession(mediaKeys, event.<a href="#dom-initdatatype">initDataType</a>, event.<a href="#dom-initdata">initData</a>);
+  }
+
+  selectKeySystem();
+  <a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-create">create</a>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      return video.<a href="#dom-setmediakeys">setMediaKeys</a>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or initialize key session")
+  );
+&lt;/script&gt;
+
+&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
+    </div>
+
+    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
     <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
@@ -1391,11 +1429,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var mediaKeys;
 
-  // See the previous example for implementations of these functions.
+  // See previous examples for implementations of these functions.
   function selectKeySystem() { ... }
   function handleKeyNeeded(event) { ... }
-  function addSession(video, initDataType, initData) { ... }
 
   // This replaces the implementation in the previous example.
   function createSession(mediaKeys, initDataType, initData) {
@@ -1420,7 +1458,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       }
     );
   }
-  
+
   function sendMessage(message, keySession) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.open("POST", licenseUrl);
@@ -1439,9 +1477,21 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     // Report event.target.error.name and event.target.error.<a href="#dom-systemcode">systemCode</a>,
     // and do some bookkeeping with event.target.<a href="#dom-sessionid">sessionId</a> if necessary.
   }
+
+  selectKeySystem();
+  <a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-create">create</a>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      return video.<a href="#dom-setmediakeys">setMediaKeys</a>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or use new MediaKeys")
+  );
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
+&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
     </div>
 
 
