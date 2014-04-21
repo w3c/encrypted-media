@@ -98,7 +98,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 17 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 21 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -1255,21 +1255,27 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     var video = document.getElementById("video");
 
     if (!video.<a href="#dom-attrmediakeys">mediaKeys</a>) {
-      <a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-create">create</a>("org.w3.clearkey").then(
+      var promise = <a href="#dom-mediakeys">MediaKeys</a>.<a href="#dom-create">create</a>("org.w3.clearkey");
+      promise.catch(
+        console.error.bind(console, "Unable to create MediaKeys")
+      );
+      promise.then(
         function(createdMediaKeys) {
           return video.<a href="#dom-setmediakeys">setMediaKeys</a>(createdMediaKeys);
-        },
-        console.error.bind(console, "Unable to create MediaKeys")
-      ).then(
-        function() {
-          var initData = new Uint8Array([ ... ]);
-          return video.<a href="#dom-attrmediakeys">mediaKeys</a>.<a href="#dom-createsession">createSession</a>("webm", initData);
-        },
+        }
+      ).catch(
         console.error.bind(console, "Unable to set MediaKeys")
+      );
+      promise.then(
+        function(createdMediaKeys) {
+          var initData = new Uint8Array([ ... ]);
+          return createdMediaKeys.<a href="#dom-createsession">createSession</a>("webm", initData);
+        }
       ).then(
         function(keySession) {
           keySession.addEventListener("<a href="#dom-eventmessage">message</a>", handleMessage, false);
-        },
+        }
+      ).catch(
         console.error.bind(console, "Unable to create key session")
       );
     }
@@ -1329,10 +1335,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           video.pendingSessionData = [];
 
           return video.<a href="#dom-setmediakeys">setMediaKeys</a>(createdMediaKeys);
-        },
-        console.error.bind(console, "Unable to create MediaKeys")
+        }
       ).catch(
-        console.error.bind(console, "Unable to set MediaKeys")
+        console.error.bind(console, "Unable to create or use new MediaKeys")
       );
     }
     addSession(video, event.<a href="#dom-initdatatype">initDataType</a>, event.<a href="#dom-initdata">initData</a>);
@@ -1350,8 +1355,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     mediaKeys.<a href="#dom-createsession">createSession</a>(initDataType, initData).then(
       function(keySession) {
         keySession.addEventListener("<a href="#dom-eventmessage">message</a>", licenseRequestReady, false);
-      },
-      console.error.bind(console, "Unable to create key session")
+      }
+    ).catch(
+      console.error.bind(console, "Unable to create or initialize key session")
     );
   }
 
@@ -1400,8 +1406,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         keySession.close.then(
           console.log.bind(console, "Session closed")
         );
-      },
-      console.error.bind(console, "Unable to create key session")
+      }
+    ).catch(
+      console.error.bind(console, "Unable to create or initialize key session")
     );
   }
 
