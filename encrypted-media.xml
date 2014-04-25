@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 21 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 24 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -329,15 +329,16 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
 };
 
-enum SessionType { "temporary", "persistent" };
+enum <precodedfn prefix="enum">IsTypeSupported</precodedfn> { "<precodedfn prefix="istypesupportedempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupported">maybe</precodedfn>", "<precodedfn prefix="istypesupported">probably</precodedfn>" };
+enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">temporary</precodedfn>", "<precodedfn prefix="sessiontype">persistent</precodedfn>" };
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 
-  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString initDataType, Uint8Array initData, optional SessionType sessionType = "temporary");
+  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, Uint8Array initData, optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
   Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>loadSession</premethodref>(DOMString sessionId);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
-  static bool <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString contentType);
+  static <precoderef prefix="enum">IsTypeSupported</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 
 interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
@@ -416,7 +417,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <ol>
       <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The keySystem parameter is empty."</p></li>
-      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The key system <var title="true">keySystem</var> is not supported." Key system string comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The key system <var title="true">keySystem</var> is not supported." String comparison is case-sensitive.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
@@ -449,7 +450,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol>
       <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initDataType parameter is empty."</p></li>
       <li><p>If <var title="true">initData</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is<code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initData parameter is empty."</p></li>
-      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data type <var title="true">initDataType</var> is not supported by the key system."</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data type <var title="true">initDataType</var> is not supported by the key system." String comparison is case-sensitive.</p></li>
       <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "<var title="true">sessionType</var> sessions are not supported by the key system."</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
@@ -464,8 +465,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             <ol>
               <li><p>Process the <var title="true">initData</var>, interpreting it per <var title="true">initDataType</var>.</p></li>
               <li><p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated by the <a href="#cdm">CDM</a> using the <var title="true">initData</var> and <var title="true">sessionType</var>.</p>
-                <p>If <var title="true">sessionType</var> is <code>"temporary"</code>, the request is for a temporary non-persisted license.
-                If <var title="true">sessionType</var> is <code>"persistent"</code>, the request is for a persistable license.</p>
+                <p>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>", the request is for a temporary non-persisted license.
+                If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>", the request is for a persistable license.</p>
                 <p class="non-normative">Note: The license server may reject the requested type. It should not issue a different type.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var title="true">initData</var>.</p>
               </li>
@@ -521,7 +522,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
-              <li><p>Let the session type be <code>"persistent"</code>.</p></li>
+              <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
@@ -537,35 +538,89 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
-    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">contentType</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the container and codec(s) specified by <var title="true">contentType</var>.</p>
+    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">initDataType</var>, <var title="true">contentType</var>, <var title="true">capability</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the <var title="true"><a href="#initialization-data-type">initDataType</a></var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
+    <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class="">isTypeSupported() is stil being defined. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24873">Bug 24873</a>.</p></div>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is supported. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported. Specific containers and codecs may or may not be supported with Some System.</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem")</pre></dd>
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> is present and supports the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">mimeType</var>)</pre></dd>
-        <dt>Returns whether the user agent supports <a href="#simple-decryption-clear-key">Clear Key</a> <a href="#simple-decryption">Simple Decryption</a> of the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">mimeType</var>)</pre></dd>
+        <!-- TODO: Replace <var title="true">initDataType</var> with "keyids" when bug 25269 is resolved. -->
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>)</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>, the user agent is capable of demuxing the container specified by <var title="true">mimeType</var>, and the codec(s) specified by <var title="true">mimeType</var> are supported, all as specified by capability "foo".</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>, <var title="true">mimeType</var>, "foo")</pre></dd>
+        <dt>Returns whether the user agent <em>probably</em> supports <a href="#simple-decryption-clear-key">Clear Key</a> using the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">"probably" == MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">initDataType</var>, <var title="true">mimeType</var>)</pre></dd>
       </dl>
     </div>
-    
+
     <p>It must run the following steps:</p>
     
     <ol>
-      <li><p>If <var title="true">keySystem</var> is an empty string, return false and abort these steps.</p></li>
-      <li><p>If <var title="true">keySystem</var> contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return false and abort these steps. Key system string comparison is case-sensitive.</p></li>
-      <li><p>If <var title="true">contentType</var> was not provided or is an empty string, return true and abort these steps.</p></li>
-      <li><p>If <var title="true">contentType</var> contains an invalid or unrecognized MIME type, return false and abort these steps.</p></li>
-      <li>
-        <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class="">isTypeSupported needs to be updated including using initDataType. This includes the discussion in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24873">Bug 24873</a>.</p></div>
-        <p>Let <var title="true">initDataFormat</var> be the container type specified by <var title="true">contentType</var>.</p>
+      <li><p>If <var title="true">keySystem</var> is an empty string or contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>If the <var title="true">keySystem</var> implementation is not available and usable, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>Follow the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <methodref>create</methodref></dt>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupported">probably</coderef>".</dd>
+          <dt>Otherwise <span class="non-normative">(as may be the case for strings that are only used for discovery)</span></dt>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+        </dl>
       </li>
-      <li><p>If the user agent does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
-      <li><p>If the CDM specified by <var title="true">keySystem</var> does not support the <a href="#initialization-data">Initialization Data</a> format <var title="true">initDataFormat</var>, return false and abort these steps.</p></li>
-      <li><p>If neither the CDM specified by <var title="true">keySystem</var> nor the user agent support all codec(s) specified by <var title="true">contentType</var>, return false and abort these steps.</p></li>
-      <li><p>Return true.</p></li>
+      
+      <li><p>If <var title="true">initDataType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation is available and usable</dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+
+      <li><p>If <var title="true">initDataType</var> is an empty string or contains an unrecognized or unsupported <a href="#initialization-data-type">initialization data type</a>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the the <var title="true">keySystem</var> implementation, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>      
+      <li><p>If the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is not available and usable, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable</dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+
+      <li><p>If <var title="true">contentType</var> is an empty string or contains an invalid or unrecognized MIME type, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>Let <var title="true">parameters</var> be the RFC 6381 parameters, if any, specified by <var title="true">contentType</var>.</p></li>
+      <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. <span class="non-normative">For example, all of the codecs.</span> It may be empty.</p></li>
+      <li><p>If the user agent does not support <var title="true">container</var>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If the user agent and <var title="true">keySystem</var> implementation do not support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If <var title="true">capability</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var></dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var></dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+      
+      <li><p>If <var title="true">capability</var> is an empty string, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If the <var title="true">keySystem</var> implementation does not support <var title="true">capability</var>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>Follow the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var> as specified by <var title="true">capability</var></dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var></dt>
+          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
     </ol>
+    
 
 <!-- Begin MediaKeySession -->
     <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
@@ -593,9 +648,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Process <var title="true">response</var></p>
                 <p>If <var title="true">response</var> contains keys, a license, or similar data, follow the stipulation for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If <var title="true">sessionType</var> is <code>"temporary"</code> and the license does not specify it should be stored</dt>
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>" and the license does not specify it should be stored</dt>
                   <dd>Do not store the license or other data contained in <var title="true">response</var>.</dd>
-                  <dt>If <var title="true">sessionType</var> is <code>"persistent"</code> and the license permits storage</dt>
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>" and the license permits storage</dt>
                   <dd>Store the license or other data contained in <var title="true">response</var>.</dd>
                   <dt>Otherwise</dt>
                   <dd>Fail with an appropriate <a href="#mediakeyerror-names">error name</a> and message.</dd>
@@ -1036,7 +1091,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>release</methodref> call, when the session is no longer needed, or when resources are lost.
     Keys in other sessions should be unaffected, even if they have overlapping key IDs.
     </p>
-    <p>If <var title="true">sessionType</var> is <code>"persistent"</code>, the CDM must have cleared all stored session data associated with the <coderef>MediaKeySession</coderef> object.</p>
+    <p>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>", the CDM must have cleared all stored session data associated with the <coderef>MediaKeySession</coderef> object.</p>
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
@@ -1271,10 +1326,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   var licenseUrl;
 
   function selectKeySystem() {
-    if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.example.somesystem", "video/webm; codecs='vp8, vorbis'")) {
+    if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.example.somesystem", "webm", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
       keySystem = "com.example.somesystem";
-    } else if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.foobar", "video/webm; codecs='vp8, vorbis'")) {
+    } else if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.foobar", "webm", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.foobar.com/request";
       keySystem = "com.foobar";
     } else {
