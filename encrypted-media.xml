@@ -179,7 +179,7 @@
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#exceptions">2.1. Exceptions</a></li>
-          <li><a href="#error-codes">2.2. Errors</a></li>
+          <li><a href="#mediakeyerror">2.2. MediaKeyError</a></li>
           <li><a href="#media-element-restictions">2.3. Media Element Restrictions</a></li>
         </ul></li>
       <li><a href="#events">3. Events</a></li>
@@ -737,7 +737,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <h3 id="exceptions">2.1. Exceptions</h3>
     <p>The methods report errors by rejecting the the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
-    The following <dom4ref name="dom-domerror-name">DOMException names from DOM4</dom4ref> are used with messages as shown in the following table.
+    The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> are used with messages as shown in the following table.
     In cases where the exact name is not specified in the algorithm, the message may differ to reflect the actual error.
     </p>
 
@@ -773,18 +773,18 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </tbody>
     </table>
 
-    <h3 id="error-codes">2.2. Errors</h3>
+    <h3 id="mediakeyerror">2.2. MediaKeyError</h3>
     <div class="issue"><div class="issue-title"><span>Issue 3</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The future of error events and MediaKeyError is uncertain.</p></div>
     <h4 id="mediakeyerror">2.2.1. Interface</h4>
     <pre class="idl">
 [<a href="#dom-mediakeyerror-constructor">Constructor</a>(DOMString <a href="#mediakeyerror-names">name</a>, unsigned long <precoderef>systemCode</precoderef>, optional DOMString message = "")]
-interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-domerror">DOMError</dom4ref> {
+interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="domexception">DOMException</dom4ref> {
   readonly attribute unsigned long <precoderef>systemCode</precoderef>;
 };
 </pre>
 
     <div class="impl">
-    <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeys(<var title="true">keySystem</var>)</code></dfn> constructor must return a new <coderef>MediaKeyError</coderef> whose <coderef>systemCode</coderef> attribute is initialized to <var title="true">systemCode</var> and inherited attributes are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><dom4ref name="dom-domerror">DOMError</dom4ref></code> constructor.</p>
+    <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeyError</code></dfn> constructor must return a new <coderef>MediaKeyError</coderef> object whose <coderef>systemCode</coderef> property is initialized to <var title="true">systemCode</var> and inherited properties are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><dom4ref name="domexception">DOMException</dom4ref></code> algorithm.</p>
 
     <p>The <codedfn>systemCode</codedfn> attribute of a <coderef>MediaKeySession</coderef> object is a <a href="#key-system">Key System</a>-specific value for the error that occurred.
     <span class="non-normative">This allows a more granular status to be returned than the more general <a href="#mediakeyerror-names">name</a>.</span>
@@ -794,11 +794,11 @@ interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="interface-dome
 
     <h4 id="mediakeyerror-names">2.2.2. Error Names</h4>
 
-    <p>The tables below list all the allowed error names for the <code><dom4ref name="dom-domerror-name">name</dom4ref></code> attribute along with a description. The message may be key system-specific.</p>
+    <p>The tables below list all the allowed error names for the <code>name</code> property along with a description. The message may be key system-specific.</p>
 
     <div class="issue"><div class="issue-title"><span>Issue 4</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=21798">Bug 21798</a> - The additional error names are yet to be defined.</p></div>
 
-    <p>The following <dom4ref name="dom-domerror-name">DOMException names from DOM4</dom4ref> may be used as shown in the following table:</p>
+    <p>The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> may be used as shown in the following table:</p>
     <table>
       <tbody>
         <tr>
@@ -1098,7 +1098,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
         <ul style="list-style-type:none"><li>
-          <code><dom4ref name="dom-domerror-name">name</dom4ref></code> = <var title="true">error name</var><br></br>
+          <code><dom4ref name="error-name">name</dom4ref></code> = <var title="true">error name</var><br></br>
           <coderef>systemCode</coderef> = <var title="true">system code</var>
         </li></ul>
       </li>
