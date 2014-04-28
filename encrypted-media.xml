@@ -1411,15 +1411,15 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   }
 
   function licenseRequestReady(event) {
-    var keySession = event.target;
     var request = event.<precoderef>message</precoderef>;
 
     var xmlhttp = new XMLHttpRequest();
+    xmlhttp.keySession = event.target;
     xmlhttp.open("POST", licenseUrl);
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4) {
         var license = new Uint8Array(xmlhttp.response);
-        keySession.<premethodref>update</premethodref>(license).catch(
+        xmlhttp.keySession.<premethodref>update</premethodref>(license).catch(
           console.error.bind(console, "update() failed")
         );
       }
@@ -1516,10 +1516,11 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   function sendMessage(message, keySession) {
     xmlhttp = new XMLHttpRequest();
+    xmlhttp.keySession = keySession;
     xmlhttp.open("POST", licenseUrl);
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4)
-        handleMessageResponse(keySession, xmlhttp.response);
+        handleMessageResponse(xmlhttp.keySession, xmlhttp.response);
     }
     xmlhttp.send(message);
   }
