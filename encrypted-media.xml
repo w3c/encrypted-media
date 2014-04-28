@@ -336,6 +336,7 @@ interface <precodedfn>MediaKeys</precodedfn> {
 
   Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, Uint8Array initData, optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
   Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>loadSession</premethodref>(DOMString sessionId);
+  Promise&lt;any&gt; <premethodref>setServerCertificate</premethodref>(Uint8Array serverCertificate);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
   static <precoderef prefix="enum">IsTypeSupported</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
@@ -440,7 +441,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <methoddfn name="createSession">createSession(<var title="true">initDataType</var>, <var title="true">initData</var>, <var title="true">sessionType</var>)</methoddfn> method creates a new <coderef>MediaKeySession</coderef> object for the <var title="true">initData</var>. It must run the following steps:</p>
-    <p class="non-normative">Note: The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
+    <p class="non-normative">The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
     <var title="true">initDataType</var> is the <a href="#initialization-data-type">initialization data type</a> that indicates how to interpret <var title="true">initData</var>. 
     </p>
     <p class="non-normative">Note: User agents and <a href="#cdm">CDMs</a> should not treat sessions created with audio data differently than those created with video data.
@@ -533,6 +534,25 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           </li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="setServerCertificate">setServerCertificate(<var title="true">serverCertificate</var>)</methoddfn> method provides a server certificate to be used to encrypt messages to the license server. It must run the following steps:</p>
+    <p class="non-normative">The contents of <var title="true">serverCertificate</var> are <a href="#key-system">Key System</a>-specific.</p>
+    <p class="non-normative">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p>
+
+    <ol>
+      <li><p>If <var title="true">serverCertificate</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The serverCertificate parameter is empty."</p></li>
+      <li><p>If the <coderef>keySystem</coderef> does not support server certificates, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The operation is not supported by the key system."</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to process <var title="true">serverCertificate</var>.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
       </li>
       <li><p>Return <var>promise</var>.</p></li>
@@ -633,7 +653,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     This promise can only be fulfilled and is never rejected.</p>
 
     <p>The <methoddfn name="update">update(<var title="true">response</var>)</methoddfn> method provides messages, including licenses, to the CDM. It must run the following steps:</p>
-    <p class="non-normative">Note: The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
+    <p class="non-normative">The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
 
     <ol>
       <li><p>If <var title="true">response</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The response parameter is empty."</p></li>
@@ -1317,6 +1337,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> method then uses
     the <a href="#initialization-data">Initialization Data</a> from the <videoanchor name="media-data">media data</videoanchor> to generate the license request and send it to the appropriate license server.
+    One of the supported key systems uses a serverCertificate, which is provided proactively.
     </p>
 
     <div class="example">
@@ -1324,11 +1345,13 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var serverCertificate;
 
   function selectKeySystem() {
     if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.example.somesystem", "webm", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
       keySystem = "com.example.somesystem";
+      serverCertificate = new Uint8Array([ ... ]);
     } else if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.foobar", "webm", "video/webm; codecs='vp8, vorbis'")) {
       licenseUrl = "https://license.foobar.com/request";
       keySystem = "com.foobar";
@@ -1346,6 +1369,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
         function(createdMediaKeys) {
           video.mediaKeysObject = createdMediaKeys;
+
+          if (serverCertificate)
+            createdMediaKeys.setServerCertificate(serverCertificate);
+
           for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
             var data = video.pendingSessionData[i];
             createSession(video.mediaKeysObject, data.initDataType, data.initData);
@@ -1415,6 +1442,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var serverCertificate;
   var mediaKeys;
 
   // See the previous example for implementations of these functions.
@@ -1432,6 +1460,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       mediaKeys = createdMediaKeys;
       var video = document.getElementById("v");
       video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.setServerCertificate(serverCertificate);
       return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
     }
   ).catch(
@@ -1451,6 +1481,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var serverCertificate;
   var mediaKeys;
 
   // See previous examples for implementations of these functions.
@@ -1508,6 +1539,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       mediaKeys = createdMediaKeys;
       var video = document.getElementById("v");
       video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.setServerCertificate(serverCertificate);
       return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
     }
   ).catch(
@@ -1526,6 +1559,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
+  var serverCertificate;
   var mediaKeys;
 
   // See the previous examples for implementations of these functions.
@@ -1596,6 +1630,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     function(createdMediaKeys) {
       mediaKeys = createdMediaKeys;
       var video = document.getElementById("v");
+      if (serverCertificate)
+        mediaKeys.setServerCertificate(serverCertificate);
       return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
     }
   ).catch(
