@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 28 April 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 29 April 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -1555,6 +1555,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
     <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
+    <div class="issue"><div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. Fix this in the spec.</div>
     <div class="example">
       <pre class="code">
 &lt;script&gt;
@@ -1578,7 +1579,13 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.close.then(
-          console.log.bind(console, "Session closed")
+          function() {
+            console.log("Session " + this.sessionId + " closed");
+            if (this.releaseRequested) {
+              console.log("Session " + this.sessionId + " destroyed");
+              // The application should remove its record of this.sessionId.
+            }
+          }.bind(keySession),        
         );
         // Store keySession.<precoderef>sessionId</precoderef> in the application.
       }
@@ -1593,6 +1600,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       function(keySession) {
         if (!keySession) {
           console.error("No stored session with the ID " + sessionId + " was found.");
+          // The application should remove its record of |sessionId|.
           return;
         }
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
@@ -1607,8 +1615,14 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   }
 
   // Called when the application wants to remove the license for the media resource.
+  // Calling release() may initiate a series of messages to/from the server.
+  // The license has not been removed until the close promise is fulfilled and
+  // releaseRequested == true.
   removeStoredSession(keySession) {
-    keySession.<premethodref>release</premethodref>().catch(
+    keySession.<premethodref>release</premethodref>().then(
+      function() {
+        this.releaseRequested = true;
+      }.bind(keySession),
       console.error.bind(console, "Unable to release the session")
     );
   }
