@@ -332,7 +332,7 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
   readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
 };
 
-enum <dfn id="dom-enumistypesupported">IsTypeSupported</dfn> { "<dfn id="dom-istypesupportedempty"></dfn>" /* empty string */, "<dfn id="dom-istypesupportedmaybe">maybe</dfn>", "<dfn id="dom-istypesupportedprobably">probably</dfn>" };
+enum <dfn id="dom-istypesupportedresult">IsTypeSupportedResult</dfn> { "<dfn id="dom-istypesupportedresultempty"></dfn>" /* empty string */, "<dfn id="dom-istypesupportedresultmaybe">maybe</dfn>", "<dfn id="dom-istypesupportedresultprobably">probably</dfn>" };
 enum <dfn id="dom-sessiontype">SessionType</dfn> { "<dfn id="dom-sessiontypetemporary">temporary</dfn>", "<dfn id="dom-sessiontypepersistent">persistent</dfn>" };
 interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
@@ -342,7 +342,7 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   Promise&lt;any&gt; <a href="#dom-setservercertificate">setServerCertificate</a>(Uint8Array serverCertificate);
 
   static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>)
-  static <a href="#dom-enumistypesupported">IsTypeSupported</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
+  static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 
 interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://www.w3.org/TR/dom/#eventtarget">EventTarget</a> {
@@ -613,10 +613,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <dl class="switch">
           <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <code><a href="#dom-create">create()</a></code>
 </dt>
-          <dd>Let <var title="true">probably result</var> be "<code><a href="#dom-istypesupportedprobably">probably</a></code>".</dd>
+          <dd>Let <var title="true">probably result</var> be "<code><a href="#dom-istypesupportedresultprobably">probably</a></code>".</dd>
           <dt>Otherwise <span class="non-normative">(as may be the case for strings that are only used for discovery)</span>
 </dt>
-          <dd>Let <var title="true">probably result</var> be "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Let <var title="true">probably result</var> be "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
         </dl>
       </li>
       
@@ -624,7 +624,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>If <var title="true">initDataType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation is available and usable</dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -637,7 +637,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable</dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -654,10 +654,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for all <var title="true">media types</var>
 </dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var>
 </dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -670,10 +670,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for all <var title="true">media types</var> as specified by <var title="true">capability</var>
 </dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var>
 </dt>
-          <dd>Return "<code><a href="#dom-istypesupportedmaybe">maybe</a></code>".</dd>
+          <dd>Return "<code><a href="#dom-istypesupportedresultmaybe">maybe</a></code>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -1628,7 +1628,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
     <div class="issue">
-<div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. Fix this in the spec.</div>
+<div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. This needs to be fixed in the spec. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25536">Bug 25536</a>.</div>
     <div class="example">
       <pre class="code">
 &lt;script&gt;

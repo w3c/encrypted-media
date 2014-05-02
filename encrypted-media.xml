@@ -329,7 +329,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
 };
 
-enum <precodedfn prefix="enum">IsTypeSupported</precodedfn> { "<precodedfn prefix="istypesupportedempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupported">maybe</precodedfn>", "<precodedfn prefix="istypesupported">probably</precodedfn>" };
+enum <precodedfn>IsTypeSupportedResult</precodedfn> { "<precodedfn prefix="istypesupportedresultempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupportedresult">maybe</precodedfn>", "<precodedfn prefix="istypesupportedresult">probably</precodedfn>" };
 enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">temporary</precodedfn>", "<precodedfn prefix="sessiontype">persistent</precodedfn>" };
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
@@ -339,7 +339,7 @@ interface <precodedfn>MediaKeys</precodedfn> {
   Promise&lt;any&gt; <premethodref>setServerCertificate</premethodref>(Uint8Array serverCertificate);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
-  static <precoderef prefix="enum">IsTypeSupported</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
+  static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 
 interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
@@ -585,16 +585,16 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Follow the steps for the first matching condition from the following list:</p>
         <dl class="switch">
           <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <methodref>create</methodref></dt>
-          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupported">probably</coderef>".</dd>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupportedresult">probably</coderef>".</dd>
           <dt>Otherwise <span class="non-normative">(as may be the case for strings that are only used for discovery)</span></dt>
-          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
         </dl>
       </li>
       
       <li><p>If <var title="true">initDataType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation is available and usable</dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -606,7 +606,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable</dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -621,9 +621,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>If <var title="true">capability</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var></dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var></dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -634,9 +634,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Follow the steps for the first matching condition from the following list:</p>
         <dl class="switch">
           <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var> as specified by <var title="true">capability</var></dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>If the user agent is <em>not</em> did not recognize one or more <var title="true">parameters</var></dt>
-          <dd>Return "<coderef prefix="istypesupported">maybe</coderef>".</dd>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
           <dt>Otherwise</dt>
           <dd>Return <var title="true">probably result</var>.</dd>
         </dl>
@@ -1558,7 +1558,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
     <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
-    <div class="issue"><div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. Fix this in the spec.</div>
+    <div class="issue"><div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. This needs to be fixed in the spec. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25536">Bug 25536</a>.</div>
     <div class="example">
       <pre class="code">
 &lt;script&gt;
