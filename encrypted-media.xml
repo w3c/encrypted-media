@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 2 May 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 5 May 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -193,7 +193,8 @@
           <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
           <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
           <li><a href="#algorithms-queue-error">4.4. Queue an "error" Event</a></li>
-          <li><a href="#algorithms-session-close">4.5. Session Close</a></li>
+          <li><a href="#algorithms-update-usable-key-ids">4.5. Update Usable Key IDs</a></li>
+          <li><a href="#algorithms-session-close">4.6. Session Close</a></li>
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
@@ -270,6 +271,8 @@
     Such keys may only be provided to the <a href="#cdm">CDM</a> via an <methodref>update</methodref> call. (They may later be loaded by <methodref>loadSession</methodref> as part of the stored session data.)
     </p>
     
+    <p class="non-normative">A key is considered <em>usable</em> if it is currently usable for decryption as determined by the CDM. <span class="non-normative">For example, a key is not usable if its license has expired.</span></p>
+        
     <h4 id="decryption-key-id">1.1.6. Key ID</h4>
     <p>A <a href="#decryption-key">key</a> is associated with a key ID, which uniquely identifies a key.
     The container specifies the ID of the key that can decrypt a block or set of blocks within the <videoanchor name="media-data">media data</videoanchor>.
@@ -349,6 +352,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   // session properties
   readonly attribute DOMString <precoderef prefix="session">keySystem</precoderef>;
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
+  readonly attribute Array&lt;Uint8Array&gt; <precoderef>usableKeyIds</precoderef>;
   readonly attribute Promise&lt;any&gt; <precoderef>close</precoderef>;
 
   // session operations
@@ -481,6 +485,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session ID</var>.</p></li>
+              <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
+              <li><p>Let <coderef>close</coderef> be a new promise.</p></li>
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
               <li><p>Let the session initData be the <var title="true">initDataType</var>-<var>init data</var> pair.</p></li>
             </ol>
@@ -524,6 +530,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
+              <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an Array containing the set of key IDs for which the session contains a currently usable key.</p>
+                <p>The <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm may also be run later should additional processing be necessary.</p>
+              </li>
+              <li><p>Let <coderef>close</coderef> be a new promise.</p></li>
               <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
             </ol>
           </li>
@@ -651,6 +661,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
+    <p>The <codedfn>usableKeyIds</codedfn> attribute is an array of key IDs for keys in the session that are currently usable to decrypt <videoanchor name="media-data">media data</videoanchor>.
+      Each element must be unique.
+    </p>
+
     <p>The <codedfn>close</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
     This promise can only be fulfilled and is never rejected.</p>
 
@@ -685,6 +699,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                 </p>
               </li> 
+              <li><p>If the set of usable keys changed, run the <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm on the <var title="true">session</var>.</p>
+                <p>The algorithm may also be run later should additional processing be necessary.</p>
+              </li>
               <li><p>If another message needs to be sent to the server, execute the following steps:</p>
                 <ol>
                   <li><p>Let <var title="true">request</var> be that message.</p></li>
@@ -930,6 +947,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
+          <td><codedfn prefix="event">keyschange</codedfn></td>
+          <td><code><dom4ref name="event">Event</dom4ref></code></td>
+          <td>There has been a change in usable keys.</td>
+          <td><!-- No Preconditions. --></td>
+        </tr>
+        <tr>
           <td><codedfn prefix="event">message</codedfn></td>
           <td><coderef>MediaKeyMessageEvent</coderef></td>
           <td>
@@ -989,7 +1012,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
                   <li><p>Let <var title="true">available keys</var> be the union of keys in sessions that were created by the <var title="true">media keys</var>.</p></li>
                   <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <!-- TODO: Fix indentation. -->
-                <p class="non-normative">In the following steps, a key is considered usable if it is valid as determined by the CDM. For example, a key is not usable if its license has expired.</p>
                 <dl class="switch">
                 <dt>If any of the <var title="true">available keys</var> corresponds to the <var title="">block key ID</var> and is usable</dt>
                 <dd>Run the following steps:
@@ -1109,7 +1131,19 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <var title="true">session</var>.</p></li>
     </ol>
 
-    <h3 id="algorithms-session-close">4.5. Session Close</h3>
+    <h3 id="algorithms-update-usable-key-ids">4.5. Update Usable Key IDs</h3>
+    <p>The Update Usable Key IDs algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
+    This can happen as the result of an <methodref>update</methodref> call or some other event.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">usable key ids</var> be an Array containing the set of key IDs for which the session contains a currently usable key.</p></li>
+      <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to <var title="true">usable key ids</var>.</p></li>
+      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
+    </ol>
+
+    <h3 id="algorithms-session-close">4.6. Session Close</h3>
     <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
     <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>release</methodref> call, when the session is no longer needed, or when resources are lost.
     Keys in other sessions should be unaffected, even if they have overlapping key IDs.
@@ -1119,6 +1153,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li><!-- Check for empty because loadSession() does not set session initData. -->
+      <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
       <li><p>Let <var>promise</var> be the <coderef>close</coderef> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
@@ -1154,7 +1189,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <p>The <var title="true">response</var> parameter of <methodref>update</methodref> should be a JSON Web Key (JWK) representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>. The JSON string is encoded into the Uint8Array parameter using <ascii-encoding />.</p>
     <p>When the JWK 'key type' ("kty") member value is 'octet sequence' ("oct"), the 'key value' ("k") member will be a base64 encoding of the octet sequence containing the symmetric key value.</p>
-    <p>For example, the following contains a single symmetric key represented as a JWK, designated as being for use with the AES Key Wrap algorithm (line breaks for readability, only).</p>
+    <p>For example, the following contains a single symmetric key represented as a JWK, designated as being for use with the AES Key Wrap algorithm (line breaks are for readability, only).</p>
 
     <div class="example">
       <pre class="code">
@@ -1374,7 +1409,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           video.mediaKeysObject = createdMediaKeys;
 
           if (serverCertificate)
-            createdMediaKeys.setServerCertificate(serverCertificate);
+            createdMediaKeys.<premethodref>setServerCertificate</premethodref>(serverCertificate);
 
           for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
             var data = video.pendingSessionData[i];
@@ -1498,6 +1533,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         if (!keySession)
           return; // A session already exists for the initData.
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+        keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.close.then(
           console.log.bind(console, "Session closed")
@@ -1530,6 +1566,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   function handleMessage(event) {
     sendMessage(event.<precoderef>message</precoderef>, event.target);
+  }
+
+  function handleKeysChange(event) {
+    // Check event.target.<precoderef>usableKeyIds</precoderef> and respond appropriately.
   }
 
   function handleError(event) {
