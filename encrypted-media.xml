@@ -97,7 +97,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 5 May 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 7 May 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -353,11 +353,12 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   readonly attribute DOMString <precoderef prefix="session">keySystem</precoderef>;
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
   readonly attribute Array&lt;Uint8Array&gt; <precoderef>usableKeyIds</precoderef>;
-  readonly attribute Promise&lt;any&gt; <precoderef>close</precoderef>;
+  readonly attribute Promise&lt;any&gt; <precoderef>closed</precoderef>;
 
   // session operations
   Promise&lt;any&gt; <premethodref>update</premethodref>(Uint8Array response);
-  Promise&lt;any&gt; <premethodref>release</premethodref>();
+  Promise&lt;any&gt; <premethodref>close</premethodref>();
+  Promise&lt;any&gt; <premethodref>remove</premethodref>();
 };
 
 <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class="">Extensions to <precoderef>HTMLSourceElement</precoderef> may be at risk as discussed in <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=23827">Bug 23827</a>.</p></div>
@@ -486,7 +487,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session ID</var>.</p></li>
               <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
-              <li><p>Let <coderef>close</coderef> be a new promise.</p></li>
+              <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
               <li><p>Let the session initData be the <var title="true">initDataType</var>-<var>init data</var> pair.</p></li>
             </ol>
@@ -533,7 +534,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an Array containing the set of key IDs for which the session contains a currently usable key.</p>
                 <p>The <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm may also be run later should additional processing be necessary.</p>
               </li>
-              <li><p>Let <coderef>close</coderef> be a new promise.</p></li>
+              <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
               <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
             </ol>
           </li>
@@ -665,7 +666,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       Each element must be unique.
     </p>
 
-    <p>The <codedfn>close</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
+    <p>The <codedfn>closed</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
     This promise can only be fulfilled and is never rejected.</p>
 
     <p>The <methoddfn name="update">update(<var title="true">response</var>)</methoddfn> method provides messages, including licenses, to the CDM. It must run the following steps:</p>
@@ -723,7 +724,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
-    <p>The <methoddfn name="release">release()</methoddfn> method allows an application to indicate to the system that it may release any resources associated with this object. It must run the following steps:</p>
+    <p>The <methoddfn name="close">close()</methoddfn> method allows an application to indicate that it no longer needs the session and the CDM should release any resources associated with this object and close it.
+    <span class="non-normative">The returned promise is resolved when the request has been processed, and the <codedfn>closed</codedfn> attribute promise is resolved when the session is closed.</span>
+    It must run the following steps:</p>
 
     <ol>
       <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise fulfilled with <code>undefined</code>.</p></li>
@@ -734,14 +737,46 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li>
-                <p>Process the release request.</p>
-                <p class="non-normative">Note: the release() method is intended to act as a hint to the user agent that the application believes the session is no longer needed.
-                However, the CDM determines whether resources can now be released.</p>
+                <p>Process the close request.</p>
+                <p>Do not remove stored session data.</p>
               </li>
               <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
             </ol>
           </li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="remove">remove()</methoddfn> method allows an application to remove stored session data associated with this object.
+    It must run the following steps:</p>
+
+    <ol>
+      <li><p>If the session type is not "<coderef prefix="sessiontype">persistent</coderef>", return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The operation is not supported on <var title="true">session type</var> sessions."</p></li>
+      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code> and that has the message "The session is closed."</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Process the remove request.</p>
+                <p>This may involve exchanging message(s) with the application.</p>
+                <p>Unless this step fails, the CDM must have cleared all stored session data associated with this object, including the <coderef>sessionId</coderef>, before proceeding to the next step.
+                  <span class="non-normative">(A subsequent call to <methodref>loadSession</methodref> with <coderef>sessionId</coderef> would fail because there is no data stored for the <var title="true">sessionId</var>.)</span>
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li><p>Run the following steps asynchronously once the above step has completed:</p>
+            <ol>
+              <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+              <li><p>Run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
+              <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+            </ol>
+          </li>
         </ol>
       </li>
       <li><p>Return <var>promise</var>.</p></li>
@@ -775,7 +810,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             The key system <em>name</em> is not supported.<br/>
             The initialization data type <em>type</em> is not supported by the key system.<br/>
             <em>type</em> sessions are not supported by the key system.<br/>
-            The operation is not supported by the key system.
+            The operation is not supported by the key system.<br/>
+            The session is closed.
           </td>
         </tr>
         <tr>
@@ -784,7 +820,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         </tr>
         <tr>
           <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
-          <td>The <em>name</em> parameter is empty.</td>
+          <td>
+            The <em>name</em> parameter is empty.<br/>
+            The operation is not supported on <em>session type</em> sessions.
+          </td>
         </tr>
         <tr>
           <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
@@ -1145,16 +1184,15 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <h3 id="algorithms-session-close">4.6. Session Close</h3>
     <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
-    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>release</methodref> call, when the session is no longer needed, or when resources are lost.
+    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>close</methodref> call, when the session is no longer needed, or when system resources are lost.
     Keys in other sessions should be unaffected, even if they have overlapping key IDs.
     </p>
-    <p>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>", the CDM must have cleared all stored session data associated with the <coderef>MediaKeySession</coderef> object.</p>
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li><!-- Check for empty because loadSession() does not set session initData. -->
       <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
-      <li><p>Let <var>promise</var> be the <coderef>close</coderef> attribute of the <var title="true">session</var>.</p></li>
+      <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
 
@@ -1535,7 +1573,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
-        keySession.close.then(
+        keySession.<precoderef>closed</precoderef>.then(
           console.log.bind(console, "Session closed")
         );
       }
@@ -1598,7 +1636,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
     <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
-    <div class="issue"><div class="issue-title"><span>Issue 7</span></div>There could be a race condition between a CDM-triggered close and setting <var>releaseRequested</var>. This needs to be fixed in the spec. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25536">Bug 25536</a>.</div>
     <div class="example">
       <pre class="code">
 &lt;script&gt;
@@ -1621,14 +1658,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           return; // A session already exists for the initData.
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
-        keySession.close.then(
+        keySession.<precoderef>closed</precoderef>.then(
           function() {
             console.log("Session " + this.sessionId + " closed");
-            if (this.releaseRequested) {
-              console.log("Session " + this.sessionId + " destroyed");
-              // The application should remove its record of this.sessionId.
-            }
-          }.bind(keySession),        
+          }.bind(keySession)        
         );
         // Store keySession.<precoderef>sessionId</precoderef> in the application.
       }
@@ -1648,7 +1681,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         }
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
-        keySession.close.then(
+        keySession.<precoderef>closed</precoderef>.then(
           console.log.bind(console, "Session closed")
         );
       }
@@ -1657,16 +1690,22 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     );
   }
 
-  // Called when the application wants to remove the license for the media resource.
-  // Calling release() may initiate a series of messages to/from the server.
-  // The license has not been removed until the close promise is fulfilled and
-  // releaseRequested == true.
+  // Called when the application wants to stop using the session without removing the stored license.
+  closeSession(keySession) {
+    keySession.<premethodref>close</premethodref>();
+  }
+
+  // Called when the application wants to remove the stored license.
+  // Calling remove() may initiate a series of messages to/from the server.
+  // The stored session data has not been completely removed until the returned promise is fulfilled.
   removeStoredSession(keySession) {
-    keySession.<premethodref>release</premethodref>().then(
+    keySession.<premethodref>remove</premethodref>().then(
       function() {
-        this.releaseRequested = true;
-      }.bind(keySession),
-      console.error.bind(console, "Unable to release the session")
+        console.log("Session " + this.sessionId + " removed");
+        // The application should remove its record of this.sessionId.
+      }.bind(keySession)
+    ).catch(
+      console.error.bind(console, "Failed to remove the session")
     );
   }
 
