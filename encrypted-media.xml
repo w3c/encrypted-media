@@ -352,6 +352,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   // session properties
   readonly attribute DOMString <precoderef prefix="session">keySystem</precoderef>;
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
+  <div class="issue"><div class="issue-title"><span>Issue 7</span></div><p class=""><precoderef>usableKeyIds</precoderef> is not WebIDL-compliant. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25594">Bug 25594</a>.</p></div>
   readonly attribute Array&lt;Uint8Array&gt; <precoderef>usableKeyIds</precoderef>;
   readonly attribute Promise&lt;any&gt; <precoderef>closed</precoderef>;
 
@@ -531,8 +532,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef prefix="session">keySystem</coderef> attribute to the value of the <coderef>MediaKeys</coderef> object's <coderef>keySystem</coderef> attribute.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
-              <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an Array containing the set of key IDs for which the session contains a currently usable key.</p>
-                <p>The <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm may also be run later should additional processing be necessary.</p>
+              <li><p>Set the <coderef>usableKeyIds</coderef> attribute to an Array containing the set of key IDs for which the session contains a key the CDM <em>knows</em> is currently usable.</p>
+                <p>The <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
               </li>
               <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
               <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
@@ -662,7 +663,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <codedfn>usableKeyIds</codedfn> attribute is an array of key IDs for keys in the session that are currently usable to decrypt <videoanchor name="media-data">media data</videoanchor>.
+    <p>The <codedfn>usableKeyIds</codedfn> attribute is an array of key IDs for keys in the session that the CDM <em>knows</em> are currently usable usable to decrypt <videoanchor name="media-data">media data</videoanchor>.
+      It must not contain IDs for keys that <em>may not</em> currently be usable.
       Each element must be unique.
     </p>
 
@@ -701,7 +703,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                 </p>
               </li> 
               <li><p>If the set of usable keys changed, run the <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm on the <var title="true">session</var>.</p>
-                <p>The algorithm may also be run later should additional processing be necessary.</p>
+                <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
               </li>
               <li><p>If another message needs to be sent to the server, execute the following steps:</p>
                 <ol>
@@ -1177,7 +1179,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Let <var title="true">usable key ids</var> be an Array containing the set of key IDs for which the session contains a currently usable key.</p></li>
+      <li><p>Let <var title="true">usable key ids</var> be an Array containing the set of key IDs for which the session contains a key the CDM <em>knows</em> is currently usable.</p></li>
       <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to <var title="true">usable key ids</var>.</p></li>
       <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
     </ol>
