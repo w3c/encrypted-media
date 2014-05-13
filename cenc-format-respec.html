@@ -56,18 +56,17 @@
     </script>
   </head>
   <body>
-    <div class="issue">Note: This specification is in progress. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17673">Bug 17673</a>.</div>
     <p>This specification defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme.</p>
 
     <section id="cenc-stream-format">
-      <h1>Stream format</h1>
+      <h1>Stream Format</h1>
       <p>Under the 'cenc' protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
       <p>Each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
     </section>
 
     <section id="cenc-detect-encrypt">
       <h1>Detecting Encryption</h1>
-      <p>Protection scheme signaling conforms with ISO/IEC 14496-12. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of 'cenc' (Common Encryption).</p>
+      <p>Protection scheme signaling conforms with ISO/IEC 14496-12:2012. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of 'cenc' (Common Encryption).</p>
       <p>The "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding Track Encryption Box ('tenc') and the sample group with grouping type 'seig' (CencSampleEncryption group), if any, associated with the sample.
       The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the SampleGroupDescriptionBox ('sgpd'), pointed to by an index in the SampleToGroupBox ('sbgp').</p>
       <p>Samples can be partially encrypted, specified by subsample information referenced by SampleAuxiliaryInformationSizesBox (‘saiz’) and SampleAuxiliaryInformationOffsetsBox ('saio') boxes.</p>
@@ -76,7 +75,11 @@
 
     <section id="cenc-init-data">
       <h1>Initialization Data and Events</h1>
-      <p>The file may contain protection system specific header ('pssh') boxes for one or more Key Systems, each containing a SystemID identifying the Key System. These multiple 'pssh' boxes are concatenated into a single Initialization Data and returned with the needkey event.</p>
+      <p>Common Encryption files may contain protection system specific header ('pssh') boxes for one or more  SystemIDs.</p>
+      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.
+      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' boxes.
+      'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.
+      </p>
     </section>
   </body>
 </html>

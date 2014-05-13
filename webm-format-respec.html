@@ -56,39 +56,29 @@
     </script>
   </head>
   <body>
-
-  <p>This specification defines the stream format and Initialization Data for implementations that choose to support <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
+  <p>This specification defines the stream format and initialization data for <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
 
   <section id="webm-stream-format">
     <h1>Stream Format </h1>
     <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
     The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
     </p>
-
     <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
     In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
-    In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.</p>
+    In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.
+    </p>
   </section>
 
   <section id="webm-detect-encrypt">
     <h1>Detecting Encryption</h1>
-    <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element shall indicate that the stream is potentially encrypted. Each time a new value is encountered in a ContentEncKeyID element, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with the value in that element as <var title="">initData</var>.</p>
-
+    <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.
     <p><a href="encrypted-media.html#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
   </section>
 
   <section id="webm-init-data">
     <h1>Initialization Data and Events</h1>
-    <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> in <a href="encrypted-media.html#events">events</a> is always a key ID, which is the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> of the current <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.
-    The current Track is the one being parsed or that contains the block being decrypted.
-    </p>
-
-    <p>Events only contain a single key ID.
-    However, if supported by the key system, multiple key IDs may be bundled by the application before requesting a key and multiple key ID-key pairs may be returned by the license server.
-    </p>
-
-    <p>An event will be fired for each new key ID (in <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a>) encountered.</p>
+    <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always a single key ID, as defined by the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element of the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.</p>
+    <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element is encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "webm" and <var title="">initData</var> = the value in that element.</p>
   </section>
-
   </body>
 </html>
