@@ -1103,10 +1103,21 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           </li>
         </ol>
       </li>
-      <li>
-        <p>Abort these steps and wait for a signal to resume playback.</p>
+	  <li>
+	    <p>Run the following steps:</p>
         <p class="non-normative">There is no usable key for the block.</p>
         <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <videoref name="potentially-playing">potentially playing</videoref>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
+		  <ol>
+		    <li><p>Let <var title="true">media element</var> be the <coderef>HTMLMediaElement</coderef> associated with the <coderef>MediaKeySession</coderef>.</p></li>
+		    <li><p>Run the <a href="#algorithms-queue-waiting">Queue "waiting" Event</a> algorithm on the media element.</p></li>
+		    <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
+		  </ol>
+
+		<p>The following steps are added to readyState change algorithms in <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>:</p>
+	      <ol>
+		    <li>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
+			<li>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
+		  </ol>
       </li>
     </ol>
 
@@ -1126,30 +1137,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Provide the frame for rendering.</p></li>
     </ol>
     </div>
-
-    <p>The following paragraph is added to <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>.</p>
-    <ul style="list-style-type:none">
-    <li>A <a href="#media-element">media element</a> is said to be <dfn id="waiting-for-a-key">waiting for a key</dfn> when
-    it would be <videoref name="potentially-playing">potentially playing</videoref> but
-    the user agent has reached a point in the <videoref name="media-resource">media resource</videoref> that must be decrypted for the resource to continue and the <a href="#cdm">CDM</a> does not have the necessary key.
-    </li>
-    <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
-
-    <li>
-      <p>It is possible for a media element to be playing media and encounter content that requires decryption keys.  To accommodate changes caused by key status, apply the first appropriate substeps from the following list:</p>
-
-      <dl class="switch">
-        <dt>If media element was previously playing and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">none</coderef>":</dt>
-        <dd>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".
-        <br/>If decryption key(s) are needed to continue playback for any selected video track(s), enabled audio track(s), or "showing" or "hidden" text track(s), and the element has not ended playback, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">key</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-waiting">waiting</videoref> at the element.
-        </dd>
-        <dt>If media element was previously waiting and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">data</coderef>":</dt>
-        <dd>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</dd>
-        <dt>If media element was previously waiting and had a <coderef>waitingFor</coderef> value of "<coderef prefix="waitingfor">key</coderef>":</dt>
-        <dd>If decryption key(s) become available that allow playback to proceed, the user agent must set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>", queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element, and queue a task to fire a simple event named <videoref name="event-media-canplay">canplay</videoref> at the element.</dd>
-      </dl>
-    </li>
-    </ul>
 
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
@@ -1223,6 +1210,19 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
       <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+    </ol>
+	
+	<h3 id="algorithms-queue-waiting">4.8. Queue a "waiting" Event</h3>
+    <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
+    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
+      <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "key".</p></li>
+	  <li><p>Queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element.</p></li>
+	  <li><p>Queue a task to fire a simple event named <videoref name="event-media-waiting">waiting</videoref> at the element.</p></li>
+	  <li><p>Suspend playback.</p></li>
     </ol>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>

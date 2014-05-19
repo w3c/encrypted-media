@@ -1176,10 +1176,21 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           </li>
         </ol>
       </li>
-      <li>
-        <p>Abort these steps and wait for a signal to resume playback.</p>
+	  <li>
+	    <p>Run the following steps:</p>
         <p class="non-normative">There is no usable key for the block.</p>
         <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
+		  <ol>
+		    <li><p>Let <var title="true">media element</var> be the <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</p></li>
+		    <li><p>Run the <a href="#algorithms-queue-waiting">Queue "waiting" Event</a> algorithm on the media element.</p></li>
+		    <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
+		  </ol>
+
+		<p>The following steps are added to readyState change algorithms in <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>:</p>
+	      <ol>
+		    <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</li>
+			<li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</li>
+		  </ol>
       </li>
     </ol>
 
@@ -1200,30 +1211,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Provide the frame for rendering.</p></li>
     </ol>
     </div>
-
-    <p>The following paragraph is added to <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>.</p>
-    <ul style="list-style-type:none">
-    <li>A <a href="#media-element">media element</a> is said to be <dfn id="waiting-for-a-key">waiting for a key</dfn> when
-    it would be <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code> but
-    the user agent has reached a point in the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a></code> that must be decrypted for the resource to continue and the <a href="#cdm">CDM</a> does not have the necessary key.
-    </li>
-    <li class="non-normative">The media element leaves this state when seeking but could re-enter it if the same conditions exist.</li>
-
-    <li>
-      <p>It is possible for a media element to be playing media and encounter content that requires decryption keys.  To accommodate changes caused by key status, apply the first appropriate substeps from the following list:</p>
-
-      <dl class="switch">
-        <dt>If media element was previously playing and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingfornone">none</a></code>":</dt>
-        <dd>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".
-        <br>If decryption key(s) are needed to continue playback for any selected video track(s), enabled audio track(s), or "showing" or "hidden" text track(s), and the element has not ended playback, the user agent must set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingforkey">key</a></code>", queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element, and queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> at the element.
-        </dd>
-        <dt>If media element was previously waiting and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingfordata">data</a></code>":</dt>
-        <dd>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</dd>
-        <dt>If media element was previously waiting and had a <code><a href="#dom-waitingfor">waitingFor</a></code> value of "<code><a href="#dom-waitingforkey">key</a></code>":</dt>
-        <dd>If decryption key(s) become available that allow playback to proceed, the user agent must set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>", queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element, and queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> at the element.</dd>
-      </dl>
-    </li>
-    </ul>
 
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
@@ -1298,6 +1285,19 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute to an empty Array.</p></li>
       <li><p>Let <var>promise</var> be the <code><a href="#dom-closed">closed</a></code> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
+    </ol>
+	
+	<h3 id="algorithms-queue-waiting">4.8. Queue a "waiting" Event</h3>
+    <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
+    Requests to run this algorithm include a target <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">media element</var> be the specified <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.</p></li>
+      <li><p>Set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the <var title="true">media element</var> to "key".</p></li>
+	  <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element.</p></li>
+	  <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> at the element.</p></li>
+	  <li><p>Suspend playback.</p></li>
     </ol>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
