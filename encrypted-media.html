@@ -98,7 +98,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 9 May 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 19 May 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -202,7 +202,7 @@
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
-          <li><a href="#simple-decryption-clear-key">5.1. Clear Key</a></li>
+          <li><a href="#clear-key">5.1. Clear Key</a></li>
         </ul></li>
       <li><a href="#security">6. Security Considerations</a></li>
       <li><a href="#privacy">7. Privacy Considerations</a></li>
@@ -492,6 +492,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
+              <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "Invalid initialization data."</p></li>
+              <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data is not supported by the key system."</p></li>
               <li>
 <p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreteted per <var title="true">initDataType</var>, and <var title="true">sessionType</var>.</p>
                 <p>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>", the request is for a temporary non-persisted license.
@@ -619,7 +621,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>)</pre></dd>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>, the user agent is capable of demuxing the container specified by <var title="true">mimeType</var>, and the codec(s) specified by <var title="true">mimeType</var> are supported, all as specified by capability "foo".</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>, <var title="true">mimeType</var>, "foo")</pre></dd>
-        <dt>Returns whether the user agent <em>probably</em> supports <a href="#simple-decryption-clear-key">Clear Key</a> using the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dt>Returns whether the user agent <em>probably</em> supports <a href="#clear-key">Clear Key</a> using the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
         <dd><pre class="code">"probably" == MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">initDataType</var>, <var title="true">mimeType</var>)</pre></dd>
       </dl>
     </div>
@@ -873,6 +875,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             The key system <em>name</em> is not supported.<br>
             The initialization data type <em>type</em> is not supported by the key system.<br>
             <em>type</em> sessions are not supported by the key system.<br>
+            The initialization data is not supported by the key system.<br>
             The operation is not supported by the key system.<br>
             The session is closed.
           </td>
@@ -885,6 +888,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
           <td>
             The <em>name</em> parameter is empty.<br>
+            Invalid initialization data.<br>
             The operation is not supported on <em>session type</em> sessions.
           </td>
         </tr>
@@ -1302,7 +1306,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.</span>
     </p>
 
-    <h3 id="simple-decryption-clear-key">5.1. Clear Key</h3>
+    <a name="simple-decryption-clear-key"></a> 
+    <h3 id="clear-key">5.1. Clear Key</h3>
     <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> indicates a plain-text clear (unencrypted) key will be used to decrypt the source.
     No additional client-side content protection is required.
     Use of this Key System is described below.
@@ -1461,7 +1466,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </p>
 
     <h3 id="example-source-and-key-known" class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key)</h3>
-    <p class="exampledescription">In this simple example, the source file and <a href="#simple-decryption-clear-key">clear-text license</a> are hard-coded in the page.
+    <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page.
     Only one session will ever be created.</p>
 
     <div class="example">
