@@ -98,7 +98,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 19 May 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 22 May 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -199,6 +199,7 @@
           <li><a href="#algorithms-update-usable-key-ids">4.5. Update Usable Key IDs</a></li>
           <li><a href="#algorithms-update-expiration">4.6 Update Expiration</a></li>
           <li><a href="#algorithms-session-close">4.7. Session Close</a></li>
+          <li><a href="#algorithms-queue-waiting">4.8 Queue a "waiting" Event</a></li>
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
@@ -416,7 +417,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 </ol>
               </li>
               <li>
-<p>If the media element is <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
+<p>If the media element is waiting for a key, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
                 <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
               </li>
             </ol>
@@ -574,7 +575,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
-            <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
+            <p>If the associated <a href="#media-element">media element(s)</a> are waiting for a key, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
             <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
@@ -773,7 +774,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
-            <p>If the associated <a href="#media-element">media element(s)</a> are <a href="#waiting-for-a-key">waiting for a key</a>, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
+            <p>If the associated <a href="#media-element">media element(s)</a> are waiting for a key, <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to attempt to resume playback.</p>
             <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
             <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
@@ -1176,21 +1177,14 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           </li>
         </ol>
       </li>
-	  <li>
-	    <p>Run the following steps:</p>
-        <p class="non-normative">There is no usable key for the block.</p>
-        <p class="non-normative">If playback stops because the stream cannot be decrypted when the <a href="#media-element">media element</a> is <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a></code>, the media element is said to be <a href="#waiting-for-a-key">waiting for a key</a>.</p>
-		  <ol>
-		    <li><p>Let <var title="true">media element</var> be the <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> associated with the <code><a href="#dom-mediakeysession">MediaKeySession</a></code>.</p></li>
-		    <li><p>Run the <a href="#algorithms-queue-waiting">Queue "waiting" Event</a> algorithm on the media element.</p></li>
-		    <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
-		  </ol>
-
-		<p>The following steps are added to readyState change algorithms in <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>:</p>
-	      <ol>
-		    <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</li>
-			<li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</li>
-		  </ol>
+      <li>
+        <p><span class="non-normative">There is no usable key for the block.</span>
+          Run the following steps:
+        </p>
+        <ol>
+          <li><p>Run the <a href="#algorithms-queue-waiting">Queue a "waiting" Event</a> algorithm on the media element.</p></li>
+          <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
+        </ol>
       </li>
     </ol>
 
@@ -1211,6 +1205,13 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Provide the frame for rendering.</p></li>
     </ol>
     </div>
+
+    
+    <p>The following steps are added to readyState change algorithms in <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>:</p>
+    <ul>
+      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</li>
+      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</li>
+    </ul>
 
     <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
@@ -1286,8 +1287,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Let <var>promise</var> be the <code><a href="#dom-closed">closed</a></code> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
-	
-	<h3 id="algorithms-queue-waiting">4.8. Queue a "waiting" Event</h3>
+
+    <h3 id="algorithms-queue-waiting">4.8. Queue a "waiting" Event</h3>
     <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
     Requests to run this algorithm include a target <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
     </p>
@@ -1295,9 +1296,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <ol>
       <li><p>Let the <var title="true">media element</var> be the specified <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.</p></li>
       <li><p>Set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the <var title="true">media element</var> to "key".</p></li>
-	  <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element.</p></li>
-	  <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> at the element.</p></li>
-	  <li><p>Suspend playback.</p></li>
+      <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-timeupdate">timeupdate</a></code> at the element.</p></li>
+      <li><p>Queue a task to fire a simple event named <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> at the element.</p></li>
+      <li><p>Suspend playback.</p></li>
     </ol>
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
