@@ -549,10 +549,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
-          <li>
-            <p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
-            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
-          </li>
+          <li><p>If the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute is not empty, run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
@@ -727,10 +724,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
-          <li>
-            <p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
-            <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
-          </li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
@@ -1185,9 +1178,11 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">previous key ids</var> be a copy of the the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute.</p></li>
       <li><p>Let <var title="true">usable key ids</var> be an Array containing the set of key IDs for which the session contains a key the CDM <em>knows</em> is currently usable.</p></li>
       <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to <var title="true">usable key ids</var>.</p></li>
       <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
+      <li><p>If <var title="true">usable key ids</var> contains values not in <var title="true">previous key ids</var>, run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
     </ol>
 
     <h3 id="algorithms-update-expiration">4.6. Update Expiration</h3>
