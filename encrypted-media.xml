@@ -197,6 +197,7 @@
           <li><a href="#algorithms-update-expiration">4.6 Update Expiration</a></li>
           <li><a href="#algorithms-session-close">4.7. Session Close</a></li>
           <li><a href="#algorithms-queue-waiting">4.8 Queue a "waiting" Event</a></li>
+          <li><a href="#algorithms-resume-playback">4.9. Attempt to Resume Playback If Necessary</a></li>
         </ul></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
@@ -402,7 +403,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                   <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
                 </ol>
               </li>
-              <li><p>If the media element is waiting for a key, <queue-a-task/> to attempt to resume playback.</p>
+              <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
                 <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
               </li>
             </ol>
@@ -549,8 +550,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
-            <p>If the associated <a href="#media-element">media element(s)</a> are waiting for a key, <queue-a-task/> to attempt to resume playback.</p>
-            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
+            <p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
             <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
@@ -728,8 +728,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li>
-            <p>If the associated <a href="#media-element">media element(s)</a> are waiting for a key, <queue-a-task/> to attempt to resume playback.</p>
-            <p class="non-normative">In other words, resume playback if the necessary key is provided.</p>
+            <p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
             <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no usable key was added)</span>.</p>
           </li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
@@ -1080,7 +1079,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
                             <dt>If decryption fails</dt>
                             <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
                             <dt>Otherwise</dt>
-                            <dd>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span></dd>
+                            <dd>Run the following steps:
+                              <ol>
+                                <li><p>If the <coderef>waitingFor</coderef> attribute on the media element is "<coderef prefix="waitingfor">key</coderef>", set the <coderef>waitingFor</coderef> attribute on the media element to "<coderef prefix="waitingfor">none</coderef>".</p></li>      
+                                <li><p>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span></p></li>
+                              </ol>
+                            </dd>
                           </dl>
                           <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
                         </li>
@@ -1110,7 +1114,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         </p>
         <ol>
           <li><p>Run the <a href="#algorithms-queue-waiting">Queue a "waiting" Event</a> algorithm on the media element.</p></li>
-          <li><p>Abort these steps and wait for a signal to resume playback.</p></li>
+          <li><p>Wait for a signal to resume playback.</p></li>
         </ol>
       </li>
     </ol>
@@ -1220,11 +1224,32 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
-      <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "key".</p></li>
-      <li><p>Queue a task to fire a simple event named <videoref name="event-media-timeupdate">timeupdate</videoref> at the element.</p></li>
-      <li><p>Queue a task to fire a simple event named <videoref name="event-media-waiting">waiting</videoref> at the element.</p></li>
+      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", run the following steps:</p>
+        <ol>
+          <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "<coderef prefix="waitingfor">key</coderef>".</p></li>
+          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-timeupdate">timeupdate</videoref> at the <var title="true">media element</var>.</p></li>
+          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-waiting">waiting</videoref> at the <var title="true">media element</var>.</p></li>
+        </ol>
+      </li>
       <li><p>Suspend playback.</p></li>
     </ol>
+
+    <h3 id="algorithms-resume-playback">4.9. Attempt to Resume Playback If Necessary</h3>
+    <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
+    If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
+    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    </p>
+
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
+      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", abort these steps.</p></li>
+      <li><p>Attempt to resume the <resource-fetch-algorithm/> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
+      <li><p>If the user agent can advance the <videoref name="current-playback-position">current playback position</videoref> in the <videoref name="direction-of-playback">direction of playback</videoref>, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-canplay">canplay</videoref>at the <var title="true">media element</var>.</p>
+        <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
+      </li>
+    </ol>
+
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
     <p>All user agents must support the simple decryption capabilities described in this section regardless of whether they support a more advanced <a href="#cdm">CDM</a>.
