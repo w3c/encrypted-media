@@ -737,6 +737,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
+              <li><p>If the format of <var>message</var> is invalid in any way, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "Invalid response format."</p></li>
               <li>
 <p>Process <var>message</var></p>
                 <p>If <var>message</var> contains a license, key(s), or similar session data, follow the stipulation for the first matching condition from the following list:</p>
@@ -884,6 +885,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             The <em>name</em> parameter is empty.<br>
             Invalid initialization data.<br>
             The operation is not supported on <em>session type</em> sessions.
+            Invalid response format.
           </td>
         </tr>
         <tr>
@@ -1331,44 +1333,82 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <a name="simple-decryption-clear-key"></a> 
     <h3 id="clear-key">5.1. Clear Key</h3>
-    <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> indicates a plain-text clear (unencrypted) key will be used to decrypt the source.
+    <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> uses plain-text clear (unencrypted) key(s) to decrypt the source.
     No additional client-side content protection is required.
-    Use of this Key System is described below.
+    This Key System is described below.
     </p>
     
-    <p>The <var title="true">keySystem</var> parameter and <code><a href="#dom-keysystem">keySystem</a></code> attributes are always <code>"org.w3.clearkey"</code>.
-    The <code><a href="#dom-sessionid">sessionId</a></code> string is numerical.</p>
+    <h4 id="clear-key-capabilities">Capabilities</h4>
+    <p>The following describe how Clear Key supports key system-specific capabilities:</p>
+    <ul>
+      <li><p>The <code><a href="#dom-loadsession">loadSession()</a></code> and "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" <code><a href="#dom-sessiontype">SessionType</a></code>: Implementations may support these.</p></li>
+      <li><p>The <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> method: Implementations may support associating the <code><a href="#dom-mediakeys">MediaKeys</a></code> object with more than one <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code>.</p></li>
+      <li><p>The <code><a href="#dom-istypesupported">isTypeSupported()</a></code> method: There are no supported <var title="true">capability</var> values.</p></li>
+    </ul>
+    
+    <h4 id="clear-key-behavior">Behavior</h4>
+    <p>The following describe how Clear Key implements key system-specific behaviors:</p>
+    <ul>
+      <li><p>The <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute is always all key IDs that have been provided via <code><a href="#dom-update">update()</a></code>.</p></li>
+      <li><p>The <code><a href="#dom-sessionid">sessionId</a></code> attribute is a numerical value representable by a 32-bit integer.</p></li>
+      <li><p>The <code><a href="#dom-expiration">expiration</a></code> attribute is always <code>undefined</code>.</p></li>
+      <li>
+<p>The <code><a href="#dom-update">update()</a></code> algorithm:</p>
+        <ul>
+          <li><p>As described in <a href="#clear-key-licese-format">Licese Format</a>, the <var title="true">response</var> parameter is a JWK Set.</p></li>
+          <li><p><var>message</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
+        </ul>
+      </li>
+      <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered and Initialization Data types</a>.</p></li>
+    </ul>
 
-    <p>The <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-needkey">needkey</a></code> event and the <var title="true">initData</var> parameter of <code><a href="#dom-createsession">createSession()</a></code> are the same container-specific <a href="#initialization-data">Initialization Data</a> format and values.
-    <span class="non-normative">
-    If supported, these values should provide some type of identification of the content or key that could be used to look up the key (since there is no defined logic for parsing it).
-    For containers that support a simple key ID, it should be a binary array containing the raw key ID.
-    For other containers, it may be some other opaque blob or null.</span>
+    <h4 id="clear-key-request-format">Licese Request Format</h4>
+    TODO: <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=24419">Bug 24419</a>
+    
+
+    <h4 id="clear-key-licese-format">Licese Format</h4>
+    <p>This section describes the format of the license to be provided via the <var title="true">response</var> parameter of <code><a href="#dom-update">update()</a></code>.</p>
+
+    <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>. The JSON string is encoded into the Uint8Array parameter using the <a href="http://www.w3.org/TR/encoding/">Encoding API</a>.</p>
+
+    <p>For each JWK in the set, the parameter values are as follows:</p>
+    <dl>
+      <dt>"kty" (key type)</dt>
+      <dd>"oct" (octet sequence)</dd>
+      <dt>"alg" (algorithm)</dt>
+      <dd>"A128KW" (AES key wrap using a 128-bit key)</dd>
+      <dt>"k" (key value)</dt>
+      <dd>base64url encoding of the octet sequence containing the symmetric <a href="#decryption-key">key</a> value</dd>
+      <dt>"kid" (key ID)</dt>
+      <dd>base64url encoding of the octet sequence containing the <a href="#decryption-key-id">key ID</a> value</dd>
+    </dl>
+    <div class="nonnormative">
+      <p>For more information on base64url and working with it, see the Base64url Encoding entry in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#section-2">Terminology section</a> and <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#appendix-C">Notes on implementing base64url encoding without padding</a> of the JSON Web Signature (JWS) specification.
+        Specifically, there is no '=' padding and '-' and '_' must be used instead of '+' and '/', respectively. 
+      </p>
+    </div>
+
+    <p>The JSON object may have an optional "type" member value, which may be any of the <code><a href="#dom-sessiontype">SessionType</a></code> values.
+      If not specified, the default value of "<code><a href="#dom-sessiontypetemporary">temporary</a></code>" is used.
+      The <code><a href="#dom-update">update()</a></code> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    
-    <p>The <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> generated by <code><a href="#dom-createsession">createSession()</a></code> has:</p>
-    <ul style="list-style-type:none"><li>
-      <code><a href="#dom-message">message</a></code> = a container-specific value extracted from the <var title="true">initData</var> parameter of <code><a href="#dom-createsession">createSession()</a></code>. null if <var title="true">initData</var> was null or a value could not be extracted.<br>
-      <code><a href="#dom-destinationurl">destinationURL</a></code> = value of the default URL if present in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and null otherwise.
-    </li></ul>
-
-    <p>The <var title="true">response</var> parameter of <code><a href="#dom-update">update()</a></code> should be a JSON Web Key (JWK) representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>. The JSON string is encoded into the Uint8Array parameter using <a href="http://www.w3.org/TR/html5/infrastructure.html#ascii-compatible-character-encoding">ASCII-compatible character encoding</a>.</p>
-    <p>When the JWK 'key type' ("kty") member value is 'octet sequence' ("oct"), the 'key value' ("k") member will be a base64 encoding of the octet sequence containing the symmetric key value.</p>
-    <p>For example, the following contains a single symmetric key represented as a JWK, designated as being for use with the AES Key Wrap algorithm (line breaks are for readability, only).</p>
-
-    <div class="example">
-      <pre class="code">
+    <div class="nonnormative">
+      <p>The following example is a JWK Set containing a single symmetric key (line breaks are for readability only).</p>
+      <div class="example nonnormative">
+        <pre class="code">
 {
   "keys": 
     [{
       "kty":"oct",
       "alg":"A128KW",
-      "kid":"67ef0gd8pvfd0=",
       "k":"GawgguFyGrWKav7AX4VKUg"
+      "kid":"67ef0gd8pvfd0",
     }]
 }</pre>
+      </div>
     </div>
+
 
     <h2 id="security">6. Security Considerations</h2>
     <div class="nonnormative">

@@ -116,10 +116,6 @@
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#media-element</xsl:attribute>media element</a>
   </xsl:template>
 
-  <xsl:template match="//ascii-encoding">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#ascii-compatible-character-encoding</xsl:attribute>ASCII-compatible character encoding</a>
-  </xsl:template>
-
   <xsl:template match="//cors-same-origin">
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin</xsl:attribute>CORS-same-origin</a>
   </xsl:template>
