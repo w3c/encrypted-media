@@ -129,7 +129,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption EME Stream Format and Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-30T05:30:28.000Z" id="w3c-editor-s-draft-29-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-29">29 May 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-30T06:21:49.000Z" id="w3c-editor-s-draft-29-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-29">29 May 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -188,8 +188,10 @@ table.simple {
   <hr>
 </div>
     <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
-      <p>This specification defines the stream format and initialization data for using ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme with <a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">.</a></p><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
-    </a></section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
+      <p>This specification defines the stream format and initialization data for using ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme with the <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions</a>.
+      It also defines a common SystemID and PSSH box format for use with Encrypted Media Extensions.
+      </p>
+    </section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
   
     
       
@@ -199,8 +201,8 @@ table.simple {
           latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
           http://www.w3.org/TR/.</em>
         </p>
-        <a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
-      </a><p><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">The working groups maintains </a><a href="http://w3.org/brief/MjY5">a list of all bug reports that the editors have not yet tried to address</a>.</p>
+        
+      <p>The Working Group maintains <a href="http://w3.org/brief/MjY5">a list of all bug reports that the editors have not yet tried to address</a>.</p>
       <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
     
         <p>
@@ -255,9 +257,9 @@ table.simple {
       
     
   
-</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li></ul></li></ul></section><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li></ul></li></ul></section>
   
-    </a>
+    
 
     <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_stream-format"><span class="secno">1. </span>Stream Format</h2>
@@ -281,7 +283,7 @@ table.simple {
       <p>ISO Common Encryption 2nd Edition also specifies storage of a ‘pssh’ box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 ‘pssh’)&gt;.  For instance, DASH manifests may provide ‘pssh’ boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These ‘pssh’ boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
 
       <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.  The application may parse out 'pssh' boxes which do not correspond to the selected key system, and may not use the InitData from the file at all and instead use initData from another source (e.g. the XML element described above). The CDM must be able to filter multiple 'pssh' in the initData to find the 'pssh' box which is Key System appropriate.</p>
-      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' boxes(s).  Multiple 'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.</p>
+      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.</p>
 
       <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
     </section>
@@ -290,7 +292,7 @@ table.simple {
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_common-system"><span class="secno">4. </span>Common SystemID and PSSH Box Format</h2>
       <p>This section defines a common open SystemID and PSSH box format for use with EME.
         Key System implementations supporting ISO Common Encryption should support this SystemID and format, though they may prefer another SystemID when present in the Initialization Data.
-        It is also recommended that media resources contain appropriate PSSH box(s) for this SystemID so that they may be used by any Key System implementation that supports it.</p>
+        It is also recommended that media resources contain appropriate PSSH box(es) for this SystemID so that they may be used by any Key System implementation that supports it.</p>
       <p><a href="encrypted-media.html#clear-key">Clear Key</a> uses this SystemID for ISO Common Encryption content.
         When <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
       </p>
