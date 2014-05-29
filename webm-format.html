@@ -114,6 +114,12 @@ table.simple {
 .section dl.attrs dd, .section dl.eldef dd {
     margin-bottom:  0;
 }
+
+@media print {
+    .removeOnSave {
+        display: none;
+    }
+}
 </style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
   <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
   <p>
@@ -123,17 +129,18 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">WebM EME Stream Format and Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-20T01:59:30.000Z" id="w3c-editor-s-draft-19-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-19">19 May 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-30T05:30:19.000Z" id="w3c-editor-s-draft-29-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-29">29 May 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
       <dd><a class="u-url" href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
       <dt>Latest published version:</dt>
-      <dd><a href="http://www.w3.org/TR//">http://www.w3.org/TR//</a></dd>
+      <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
     
     
       <dt>Latest editor's draft:</dt>
       <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
+    
     
     
     
@@ -180,9 +187,79 @@ table.simple {
   
   <hr>
 </div>
-    <p>This specification defines the stream format and initialization data for <a href="http://www.webmproject.org/code/specs/container/">WebM</a>.</p>
+    <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
+      <p>This specification defines the stream format and initialization data for using <a href="http://www.webmproject.org/code/specs/container/">WebM</a> with <a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">.</a></p><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
+    </a></section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
   
-    <section id="stream-format" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication.
+          Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the
+          latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
+          http://www.w3.org/TR/.</em>
+        </p>
+        <a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
+      </a><p><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">The working groups maintains </a><a href="http://w3.org/brief/MjY5">a list of all bug reports that the editors have not yet tried to address</a>.</p>
+      <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
+    
+        <p>
+          This document was published by the <a href="http://www.w3.org/html/wg/">HTML Working Group</a> as an Editor's Draft.
+          
+          
+            If you wish to make comments regarding this document, please send them to 
+            <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a> 
+            (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
+            <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>).
+          
+          
+          
+          
+            All comments are welcome.
+          
+        </p>
+        
+        
+          <p>
+            Publication as an Editor's Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
+            Membership. This is a draft document and may be updated, replaced or obsoleted by other
+            documents at any time. It is inappropriate to cite this document as other than work in
+            progress.
+          </p>
+        
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a id="sotd_patent" about="" rel="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
+            Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent
+              disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes
+            instructions for disclosing a patent. An individual who has actual knowledge of a patent
+            which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+            Claim(s)</a> must disclose the information in accordance with
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format </a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li></ul></section><a href="http://www.w3.org/TR/encrypted-media/" encrypted="" media="" extensions<="" a="">
+  
+    </a>
+  
+    <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_stream-format"><span class="secno">1. </span>Stream Format </h2>
       <p><a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc">Encrypted WebM streams</a> are encrypted at the block level with AES-128 CTR encryption.
       The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
@@ -193,13 +270,13 @@ table.simple {
       </p>
     </section>
   
-    <section id="detect-encrypt" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+    <section id="detect-encrypt" typeof="bibo:Chapter" resource="#detect-encrypt" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_detect-encrypt"><span class="secno">2. </span>Detecting Encryption</h2>
       <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.
       </p><p><a href="encrypted-media.html#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
     </section>
   
-    <section id="init-data" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+    <section id="init-data" typeof="bibo:Chapter" resource="#init-data" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_init-data"><span class="secno">3. </span>Initialization Data and Events</h2>
       <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always a single key ID, as defined by the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element of the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.</p>
       <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element is encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "webm" and <var title="">initData</var> = the value in that element.</p>

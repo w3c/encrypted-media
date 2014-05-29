@@ -3,14 +3,14 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>ISO Common Encryption EME Stream Format and Initialization Data</title>
-    <script src="http://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
     <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
       specStatus: "ED",
 
       // the specification's short name, as in http://www.w3.org/TR/short-name/
-      shortName: "cenc-format",
+      shortName: "encrypted-media", <!-- The registry does not have its own short name. -->
 
       // if there a publicly available Editor's Draft, this is the link
       edDraftURI:           "http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html",
@@ -56,11 +56,14 @@
     </script>
   </head>
   <body>
-    <section id="sotd">
-        <p>This specification provides reference information on the use of ISO Common Encryption content with Encrypted Media Extensions.</p>
+    <section id="abstract">
+      <p>This specification defines the stream format and initialization data for using ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme with <a href="http://www.w3.org/TR/encrypted-media/"Encrypted Media Extensions</a>.</p>
     </section>
-
-    <p>This specification defines the stream format and initialization data for ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme.</p>
+  
+    <section id="sotd">
+      <p>The working groups maintains <a href="http://w3.org/brief/MjY5">a list of all bug reports that the editors have not yet tried to address</a>.</p>
+      <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
+    </section>
 
     <section id="stream-format">
       <h2>Stream Format</h2>
@@ -81,7 +84,7 @@
       <h2>Initialization Data and Events</h2>
       <p>Common Encryption files may contain one or more protection system specific header ('pssh') boxes, each for a different SystemID.</p>
       <p>‘pssh’ boxes stored in movie fragment boxes are intended to store keys referenced by KID in a sample group description contained in that movie fragment, where the KID in the sample group description overrides the default_KID specified for the track in the track encryption box (‘tenc’).  Each ‘moof’/’pssh’ must protect the contained keys with a SystemID specific method.  Sample groups and ‘pssh’ key storage in movie fragments enable keys to be changed and accessed without interruption during playback of a track.</p>
-	  <p>ISO Common Encryption 2nd Edition also specifies storage of a ‘pssh’ box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 ‘pssh’)&gt;.  For instance, DASH manifests may provide ‘pssh’ boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These ‘pssh’ boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
+      <p>ISO Common Encryption 2nd Edition also specifies storage of a ‘pssh’ box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 ‘pssh’)&gt;.  For instance, DASH manifests may provide ‘pssh’ boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These ‘pssh’ boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
 
       <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.  The application may parse out 'pssh' boxes which do not correspond to the selected key system, and may not use the InitData from the file at all and instead use initData from another source (e.g. the XML element described above). The CDM must be able to filter multiple 'pssh' in the initData to find the 'pssh' box which is Key System appropriate.</p>
       <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' boxes(s).  Multiple 'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.</p>
