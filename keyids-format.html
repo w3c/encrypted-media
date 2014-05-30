@@ -2,17 +2,9 @@
 <html lang="en" dir="ltr" typeof="bibo:Document " about="" property="dcterms:language" content="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Encrypted Media Extensions Stream Format and Initialization Data Format Registry</title>
+    <title>Key IDs Initialization Data</title>
     
     
-
-    <style type="text/css">
-      #registry table { border-collapse: collapse; border-style: hidden hidden none hidden; }
-      #registry table thead, table tbody { border-bottom: solid; }
-      #registry table tbody th:first-child { border-left: solid; }
-      #registry table tbody th { text-align: left; }
-      #registry table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
-    </style>
   <style>/*****************************************************************
  * ReSpec 3 CSS
  * Robin Berjon - http://berjon.com/
@@ -128,6 +120,38 @@ table.simple {
         display: none;
     }
 }
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
 </style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
   <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
   <p>
@@ -135,19 +159,19 @@ table.simple {
       <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
     
   </p>
-  <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</h1>
+  <h1 class="title p-name" id="title" property="dcterms:title">Key IDs Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-31T04:29:43.000Z" id="w3c-editor-s-draft-30-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-30">30 May 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-31T04:29:17.000Z" id="w3c-editor-s-draft-30-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-30">30 May 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
-      <dd><a class="u-url" href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/initdata-format-registry.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/initdata-format-registry.html</a></dd>
+      <dd><a class="u-url" href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
       <dt>Latest published version:</dt>
       <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
     
     
       <dt>Latest editor's draft:</dt>
-      <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/initdata-format-registry.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/initdata-format-registry.html</a></dd>
+      <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/cenc-format.html</a></dd>
     
     
     
@@ -195,9 +219,11 @@ table.simple {
   
   <hr>
 </div>
-
     <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
-      <p>This specification defines the stream and initialization data formats for use with the <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions</a>.</p>
+      <p>This specification defines a container-independent initialization data format for specifying a list of key IDs to the <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> method defined by the <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions</a>.
+      This type can be used by applications to directly provide information necessary to generate a license request without using media data or constructing container-specific formats. 
+      </p>
+      <p>Unlike other similar specifications, this one does not document a stream format or behavior related to processing media data. This type and format are not used in the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm.</p>
     </section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
   
     
@@ -264,69 +290,34 @@ table.simple {
       
     
   
-</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#purpose" class="tocxref"><span class="secno">1. </span>Purpose</a></li><li class="tocline"><a href="#organization" class="tocxref"><span class="secno">2. </span>Organization</a></li><li class="tocline"><a href="#entry-requirements" class="tocxref"><span class="secno">3. </span>Registration Entry Requirements</a></li><li class="tocline"><a href="#registry" class="tocxref"><span class="secno">4. </span>Registry</a></li></ul></section>
-
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">1. </span>Initialization Data Format</a><ul class="toc"><li class="tocline"><a href="#example" class="tocxref"><span class="secno">1.1 </span>Example</a></li></ul></li></ul></section>
+  
     
+  
+    <section id="init-data" typeof="bibo:Chapter" resource="#init-data" rel="bibo:Chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_init-data"><span class="secno">1. </span>Initialization Data Format</h2>
+      <p>The format is a JSON object containing the following member:</p>
+      <dl>
+        <dt>"kids"</dt>
+        <dd>An array of <a href="encrypted-media.html#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+      </dl>
 
-    <section id="purpose" typeof="bibo:Chapter" resource="#purpose" rel="bibo:Chapter">
-      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_purpose"><span class="secno">1. </span>Purpose</h2>
-      <p>This registry is intended to enhance interoperability among implementations and users of encrypted media streams with the
-        <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions (EME)</a> specification. In particular, this registry provides the means (1) to identify
-        and avoid collisions among initialization data type strings, and (2) to disclose information about encrypted data formats accepted by EME
-        implementations to promote interoperability.
-    </p></section>
+      <p>When passed to the <code><a href="encrypted-media.html#dom-update">update()</a></code> method as the Uint8Array <var>response</var> parameter, the JSON string must be encoded in utf-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+        Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
+      </p>
+  
+      <section class="informative" id="example">
+        <h3 aria-level="2" role="heading" id="h3_example"><span class="secno">1.1 </span>Example</h3><p><em>This section is non-normative.</em></p>
+        <p>The following example will generate a license request for two key IDs. (Line breaks are for readability only.)</p>
+          <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example">{
+  "kids": 
+    [
+     "67ef0gd8pvfd0",
+     "77ef0gd8pvfd0"
+    ],
+}</pre></div>
+      </section>
 
-    <section id="organization" typeof="bibo:Chapter" resource="#organization" rel="bibo:Chapter">
-      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_organization"><span class="secno">2. </span>Organization</h2>
-      <p>The registry maintains a mapping between <a href="encrypted-media.html#initialization-data-type">initialization data type</a> strings and encryption format specifications. The encryption format specifications describe the
-        structure and semantics of initialization data.</p>
-      <p>This registry is not intended to include any information on whether a byte stream format is encumbered by intellectual property claims. Implementors and users
-        are advised to seek appropriate legal counsel in this matter if they intend to implement or use a specific byte stream format.</p>
-    </section>
-
-    <section id="entry-requirements" typeof="bibo:Chapter" resource="#entry-requirements" rel="bibo:Chapter">
-      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_entry-requirements"><span class="secno">3. </span>Registration Entry Requirements</h2>
-      <ol>
-        <li>Each entry must include a unique <a href="encrypted-media.html#initialization-data-type">initialization data type</a> string. If the byte stream format is derived-from an existing file format, then it should use the
-          MIME-type/subtype pairs typically used for the file format.</li>
-        <li>Each entry must include a link that references a publically available specification. It is recommended that such a specification be made available
-          without cost (other than reasonable shipping and handling if not available by online means).</li>
-        <li>Candidate entries must be announced on <a href="public-html-media@w3.org">public-html-media@w3.org</a>(<a href="public-html-media-request@w3.org">subscribe</a>,
-          <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>) so they can be discussed and evaluated for compliance before being added to the
-          registry.</li>
-      </ol>
-    </section>
-
-    <section id="registry" typeof="bibo:Chapter" resource="#registry" rel="bibo:Chapter">
-      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_registry"><span class="secno">4. </span>Registry</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Initialization Data Type</th>
-            <th>Public Specification(s)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              cenc
-            </td>
-            <td><a href="cenc-format.html">ISO Common Encryption EME Stream Format and Initialization Data</a></td>
-          </tr>
-          <tr>
-            <td>
-              keyids
-            </td>
-            <td><a href="keyids-format.html">Key IDs Initialization Data Format</a></td>
-          </tr>
-          <tr>
-            <td>
-              webm
-            </td>
-            <td><a href="webm-format.html">WebM EME Stream Format and Initialization Data</a></td>
-          </tr>
-        </tbody>
-      </table>
     </section>
   
 

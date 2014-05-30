@@ -98,7 +98,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 29 May 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 30 May 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -614,9 +614,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <dl>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported. Specific containers and codecs may or may not be supported with Some System.</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem")</pre></dd>
-        
-        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>. Specific containers and codecs may or may not be supported with Some System.</dt>
-        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>)</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format "keyids". Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", "keyids")</pre></dd>
         <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>, the user agent is capable of demuxing the container specified by <var title="true">mimeType</var>, and the codec(s) specified by <var title="true">mimeType</var> are supported, all as specified by capability "foo".</dt>
         <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>, <var title="true">mimeType</var>, "foo")</pre></dd>
         <dt>Returns whether the user agent <em>probably</em> supports <a href="#clear-key">Clear Key</a> using the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
@@ -1368,7 +1367,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           <li><p><var>message</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
         </ul>
       </li>
-      <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered and Initialization Data types</a>.</p></li>
+      <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered and Initialization Data types</a>.
+        Implementations should support the "<a href="keyids-format.html%20">keyids</a>" type and other types appropriate for content supported by the user agent.
+      </p></li>
     </ul>
 
     <h4 id="clear-key-request-format">Licese Request Format</h4>
@@ -1377,14 +1378,14 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p>The format is a JSON object containing the following members:</p>
     <dl>
       <dt>"kids"</dt>
-      <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the <a href="#decryption-key-id">key ID</a> value.</dd>
+      <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
       <dt>"type"</dt>
       <dd>The requested <code><a href="#dom-sessiontype">SessionType</a></code>
 </dd>
     </dl>
 
     <div class="nonnormative">
-      <p>The following example is a license request for a temporary license for two key IDs (line breaks are for readability only).</p>
+      <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
       <div class="example nonnormative">
         <pre class="code">
 {
@@ -1430,7 +1431,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </p>
 
     <div class="nonnormative">
-      <p>The following example is a JWK Set containing a single symmetric key (line breaks are for readability only).</p>
+      <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
       <div class="example nonnormative">
         <pre class="code">
 {
