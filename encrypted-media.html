@@ -378,7 +378,8 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
 </div>
 partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
   attribute DOMString <a href="#dom-sourcekeysystem">keySystem</a>;
-};</pre>
+};
+</pre>
 
     <div class="note">
 <div class="noteHeader">Note</div>
@@ -965,7 +966,8 @@ interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href=
 dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
   DOMString <a href="#dom-initdatatype">initDataType</a>;
   Uint8Array? <a href="#dom-initdata">initData</a>;
-};</pre>
+};
+</pre>
 
     <pre class="idl">
 [Constructor(DOMString type, optional <a href="#dom-mediakeymessageeventinit">MediaKeyMessageEventInit</a> eventInitDict)]
@@ -977,7 +979,8 @@ interface <dfn id="dom-mediakeymessageevent">MediaKeyMessageEvent</dfn> : <a hre
 dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
   Uint8Array <a href="#dom-message">message</a>;
   DOMString? <a href="#dom-destinationurl">destinationURL</a>;
-};</pre>
+};
+</pre>
 
     <dl class="domintro">
      <dt>
@@ -1337,7 +1340,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     This Key System is described below.
     </p>
     
-    <h4 id="clear-key-capabilities">Capabilities</h4>
+    <h4 id="clear-key-capabilities">5.1.1. Capabilities</h4>
     <p>The following describe how Clear Key supports key system-specific capabilities:</p>
     <ul>
       <li><p>The <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> method: Implementations may support associating the <code><a href="#dom-mediakeys">MediaKeys</a></code> object with more than one <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code>.</p></li>
@@ -1346,7 +1349,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>The "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" <code><a href="#dom-sessiontype">SessionType</a></code>, including the <code><a href="#dom-loadsession">loadSession()</a></code> and <code><a href="#dom-remove">remove()</a></code> methods: Implementations may support these.</p></li>
     </ul>
     
-    <h4 id="clear-key-behavior">Behavior</h4>
+    <h4 id="clear-key-behavior">5.1.2. Behavior</h4>
     <p>The following describe how Clear Key implements key system-specific behaviors:</p>
     <ul>
       <li>
@@ -1368,11 +1371,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </ul>
       </li>
       <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered and Initialization Data types</a>.
-        Implementations should support the "<a href="keyids-format.html%20">keyids</a>" type and other types appropriate for content supported by the user agent.
+        Implementations should support the "<a href="keyids-format.html%20">keyids</a>" type and other types appropriate for content types supported by the user agent.
       </p></li>
     </ul>
 
-    <h4 id="clear-key-request-format">Licese Request Format</h4>
+    <h4 id="clear-key-request-format">5.1.3. Licese Request Format</h4>
     <p>This section describes the format of the license request provided to the application via the <code><a href="#dom-message">message</a></code> attribute of the <a href="#dom-eventmessage">message</a> event.</p>
     
     <p>The format is a JSON object containing the following members:</p>
@@ -1384,10 +1387,15 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 </dd>
     </dl>
 
-    <div class="nonnormative">
-      <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
-      <div class="example nonnormative">
-        <pre class="code">
+    <p>When contained in the Uint8Array <code><a href="#dom-message">message</a></code> attribute of a <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> object, the JSON string is encoded in utf-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may decode the contents of the Uint8Array to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
+    </p>
+
+    
+    <h5 id="clear-key-licese-format">5.1.3.1. Example</h5>
+    <p><i>This section is non-normative.</i></p>
+    <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
+    <pre class="example">
 {
   "kids": 
     [
@@ -1395,15 +1403,10 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
      "77ef0gd8pvfd0"
     ],
   "type":"<a href="#dom-sessiontypetemporary">temporary</a>"
-}</pre>
-      </div>
-    </div>
+}
+</pre>
 
-    <p>When contained in the Uint8Array <code><a href="#dom-message">message</a></code> attribute of a <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> object, the JSON string is encoded in utf-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may decode the contents of the Uint8Array to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
-    </p>
-
-    <h4 id="clear-key-licese-format">Licese Format</h4>
+    <h4 id="clear-key-licese-format">5.1.4. Licese Format</h4>
     <p>This section describes the format of the license to be provided via the <var title="true">response</var> parameter of the <code><a href="#dom-update">update()</a></code> method.</p>
 
     <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>.</p>
@@ -1419,21 +1422,21 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <dt>"kid" (key ID)</dt>
       <dd>The base64url encoding of the octet sequence containing the <a href="#decryption-key-id">key ID</a> value</dd>
     </dl>
-    <div class="nonnormative">
-      <p>For more information on base64url and working with it, see the Base64url Encoding entry in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#section-2">Terminology section</a> and <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#appendix-C">Notes on implementing base64url encoding without padding</a> of the JSON Web Signature (JWS) specification.
-        Specifically, there is no '=' padding and '-' and '_' must be used instead of '+' and '/', respectively. 
-      </p>
-    </div>
 
     <p>The JSON object may have an optional "type" member value, which may be any of the <code><a href="#dom-sessiontype">SessionType</a></code> values.
       If not specified, the default value of "<code><a href="#dom-sessiontypetemporary">temporary</a></code>" is used.
       The <code><a href="#dom-update">update()</a></code> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    <div class="nonnormative">
-      <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
-      <div class="example nonnormative">
-        <pre class="code">
+    <p>When passed to the <code><a href="#dom-update">update()</a></code> method as the Uint8Array <var title="true">response</var> parameter, the JSON string must be encoded in utf-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
+    </p>
+
+    
+    <h5 id="clear-key-licese-format">5.1.4.1. Example</h5>
+    <p><i>This section is non-normative.</i></p>
+    <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
+    <pre class="example">
 {
   "keys": 
     [{
@@ -1444,12 +1447,14 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     }],
   "type":"<a href="#dom-sessiontypetemporary">temporary</a>"
 }</pre>
-      </div>
-    </div>
 
-    <p>When passed to the <code><a href="#dom-update">update()</a></code> method as the Uint8Array <var title="true">response</var> parameter, the JSON string must be encoded in utf-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
+    
+    <h4 id="using-base64url">5.1.5. Using base64url</h4>
+    <p><i>This section is non-normative.</i></p>
+    <p>For more information on base64url and working with it, see the Base64url Encoding entry in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#section-2">Terminology section</a> and <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#appendix-C">Notes on implementing base64url encoding without padding</a> of the JSON Web Signature (JWS) specification.
+      Specifically, there is no '=' padding, and the characters '-' and '_' must be used instead of '+' and '/', respectively. 
     </p>
+
 
     <h2 id="security">6. Security Considerations</h2>
     <div class="nonnormative">
@@ -1573,8 +1578,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page.
     Only one session will ever be created.</p>
 
-    <div class="example">
-      <pre class="code">
+    <pre class="example">
 &lt;script&gt;
   function load() {
     var video = document.getElementById("video");
@@ -1618,8 +1622,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
 &lt;body onload="load()"&gt;
   &lt;video src="foo.webm" autoplay id="video"&gt;&lt;/video&gt;
-&lt;/body&gt;</pre>
-    </div>
+&lt;/body&gt;
+</pre>
 
     <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <code><a href="#dom-istypesupported">isTypeSupported()</a></code> method then uses
@@ -1627,8 +1631,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     One of the supported key systems uses a serverCertificate, which is provided proactively.
     </p>
 
-    <div class="example">
-      <pre class="code">
+    <pre class="example">
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
@@ -1715,8 +1718,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   }
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
-    </div>
+&lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+</pre>
 
     <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
     <p class="exampledescription">Initialization is much simpler if needkey events do not need to be handled during MediaKeys initialization.
@@ -1724,8 +1727,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     This example does the latter.
     </p>
 
-    <div class="example">
-      <pre class="code">
+    <pre class="example">
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
@@ -1756,15 +1758,14 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
-    </div>
+&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+</pre>
 
     <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
     <p class="exampledescription">This is a more complete example showing all events being used.</p>
     <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#dom-update">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
-    <div class="example">
-      <pre class="code">
+    <pre class="example">
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
@@ -1841,14 +1842,13 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;</pre>
-    </div>
+&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+</pre>
 
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
     <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
-    <div class="example">
-      <pre class="code">
+    <pre class="example">
 &lt;script&gt;
   var keySystem;
   var licenseUrl;
@@ -1947,8 +1947,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   );
 &lt;/script&gt;
 
-&lt;video id="v" src="foo.webm" autoplay&gt;&lt;/video&gt;</pre>
-    </div>
+&lt;video id="v" src="foo.webm" autoplay&gt;&lt;/video&gt;
+</pre>
 
 
     <h2 id="revision-history">9. Revision History</h2>
