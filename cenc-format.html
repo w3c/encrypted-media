@@ -120,6 +120,45 @@ table.simple {
         display: none;
     }
 }
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
 </style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
   <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
   <p>
@@ -129,7 +168,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption EME Stream Format and Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-30T06:21:49.000Z" id="w3c-editor-s-draft-29-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-29">29 May 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-31T07:37:16.000Z" id="w3c-editor-s-draft-31-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-31">31 May 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -187,8 +226,9 @@ table.simple {
   
   <hr>
 </div>
+    <!-- TODO: Use styles for ISO boxes like the MSE registry. -->
     <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
-      <p>This specification defines the stream format and initialization data for using ISO Base media File Format (ISOBMFF) content using the ISO Common Encryption ('cenc') protection scheme with the <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions</a>.
+      <p>This specification defines the stream format and initialization data for using ISO Base media File Format [<cite><a class="bibref" href="#bib-BMFF">BMFF</a></cite>] content using the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC-1ST">CENC-1ST</a></cite>] with the <a href="http://www.w3.org/TR/encrypted-media/">Encrypted Media Extensions</a>.
       It also defines a common SystemID and PSSH box format for use with Encrypted Media Extensions.
       </p>
     </section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
@@ -257,30 +297,31 @@ table.simple {
       
     
   
-</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li></ul></li></ul></section>
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li></ul></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li></ul></li></ul></section>
   
     
 
     <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_stream-format"><span class="secno">1. </span>Stream Format</h2>
-      <p>Under the 'cenc' protection scheme, ISOBMFF content is encrypted at the sample level with AES-128 CTR encryption, according to ISO/IEC 23001-7:2012, "Information technology - MPEG system technologies - Part 7: Common encryption in ISO base media file format files". This protection method enables multiple Key Systems to decrypt the same media content.</p>
+      <p>Under the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC-1ST">CENC-1ST</a></cite>], ISO Base media File Format [<cite><a class="bibref" href="#bib-BMFF">BMFF</a></cite>] content is encrypted at the sample level with AES-128 CTR encryption. This protection method enables multiple Key Systems to decrypt the same media content.</p>
       <p>Each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
     </section>
 
     <section id="detect-encrypt" typeof="bibo:Chapter" resource="#detect-encrypt" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_detect-encrypt"><span class="secno">2. </span>Detecting Encryption</h2>
-      <p>Protection scheme signaling conforms with ISO/IEC 14496-12:2012. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of 'cenc' (Common Encryption).</p>
+      <p>Protection scheme signaling conforms with ISO Base media File Format [<cite><a class="bibref" href="#bib-BMFF">BMFF</a></cite>]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of 'cenc' (Common Encryption).</p>
       <p>The "encrypted block" is a sample. Determining whether a sample is encrypted depends on the corresponding Track Encryption Box ('tenc') and the sample group with grouping type 'seig' (CencSampleEncryption group), if any, associated with the sample.
       The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the SampleGroupDescriptionBox ('sgpd'), pointed to by an index in the SampleToGroupBox ('sbgp').</p>
       <p>Samples can be partially encrypted, specified by subsample information referenced by SampleAuxiliaryInformationSizesBox (‘saiz’) and SampleAuxiliaryInformationOffsetsBox ('saio') boxes.</p>
-      <p>For complete information, see ISO/IEC 23001-7:2012.</p>
+      <p>For complete information, see [<cite><a class="bibref" href="#bib-CENC-1ST">CENC-1ST</a></cite>].</p>
     </section>
 
     <section id="init-data" typeof="bibo:Chapter" resource="#init-data" rel="bibo:Chapter">
       <!--OddPage--><h2 aria-level="1" role="heading" id="h2_init-data"><span class="secno">3. </span>Initialization Data and Events</h2>
+      <div class="issue"><div class="issue-title" aria-level="2" role="heading" id="h_issue_1"><span>Issue 1</span></div><p class="">This section is still under discussion. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=17673">Bug 17673</a>.</p></div>
       <p>Common Encryption files may contain one or more protection system specific header ('pssh') boxes, each for a different SystemID.</p>
       <p>‘pssh’ boxes stored in movie fragment boxes are intended to store keys referenced by KID in a sample group description contained in that movie fragment, where the KID in the sample group description overrides the default_KID specified for the track in the track encryption box (‘tenc’).  Each ‘moof’/’pssh’ must protect the contained keys with a SystemID specific method.  Sample groups and ‘pssh’ key storage in movie fragments enable keys to be changed and accessed without interruption during playback of a track.</p>
-      <p>ISO Common Encryption 2nd Edition also specifies storage of a ‘pssh’ box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 ‘pssh’)&gt;.  For instance, DASH manifests may provide ‘pssh’ boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These ‘pssh’ boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
+      <p>ISO Common Encryption 2nd Edition [<cite><a class="bibref" href="#bib-CENC-2ND">CENC-2ND</a></cite>] also specifies storage of a ‘pssh’ box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 ‘pssh’)&gt;.  For instance, DASH manifests may provide ‘pssh’ boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These ‘pssh’ boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
 
       <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.  The application may parse out 'pssh' boxes which do not correspond to the selected key system, and may not use the InitData from the file at all and instead use initData from another source (e.g. the XML element described above). The CDM must be able to filter multiple 'pssh' in the initData to find the 'pssh' box which is Key System appropriate.</p>
       <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.</p>
@@ -299,7 +340,7 @@ table.simple {
       <section id="common-system-definition" typeof="bibo:Chapter" resource="#common-system-definition" rel="bibo:Chapter">
         <h3 aria-level="2" role="heading" id="h3_common-system-definition"><span class="secno">4.1 </span>Definition</h3>
         <p>The SystemID is 1077efec-c0b2-4d02-ace3-3c1e52e2fb4b.</p>
-        <p> The PSSH box format is as follows:</p>
+        <p>The PSSH box format is as follows. It follows version 1 of the 'pssh' box as defined in ISO Common Encryption 2nd Edition [<cite><a class="bibref" href="#bib-CENC-2ND">CENC-2ND</a></cite>].</p>
         <dl>
           <dt>version</dt>
           <dd>1</dd>
@@ -309,8 +350,12 @@ table.simple {
           <dd>Reserved for future use. DataSize must be 0.</dd>
         </dl>
       </section>
+      <!-- TODO: Add an example section. -->
     </section>
     
   
 
-</body></html>
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_references"><span class="secno">A. </span>References</h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_normative-references"><span class="secno">A.1 </span>Normative references</h3><dl class="bibliography" about=""><dt id="bib-BMFF">[BMFF]</dt><dd rel="dcterms:requires"><a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c061988_ISO_IEC_14496-12_2012.zip"><cite>ISO/IEC 14496-12:2012, Information technology -- Coding of audio-visual objects -- Part 12: ISO base media file format</cite></a>. International Standard. URL: <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c061988_ISO_IEC_14496-12_2012.zip">http://standards.iso.org/ittf/PubliclyAvailableStandards/c061988_ISO_IEC_14496-12_2012.zip</a>
+</dd><dt id="bib-CENC-1ST">[CENC-1ST]</dt><dd rel="dcterms:requires"><a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-1:v1"><cite>ISO/IEC 23001-7:2012, Information technology -- MPEG systems technologies -- Part 7: Common encryption in ISO base media file format files</cite></a>. International Standard. URL: <a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-1:v1">https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-1:v1</a>
+</dd><dt id="bib-CENC-2ND">[CENC-2ND]</dt><dd rel="dcterms:requires"><a href="undefined"><cite>ISO/IEC DIS 23001-7 2nd Edition</cite></a>. Draft International Standard. URL: <a href="undefined">undefined</a>
+</dd></dl></section></section></body></html>
