@@ -30,6 +30,10 @@
     df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: HTML_spec_url + "#" + id}).text(text))[0]);
   }
 
+  function encodingapi_helper(doc, df, id, text) {
+    link_helper(doc, df, 'http://www.w3.org/TR/encoding/#' + id, text);
+  }
+
   function webappapis_helper(doc, df, id, text) {
     link_helper(doc, df, 'http://www.w3.org/TR/html5/webappapis.html#' + id, text);
   }
@@ -105,6 +109,8 @@
   var emeDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
 
+    'interface-textencoder': { func: encodingapi_helper, fragment: 'interface-textencoder', link_text: 'TextEncoder interface',  },
+    
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
 
     'videoref': { func: videoref_helper, fragment: '', link_text: '', },
