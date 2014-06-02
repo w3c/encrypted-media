@@ -120,6 +120,38 @@ table.simple {
         display: none;
     }
 }
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
 </style><style>/* --- ISSUES/NOTES --- */
 div.issue-title, div.note-title {
     padding-right:  1em;
@@ -168,7 +200,7 @@ span.note, span.issue { padding: .1em .5em .15em; }
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption EME Stream Format and Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-31T07:37:16.000Z" id="w3c-editor-s-draft-31-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-05-31">31 May 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-06-03T02:29:40.000Z" id="w3c-editor-s-draft-02-june-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-06-02">02 June 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -297,7 +329,7 @@ span.note, span.issue { padding: .1em .5em .15em; }
       
     
   
-</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li></ul></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li></ul></li></ul></section>
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-encrypt" class="tocxref"><span class="secno">2. </span>Detecting Encryption</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">3. </span>Initialization Data and Events</a></li><li class="tocline"><a href="#common-system" class="tocxref"><span class="secno">4. </span>Common SystemID and PSSH Box Format</a><ul class="toc"><li class="tocline"><a href="#common-system-definition" class="tocxref"><span class="secno">4.1 </span>Definition</a></li><li class="tocline"><a href="#example" class="tocxref"><span class="secno">4.2 </span>Example</a></li></ul></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li></ul></li></ul></section>
   
     
 
@@ -350,7 +382,22 @@ span.note, span.issue { padding: .1em .5em .15em; }
           <dd>Reserved for future use. DataSize must be 0.</dd>
         </dl>
       </section>
-      <!-- TODO: Add an example section. -->
+      <section class="informative" id="example">
+        <h3 aria-level="2" role="heading" id="h3_example"><span class="secno">4.2 </span>Example</h3><p><em>This section is non-normative.</em></p>
+        <p>The following example contains two key IDs.</p>
+          <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example">var pssh = [
+    0x00, 0x00, 0x00, 0x4c, 0x70, 0x73, 0x73, 0x68, // BMFF box header (76 bytes, 'pssh')
+    0x01, 0x00, 0x00, 0x00,                         // Full box header (version = 1, flags = 0)
+    0x10, 0x77, 0xef, 0xec, 0xc0, 0xb2, 0x4d, 0x02, // SystemID
+    0xac, 0xe3, 0x3c, 0x1e, 0x52, 0xe2, 0xfb, 0x4b,
+    0x00, 0x00, 0x00, 0x02,                         // KID_count (2)  
+    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, // First KID ("0123456789012345")
+    0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, // Second KID ("ABCDEFGHIJKLMNOP")
+    0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
+    0x00, 0x00, 0x00, 0x00,                         // Size of Data (0)
+];</pre></div>
+      </section>
     </section>
     
   
