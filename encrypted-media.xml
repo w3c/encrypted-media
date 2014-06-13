@@ -505,8 +505,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
-          <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
+          <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
           <li><p>Add an entry for the <var title="true">initDataType</var>-<var>init data</var> pair to the <var title="true">list of active session Initialization Data</var> for this object.</p></li>
+          <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
       </li>
@@ -520,6 +521,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
+          <li><p>If the <var title="true">list of active session IDs</var> for this object includes an entry for <var title="true">sessionId</var>, resolve <var>promise</var> with <code>null</code>.</p>
+            <p class="non-normative">In other words, do not create a session if a non-closed session already exists for this <var title="true">sessionId</var>.</p>
+          </li>
           <li><p>Let <var title="true">expiration time</var> be <code>undefined</code>.</p></li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">destination URL</var> be null.</p></li>
@@ -553,6 +557,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
           <li><p>If the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute is not empty, run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
@@ -1218,6 +1223,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Remove the entry for the value of the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute from the <var title="true">list of active session IDs</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li>
       <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li><!-- Check for empty because loadSession() does not set session initData. -->
       <li><p>Set the <var title="true">session</var>'s <coderef>usableKeyIds</coderef> attribute to an empty Array.</p></li>
       <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
