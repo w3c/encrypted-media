@@ -346,9 +346,9 @@ enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">te
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 
-  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, Uint8Array initData, optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
+  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData, optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
   Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>loadSession</premethodref>(DOMString sessionId);
-  Promise&lt;any&gt; <premethodref>setServerCertificate</premethodref>(Uint8Array serverCertificate);
+  Promise&lt;any&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
   static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
@@ -361,12 +361,12 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
   // session properties
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
   <div class="issue"><div class="issue-title"><span>Issue 7</span></div><p class=""><precoderef>usableKeyIds</precoderef> is not WebIDL-compliant. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25594">Bug 25594</a>.</p></div>
-  readonly attribute Array&lt;Uint8Array&gt; <precoderef>usableKeyIds</precoderef>;
+  readonly attribute Array&lt;ArrayBuffer&gt; <precoderef>usableKeyIds</precoderef>;
   readonly attribute Date <precoderef>expiration</precoderef>;
   readonly attribute Promise&lt;any&gt; <precoderef>closed</precoderef>;
 
   // session operations
-  Promise&lt;any&gt; <premethodref>update</premethodref>(Uint8Array response);
+  Promise&lt;any&gt; <premethodref>update</premethodref>((ArrayBuffer or ArrayBufferView) response);
   Promise&lt;any&gt; <premethodref>close</premethodref>();
   Promise&lt;any&gt; <premethodref>remove</premethodref>();
 };
@@ -915,24 +915,24 @@ interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="domexception">
 [Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
   readonly attribute DOMString <precoderef>initDataType</precoderef>;
-  readonly attribute Uint8Array? <precoderef>initData</precoderef>;
+  readonly attribute ArrayBuffer? <precoderef>initData</precoderef>;
 };
 
 dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
   DOMString <precoderef>initDataType</precoderef>;
-  Uint8Array? <precoderef>initData</precoderef>;
+  ArrayBuffer? <precoderef>initData</precoderef>;
 };
 </pre>
 
     <pre class="idl">
 [Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-  readonly attribute Uint8Array <precoderef>message</precoderef>;
+  readonly attribute ArrayBuffer <precoderef>message</precoderef>;
   readonly attribute DOMString? <precoderef>destinationURL</precoderef>;
 };
 
 dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
-  Uint8Array <precoderef>message</precoderef>;
+  ArrayBuffer <precoderef>message</precoderef>;
   DOMString? <precoderef>destinationURL</precoderef>;
 };
 </pre>
@@ -1321,8 +1321,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <dd>The requested <coderef>SessionType</coderef></dd>
     </dl>
 
-    <p>When contained in the Uint8Array <coderef>message</coderef> attribute of a <coderef>MediaKeyMessageEvent</coderef> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may decode the contents of the Uint8Array to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
+    <p>When contained in the ArrayBuffer <coderef>message</coderef> attribute of a <coderef>MediaKeyMessageEvent</coderef> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
     </p>
 
     <!-- Will be <section class="informative"> -->
@@ -1362,7 +1362,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       The <methodref>update</methodref> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    <p>When passed to the <methodref>update</methodref> method as the Uint8Array <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+    <p>When passed to the <methodref>update</methodref> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
       Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
     </p>
 

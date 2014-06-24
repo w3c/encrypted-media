@@ -349,9 +349,9 @@ enum <dfn id="dom-sessiontype">SessionType</dfn> { "<dfn id="dom-sessiontypetemp
 interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
 
-  Promise&lt;<a href="#dom-mediakeysession">MediaKeySession</a>&gt; <a href="#dom-createsession">createSession</a>(DOMString <a href="#initialization-data-type">initDataType</a>, Uint8Array initData, optional <a href="#dom-sessiontype">SessionType</a> sessionType = "<a href="#dom-sessiontypetemporary">temporary</a>");
+  Promise&lt;<a href="#dom-mediakeysession">MediaKeySession</a>&gt; <a href="#dom-createsession">createSession</a>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData, optional <a href="#dom-sessiontype">SessionType</a> sessionType = "<a href="#dom-sessiontypetemporary">temporary</a>");
   Promise&lt;<a href="#dom-mediakeysession">MediaKeySession</a>&gt; <a href="#dom-loadsession">loadSession</a>(DOMString sessionId);
-  Promise&lt;any&gt; <a href="#dom-setservercertificate">setServerCertificate</a>(Uint8Array serverCertificate);
+  Promise&lt;any&gt; <a href="#dom-setservercertificate">setServerCertificate</a>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>)
   static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
@@ -367,12 +367,12 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
 <div class="issue-title"><span>Issue 7</span></div>
 <p class=""><a href="#dom-usablekeyids">usableKeyIds</a> is not WebIDL-compliant. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25594">Bug 25594</a>.</p>
 </div>
-  readonly attribute Array&lt;Uint8Array&gt; <a href="#dom-usablekeyids">usableKeyIds</a>;
+  readonly attribute Array&lt;ArrayBuffer&gt; <a href="#dom-usablekeyids">usableKeyIds</a>;
   readonly attribute Date <a href="#dom-expiration">expiration</a>;
   readonly attribute Promise&lt;any&gt; <a href="#dom-closed">closed</a>;
 
   // session operations
-  Promise&lt;any&gt; <a href="#dom-update">update</a>(Uint8Array response);
+  Promise&lt;any&gt; <a href="#dom-update">update</a>((ArrayBuffer or ArrayBufferView) response);
   Promise&lt;any&gt; <a href="#dom-close">close</a>();
   Promise&lt;any&gt; <a href="#dom-remove">remove</a>();
 };
@@ -973,24 +973,24 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> : <a href="http://www.
 [Constructor(DOMString type, optional <a href="#dom-mediakeyneededeventinit">MediaKeyNeededEventInit</a> eventInitDict)]
 interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href="http://www.w3.org/TR/dom/#event">Event</a> {
   readonly attribute DOMString <a href="#dom-initdatatype">initDataType</a>;
-  readonly attribute Uint8Array? <a href="#dom-initdata">initData</a>;
+  readonly attribute ArrayBuffer? <a href="#dom-initdata">initData</a>;
 };
 
 dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
   DOMString <a href="#dom-initdatatype">initDataType</a>;
-  Uint8Array? <a href="#dom-initdata">initData</a>;
+  ArrayBuffer? <a href="#dom-initdata">initData</a>;
 };
 </pre>
 
     <pre class="idl">
 [Constructor(DOMString type, optional <a href="#dom-mediakeymessageeventinit">MediaKeyMessageEventInit</a> eventInitDict)]
 interface <dfn id="dom-mediakeymessageevent">MediaKeyMessageEvent</dfn> : <a href="http://www.w3.org/TR/dom/#event">Event</a> {
-  readonly attribute Uint8Array <a href="#dom-message">message</a>;
+  readonly attribute ArrayBuffer <a href="#dom-message">message</a>;
   readonly attribute DOMString? <a href="#dom-destinationurl">destinationURL</a>;
 };
 
 dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
-  Uint8Array <a href="#dom-message">message</a>;
+  ArrayBuffer <a href="#dom-message">message</a>;
   DOMString? <a href="#dom-destinationurl">destinationURL</a>;
 };
 </pre>
@@ -1401,8 +1401,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 </dd>
     </dl>
 
-    <p>When contained in the Uint8Array <code><a href="#dom-message">message</a></code> attribute of a <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may decode the contents of the Uint8Array to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
+    <p>When contained in the ArrayBuffer <code><a href="#dom-message">message</a></code> attribute of a <code><a href="#dom-mediakeymessageevent">MediaKeyMessageEvent</a></code> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
     </p>
 
     
@@ -1442,7 +1442,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       The <code><a href="#dom-update">update()</a></code> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    <p>When passed to the <code><a href="#dom-update">update()</a></code> method as the Uint8Array <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+    <p>When passed to the <code><a href="#dom-update">update()</a></code> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
       Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
     </p>
 
