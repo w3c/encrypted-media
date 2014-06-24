@@ -202,7 +202,7 @@
           <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
           <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
           <li><a href="#algorithms-queue-error">4.4. Queue an "error" Event</a></li>
-          <li><a href="#algorithms-update-usable-key-ids">4.5. Update Usable Key IDs</a></li>
+          <li><a href="#algorithms-keys-changed">4.5. Keys changed</a></li>
           <li><a href="#algorithms-update-expiration">4.6 Update Expiration</a></li>
           <li><a href="#algorithms-session-close">4.7. Session Close</a></li>
           <li><a href="#algorithms-queue-waiting">4.8 Queue a "waiting" Event</a></li>
@@ -363,11 +363,6 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
 
   // session properties
   readonly attribute DOMString <a href="#dom-sessionid">sessionId</a>;
-  <div class="issue">
-<div class="issue-title"><span>Issue 7</span></div>
-<p class=""><a href="#dom-usablekeyids">usableKeyIds</a> is not WebIDL-compliant. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25594">Bug 25594</a>.</p>
-</div>
-  readonly attribute Array&lt;ArrayBuffer&gt; <a href="#dom-usablekeyids">usableKeyIds</a>;
   readonly attribute unrestricted double <a href="#dom-expiration">expiration</a>;
   readonly attribute Promise&lt;any&gt; <a href="#dom-closed">closed</a>;
 
@@ -375,6 +370,8 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
   Promise&lt;any&gt; <a href="#dom-update">update</a>((ArrayBuffer or ArrayBufferView) response);
   Promise&lt;any&gt; <a href="#dom-close">close</a>();
   Promise&lt;any&gt; <a href="#dom-remove">remove</a>();
+  
+  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <a href="#dom-getusablekeyids__">getUsableKeyIds()</a>;
 };
 
 <div class="issue">
@@ -518,7 +515,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
               <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">session ID</var>.</p></li>
-              <li><p>Set the <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute to an empty Array.</p></li>
               <li><p>Let <code><a href="#dom-expiration">expiration</a></code> be <code>NaN</code>.</p></li>
               <li><p>Let <code><a href="#dom-closed">closed</a></code> be a new promise.</p></li>
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
@@ -574,10 +570,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
               <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">sessionId</var>.</p></li>
-              <li>
-<p>Set the <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute to an Array containing the set of key IDs for which the session contains a key the CDM <em>knows</em> is currently usable.</p>
-                <p>The <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
-              </li>
               <li><p>Let <code><a href="#dom-expiration">expiration</a></code> be <var title="true">expiration time</var>.</p></li>
               <li><p>Let <code><a href="#dom-closed">closed</a></code> be a new promise.</p></li>
               <li><p>Let the session type be "<code><a href="#dom-sessiontypepersistent">persistent</a></code>".</p></li>
@@ -585,7 +577,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <code><a href="#dom-sessionid">sessionId</a></code> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>If the <var title="true">session</var>'s <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute is not empty, run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
+          <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
@@ -716,11 +708,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>The <dfn id="dom-sessionid"><code>sessionId</code></dfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <dfn id="dom-usablekeyids"><code>usableKeyIds</code></dfn> attribute is an array of key IDs for keys in the session that the CDM <em>knows</em> are currently usable usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
-      It must not contain IDs for keys that <em>may not</em> currently be usable.
-      Each element must be unique.
-    </p>
-
     <p>The <dfn id="dom-expiration"><code>expiration</code></dfn> attribute is the time, in milliseconds since since 01 January, 1970 UTC, at which the the key(s) in the session will no longer be usable usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, or <code>NaN</code> if no such time exists, as determined by the CDM.
     </p>
 
@@ -763,7 +750,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 </p>
               </li> 
               <li>
-<p>If the set of usable keys changed, run the <a href="#algorithms-update-usable-key-ids">Update Usable Key IDs</a> algorithm on the <var title="true">session</var>.</p>
+<p>If the set of usable keys changed, run the <a href="#algorithms-keys-changed">Keys changed</a> algorithm on the <var title="true">session</var>.</p>
                 <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
               </li>
               <li><p>If the expiration time for the session changed, run the <a href="#algorithms-update-expiration">Update Expiration</a> algorithm on the <var title="true">session</var>, providing the new expiration time.</p></li>
@@ -845,6 +832,30 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         </ol>
       </li>
       <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+    
+    <p>The <dfn id="dom-getusablekeyids"><code>getUsableKeyIds()</code></dfn> method allows an application to get the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. It must run the following steps:</p>
+    
+    <ol>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li>
+<p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <code><a href="#dom-create">create()</a></code>.</p></li>
+          <li>
+<p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li><p>Let <var title="true">usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. <var title="true">usable key ids</var> must not contain IDs for keys that <em>may not</em> currently be usable. Each element must be unique.</p></li>
+            </ol>
+          </li>
+          <li>
+            <p>If the preceding step failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p>
+          </li>
+          <li>
+            <p>Otherwise, resolve <var>promise</var> with a new Javascript Array object each element of which contains one element of <var title="true">usable key ids</var>.</p>
+          </li>
+        </ol>
+      </li>
     </ol>
 
 
@@ -1262,19 +1273,16 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventerror">error</a></code> at the <var title="true">session</var>.</p></li>
     </ol>
 
-    <h3 id="algorithms-update-usable-key-ids">4.5. Update Usable Key IDs</h3>
-    <p>The Update Usable Key IDs algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
+    <h3 id="algorithms-keys-changed">4.5. Keys changed</h3>
+    <p>The Keys changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
     This can happen as the result of an <code><a href="#dom-update">update()</a></code> call or some other event.
     Requests to run this algorithm include a target <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.
     </p>
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
-      <li><p>Let <var title="true">previous key ids</var> be a copy of the the <var title="true">session</var>'s <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute.</p></li>
-      <li><p>Let <var title="true">usable key ids</var> be an Array containing the set of key IDs for which the session contains a key the CDM <em>knows</em> is currently usable.</p></li>
-      <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute to <var title="true">usable key ids</var>.</p></li>
       <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-eventkeyschange">keyschange</a></code> at the <var title="true">session</var>.</p></li>
-      <li><p>If <var title="true">usable key ids</var> contains values not in <var title="true">previous key ids</var>, run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
+      <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
     </ol>
 
     <h3 id="algorithms-update-expiration">4.6. Update Expiration</h3>
@@ -1300,7 +1308,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Let the <var title="true">session</var> be the associated <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object.</p></li>
       <li><p>Remove the entry for the value of the <var title="true">session</var>'s <code><a href="#dom-sessionid">sessionId</a></code> attribute from the <var title="true">list of active session IDs</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li>
       <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li>
-      <li><p>Set the <var title="true">session</var>'s <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute to an empty Array.</p></li>
       <li><p>Let <var>promise</var> be the <code><a href="#dom-closed">closed</a></code> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
@@ -1375,7 +1382,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </ul>
       </li>
       <li><p>The <code><a href="#dom-sessionid">sessionId</a></code> attribute is a numerical value representable by a 32-bit integer.</p></li>
-      <li><p>The <code><a href="#dom-usablekeyids">usableKeyIds</a></code> attribute is always all key IDs that have been provided via <code><a href="#dom-update">update()</a></code>.</p></li>
       <li><p>The <code><a href="#dom-expiration">expiration</a></code> attribute is always <code>NaN</code>.</p></li>
       <li>
 <p>In the <code><a href="#dom-update">update()</a></code> algorithm:</p>
@@ -1384,6 +1390,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           <li><p><var>message</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
         </ul>
       </li>
+      <li><p>The <code><a href="#dom-getusablekeyids__">getUsableKeyIds()</a></code> method always returns all key IDs that have been provided via <code><a href="#dom-update">update()</a></code>.</p></li>
       <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered and Initialization Data types</a>.
         Implementations should support the "<a href="keyids-format.html%20">keyids</a>" type and other types appropriate for content types supported by the user agent.
       </p></li>
@@ -1833,7 +1840,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   }
 
   function handleKeysChange(event) {
-    // Check event.target.<a href="#dom-usablekeyids">usableKeyIds</a> and respond appropriately.
+    // Call event.target.<a href="#dom-getusablekeyids">getUsableKeyIds</a> and respond appropriately.
   }
 
   function handleError(event) {
