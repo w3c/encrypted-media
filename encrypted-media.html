@@ -570,14 +570,18 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li><p>Set the <code><a href="#dom-error">error</a></code> attribute to null.</p></li>
               <li><p>Set the <code><a href="#dom-sessionid">sessionId</a></code> attribute to <var title="true">sessionId</var>.</p></li>
-              <li><p>Let <code><a href="#dom-expiration">expiration</a></code> be <var title="true">expiration time</var>.</p></li>
+              <li><p>Let <code><a href="#dom-expiration">expiration</a></code> be <code>NaN</code>.</p></li>
               <li><p>Let <code><a href="#dom-closed">closed</a></code> be a new promise.</p></li>
               <li><p>Let the session type be "<code><a href="#dom-sessiontypepersistent">persistent</a></code>".</p></li>
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <code><a href="#dom-sessionid">sessionId</a></code> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
+          <li>
+<p>If the loaded session contains usable keys, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
+            <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+          </li>
+          <li><p>Run the <a href="#algorithms-update-expiration">Update Expiration</a> algorithm on the <var title="true">session</var>, providing <var title="true">expiration time</var>.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>

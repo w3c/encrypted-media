@@ -547,14 +547,17 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             <ol>
               <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
-              <li><p>Let <coderef>expiration</coderef> be <var title="true">expiration time</var>.</p></li>
+              <li><p>Let <coderef>expiration</coderef> be <code>NaN</code>.</p></li>
               <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
               <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p></li>
+          <li><p>If the loaded session contains usable keys, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
+            <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+          </li>
+          <li><p>Run the <a href="#algorithms-update-expiration">Update Expiration</a> algorithm on the <var title="true">session</var>, providing <var title="true">expiration time</var>.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
