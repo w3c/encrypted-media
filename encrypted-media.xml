@@ -280,7 +280,7 @@
     Such keys may only be provided to the <a href="#cdm">CDM</a> via an <methodref>update</methodref> call. (They may later be loaded by <methodref>loadSession</methodref> as part of the stored session data.)
     </p>
     
-    <p class="non-normative">A key is considered <em>usable</em> if it is currently usable for decryption as determined by the CDM. <span class="non-normative">For example, a key is not usable if its license has expired.</span></p>
+    <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable for decryption. <span class="non-normative">For example, a key is not usable if its license has expired.</span></p>
         
     <h4 id="decryption-key-id">1.1.6. Key ID</h4>
     <p>A <a href="#decryption-key">key</a> is associated with a key ID, which uniquely identifies a key.
@@ -1212,7 +1212,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
-      <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the associated <a href="#media-element">media element(s)</a>.</p>
+      <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#media-element">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
         <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no additional keys became available)</span>.</p>
       </li>
     </ol>
