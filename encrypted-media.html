@@ -399,12 +399,12 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <li>
 <p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code> and that has the message "The MediaKeys object cannot be used with additional HTMLMediaElements."</p></li>
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
           <li>
 <p>If the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
             <ol>
-              <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The existing MediaKeys object cannot be removed."</p></li>
-              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code> and that has the message "The existing MediaKeys object cannot be removed at this time."</p></li>
+              <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
               <li><p>Stop using the CDM instance represented by the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
               <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
             </ol>
@@ -445,8 +445,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p>The <dfn id="dom-create"><code>create(keySystem)</code></dfn> method creates a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object for <var title="true">keySystem</var>. It must run the following steps:</p>
 
     <ol>
-      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The keySystem parameter is empty."</p></li>
-      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The key system <var title="true">keySystem</var> is not supported." String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
 <p>Run the following steps asynchronously:</p>
@@ -478,10 +478,10 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     </p>
 
     <ol>
-      <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initDataType parameter is empty."</p></li>
-      <li><p>If <var title="true">initData</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is<code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The initData parameter is empty."</p></li>
-      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data type <var title="true">initDataType</var> is not supported by the key system." String comparison is case-sensitive.</p></li>
-      <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "<var title="true">sessionType</var> sessions are not supported by the key system."</p></li>
+      <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">initData</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is<code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
       <li><p>Let <var>init data</var> be a copy of the contents of the <var title="true">initData</var> parameter.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
@@ -497,8 +497,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "Invalid initialization data."</p></li>
-              <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The initialization data is not supported by the key system."</p></li>
+              <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+              <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
               <li>
 <p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreteted per <var title="true">initDataType</var>, and <var title="true">sessionType</var>.</p>
                 <p>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>", the request is for a temporary non-persisted license.
@@ -533,8 +533,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <p>The <dfn id="dom-loadsession"><code>loadSession(sessionId)</code></dfn> method creates a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object containing the data stored for the <var title="true">sessionId</var>. It must run the following steps:</p>
     <ol>
-      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support loading previous sessions, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The operation is not supported by the key system."</p></li>
-      <li><p>If <var title="true">sessionId</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The sessionId parameter is empty."</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to the <code><a href="#dom-keysystem">keySystem</a></code> attribute does not support loading previous sessions, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>If <var title="true">sessionId</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
 <p>Run the following steps asynchronously:</p>
@@ -594,8 +594,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p class="non-normative">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p>
 
     <ol>
-      <li><p>If <var title="true">serverCertificate</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The serverCertificate parameter is empty."</p></li>
-      <li><p>If the <code><a href="#dom-keysystem">keySystem</a></code> does not support server certificates, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code> and that has the message "The operation is not supported by the key system."</p></li>
+      <li><p>If <var title="true">serverCertificate</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If the <code><a href="#dom-keysystem">keySystem</a></code> does not support server certificates, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
       <li><p>Let <var>certificate</var> be a copy of the contents of the <var title="true">serverCertificate</var> parameter.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
@@ -722,7 +722,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p class="non-normative">The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
 
     <ol>
-      <li><p>If <var title="true">response</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The response parameter is empty."</p></li>
+      <li><p>If <var title="true">response</var> is an empty array, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
       <li><p>Let <var>message</var> be a copy of the contents of the <var title="true">response</var> parameter.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
@@ -734,7 +734,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>If the format of <var>message</var> is invalid in any way, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "Invalid response format."</p></li>
+              <li><p>If the format of <var>message</var> is invalid in any way, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
               <li>
 <p>Process <var>message</var></p>
                 <p>If <var>message</var> contains a license, key(s), or similar session data, follow the stipulation for the first matching condition from the following list:</p>
@@ -806,8 +806,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     It must run the following steps:</p>
 
     <ol>
-      <li><p>If the session type is not "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code> and that has the message "The operation is not supported on <var title="true">session type</var> sessions."</p></li>
-      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code> and that has the message "The session is closed."</p></li>
+      <li><p>If the session type is not "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
 <p>Run the following steps asynchronously:</p>
@@ -878,8 +878,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <h3 id="exceptions">2.1. Exceptions</h3>
     <p>The methods report errors by rejecting the the returned promise with a <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code>.
-    The following <a href="http://www.w3.org/TR/dom/#error-names">DOMException names from DOM4</a> are used with messages as shown in the following table.
-    In cases where the exact name is not specified in the algorithm, the message may differ to reflect the actual error.
+    The following <a href="http://www.w3.org/TR/dom/#error-names">DOMException names from DOM4</a> are used in the algorithms.
+    Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
     </p>
 
     
@@ -887,15 +887,15 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
       <tbody>
         <tr>
           <th>Name</th>
-          <th>Possible Messages (optional)</th>
+          <th>Possible Causes (non-exhaustive)</th>
         </tr>
         <tr>
           <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
           <td>
             The existing MediaKeys object cannot be removed.<br>
-            The key system <em>name</em> is not supported.<br>
-            The initialization data type <em>type</em> is not supported by the key system.<br>
-            <em>type</em> sessions are not supported by the key system.<br>
+            The key system is not supported.<br>
+            The initialization data type is not supported by the key system.<br>
+            The session type is not supported by the key system.<br>
             The initialization data is not supported by the key system.<br>
             The operation is not supported by the key system.
           </td>
@@ -909,9 +909,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
         <tr>
           <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
           <td>
-            The <em>name</em> parameter is empty.<br>
+            The parameter is empty.<br>
             Invalid initialization data.<br>
-            The operation is not supported on <em>session type</em> sessions.
+            The operation is not supported on sessions of this type.
             Invalid response format.
           </td>
         </tr>
@@ -946,7 +946,7 @@ interface <dfn id="dom-mediakeyerror">MediaKeyError</dfn> : <a href="http://www.
 
     <h4 id="mediakeyerror-names">2.2.2. Error Names</h4>
 
-    <p>The tables below list all the allowed error names for the <code>name</code> property along with a description. The message may be key system-specific.</p>
+    <p>The tables below list all the allowed error names for the <code>name</code> property along with a description.</p>
 
     <div class="issue">
 <div class="issue-title"><span>Issue 4</span></div>
