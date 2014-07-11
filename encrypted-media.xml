@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 7 July 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 10 July 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -473,9 +473,6 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If the <var title="true">list of active session Initialization Data</var> for this object includes an entry for the <var title="true">initDataType</var>-<var>init data</var> pair, resolve <var>promise</var> with <code>null</code>.</p>
-            <p class="non-normative">In other words, do not create a session if a non-closed session already exists for this <var>init data</var>.</p>
-          </li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">default URL</var> be null.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
@@ -500,12 +497,10 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Let <coderef>expiration</coderef> be <code>NaN</code>.</p></li>
               <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
-              <li><p>Let the session initData be the <var title="true">initDataType</var>-<var>init data</var> pair.</p></li>
             </ol>
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>Add an entry for the <var title="true">initDataType</var>-<var>init data</var> pair to the <var title="true">list of active session Initialization Data</var> for this object.</p></li>
           <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
@@ -1239,7 +1234,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p>Remove the entry for the value of the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute from the <var title="true">list of active session IDs</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li>
-      <li><p>If the session initData of the <var title="true">session</var> is not empty, remove its entry from the <var title="true">list of active session Initialization Data</var> for the MediaKeys object that created the <var title="true">session</var>.</p></li><!-- Check for empty because loadSession() does not set session initData. -->
       <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
     </ol>
@@ -1635,11 +1629,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData).then(
       function(keySession) {
-        if (keySession) {
-          keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
-        } else {
-          console.log("A session already exists for the initData");
-        }
+        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
       }
     ).catch(
       console.error.bind(console, "Unable to create or initialize key session")
@@ -1726,8 +1716,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData).then(
       function(keySession) {
-        if (!keySession)
-          return; // A session already exists for the initData.
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
@@ -1817,8 +1805,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function createSession(mediaKeys, initDataType, initData) {
     mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData, "persistent").then(
       function(keySession) {
-        if (!keySession)
-          return; // A session already exists for the initData.
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.<precoderef>closed</precoderef>.then(
