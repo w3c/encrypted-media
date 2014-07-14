@@ -104,7 +104,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 10 July 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 14 July 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -488,7 +488,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 <p>Run the following steps asynchronously:</p>
         <ol>
           <li><p>Let <var title="true">request</var> be null.</p></li>
-          <li><p>Let <var title="true">default URL</var> be null.</p></li>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <code><a href="#dom-create">create()</a></code>.</p></li>
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
@@ -502,7 +501,6 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
                 <p class="non-normative">Note: The license server may reject the requested type. It should not issue a different type.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
               </li>
-              <li><p>If the <var>init data</var> indicates a default URL, let <var title="true">default URL</var> be that URL. The URL may be validated and/or normalized.</p></li>
             </ol>
           </li>
           <li><p>Let the <var title="true">session ID</var> be a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
@@ -518,7 +516,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <code><a href="#dom-sessionid">sessionId</a></code> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">default URL</var>.</p></li>
+          <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <code>null</code>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
         </ol>
       </li>
@@ -1483,8 +1481,21 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <div class="issue">
 <div class="issue-title"><span>Issue 5</span></div>Note: This section is not final and review is welcome.</div>
 
-    <p>Key system implementations must consider initialization data, key data and media data as potential attack vectors and must take care to safely parse, decrypt etc. initialization data, key data and media data. User Agents may want to validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering). </p>
-    <p>User Agents should treat media data, key data, URLs, and any other data from the application as untrusted content and use appropriate safeguards to mitigate any associated threats.</p>
+    <p>User Agent and Key System implementations must consider <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, <a href="#initialization-data">Initialization Data</a>, responses (i.e. data passed to <code><a href="#dom-update">update()</a></code>), licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
+    They must use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
+    User Agents may want to validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering).
+    </p>
+    <p>Implementations should not return active content or passive content that affects program control flow to the application.
+    For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the Initialization Data passed to <code><a href="#dom-createsession">createSession()</a></code>.
+    An exception is made for information extracted from a license or other messages from the license server, which is assumed to be trusted by the application.
+    (This requires that the application be responsible for determining the location of the license or the URL of the license server.)
+    For example, a license may include a destination URL to receive renewal requests.
+    </p>
+    <p>Applications should validate any URLs or other "instructions" provided by the user agent (or CDM).
+    Specifically, applications should validate that any <code><a href="#dom-destinationurl">destinationURL</a></code> value represents a trusted and expected origin and path.
+    A restrictive whitelist, possibly using strict patterns, is recommended.
+    Applications should reject URLs that do not have a secure origin (e.g. HTTPS).
+    </p>
     <p>User Agents are responsible for providing users with a secure way to browse the web. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to properly asses the security implications of integrating with the Key System.</p>
     <p>Note: Unsandboxed CDMs (or CDMs that use platform features) and UAs that use them must be especially careful in all areas of security, including parsing of key and media data, etc. due to the potential for compromises to provide access to OS/platform features, interact with or run as root, access drivers, kernel, firmware, hardware, etc., all of which may not be written to be robust against hostile software or web-based attacks. Additionally, CDMs may not be updated with security fixes as frequently, especially when part of the OS, platform or hardware.</p>
     
