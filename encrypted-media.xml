@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 14 July 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 18 July 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -435,6 +435,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <ol>
       <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
       <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not supported or not allowed on the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the <code><dom4ref name="document">Document</dom4ref></code>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
@@ -558,7 +559,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
 
-    <p>The <methoddfn name="setServerCertificate">setServerCertificate(<var title="true">serverCertificate</var>)</methoddfn> method provides a server certificate to be used to encrypt messages to the license server. It must run the following steps:</p>
+    <p id="server-certificate">The <methoddfn name="setServerCertificate">setServerCertificate(<var title="true">serverCertificate</var>)</methoddfn> method provides a server certificate to be used to encrypt messages to the license server. It must run the following steps:</p>
     <p class="non-normative">The contents of <var title="true">serverCertificate</var> are <a href="#key-system">Key System</a>-specific.</p>
     <p class="non-normative">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p>
 
@@ -836,6 +837,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <td>
             The existing MediaKeys object cannot be removed.<br/>
             The key system is not supported.<br/>
+            The key system is not supported on insecure origins.<br/>
             The initialization data type is not supported by the key system.<br/>
             The session type is not supported by the key system.<br/>
             The initialization data is not supported by the key system.<br/>
@@ -1418,8 +1420,16 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </p>
     <p>User Agents are responsible for providing users with a secure way to browse the web. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to properly asses the security implications of integrating with the Key System.</p>
     <p>Note: Unsandboxed CDMs (or CDMs that use platform features) and UAs that use them must be especially careful in all areas of security, including parsing of key and media data, etc. due to the potential for compromises to provide access to OS/platform features, interact with or run as root, access drivers, kernel, firmware, hardware, etc., all of which may not be written to be robust against hostile software or web-based attacks. Additionally, CDMs may not be updated with security fixes as frequently, especially when part of the OS, platform or hardware.</p>
-    
+
+    <p>User agents may choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+    This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
+    Such user agents should also properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid potential exposure to insecure content.
+    See also <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
+    </p>
+
     </div>
+
+
     <h2 id="privacy">7. Privacy Considerations</h2>
     <div class="nonnormative">
 
@@ -1432,7 +1442,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories, concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and user-specific information that may be used directly for user tracking.</p>
 
     <h4 id="privacy-fingerprinting">7.1.1 Fingerprinting</h4>
-    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of key systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between sites that are not CORS-same-origin.</p>
+    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between sites that are not CORS-same-origin.</p>
 
     <h4 id="privacy-tracking">7.1.2 Information Leakage</h4>
     <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
@@ -1473,8 +1483,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <dt>Use of (non-reversible) per-origin identifiers</dt>
       <dd>The user / device identifier exposed by a Key System may be different for each origin, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</dd>
 
-      <dt>Encryption of user identifiers</dt>
-      <dd>User identifiers in Key System messages could be encrypted, together with a timestamp or nonce, such that the Key System messages are always different. This would prevent the use of Key System messages for tracking except by applications fully supporting the Key System.</dd>
+      <dt id="identifier-encryption">Encryption of user identifiers</dt>
+      <dd>User identifiers in Key System messages could be encrypted, together with a timestamp or nonce, such that the Key System messages are always different. This would prevent the use of Key System messages for tracking except by applications fully supporting the Key System.
+      This may be implemented using a <a href="#server-certificate">server certificate</a>.
+      </dd>
 
       <dt>Site-specific white-listing of access to each Key System</dt>
       <dd>User agents could require the user to explicitly authorize access by each site to each Key System. User agents should enable users to revoke this authorization either temporarily or permanently.</dd>
@@ -1514,6 +1526,13 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <dt>Encryption or obfuscation of Key System stored data</dt>
       <dd>User agents should treat data stored by Key Systems as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information. To this end, user agents should ensure that such data is securely stored and when deleting data, it is promptly deleted from the underlying storage.</dd>
     </dl>
+
+    <h3 id="privacy-secureorigin">7.3. Use Secure Origin and Transport</h3>
+    <p>In order to protect identifiers and other information discussed in previous sections, user agents may choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+    This is especially important if a user agent chooses to support a Key System implementation that exposes identifiers or other such information without effectively anonymizing it in transit (i.e. without <a href="#identifier-encryption">encrypting identifiers</a>).
+    </p>
+    <p>Regardless of user agent limitations, applications should use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <coderef prefix="event">message</coderef> events and to <methodref>update</methodref>).</p>
+    <p>All user agents should properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
 
     </div>
 
