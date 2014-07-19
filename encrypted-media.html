@@ -1506,6 +1506,10 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     Such user agents should also properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid potential exposure to insecure content.
     See also <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
     </p>
+    
+    <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent should ensure that users are fully informed and/or give explicit consent before loading or invoking it.
+    See also <a href="#privacy-prompts">User Alerts / Prompts</a>.
+    </p>
 
     </div>
 
@@ -1578,11 +1582,15 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <dt>Shared blacklists</dt>
       <dd>User agents may allow users to share their Key System domain blacklists. This would allow communities to act together to protect their privacy.</dd>
 
-      <dt>User alerts / prompts</dt>
-      <dd>User Agents could ensure that users are fully informed and / or give explicit consent before identifiers are exposed in messages from Key Systems.</dd>
+      <dt id="privacy-prompts">User Alerts / Prompts</dt>
+      <dd>User Agents should ensure that users are fully informed and/or give explicit consent before identifiers are exposed in messages from Key Systems.
+        Such alerts and consent should be per origin to avoid valid uses enabling subsequent malicious access.
+        User agents that consider such alerts or consent appropriate should only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
+        (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.)
+      </dd>
 
       <dt>User controls to disable Key Systems or Key System use of identifiers</dt>
-      <dd>User Agents could provide users with a global control of whether a Key System is enabled / disabled and / or whether Key System use of user / device identifiers is enabled or disabled (if supported by the Key System).</dd>
+      <dd>User Agents could provide users with a global control of whether a Key System is enabled / disabled and/or whether Key System use of user / device identifiers is enabled or disabled (if supported by the Key System).</dd>
     </dl>
 
     <p>While these suggestions prevent trivial use of this feature for user tracking, they do not block it altogether. Within a single domain, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not per-origin, then a profile can still be created.</p>
