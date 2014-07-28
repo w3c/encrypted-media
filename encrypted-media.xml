@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 18 July 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 28 July 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -1256,7 +1256,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", run the following steps:</p>
         <ol>
           <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "<coderef prefix="waitingfor">key</coderef>".</p></li>
-          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-timeupdate">timeupdate</videoref> at the <var title="true">media element</var>.</p></li>
           <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-waiting">waiting</videoref> at the <var title="true">media element</var>.</p></li>
         </ol>
       </li>
@@ -1274,9 +1273,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
       <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", abort these steps.</p></li>
       <li><p>Attempt to resume the <resource-fetch-algorithm/> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
-      <li><p>If the user agent can advance the <videoref name="current-playback-position">current playback position</videoref> in the <videoref name="direction-of-playback">direction of playback</videoref>, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-canplay">canplay</videoref> at the <var title="true">media element</var>.</p>
-        <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
-      </li>
+      <li><p>If the user agent can advance the <videoref name="current-playback-position">current playback position</videoref> in the <videoref name="direction-of-playback">direction of playback</videoref>, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-canplay">canplay</videoref> at the <var title="true">media element</var>.</p></li>
+      <li><p>If the <coderef>paused</coderef> attribute on the <var title="true">media element</var> is false, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-playing">playing</videoref> at the <var title="true">media element</var>.</p></li>
+
+	  <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
     </ol>
 
 
