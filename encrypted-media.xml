@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 28 July 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 11 August 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -398,7 +398,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
               <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
               <li><p>Stop using the CDM instance represented by the <coderef prefix="attr">mediaKeys</coderef> attribute to decrypt <videoanchor name="media-data">media data</videoanchor> and remove the association with the media element.</p></li>
-              <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+              <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
             </ol>
           </li>
           <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
@@ -407,7 +407,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>If the preceding step failed, run the following steps:</p>
                 <ol>
                   <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
-                  <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+                  <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
                 </ol>
               </li>
               <li><p>Run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
@@ -442,7 +442,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
           <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
-          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
 
           <li>
             <p>Let <var title="true">media keys</var> be a new <coderef>MediaKeys</coderef> object, and initialize it as follows:</p>
@@ -499,7 +499,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Let the session type be <var title="true">sessionType</var>.</p></li>
             </ol>
           </li>
-          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
           <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <code>null</code>.</p></li>
           <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
@@ -547,7 +547,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>Let the session type be "<coderef prefix="sessiontype">persistent</coderef>".</p></li>
             </ol>
           </li>
-          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
           <li><p>If the loaded session contains usable keys, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
             <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
@@ -573,7 +573,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
         <ol>
           <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> loaded in <methodref>create</methodref>.</p></li>
           <li><p>Use the <var title="true">cdm</var> to process <var>certificate</var>.</p></li>
-          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
       </li>
@@ -620,7 +620,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
       </li>
 
       <li><p>If <var title="true">initDataType</var> is an empty string or contains an unrecognized or unsupported <a href="#initialization-data-type">initialization data type</a>, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
-      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the the <var title="true">keySystem</var> implementation, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>      
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <var title="true">keySystem</var> implementation, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>      
       <li><p>If the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is not available and usable, return the <a href="#dom-istypesupportedempty">empty string</a> and abort these steps.</p></li>
       <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
         <dl class="switch">
@@ -668,7 +668,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
-    <p>The <codedfn>expiration</codedfn> attribute is the time, in milliseconds since since 01 January, 1970 UTC, after which the the key(s) in the session will no longer be usable to decrypt <videoanchor name="media-data">media data</videoanchor>, or <code>NaN</code> if no such time exists, as determined by the CDM.
+    <p>The <codedfn>expiration</codedfn> attribute is the time, in milliseconds since since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <videoanchor name="media-data">media data</videoanchor>, or <code>NaN</code> if no such time exists, as determined by the CDM.
     </p>
 
     <p>The <codedfn>closed</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
@@ -697,7 +697,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
                   <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>" and the license permits storage</dt>
                   <dd>Store the license, key(s), or similar session data contained in <var>message</var>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Fail with an appropriate <a href="#mediakeyerror-names">error name</a> and message.</dd>
+                  <dd>Fail with an appropriate <a href="#error-names">error name</a> and message.</dd>
                 </dl>
                 <p class="non-normative">Note: When <var>message</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
                 <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
@@ -718,7 +718,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               </li>
             </ol>
           </li>
-          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
           <li><p>If <var title="true">request</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <var title="true">destination URL</var>.</p></li>
           <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
         </ol>
@@ -774,7 +774,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           </li>
           <li><p>Run the following steps asynchronously once the above step has completed:</p>
             <ol>
-              <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p></li>
+              <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p></li>
               <li><p>Run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
               <li><p>Resolve <var>promise</var> with <code>undefined</code>.</p></li>
             </ol>
@@ -797,7 +797,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             </ol>
           </li>
           <li>
-            <p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#mediakeyerror-names">error name</a> and that has an appropriate message.</p>
+            <p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a> and that has an appropriate message.</p>
           </li>
           <li>
             <p>Resolve <var>promise</var> with a new Sequence object, each element of which contains one element of <var title="true">usable key ids</var>.</p>
@@ -821,7 +821,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     </ol>
 
     <h3 id="exceptions">2.1. Exceptions</h3>
-    <p>The methods report errors by rejecting the the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
+    <a name="error-names"></a>
+    <p>The methods report errors by rejecting the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
     The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> are used in the algorithms.
     Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
     </p>
@@ -856,7 +857,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <td>
             The parameter is empty.<br/>
             Invalid initialization data.<br/>
-            The operation is not supported on sessions of this type.
+            The operation is not supported on sessions of this type.<br/>
             Invalid response format.
           </td>
         </tr>
@@ -1120,7 +1121,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
                     <dd>Run the following steps:
                       <ol>
                         <li><p>Let <var title="true">session</var> be the <coderef>MediaKeySession</coderef> object associated with that session.</p></li>
-                        <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#mediakeyerror-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+                        <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#error-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
                         <li><p>Abort these steps.</p></li>
                       </ol>
                     </dd>
@@ -1466,7 +1467,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>To avoid such issues, user agent and CDM implementations should ensure that:</p>
     <ul>
       <li>CDMs have a concept of a CDM instance that is associated 1:1 with a MediaKeys object.</li>
-      <li>Keys, licenses, other session data, and the presence of sessions are restricted to the the CDM instance associated with the MediaKeys object that created the session.</li>
+      <li>Keys, licenses, other session data, and the presence of sessions are restricted to the CDM instance associated with the MediaKeys object that created the session.</li>
       <li>Session data is not shared between MediaKeys objects or CDM instances.</li>
       <li>Session data is not shared with media elements not associated with the MediaKeys object that created the session. Among other things, this means a session's keys may not be used to decrypt content loaded by a media element whose <coderef prefix="attr">mediaKeys</coderef> attribute is not the MediaKeys object.</li>
       <li>MediaKeys objects and the underlying implementation do not expose information outside the origin.</li>
