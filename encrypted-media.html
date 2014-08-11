@@ -502,8 +502,9 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
               <li>
 <p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreteted per <var title="true">initDataType</var>, and <var title="true">sessionType</var>.</p>
                 <p>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>", the request is for a temporary non-persisted license.
-                If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the request is for a persistable license.</p>
-                <p class="non-normative">Note: The license server may reject the requested type. It should not issue a different type.</p>
+                If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the request is for a persistable session, possibly with a persistable license.</p>
+                <p>If <var title="true">sessionType</var> is <em>not</em> "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the CDM must <em>not</em> store a record of or data related to the session at any point.</p>
+                <p class="non-normative">Note: The license server may reject the requested type, but it should not issue a different type.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
               </li>
             </ol>
@@ -733,15 +734,14 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             <ol>
               <li><p>If the format of <var>message</var> is invalid in any way, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
               <li>
-<p>Process <var>message</var></p>
-                <p>If <var>message</var> contains a license, key(s), or similar session data, follow the stipulation for the first matching condition from the following list:</p>
+<p>Process <var>message</var>, following the stipulation for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>" and the license does not specify it should be stored</dt>
-                  <dd>Do not store the license, key(s), or similar session data contained in <var>message</var>.</dd>
-                  <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" and the license permits storage</dt>
-                  <dd>Store the license, key(s), or similar session data contained in <var>message</var>.</dd>
+                  <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>" and <var>message</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
+                  <dd>Continue processing <var>message</var>, not storing any session data.</dd>
+                  <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>"</dt>
+                  <dd>Continue processing <var>message</var>, storing the license, key(s), or similar session data contained in <var>message</var> as permitted or instructed by the license.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Fail with an appropriate <a href="#error-names">error name</a> and message.</dd>
+                  <dd>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</dd>
                 </dl>
                 <p class="non-normative">Note: When <var>message</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
                 <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
@@ -911,7 +911,8 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
             The parameter is empty.<br>
             Invalid initialization data.<br>
             The operation is not supported on sessions of this type.<br>
-            Invalid response format.
+            Invalid response format.<br>
+            A persistent license was provided for a "temporary" session.
           </td>
         </tr>
         <tr>

@@ -483,8 +483,9 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
               <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
               <li><p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreteted per <var title="true">initDataType</var>, and <var title="true">sessionType</var>.</p>
                 <p>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>", the request is for a temporary non-persisted license.
-                If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>", the request is for a persistable license.</p>
-                <p class="non-normative">Note: The license server may reject the requested type. It should not issue a different type.</p>
+                If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>", the request is for a persistable session, possibly with a persistable license.</p>
+                <p>If <var title="true">sessionType</var> is <em>not</em> "<coderef prefix="sessiontype">persistent</coderef>", the CDM must <em>not</em> store a record of or data related to the session at any point.</p>
+                <p class="non-normative">Note: The license server may reject the requested type, but it should not issue a different type.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var>init data</var>.</p>
               </li>
             </ol>
@@ -689,15 +690,14 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
               <li><p>If the format of <var>message</var> is invalid in any way, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
-              <li><p>Process <var>message</var></p>
-                <p>If <var>message</var> contains a license, key(s), or similar session data, follow the stipulation for the first matching condition from the following list:</p>
+              <li><p>Process <var>message</var>, following the stipulation for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>" and the license does not specify it should be stored</dt>
-                  <dd>Do not store the license, key(s), or similar session data contained in <var>message</var>.</dd>
-                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>" and the license permits storage</dt>
-                  <dd>Store the license, key(s), or similar session data contained in <var>message</var>.</dd>
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>" and <var>message</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
+                  <dd>Continue processing <var>message</var>, not storing any session data.</dd>
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>"</dt>
+                  <dd>Continue processing <var>message</var>, storing the license, key(s), or similar session data contained in <var>message</var> as permitted or instructed by the license.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Fail with an appropriate <a href="#error-names">error name</a> and message.</dd>
+                  <dd>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</dd>
                 </dl>
                 <p class="non-normative">Note: When <var>message</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
                 <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
@@ -858,7 +858,8 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
             The parameter is empty.<br/>
             Invalid initialization data.<br/>
             The operation is not supported on sessions of this type.<br/>
-            Invalid response format.
+            Invalid response format.<br/>
+            A persistent license was provided for a "temporary" session.
           </td>
         </tr>
         <tr>
