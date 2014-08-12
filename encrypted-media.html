@@ -306,7 +306,7 @@
 
     <p>
     Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">CDMs</a> to generate a license request.
-    Initialization data found with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-needkey">needkey</a></code> event.
+    Initialization data found with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#dom-initdata">initData</a></code> attribute of the <code><a href="#dom-encrypted">encrypted</a></code> event.
     </p>
 
     <p>
@@ -323,7 +323,7 @@
 
 
     <h4 id="cross-origin-support">1.1.9. Cross Origin Support</h4>
-    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <code><a href="#dom-needkey">needkey</a></code>
+    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <code><a href="#dom-encrypted">encrypted</a></code>
     and <code><a href="#dom-eventmessage">message</a></code> events, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page.
     If <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is cross-origin with the embedding document, authors should use the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-crossorigin">crossorigin</a> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> response to make it <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>.
@@ -339,7 +339,7 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
   readonly attribute <a href="#dom-mediakeys">MediaKeys</a>? <a href="#dom-attrmediakeys">mediaKeys</a>;
   Promise&lt;void&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
   
-  attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onneedkey">onneedkey</a>;
+  attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onencrypted">onencrypted</a>;
 
   readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
 };
@@ -441,7 +441,7 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
     <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects created by <code><a href="#dom-createsession">createSession()</a></code> may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
-    <p>The <dfn id="dom-onneedkey"><code>onneedkey</code></dfn> event handler for the <code><a href="#dom-needkey">needkey</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+    <p>The <dfn id="dom-onencrypted"><code>onencrypted</code></dfn> event handler for the <code><a href="#dom-encrypted">encrypted</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
     <p>The <dfn id="dom-waitingfor"><code>waitingFor</code></dfn> attribute indicates what the media element is waiting for, if anything (indicated by the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> and <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
@@ -940,13 +940,13 @@ partial interface <dfn id="dom-htmlsourceelement">HTMLSourceElement</dfn> {
 
     <h3 id="event-definitions">3.1. Event Definitions</h3>
     <pre class="idl">
-[Constructor(DOMString type, optional <a href="#dom-mediakeyneededeventinit">MediaKeyNeededEventInit</a> eventInitDict)]
-interface <dfn id="dom-mediakeyneededevent">MediaKeyNeededEvent</dfn> : <a href="http://www.w3.org/TR/dom/#event">Event</a> {
+[Constructor(DOMString type, optional <a href="#dom-mediaencrytedeventinit">MediaEncrytedEventInit</a> eventInitDict)]
+interface <dfn id="dom-mediaencrytedevent">MediaEncrytedEvent</dfn> : <a href="http://www.w3.org/TR/dom/#event">Event</a> {
   readonly attribute DOMString <a href="#dom-initdatatype">initDataType</a>;
   readonly attribute ArrayBuffer? <a href="#dom-initdata">initData</a>;
 };
 
-dictionary <dfn id="dom-mediakeyneededeventinit">MediaKeyNeededEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
+dictionary <dfn id="dom-mediaencrytedeventinit">MediaEncrytedEventInit</dfn> : <a href="http://www.w3.org/TR/dom/#eventinit">EventInit</a> {
   DOMString <a href="#dom-initdatatype">initDataType</a> = "";
   ArrayBuffer? <a href="#dom-initdata">initData</a> = null;
 };
@@ -1018,12 +1018,9 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       </thead>
       <tbody>
         <tr>
-          <td><dfn id="dom-needkey"><code>needkey</code></dfn></td>
-          <td><code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code></td>
-          <td>
-            The user agent needs a key or license to begin or continue playback.
-            <br><span class="non-normative"><br>It may have encountered <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
-          </td>
+          <td><dfn id="dom-encrypted"><code>encrypted</code></dfn></td>
+          <td><code><a href="#dom-mediaencrytedevent">MediaEncrytedEvent</a></code></td>
+          <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</td>
           <td>
 <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code title="dom-media-HAVE_METADATA"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
           <span class="non-normative">It is possible that the element is playing or has played.</span>
@@ -1039,7 +1036,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
           <th>Event name</th>
           <th>Interface</th>
           <th>Dispatched when...</th>
-          <th>Preconditions</th>
         </tr>
       </thead>
       <tbody>
@@ -1052,13 +1048,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 <p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <code><a href="#dom-eventerror">error</a></code> event, <code><a href="#dom-error">error</a></code> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p>
 </div>
           </td>
-          <td></td>
         </tr>
         <tr>
           <td><dfn id="dom-eventkeyschange"><code>keyschange</code></dfn></td>
           <td><code><a href="http://www.w3.org/TR/dom/#event">Event</a></code></td>
           <td>There has been a change in usable keys.</td>
-          <td></td>
         </tr>
         <tr>
           <td><dfn id="dom-eventmessage"><code>message</code></dfn></td>
@@ -1067,7 +1061,6 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
             <span class="non-normative">For example, a license request has been generated as the result of a <code><a href="#dom-createsession">createSession()</a></code> call or another message must be sent in response to an <code><a href="#dom-update">update()</a></code> call.</span>
           </td>
-          <td></td>
         </tr>
       </tbody>
     </table>
@@ -1089,13 +1082,12 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </ol>
       </li>
       <li>
-        <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-needkey">needkey</a></code> at the <a href="#media-element">media element</a>.</p>
-        <p>The event is of type <code><a href="#dom-mediakeyneededevent">MediaKeyNeededEvent</a></code> and has:</p>
+        <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-encrypted">encrypted</a></code> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <code><a href="#dom-mediaencrytedevent">MediaEncrytedEvent</a></code> and has:</p>
         <ul style="list-style-type:none"><li>
           <code><a href="#dom-initdatatype">initDataType</a></code> = <var title="">initDataType</var><br>
           <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
         </li></ul>
-        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
         <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
         <p class="non-normative">Note that if the media is not <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
       </li>
@@ -1651,7 +1643,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 &lt;/body&gt;
 </pre>
 
-    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
+    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <code><a href="#dom-istypesupported">isTypeSupported()</a></code> method then uses
     the <a href="#initialization-data">Initialization Data</a> from the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> to generate the license request and send it to the appropriate license server.
     One of the supported key systems uses a serverCertificate, which is provided proactively.
@@ -1676,7 +1668,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     }
   }
 
-  function handleKeyNeeded(event) {
+  function handleInitData(event) {
     var video = event.target;
     if (video.mediaKeysObject === undefined) {
       selectKeySystem();
@@ -1740,11 +1732,11 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   }
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video src="foo.webm" autoplay on<a href="#dom-encrypted">encrypted</a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
-    <p class="exampledescription">Initialization is much simpler if needkey events do not need to be handled during MediaKeys initialization.
+    <p class="exampledescription">Initialization is much simpler if encrypted events do not need to be handled during MediaKeys initialization.
     This can be accomplished either by providing the <a href="#initialization-data">Initialization Data</a> in other ways or setting the source after the MediaKeys object has been created.
     This example does the latter.
     </p>
@@ -1761,7 +1753,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   function createSession(mediaKeys, initDataType, initData) { ... }
   function licenseRequestReady(event) { ... }
 
-  function handleKeyNeeded(event) {
+  function handleInitData(event) {
     createSession(mediaKeys, event.<a href="#dom-initdatatype">initDataType</a>, event.<a href="#dom-initdata">initData</a>);
   }
 
@@ -1780,7 +1772,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay on<a href="#dom-encrypted">encrypted</a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
@@ -1796,7 +1788,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
   // See previous examples for implementations of these functions.
   function selectKeySystem() { ... }
-  function handleKeyNeeded(event) { ... }
+  function handleInitData(event) { ... }
 
   // This replaces the implementation in the previous example.
   function createSession(mediaKeys, initDataType, initData) {
@@ -1867,7 +1859,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<a href="#dom-needkey">needkey</a>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay on<a href="#dom-encrypted">encrypted</a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>

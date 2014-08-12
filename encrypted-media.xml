@@ -303,7 +303,7 @@
 
     <p>
     Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">CDMs</a> to generate a license request.
-    Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>needkey</coderef> event.
+    Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>encrypted</coderef> event.
     </p>
 
     <p>
@@ -320,7 +320,7 @@
 
 
     <h4 id="cross-origin-support">1.1.9. Cross Origin Support</h4>
-    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>needkey</coderef>
+    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>encrypted</coderef>
     and <coderef prefix="event">message</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
@@ -336,7 +336,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   readonly attribute <precoderef>MediaKeys</precoderef>? <precoderef prefix="attr">mediaKeys</precoderef>;
   Promise&lt;void&gt; <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef>? mediaKeys);
   
-  attribute <EventHandler/> <precoderef>onneedkey</precoderef>;
+  attribute <EventHandler/> <precoderef>onencrypted</precoderef>;
 
   readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
 };
@@ -426,7 +426,7 @@ partial interface <precodedfn>HTMLSourceElement</precodedfn> {
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
     <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects created by <methodref>createSession</methodref> may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
 
-    <p>The <codedfn>onneedkey</codedfn> event handler for the <coderef>needkey</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+    <p>The <codedfn>onencrypted</codedfn> event handler for the <coderef>encrypted</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
     <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
@@ -927,13 +927,13 @@ interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="domexception">
 
     <h3 id="event-definitions">3.1. Event Definitions</h3>
     <pre class="idl">
-[Constructor(DOMString type, optional <precoderef>MediaKeyNeededEventInit</precoderef> eventInitDict)]
-interface <precodedfn>MediaKeyNeededEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+[Constructor(DOMString type, optional <precoderef>MediaEncrytedEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaEncrytedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
   readonly attribute DOMString <precoderef>initDataType</precoderef>;
   readonly attribute ArrayBuffer? <precoderef>initData</precoderef>;
 };
 
-dictionary <precodedfn>MediaKeyNeededEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+dictionary <precodedfn>MediaEncrytedEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
   DOMString <precoderef>initDataType</precoderef> = "";
   ArrayBuffer? <precoderef>initData</precoderef> = null;
 };
@@ -997,12 +997,9 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </thead>
       <tbody>
         <tr>
-          <td><codedfn>needkey</codedfn></td>
-          <td><coderef>MediaKeyNeededEvent</coderef></td>
-          <td>
-            The user agent needs a key or license to begin or continue playback.
-            <br></br><span class="non-normative"><br></br>It may have encountered <videoanchor name="media-data">media data</videoanchor> that may/does require decryption to load or play OR need a new key/license to continue playback.</span>
-          </td>
+          <td><codedfn>encrypted</codedfn></td>
+          <td><coderef>MediaEncrytedEvent</coderef></td>
+          <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor>.</td>
           <td><readystate/> is equal to <have-metadata/> or greater.
           <span class="non-normative">It is possible that the element is playing or has played.</span>
           </td>
@@ -1017,7 +1014,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           <th>Event name</th>
           <th>Interface</th>
           <th>Dispatched when...</th>
-          <th>Preconditions</th>
         </tr>
       </thead>
       <tbody>
@@ -1027,13 +1023,11 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           <td>An error occurs in the session.
             <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <coderef prefix="event">error</coderef> event, <coderef>error</coderef> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p></div>
           </td>
-          <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
           <td><codedfn prefix="event">keyschange</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
           <td>There has been a change in usable keys.</td>
-          <td><!-- No Preconditions. --></td>
         </tr>
         <tr>
           <td><codedfn prefix="event">message</codedfn></td>
@@ -1042,7 +1036,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
             A message has been generated <span class="non-normative">(and likely needs to be sent to a server)</span>.
             <span class="non-normative">For example, a license request has been generated as the result of a <methodref>createSession</methodref> call or another message must be sent in response to an <methodref>update</methodref> call.</span>
           </td>
-          <td><!-- No Preconditions. --></td>
         </tr>
       </tbody>
     </table>
@@ -1064,13 +1057,12 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
         </ol>
       </li>
       <li>
-        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>needkey</coderef> at the <a href="#media-element">media element</a>.</p>
-        <p>The event is of type <coderef>MediaKeyNeededEvent</coderef> and has:</p>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>encrypted</coderef> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <coderef>MediaEncrytedEvent</coderef> and has:</p>
         <ul style="list-style-type:none"><li>
           <coderef>initDataType</coderef> = <var title="">initDataType</var><br></br>
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
-        <p class="non-normative">Firing this event allows the application to begin acquiring the key process before it is needed.</p>
         <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
         <p class="non-normative">Note that if the media is not <cors-same-origin/> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
       </li>
@@ -1624,7 +1616,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 &lt;/body&gt;
 </pre>
 
-    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "needkey" Event</h3>
+    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
     <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> method then uses
     the <a href="#initialization-data">Initialization Data</a> from the <videoanchor name="media-data">media data</videoanchor> to generate the license request and send it to the appropriate license server.
     One of the supported key systems uses a serverCertificate, which is provided proactively.
@@ -1649,7 +1641,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     }
   }
 
-  function handleKeyNeeded(event) {
+  function handleInitData(event) {
     var video = event.target;
     if (video.mediaKeysObject === undefined) {
       selectKeySystem();
@@ -1713,11 +1705,11 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   }
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video src="foo.webm" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
-    <p class="exampledescription">Initialization is much simpler if needkey events do not need to be handled during MediaKeys initialization.
+    <p class="exampledescription">Initialization is much simpler if encrypted events do not need to be handled during MediaKeys initialization.
     This can be accomplished either by providing the <a href="#initialization-data">Initialization Data</a> in other ways or setting the source after the MediaKeys object has been created.
     This example does the latter.
     </p>
@@ -1734,7 +1726,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   function createSession(mediaKeys, initDataType, initData) { ... }
   function licenseRequestReady(event) { ... }
 
-  function handleKeyNeeded(event) {
+  function handleInitData(event) {
     createSession(mediaKeys, event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
   }
 
@@ -1753,7 +1745,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
@@ -1769,7 +1761,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   // See previous examples for implementations of these functions.
   function selectKeySystem() { ... }
-  function handleKeyNeeded(event) { ... }
+  function handleInitData(event) { ... }
 
   // This replaces the implementation in the previous example.
   function createSession(mediaKeys, initDataType, initData) {
@@ -1842,7 +1834,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<precoderef>needkey</precoderef>="handleKeyNeeded(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
 
     <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
