@@ -185,8 +185,7 @@
       <li><a href="#extensions">2. Media Element Extensions</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#exceptions">2.1. Exceptions</a></li>
-          <li><a href="#mediakeyerror">2.2. MediaKeyError</a></li>
-          <li><a href="#media-element-restictions">2.3. Media Element Restrictions</a></li>
+          <li><a href="#media-element-restictions">2.2. Media Element Restrictions</a></li>
         </ul></li>
       <li><a href="#events">3. Events</a></li>
         <li><ul style="list-style-type:none">
@@ -355,10 +354,6 @@ interface <precodedfn>MediaKeys</precodedfn> {
 };
 
 interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
-<div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <coderef prefix="event">error</coderef> event, <coderef>error</coderef> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p></div>
-  // error state
-  readonly attribute <precoderef>MediaKeyError</precoderef>? <precoderef>error</precoderef>;
-
   // session properties
   readonly attribute DOMString <precoderef>sessionId</precoderef>;
   readonly attribute unrestricted double <precoderef>expiration</precoderef>;
@@ -488,7 +483,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
           <li><p>Let the <var title="true">session ID</var> be a unique <a href="#session-id">Session ID</a> string. <span class="non-normative">It may be obtained from <var title="true">cdm</var>.</span></p></li>
           <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
             <ol>
-              <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session ID</var>.</p></li>
               <li><p>Let <coderef>expiration</coderef> be <code>NaN</code>.</p></li>
               <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
@@ -536,7 +530,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
           </li>
           <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
             <ol>
-              <li><p>Set the <coderef>error</coderef> attribute to null.</p></li>
               <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
               <li><p>Let <coderef>expiration</coderef> be <code>NaN</code>.</p></li>
               <li><p>Let <coderef>closed</coderef> be a new promise.</p></li>
@@ -660,8 +653,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     
 
 <!-- Begin MediaKeySession -->
-    <p>The <codedfn>error</codedfn> attribute is a <coderef>MediaKeyError</coderef> representing the current error state of the session. It is null if there is no error.</p>
-
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
     <p>The <codedfn>expiration</codedfn> attribute is the time, in milliseconds since since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <videoanchor name="media-data">media data</videoanchor>, or <code>NaN</code> if no such time exists, as determined by the CDM.
@@ -850,54 +841,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
       </tbody>
     </table>
 
-    <h3 id="mediakeyerror">2.2. MediaKeyError</h3>
-    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <coderef prefix="event">error</coderef> event, <coderef>error</coderef> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p></div>
-<!-- TODO: Remove or fix when the bug is addressed.
-    <h4 id="mediakeyerror">2.2.1. Interface</h4>
-    <pre class="idl">
-[<a href="#dom-mediakeyerror-constructor">Constructor</a>(DOMString <a href="#mediakeyerror-names">name</a>, unsigned long <precoderef>systemCode</precoderef>, optional DOMString message = "")]
-interface <precodedfn>MediaKeyError</precodedfn> : <dom4ref name="domexception">DOMException</dom4ref> {
-  readonly attribute unsigned long <precoderef>systemCode</precoderef>;
-};
-</pre>
-
-    <div class="impl">
-    <p>The <dfn id="dom-mediakeyerror-constructor"><code>MediaKeyError</code></dfn> constructor must return a new <coderef>MediaKeyError</coderef> object whose <coderef>systemCode</coderef> property is initialized to <var title="true">systemCode</var> and inherited properties are initialized by passing <var title="true">name</var> and <var title="true">message</var> to the <code><dom4ref name="domexception">DOMException</dom4ref></code> algorithm.</p>
-
-    <p>The <codedfn>systemCode</codedfn> attribute of a <coderef>MediaKeySession</coderef> object is a <a href="#key-system">Key System</a>-specific value for the error that occurred.
-    <span class="non-normative">This allows a more granular status to be returned than the more general <a href="#mediakeyerror-names">name</a>.</span>
-    It should be 0 if there is no associated status code or such status codes are not supported by the Key System.
-    </p>
-    </div>
-
-    <h4 id="mediakeyerror-names">2.2.2. Error Names</h4>
-
-    <p>The tables below list all the allowed error names for the <code>name</code> property along with a description.</p>
-
-    <div class="issue"><div class="issue-title"><span>Issue X</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The additional error names are yet to be defined.</p></div>
-
-    <p>The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> may be used as shown in the following table:</p>
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <th>Use</th>
-        </tr>
-      </tbody>
-    </table>
-
-    <p>The following new DOMException names are defined by this specification:</p>
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <th>Use</th>
-        </tr>
-      </tbody>
-    </table>
--->
-
-    <h3 id="media-element-restictions">2.3 Media Element Restrictions</h3>
+    <h3 id="media-element-restictions">2.2 Media Element Restrictions</h3>
     <non-normative-section/>
     <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
     This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
@@ -999,13 +943,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </thead>
       <tbody>
         <tr>
-          <td><codedfn prefix="event">error</codedfn></td>
-          <td><code><dom4ref name="event">Event</dom4ref></code></td>
-          <td>An error occurs in the session.
-            <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <coderef prefix="event">error</coderef> event, <coderef>error</coderef> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p></div>
-          </td>
-        </tr>
-        <tr>
           <td><codedfn prefix="event">keyschange</codedfn></td>
           <td><code><dom4ref name="event">Event</dom4ref></code></td>
           <td>There has been a change in usable keys.</td>
@@ -1095,7 +1032,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
                     <dd>Run the following steps:
                       <ol>
                         <li><p>Let <var title="true">session</var> be the <coderef>MediaKeySession</coderef> object associated with that session.</p></li>
-                        <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#error-names">error name</a> and system code value, if provided, and 0 otherwise.</p></li>
+                        <li><p>Run the <a href="#algorithms-queue-error">Queue an "error" Event</a> algorithm on the <var title="true">session</var>, providing the appropriate <a href="#error-names">error name</a>.</p></li>
                         <li><p>Abort these steps.</p></li>
                       </ol>
                     </dd>
@@ -1162,24 +1099,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </ol>
 
     <h3 id="algorithms-queue-error">4.4. Queue an "error" Event</h3>
-    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - The future of the <coderef prefix="event">error</coderef> event, <coderef>error</coderef> attribute, and <a href="#mediakeyerror">MediaKeyError</a> is uncertain.</p></div>
-<!-- TODO: Remove or fix when bug 26372 is addressed.
-    <p>The Queue an "error" Event algorithm is run when the CDM needs to queue an error event to a <coderef>MediaKeySession</coderef> object.
-    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, an <var title="true">error name</var>, and a <var title="true">system code</var>.
-    </p>
-    <p>The following steps are run:</p>
-    <ol>
-      <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Create a new <coderef>MediaKeyError</coderef> object with the following attributes:</p>
-        <ul style="list-style-type:none"><li>
-          <code><dom4ref name="error-name">name</dom4ref></code> = <var title="true">error name</var><br></br>
-          <coderef>systemCode</coderef> = <var title="true">system code</var>
-        </li></ul>
-      </li>
-      <li><p>Set the <var title="true">session</var>'s <coderef>error</coderef> attribute to the error object created in the previous step.</p></li>
-      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">error</coderef> at the <var title="true">session</var>.</p></li>
-    </ol>
--->
+    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
 
     <h3 id="algorithms-keys-changed">4.5. Usable Keys Changed</h3>
     <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
@@ -1750,7 +1670,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       function(keySession) {
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
         keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
-        keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.<precoderef>closed</precoderef>.then(
           console.log.bind(console, "Session closed")
         );
@@ -1839,7 +1758,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     mediaKeys.<premethodref>createSession</premethodref>(initDataType, initData, "persistent").then(
       function(keySession) {
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-        keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.<precoderef>closed</precoderef>.then(
           function() {
             console.log("Session " + this.sessionId + " closed");
@@ -1862,7 +1780,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
           return;
         }
         keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-        keySession.addEventListener("<precoderef prefix="event">error</precoderef>", handleError, false);
         keySession.<precoderef>closed</precoderef>.then(
           console.log.bind(console, "Session closed")
         );
