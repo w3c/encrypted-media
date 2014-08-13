@@ -87,6 +87,16 @@
       color: black;
       padding-top: 0.5em;
     }
+
+    <!-- Fix up issue boxes inside IDL boxes. -->
+    pre.idl > div.issue { 
+        white-space: normal;
+        margin-bottom: 0px;
+        margin-top: 0px;
+        font-family: "sans-serif";
+    }
+    pre.idl > div.issue :link { color: #0000EE; }
+    pre.idl > div.issue :visited { color: #551A8B; }
     </style>
     <style type="text/css">
       div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
@@ -164,7 +174,7 @@
       Publication as an Editor's Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated,
       replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.
     </p>
-    <p class="non-normative">Note: It is an open issue whether and how the spec should do more to encourage/ensure CDM-level interop. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20944">Bug 20944</a>.</p>
+    <p class="non-normative">Note: It is an open issue whether and how the specification should do more to encourage/ensure CDM-level interoperability. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20944">Bug 20944</a>.</p>
     <p class="non-normative">Note: This specification contains sections for describing <a href="#security">security</a> and <a href="#privacy">privacy</a> considerations. These sections are not final and review is welcome.</p>
     <p>
       This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>.
@@ -350,6 +360,7 @@ interface <precodedfn>MediaKeys</precodedfn> {
   Promise&lt;void&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>)
+  <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - isTypeSupported() may be made asynchronous.</p></div>
   static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 
@@ -570,7 +581,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     </ol>
 
     <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">initDataType</var>, <var title="true">contentType</var>, <var title="true">capability</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the <var title="true"><a href="#initialization-data-type">initDataType</a></var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
-    <div class="issue"><div class="issue-title"><span>Issue 3</span></div><p class="">isTypeSupported() is still under discussion. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> and <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26207">Bug 26207</a>.</p></div>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
@@ -1099,7 +1109,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </ol>
 
     <h3 id="algorithms-queue-error">4.4. Queue an "error" Event</h3>
-    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
+    <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
 
     <h3 id="algorithms-keys-changed">4.5. Usable Keys Changed</h3>
     <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
@@ -1307,8 +1317,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h2 id="security">6. Security Considerations</h2>
     <div class="nonnormative">
 
-    <div class="issue"><div class="issue-title"><span>Issue 4</span></div>Note: This section is not final and review is welcome.</div>
-
     <p>User Agent and Key System implementations must consider <videoanchor name="media-data">media data</videoanchor>, <a href="#initialization-data">Initialization Data</a>, responses (i.e. data passed to <methodref>update</methodref>), licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
     They must use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
     User Agents may want to validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering).
@@ -1343,8 +1351,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <h2 id="privacy">7. Privacy Considerations</h2>
     <div class="nonnormative">
 
-    <div class="issue"><div class="issue-title"><span>Issue 5</span></div>Note: This section is not final and review is welcome.</div>
- 
     <p>The presence or use of Key Systems on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself, or within messages from Key Systems and (b) user-specific information that may be persistently stored on the users device.</p>
     <p>User Agents should take responsibility for providing users with adequate control over their own privacy. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to implement appropriate techniques to ensure users have control over their privacy, including but not limited to the techniques described below.</p>
 
