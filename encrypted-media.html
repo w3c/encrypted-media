@@ -114,7 +114,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48"></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 13 August 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 15 August 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -128,8 +128,9 @@
         <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20131022/">http://www.w3.org/TR/2013/WD-encrypted-media-20131022/</a></dd>
         <dt>Editors:</dt>
         <dd>David Dorwin, Google, Inc.</dd>
-        <dd>Adrian Bateman, Microsoft Corporation</dd>
+        <dd>Jerry Smith, Microsoft Corporation</dd>
         <dd>Mark Watson, Netflix, Inc.</dd>
+        <dd>Adrian Bateman, Microsoft Corporation (until May 2014)</dd>
   <dt>Bug/Issue lists:</dt>
   <dd>
 <a href="http://w3.org/brief/MjY5">Bugzilla</a>, <a href="http://www.w3.org/html/wg/tracker/products/19">Tracker</a>
@@ -363,10 +364,7 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   Promise&lt;void&gt; <a href="#dom-setservercertificate">setServerCertificate</a>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>);
-  <div class="issue">
-<div class="issue-title"><span>Issue 1</span></div>
-<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - isTypeSupported() may be made asynchronous.</p>
-</div>
+
   static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 
@@ -605,6 +603,10 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
     </ol>
 
     <p>The <dfn id="dom-istypesupported"><code>isTypeSupported(keySystem, initDataType, contentType, capability)</code></dfn> method returns whether <var title="true">keySystem</var> is supported with the <var title="true"><a href="#initialization-data-type">initDataType</a></var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
+    <div class="issue">
+<div class="issue-title"><span>Issue 1</span></div>
+<p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - isTypeSupported() may be made asynchronous.</p>
+</div>
     <div class="example">
       <p>The following list shows some examples.</p>
       <dl>
@@ -763,7 +765,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
     </ol>
 
     <p>The <dfn id="dom-close"><code>close()</code></dfn> method allows an application to indicate that it no longer needs the session and the CDM should release any resources associated with this object and close it.
-    <span class="non-normative">The returned promise is resolved when the request has been processed, and the <dfn id="dom-closed"><code>closed</code></dfn> attribute promise is resolved when the session is closed.</span>
+    <span class="non-normative">The returned promise is resolved when the request has been processed, and the <code><a href="#dom-closed">closed</a></code> attribute promise is resolved when the session is closed.</span>
     It must run the following steps:</p>
 
     <ol>
@@ -850,8 +852,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
     </ol>
 
     <h3 id="exceptions">2.1. Exceptions</h3>
-    <a name="error-names"></a>
-    <p>The methods report errors by rejecting the returned promise with a <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code>.
+    <p id="error-names">The methods report errors by rejecting the returned promise with a <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code>.
     The following <a href="http://www.w3.org/TR/dom/#error-names">DOMException names from DOM4</a> are used in the algorithms.
     Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
     </p>
@@ -1263,7 +1264,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.</span>
     </p>
 
-    <a name="simple-decryption-clear-key"></a> 
+    <span id="simple-decryption-clear-key"></span> 
     <h3 id="clear-key">5.1. Clear Key</h3>
     <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> uses plain-text clear (unencrypted) key(s) to decrypt the source.
     No additional client-side content protection is required.
@@ -1295,7 +1296,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li>
 <p>In the <code><a href="#dom-update">update()</a></code> algorithm:</p>
         <ul>
-          <li><p>The <var title="true">response</var> parameter is a JWK Set as described in <a href="#clear-key-licese-format">License Format</a>.</p></li>
+          <li><p>The <var title="true">response</var> parameter is a JWK Set as described in <a href="#clear-key-license-format">License Format</a>.</p></li>
           <li><p><var>message</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
         </ul>
       </li>
@@ -1322,7 +1323,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </p>
 
     
-    <h5 id="clear-key-licese-format">5.1.3.1. Example</h5>
+    <h5 id="clear-key-request-format-example">5.1.3.1. Example</h5>
     <p><i>This section is non-normative.</i></p>
     <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
     <pre class="example">
@@ -1336,7 +1337,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 }
 </pre>
 
-    <h4 id="clear-key-licese-format">5.1.4. License Format</h4>
+    <h4 id="clear-key-license-format">5.1.4. License Format</h4>
     <p>This section describes the format of the license to be provided via the <var title="true">response</var> parameter of the <code><a href="#dom-update">update()</a></code> method.</p>
 
     <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>.</p>
@@ -1363,7 +1364,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     </p>
 
     
-    <h5 id="clear-key-licese-format">5.1.4.1. Example</h5>
+    <h5 id="clear-key-license-format-example">5.1.4.1. Example</h5>
     <p><i>This section is non-normative.</i></p>
     <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
     <pre class="example">
@@ -1432,7 +1433,7 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
     <h4 id="privacy-fingerprinting">7.1.1 Fingerprinting</h4>
     <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between sites that are not CORS-same-origin.</p>
 
-    <h4 id="privacy-tracking">7.1.2 Information Leakage</h4>
+    <h4 id="privacy-leakage">7.1.2 Information Leakage</h4>
     <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
     It is important that steps be taken to avoid information leakage, especially across origins.
     This includes both in-memory and stored data.
