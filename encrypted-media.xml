@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 25 August 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 26 August 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -346,7 +346,7 @@ enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">te
 interface <precodedfn>MediaKeys</precodedfn> {
   readonly attribute DOMString <precoderef>keySystem</precoderef>;
 
-  Promise&lt;<precoderef>MediaKeySession</precoderef>&gt; <premethodref>createSession</premethodref>(optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
+  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
   Promise&lt;void&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>);
@@ -455,29 +455,22 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
     <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26575">Bug 26575</a> - This method may be changed to return the MediaKeySession object synchronously.</p></div>
-    <p>The <methoddfn name="createSession">createSession(<var title="true">sessionType</var>)</methoddfn> method creates a new <coderef>MediaKeySession</coderef> object for the <var title="true">initData</var>. It must run the following steps:</p>
+    <p>The <methoddfn name="createSession">createSession(<var title="true">sessionType</var>)</methoddfn> method returns a new <coderef>MediaKeySession</coderef> object. It must run the following steps:</p>
 
     <ol>
-      <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
-      <li><p>Let <var>promise</var> be a new promise.</p></li>
-      <li><p>Run the following steps asynchronously:</p>
+      <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, throw a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
         <ol>
-          <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
-            <ol>
-              <li><p>Let the <coderef>sessionId</coderef> attribute be the empty string.</p></li>
-              <li><p>Let the <coderef>expiration</coderef> attribute be <code>NaN</code>.</p></li>
-              <li><p>Let the <coderef>closed</coderef> attribute be a new promise.</p></li>
-              <li><p>Let the <var title="true">session type</var> be <var title="true">sessionType</var>.</p></li>
-              <li><p>Let <var title="true">uninitialized</var> be true.</p></li>
-              <li><p>Let <var title="true">callable</var> be false.</p></li>
-            </ol>
-          </li>
-          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-          <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
-          <li><p>Resolve <var>promise</var> with <var title="true">session</var>.</p></li>
+          <li><p>Let the <coderef>sessionId</coderef> attribute be the empty string.</p></li>
+          <li><p>Let the <coderef>expiration</coderef> attribute be <code>NaN</code>.</p></li>
+          <li><p>Let the <coderef>closed</coderef> attribute be a new promise.</p></li>
+          <li><p>Let the <var title="true">session type</var> be <var title="true">sessionType</var>.</p></li>
+          <li><p>Let <var title="true">uninitialized</var> be true.</p></li>
+          <li><p>Let <var title="true">callable</var> be false.</p></li>
         </ol>
       </li>
-      <li><p>Return <var>promise</var>.</p></li>
+      <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to the <var title="true">list of active session IDs</var> for this object.</p></li>
+      <li><p>Return <var title="true">session</var>.</p></li>
     </ol>
 
     <p id="server-certificate">The <methoddfn name="setServerCertificate">setServerCertificate(<var title="true">serverCertificate</var>)</methoddfn> method provides a server certificate to be used to encrypt messages to the license server. It must run the following steps:</p>
@@ -1518,10 +1511,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       promise.then(
         function(createdMediaKeys) {
           var initData = new Uint8Array([ ... ]);
-          return createdMediaKeys.<premethodref>createSession</premethodref>();
-        }
-      ).then(
-        function(keySession) {
+          var keySession = createdMediaKeys.<premethodref>createSession</premethodref>();
           keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
           return keySession.<premethodref>generateRequest</premethodref>("webm", initData);
         }
@@ -1608,12 +1598,9 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
   }
 
   function makeNewRequest(mediaKeys, initDataType, initData) {
-    mediaKeys.<premethodref>createSession</premethodref>().then(
-      function(keySession) {
-        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
-        return keySession.<premethodref>generateRequest</premethodref>(initDataType, initData);
-      }
-    ).catch(
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>();
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).catch(
       console.error.bind(console, "Unable to create or initialize key session")
     );
   }
@@ -1696,16 +1683,13 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   // This replaces the implementation in the previous example.
   function makeNewRequest(mediaKeys, initDataType, initData) {
-    mediaKeys.<premethodref>createSession</premethodref>().then(
-      function(keySession) {
-        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-        keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
-        keySession.<precoderef>closed</precoderef>.then(
-          console.log.bind(console, "Session closed")
-        );
-        return keySession.<premethodref>generateRequest</premethodref>(initDataType, initData);
-      }
-    ).catch(
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>();
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      console.log.bind(console, "Session closed")
+    );
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).catch(
       console.error.bind(console, "Unable to create or initialize key session")
     );
   }
@@ -1786,36 +1770,33 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
   // Called if the application does not have a stored sessionId for the media resource.
   function makeNewRequest(mediaKeys, initDataType, initData) {
-    mediaKeys.<premethodref>createSession</premethodref>("persistent").then(
-      function(keySession) {
-        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-        keySession.<precoderef>closed</precoderef>.then(
-          function() {
-            console.log("Session " + this.sessionId + " closed");
-          }.bind(keySession)        
-        );
-        // Store keySession.<precoderef>sessionId</precoderef> in the application.
-        return keySession.<premethodref>generateRequest</premethodref>(initDataType, initData);
-      }
-    ).catch(
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>("persistent");
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      function() {
+        console.log("Session " + this.sessionId + " closed");
+      }.bind(keySession)        
+    );
+    // Store keySession.<precoderef>sessionId</precoderef> in the application.
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).catch(
       console.error.bind(console, "Unable to create or initialize a persistable key session")
     );
   }
 
   // Called if the application has a stored sessionId for the media resource.
   function loadStoredSession(mediaKeys, sessionId) {
-    mediaKeys.<premethodref>createSession</premethodref>("persistent").then(
-      function(keySession) {
-        if (!keySession) {
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>("persistent");
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      console.log.bind(console, "Session closed")
+    );
+    keySession.<premethodref>load</premethodref>(sessionId).then(
+      function(loaded) {
+        if (!loaded) {
           console.error("No stored session with the ID " + sessionId + " was found.");
           // The application should remove its record of |sessionId|.
           return;
         }
-        keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
-        keySession.<precoderef>closed</precoderef>.then(
-          console.log.bind(console, "Session closed")
-        );
-        return keySession.<premethodref>load</premethodref>(sessionId);
       }
     ).catch(
       console.error.bind(console, "Unable to load or initialize the stored session with the ID " + sessionId)
