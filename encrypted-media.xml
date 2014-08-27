@@ -383,17 +383,20 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <coderef>MediaKeys</coderef> to use when decrypting media data during playback. It must run the following steps:</p>
     
     <ol>
+      <!-- For simplicity and consistency, do not allow multiple pending calls. -->
       <li><p>If <var>mediaKeys</var> and the <coderef prefix="attr">mediaKeys</coderef> attribute are the same object, return a resolved promise.</p></li>
+      <li><p>If this object's <var title="true">attaching media keys</var> value is true, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let this object's <var title="true">attaching media keys</var> value be true.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
           <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
             <ol>
-              <li><p>If the user agent or CDM do not support removing the association, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
-              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+              <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
               <li><p>Stop using the CDM instance represented by the <coderef prefix="attr">mediaKeys</coderef> attribute to decrypt <videoanchor name="media-data">media data</videoanchor> and remove the association with the media element.</p></li>
-              <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+              <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
             </ol>
           </li>
           <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
@@ -402,6 +405,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
               <li><p>If the preceding step failed, run the following steps:</p>
                 <ol>
                   <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
+                  <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
                   <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
                 </ol>
               </li>
@@ -411,6 +415,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
             </ol>
           </li>
           <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to <var>mediaKeys</var>.</p></li>
+          <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
           <li><p>Resolve <var>promise</var>.</p></li>
         </ol>
       </li>
