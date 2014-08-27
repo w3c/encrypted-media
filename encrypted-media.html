@@ -446,7 +446,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
     <ol>
       <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
       <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
-      <li><p>If <var title="true">keySystem</var> is not supported or not allowed on the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not supported or not allowed on the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the media element's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li>
 <p>Run the following steps asynchronously:</p>
@@ -644,6 +644,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
                 <p>If <var title="true">session type</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>", the request is for a temporary non-persisted license.
                 If <var title="true">session type</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the request is for a persistable session, possibly with a persistable license.</p>
                 <p>If <var title="true">session type</var> is <em>not</em> "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the CDM must <em>not</em> store a record of or data related to the session at any point.</p>
+                <p>When storage is allowed, data must always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code> can access it.</p>
                 <p class="non-normative">Note: The license server may reject the requested type, but it should not issue a different type.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
               </li>
@@ -680,7 +681,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
           <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">destination URL</var> be null.</p></li>
-          <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the <code><a href="#dom-mediakeys">MediaKeys</a></code> object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>.</p></li>
+          <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>.</p></li>
           <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of <var title="true">media keys</var>.</p></li>
           <li>
 <p>Use the <var title="true">cdm</var> to execute the following steps:</p>
@@ -739,7 +740,9 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
                   <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>" and <var>message</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
                   <dd>Continue processing <var>message</var>, not storing any session data.</dd>
                   <dt>If <var title="true">sessionType</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>"</dt>
-                  <dd>Continue processing <var>message</var>, storing the license, key(s), or similar session data contained in <var>message</var> as permitted or instructed by the license.</dd>
+                  <dd>Continue processing <var>message</var>, storing the license, key(s), or similar session data contained in <var>message</var> as permitted or instructed by the license.
+                    Such data must be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code> can access it.
+                  </dd>
                   <dt>Otherwise</dt>
                   <dd>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</dd>
                 </dl>
