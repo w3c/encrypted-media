@@ -149,6 +149,7 @@
     or other server.</p>
  
     <h2>Status of This Document</h2>
+    <div class="issue"><p class="">The specification is being reordered, and the table of contents has been temporarily removed. Until these updates are complete, please use the <a href="https://dvcs.w3.org/hg/html-media/raw-file/0713fffe9928/encrypted-media/encrypted-media.html">previous version</a>.</p></div>
 
     <p><em>
       This section describes the status of this document at the time of its publication. Other documents may supersede this document.
@@ -180,44 +181,7 @@
       </p>
 
 
-    <h2 id="toc">Table of Contents</h2>
 
-    <ul style="list-style-type:none">
-      <li><a href="#introduction">1. Introduction</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#definitions">1.1. Definitions</a></li>
-        </ul></li>
-      <li><a href="#extensions">2. Media Element Extensions</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#exceptions">2.1. Exceptions</a></li>
-          <li><a href="#media-element-restictions">2.2. Media Element Restrictions</a></li>
-        </ul></li>
-      <li><a href="#events">3. Events</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#event-definitions">3.1 Event Definitions</a></li>
-          <li><a href="#event-summary">3.2 Event Summary</a></li>
-        </ul></li>
-      <li><a href="#algorithms">4. Algorithms</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#algorithms-initdata-encountered">4.1. Initialization Data Encountered</a></li>
-          <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
-          <li><a href="#algorithms-queue-error">4.4. Queue an "error" Event</a></li>
-          <li><a href="#algorithms-keys-changed">4.5. Usable Keys Changed</a></li>
-          <li><a href="#algorithms-update-expiration">4.6. Update Expiration</a></li>
-          <li><a href="#algorithms-session-close">4.7. Session Close</a></li>
-          <li><a href="#algorithms-queue-waiting">4.8. Queue a "waiting" Event</a></li>
-          <li><a href="#algorithms-resume-playback">4.9. Attempt to Resume Playback If Necessary</a></li>
-        </ul></li>
-      <li><a href="#simple-decryption">5. Simple Decryption</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#clear-key">5.1. Clear Key</a></li>
-        </ul></li>
-      <li><a href="#security">6. Security Considerations</a></li>
-      <li><a href="#privacy">7. Privacy Considerations</a></li>
-      <li><a href="#examples">8. Examples</a></li>
-      <li><a href="#revision-history">9. Revision History</a></li>
-    </ul>
 
 
     <h2 id="introduction">1. Introduction</h2>
@@ -330,9 +294,10 @@
     on the <a href="#media-element">media element</a> and CORS headers on the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> response to make it <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>.
     </p>
 
-    <h2 id="extensions">2. Media Element Extensions</h2>
-    <p>We extend <dfn id="media-element" title="media element"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-element">media element</a></dfn> to allow decryption key acquisition to be handled by the application.</p>
-
+    
+    <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
+    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
+    
     <pre class="idl">
 enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waitingfornone">none</dfn>", "<dfn id="dom-waitingfordata">data</dfn>", "<dfn id="dom-waitingforkey">key</dfn>" };
 partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
@@ -344,45 +309,10 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
 
   readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
 };
-
-enum <dfn id="dom-istypesupportedresult">IsTypeSupportedResult</dfn> { "<dfn id="dom-istypesupportedresultempty"></dfn>" /* empty string */, "<dfn id="dom-istypesupportedresultmaybe">maybe</dfn>", "<dfn id="dom-istypesupportedresultprobably">probably</dfn>" };
-enum <dfn id="dom-sessiontype">SessionType</dfn> { "<dfn id="dom-sessiontypetemporary">temporary</dfn>", "<dfn id="dom-sessiontypepersistent">persistent</dfn>" };
-interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
-  readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
-
-  <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(optional <a href="#dom-sessiontype">SessionType</a> sessionType = "<a href="#dom-sessiontypetemporary">temporary</a>");
-  Promise&lt;void&gt; <a href="#dom-setservercertificate">setServerCertificate</a>((ArrayBuffer or ArrayBufferView) serverCertificate);
-
-  static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>);
-
-  static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
-};
-
-interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://www.w3.org/TR/dom/#eventtarget">EventTarget</a> {
-  // session properties
-  readonly attribute DOMString <a href="#dom-sessionid">sessionId</a>;
-  readonly attribute unrestricted double <a href="#dom-expiration">expiration</a>;
-  readonly attribute Promise&lt;void&gt; <a href="#dom-closed">closed</a>;
-
-  // session initialization
-  Promise&lt;void&gt; <a href="#dom-generaterequest">generateRequest</a>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData);
-  Promise&lt;bool&gt; <a href="#dom-load">load</a>(DOMString sessionId);
-
-  // session operations
-  Promise&lt;void&gt; <a href="#dom-update">update</a>((ArrayBuffer or ArrayBufferView) response);
-  Promise&lt;void&gt; <a href="#dom-close">close</a>();
-  Promise&lt;void&gt; <a href="#dom-remove">remove</a>();
-  
-  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <a href="#dom-getusablekeyids">getUsableKeyIds</a>();
-};
 </pre>
 
-    <div class="note">
-<div class="noteHeader">Note</div>
-      <p>All errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
-      <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
-    </div>
-
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
     <p>The <dfn id="dom-attrmediakeys"><code>mediaKeys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
     <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys(mediaKeys</code></dfn>) method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use when decrypting media data during playback. It must run the following steps:</p>
@@ -441,6 +371,27 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
 
     <p>The <dfn id="dom-waitingfor"><code>waitingFor</code></dfn> attribute indicates what the media element is waiting for, if anything (indicated by the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> and <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
+    <h2 id="mediakeys">MediaKeys Object</h2>
+    <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during playback.
+      It also represents a CDM instance.
+    </p>
+    <pre class="idl">
+enum <dfn id="dom-istypesupportedresult">IsTypeSupportedResult</dfn> { "<dfn id="dom-istypesupportedresultempty"></dfn>" /* empty string */, "<dfn id="dom-istypesupportedresultmaybe">maybe</dfn>", "<dfn id="dom-istypesupportedresultprobably">probably</dfn>" };
+enum <dfn id="dom-sessiontype">SessionType</dfn> { "<dfn id="dom-sessiontypetemporary">temporary</dfn>", "<dfn id="dom-sessiontypepersistent">persistent</dfn>" };
+interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
+  readonly attribute DOMString <a href="#dom-keysystem">keySystem</a>;
+
+  <a href="#dom-mediakeysession">MediaKeySession</a> <a href="#dom-createsession">createSession</a>(optional <a href="#dom-sessiontype">SessionType</a> sessionType = "<a href="#dom-sessiontypetemporary">temporary</a>");
+  Promise&lt;void&gt; <a href="#dom-setservercertificate">setServerCertificate</a>((ArrayBuffer or ArrayBufferView) serverCertificate);
+
+  static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>);
+
+  static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
+};
+</pre>
+
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
     <p>The <dfn id="dom-create"><code>create(keySystem)</code></dfn> method creates a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object for <var title="true">keySystem</var>. It must run the following steps:</p>
 
@@ -606,6 +557,30 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
     </ol>
     
 
+    <h2 id="mediakeysession">MediaKeySession Object</h2>
+    <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+    <pre class="idl">
+interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://www.w3.org/TR/dom/#eventtarget">EventTarget</a> {
+  // session properties
+  readonly attribute DOMString <a href="#dom-sessionid">sessionId</a>;
+  readonly attribute unrestricted double <a href="#dom-expiration">expiration</a>;
+  readonly attribute Promise&lt;void&gt; <a href="#dom-closed">closed</a>;
+
+  // session initialization
+  Promise&lt;void&gt; <a href="#dom-generaterequest">generateRequest</a>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData);
+  Promise&lt;bool&gt; <a href="#dom-load">load</a>(DOMString sessionId);
+
+  // session operations
+  Promise&lt;void&gt; <a href="#dom-update">update</a>((ArrayBuffer or ArrayBufferView) response);
+  Promise&lt;void&gt; <a href="#dom-close">close</a>();
+  Promise&lt;void&gt; <a href="#dom-remove">remove</a>();
+  
+  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <a href="#dom-getusablekeyids">getUsableKeyIds</a>();
+};
+</pre>
+
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
     <p>The <dfn id="dom-sessionid"><code>sessionId</code></dfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 

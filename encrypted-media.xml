@@ -146,6 +146,7 @@
     or other server.</p>
  
     <h2>Status of This Document</h2>
+    <div class="issue"><p class="">The specification is being reordered, and the table of contents has been temporarily removed. Until these updates are complete, please use the <a href="https://dvcs.w3.org/hg/html-media/raw-file/0713fffe9928/encrypted-media/encrypted-media.html">previous version</a>.</p></div>
 
     <p><em>
       This section describes the status of this document at the time of its publication. Other documents may supersede this document.
@@ -177,6 +178,7 @@
       </p>
 
 
+<!-- 
     <h2 id="toc">Table of Contents</h2>
 
     <ul style="list-style-type:none">
@@ -215,6 +217,7 @@
       <li><a href="#examples">8. Examples</a></li>
       <li><a href="#revision-history">9. Revision History</a></li>
     </ul>
+ -->
 
 
     <h2 id="introduction">1. Introduction</h2>
@@ -327,9 +330,10 @@
     on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
     </p>
 
-    <h2 id="extensions">2. Media Element Extensions</h2>
-    <p>We extend <dfn id="media-element" title="media element"><media-element/></dfn> to allow decryption key acquisition to be handled by the application.</p>
-
+    <!-- TODO: Move after EME objects. -->
+    <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
+    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
+    <!-- TODO: Move methods after attributes in IDL and text for all objects. -->
     <pre class="idl">
 enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
 partial interface <precodedfn>HTMLMediaElement</precodedfn> {
@@ -341,45 +345,11 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 
   readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
 };
-
-enum <precodedfn>IsTypeSupportedResult</precodedfn> { "<precodedfn prefix="istypesupportedresultempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupportedresult">maybe</precodedfn>", "<precodedfn prefix="istypesupportedresult">probably</precodedfn>" };
-enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">temporary</precodedfn>", "<precodedfn prefix="sessiontype">persistent</precodedfn>" };
-interface <precodedfn>MediaKeys</precodedfn> {
-  readonly attribute DOMString <precoderef>keySystem</precoderef>;
-
-  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
-  Promise&lt;void&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
-
-  static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>);
-
-  static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
-};
-
-interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
-  // session properties
-  readonly attribute DOMString <precoderef>sessionId</precoderef>;
-  readonly attribute unrestricted double <precoderef>expiration</precoderef>;
-  readonly attribute Promise&lt;void&gt; <precoderef>closed</precoderef>;
-
-  // session initialization
-  Promise&lt;void&gt; <premethodref>generateRequest</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData);
-  Promise&lt;bool&gt; <premethodref>load</premethodref>(DOMString sessionId);
-
-  // session operations
-  Promise&lt;void&gt; <premethodref>update</premethodref>((ArrayBuffer or ArrayBufferView) response);
-  Promise&lt;void&gt; <premethodref>close</premethodref>();
-  Promise&lt;void&gt; <premethodref>remove</premethodref>();
-  
-  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <premethodref>getUsableKeyIds</premethodref>();
-};
 </pre>
 
-    <div class="note"><div class="noteHeader">Note</div>
-      <p>All errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
-      <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
-    </div>
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
-<!-- Begin HTMLMediaElement -->
     <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
     <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <coderef>MediaKeys</coderef> to use when decrypting media data during playback. It must run the following steps:</p>
     
@@ -432,7 +402,28 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 
     <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
-<!-- Begin MediaKeys -->
+    <h2 id="mediakeys">MediaKeys Object</h2>
+    <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <videoanchor name="media-data">media data</videoanchor> during playback.
+      It also represents a CDM instance.
+    </p>
+    <pre class="idl">
+enum <precodedfn>IsTypeSupportedResult</precodedfn> { "<precodedfn prefix="istypesupportedresultempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupportedresult">maybe</precodedfn>", "<precodedfn prefix="istypesupportedresult">probably</precodedfn>" };
+enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">temporary</precodedfn>", "<precodedfn prefix="sessiontype">persistent</precodedfn>" };
+interface <precodedfn>MediaKeys</precodedfn> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+
+  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
+  Promise&lt;void&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
+
+  static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>);
+
+  static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
+};
+</pre>
+
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
     <p>The <methoddfn name="create">create(<var title="true">keySystem</var>)</methoddfn> method creates a new <coderef>MediaKeys</coderef> object for <var title="true">keySystem</var>. It must run the following steps:</p>
 
     <ol>
@@ -580,7 +571,31 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     </ol>
     
 
-<!-- Begin MediaKeySession -->
+    <h2 id="mediakeysession">MediaKeySession Object</h2>
+    <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+    <pre class="idl">
+interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
+  // session properties
+  readonly attribute DOMString <precoderef>sessionId</precoderef>;
+  readonly attribute unrestricted double <precoderef>expiration</precoderef>;
+  readonly attribute Promise&lt;void&gt; <precoderef>closed</precoderef>;
+
+  // session initialization
+  Promise&lt;void&gt; <premethodref>generateRequest</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData);
+  Promise&lt;bool&gt; <premethodref>load</premethodref>(DOMString sessionId);
+
+  // session operations
+  Promise&lt;void&gt; <premethodref>update</premethodref>((ArrayBuffer or ArrayBufferView) response);
+  Promise&lt;void&gt; <premethodref>close</premethodref>();
+  Promise&lt;void&gt; <premethodref>remove</premethodref>();
+  
+  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <premethodref>getUsableKeyIds</premethodref>();
+};
+</pre>
+
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
     <p>The <codedfn>expiration</codedfn> attribute is the time, in milliseconds since since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <videoanchor name="media-data">media data</videoanchor>, or <code>NaN</code> if no such time exists, as determined by the CDM.
