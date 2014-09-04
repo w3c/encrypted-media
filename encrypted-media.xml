@@ -943,6 +943,67 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <h3 id="mediakeysession-algorithms">Algorithms</h3>
 
+    <h4 id="algorithms-queue-message">Queue a "message" Event</h4>
+    <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
+      <li>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
+        <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>message</coderef> = the specified <var title="true">request</var><br></br>
+          <coderef>destinationURL</coderef> = the specified <var title="true">destination URL</var>
+        </li></ul>
+      </li>
+    </ol>
+
+    <h4 id="algorithms-queue-error">Queue an "error" Event</h4>
+    <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
+
+    <h4 id="algorithms-keys-changed">Usable Keys Changed</h4>
+    <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
+    This can happen as the result of an <methodref>update</methodref> call or some other event.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
+      <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#media-element">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
+        <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no additional keys became available)</span>.</p>
+      </li>
+    </ol>
+
+    <h4 id="algorithms-update-expiration">Update Expiration</h4>
+    <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
+    This can happen as the result of an <methodref>update</methodref> call or some other event.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object and the new expiration time, which may be <code>NaN</code>.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
+      <li><p>If the new expiration time is not <code>NaN</code>, let <var title="true">expiration time</var> be the new expiration time in milliseconds since 01 January 1970 UTC.</p></li>
+      <li><p>Set the <var title="true">session</var>'s <coderef>expiration</coderef> attribute to <var title="true">expiration time</var>.</p></li>
+    </ol>
+
+    <h4 id="algorithms-session-close">Session Close</h4>
+    <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
+    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>close</methodref> call, when the session is no longer needed, or when system resources are lost.
+    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+      <li><p>Remove the entry for the value of the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute from <var title="true">media keys</var>'s <var title="true">list of active session IDs</var>.</p></li>
+      <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
+      <li><p>Resolve <var>promise</var>.</p></li>
+    </ol>
+
 
     <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
     <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
@@ -1021,10 +1082,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 
     <h3 id="htmlmediaelement-algorithms">Algorithms</h3>
 
-
-    <h2 id="algorithms">4. Algorithms</h2>
-
-    <h3 id="algorithms-initdata-encountered">4.1. Initialization Data Encountered</h3>
+    <h4 id="algorithms-initdata-encountered">Initialization Data Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1051,7 +1109,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
     </ol>
 
-    <h3 id="algorithms-encrypted-block">4.2. Encrypted Block Encountered</h3>
+    <h4 id="algorithms-encrypted-block">Encrypted Block Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1144,68 +1202,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
     </ul>
 
-    <h3 id="algorithms-queue-message">4.3. Queue a "message" Event</h3>
-    <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
-    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
-    </p>
-    <p>The following steps are run:</p>
-    <ol>
-      <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
-      <li>
-        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
-        <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
-        <ul style="list-style-type:none"><li>
-          <coderef>message</coderef> = the specified <var title="true">request</var><br></br>
-          <coderef>destinationURL</coderef> = the specified <var title="true">destination URL</var>
-        </li></ul>
-      </li>
-    </ol>
-
-    <h3 id="algorithms-queue-error">4.4. Queue an "error" Event</h3>
-    <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
-
-    <h3 id="algorithms-keys-changed">4.5. Usable Keys Changed</h3>
-    <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
-    This can happen as the result of an <methodref>update</methodref> call or some other event.
-    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object.
-    </p>
-    <p>The following steps are run:</p>
-    <ol>
-      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
-      <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#media-element">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
-        <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no additional keys became available)</span>.</p>
-      </li>
-    </ol>
-
-    <h3 id="algorithms-update-expiration">4.6. Update Expiration</h3>
-    <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
-    This can happen as the result of an <methodref>update</methodref> call or some other event.
-    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object and the new expiration time, which may be <code>NaN</code>.
-    </p>
-    <p>The following steps are run:</p>
-    <ol>
-      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
-      <li><p>If the new expiration time is not <code>NaN</code>, let <var title="true">expiration time</var> be the new expiration time in milliseconds since 01 January 1970 UTC.</p></li>
-      <li><p>Set the <var title="true">session</var>'s <coderef>expiration</coderef> attribute to <var title="true">expiration time</var>.</p></li>
-    </ol>
-
-    <h3 id="algorithms-session-close">4.7. Session Close</h3>
-    <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
-    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>close</methodref> call, when the session is no longer needed, or when system resources are lost.
-    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
-    </p>
-    <p>The following steps are run:</p>
-    <ol>
-      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
-      <li><p>Remove the entry for the value of the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute from <var title="true">media keys</var>'s <var title="true">list of active session IDs</var>.</p></li>
-      <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
-      <li><p>Resolve <var>promise</var>.</p></li>
-    </ol>
-
-    <h3 id="algorithms-queue-waiting">4.8. Queue a "waiting" Event</h3>
+    <h4 id="algorithms-queue-waiting">Queue a "waiting" Event</h4>
     <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
     </p>
@@ -1221,7 +1218,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p>Suspend playback.</p></li>
     </ol>
 
-    <h3 id="algorithms-resume-playback">4.9. Attempt to Resume Playback If Necessary</h3>
+    <h4 id="algorithms-resume-playback">Attempt to Resume Playback If Necessary</h4>
     <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
     If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
