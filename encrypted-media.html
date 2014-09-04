@@ -294,83 +294,6 @@
     on the <a href="#media-element">media element</a> and CORS headers on the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> response to make it <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>.
     </p>
 
-    
-    <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
-    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
-    
-    <pre class="idl">
-enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waitingfornone">none</dfn>", "<dfn id="dom-waitingfordata">data</dfn>", "<dfn id="dom-waitingforkey">key</dfn>" };
-partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
-  // Encrypted Media
-  readonly attribute <a href="#dom-mediakeys">MediaKeys</a>? <a href="#dom-attrmediakeys">mediaKeys</a>;
-  Promise&lt;void&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
-  
-  attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onencrypted">onencrypted</a>;
-
-  readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
-};
-</pre>
-
-    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
-    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
-
-    <p>The <dfn id="dom-attrmediakeys"><code>mediaKeys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
-    <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys(mediaKeys</code></dfn>) method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use when decrypting media data during playback. It must run the following steps:</p>
-    
-    <ol>
-      
-      <li><p>If <var>mediaKeys</var> and the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute are the same object, return a resolved promise.</p></li>
-      <li><p>If this object's <var title="true">attaching media keys</var> value is true, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
-      <li><p>Let this object's <var title="true">attaching media keys</var> value be true.</p></li>
-      <li><p>Let <var>promise</var> be a new promise.</p></li>
-      <li>
-<p>Run the following steps asynchronously:</p>
-        <ol>
-          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
-          <li>
-<p>If the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
-            <ol>
-              <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
-              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
-              <li><p>Stop using the CDM instance represented by the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
-              <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-            </ol>
-          </li>
-          <li>
-<p>If <var>mediaKeys</var> is not null, run the following steps:</p>
-            <ol>
-              <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</p></li>
-              <li>
-<p>If the preceding step failed, run the following steps:</p>
-                <ol>
-                  <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to null.</p></li>
-                  <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
-                  <li><p>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-                </ol>
-              </li>
-              <li>
-<p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
-                <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
-              </li>
-            </ol>
-          </li>
-          <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to <var>mediaKeys</var>.</p></li>
-          <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
-          <li><p>Resolve <var>promise</var>.</p></li>
-        </ol>
-      </li>
-      <li><p>Return <var>promise</var>.</p></li>
-    </ol>
-    
-    <p class="non-normative">Note: Support for clearing or replacing the associated <code><a href="#dom-mediakeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
-    <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
-    
-    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
-
-    <p>The <dfn id="dom-onencrypted"><code>onencrypted</code></dfn> event handler for the <code><a href="#dom-encrypted">encrypted</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-
-    <p>The <dfn id="dom-waitingfor"><code>waitingFor</code></dfn> attribute indicates what the media element is waiting for, if anything (indicated by the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> and <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
-
     <h2 id="mediakeys">MediaKeys Object</h2>
     <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during playback.
       It also represents a CDM instance.
@@ -895,6 +818,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
       </tbody>
     </table>
 
+    
     <h3 id="media-element-restictions">2.2 Media Element Restrictions</h3>
     <p><i>This section is non-normative.</i></p>
     <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
@@ -1024,6 +948,84 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </tr>
       </tbody>
     </table>
+
+
+    <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
+    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
+    
+    <pre class="idl">
+enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waitingfornone">none</dfn>", "<dfn id="dom-waitingfordata">data</dfn>", "<dfn id="dom-waitingforkey">key</dfn>" };
+partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
+  // Encrypted Media
+  readonly attribute <a href="#dom-mediakeys">MediaKeys</a>? <a href="#dom-attrmediakeys">mediaKeys</a>;
+  Promise&lt;void&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
+  
+  attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onencrypted">onencrypted</a>;
+
+  readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
+};
+</pre>
+
+    <div class="note">
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
+    <p>The <dfn id="dom-attrmediakeys"><code>mediaKeys</code></dfn> attribute is the <code><a href="#dom-mediakeys">MediaKeys</a></code> being used when decrypting encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for this <a href="#media-element">media element</a>.</p>
+    <p>The <dfn id="dom-setmediakeys"><code>setMediaKeys(mediaKeys</code></dfn>) method provides the <code><a href="#dom-mediakeys">MediaKeys</a></code> to use when decrypting media data during playback. It must run the following steps:</p>
+    
+    <ol>
+      
+      <li><p>If <var>mediaKeys</var> and the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute are the same object, return a resolved promise.</p></li>
+      <li><p>If this object's <var title="true">attaching media keys</var> value is true, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let this object's <var title="true">attaching media keys</var> value be true.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li>
+<p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
+          <li>
+<p>If the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
+            <ol>
+              <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+              <li><p>Stop using the CDM instance represented by the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
+              <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+            </ol>
+          </li>
+          <li>
+<p>If <var>mediaKeys</var> is not null, run the following steps:</p>
+            <ol>
+              <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</p></li>
+              <li>
+<p>If the preceding step failed, run the following steps:</p>
+                <ol>
+                  <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to null.</p></li>
+                  <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
+                  <li><p>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+                </ol>
+              </li>
+              <li>
+<p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
+                <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
+              </li>
+            </ol>
+          </li>
+          <li><p>Set the <code><a href="#dom-attrmediakeys">mediaKeys</a></code> attribute to <var>mediaKeys</var>.</p></li>
+          <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+    
+    <p class="non-normative">Note: Support for clearing or replacing the associated <code><a href="#dom-mediakeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
+    <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
+    
+    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
+
+    <p>The <dfn id="dom-onencrypted"><code>onencrypted</code></dfn> event handler for the <code><a href="#dom-encrypted">encrypted</a></code> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+
+    <p>The <dfn id="dom-waitingfor"><code>waitingFor</code></dfn> attribute indicates what the media element is waiting for, if anything (indicated by the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> and <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
 
     <h2 id="algorithms">4. Algorithms</h2>
