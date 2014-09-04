@@ -349,6 +349,11 @@ interface <precodedfn>MediaKeys</precodedfn> {
 };
 </pre>
 
+    <h3 id="mediakeys-attributes">Attributes</h3>
+
+    <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
+
+    <h3 id="mediakeys-methods">Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -376,8 +381,6 @@ interface <precodedfn>MediaKeys</precodedfn> {
       </li>
       <li><p>Return <var>promise</var>.</p></li>
     </ol>
-
-    <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
     <p>The <methoddfn name="createSession">createSession(<var title="true">sessionType</var>)</methoddfn> method returns a new <coderef>MediaKeySession</coderef> object. It must run the following steps:</p>
 
@@ -521,8 +524,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 };
 </pre>
 
-    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
-    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+    <h3 id="mediakeysession-attributes">Attributes</h3>
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
@@ -531,6 +533,10 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 
     <p>The <codedfn>closed</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
     This promise can only be fulfilled and is never rejected.</p>
+
+    <h3 id="mediakeysession-methods">Methods</h3>
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
     <p>The <methoddfn name="generateRequest">generateRequest(<var title="true">initDataType</var>, <var title="true">initData</var>)</methoddfn> method creates a new <coderef>MediaKeySession</coderef> object for the <var title="true">initData</var>. It must run the following steps:</p>
     <p class="non-normative">The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
@@ -765,6 +771,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
       </li>
     </ol>
 
+    <!-- TODO: Move after algorithms. -->
     <h3 id="exceptions">2.1. Exceptions</h3>
     <p id="error-names">The methods report errors by rejecting the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
     The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> are used in the algorithms.
@@ -825,9 +832,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, may not be available. One likely restriction is that
     video media may be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
 
-    <h2 id="events">3. Events</h2>
-
-    <h3 id="event-definitions">3.1. Event Definitions</h3>
+    <h3 id="mediakeysession-event-definitions">Event Definitions</h3>
     <pre class="idl">
 [Constructor(DOMString type, optional <precoderef>MediaEncryptedEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaEncryptedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
@@ -885,7 +890,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>Events are constructed as defined in <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#constructing-events">Constructing events</a>, in [DOM4].</p>
     </div>
 
-    <h3 id="event-summary">3.2. Event Summary</h3>
+    <h3 id="mediakeysession-events">Event Summary</h3>
     <non-normative-section/>
 
     <p>The following event is fired at <coderef>HTMLMediaElement</coderef>.</p>
@@ -936,6 +941,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </tbody>
     </table>
 
+    <h3 id="mediakeysession-algorithms">Algorithms</h3>
+
 
     <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
     <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
@@ -953,10 +960,18 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 };
 </pre>
 
+    <h3 id="htmlmediaelement-attributes">Attributes</h3>
+
+    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
+
+    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
+
+    <p>The <codedfn>onencrypted</codedfn> event handler for the <coderef>encrypted</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+
+    <h3 id="htmlmediaelement-methods">Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
-    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
     <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <coderef>MediaKeys</coderef> to use when decrypting media data during playback. It must run the following steps:</p>
     
     <ol>
@@ -1004,9 +1019,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <!-- TODO: Move to the MediaKeySession section when refactoring. -->
     <p class="non-normative">Note: In some implementations, <coderef>MediaKeySession</coderef> objects may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
 
-    <p>The <codedfn>onencrypted</codedfn> event handler for the <coderef>encrypted</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-
-    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
+    <h3 id="htmlmediaelement-algorithms">Algorithms</h3>
 
 
     <h2 id="algorithms">4. Algorithms</h2>
