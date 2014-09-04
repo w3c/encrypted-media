@@ -308,7 +308,6 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
   Promise&lt;void&gt; <a href="#dom-setservercertificate">setServerCertificate</a>((ArrayBuffer or ArrayBufferView) serverCertificate);
 
   static Promise&lt;<a href="#dom-mediakeys">MediaKeys</a>&gt; <a href="#dom-create">create</a>(DOMString <a href="#key-system">keySystem</a>);
-
   static <a href="#dom-istypesupportedresult">IsTypeSupportedResult</a> <a href="#dom-istypesupported">isTypeSupported</a>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
 };
 </pre>
@@ -320,32 +319,6 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
     <h3 id="mediakeys-methods">Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
-
-    <p>The <dfn id="dom-create"><code>create(keySystem)</code></dfn> method creates a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object for <var title="true">keySystem</var>. It must run the following steps:</p>
-
-    <ol>
-      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
-      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
-      <li><p>If <var title="true">keySystem</var> is not supported or not allowed on the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the media element's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
-      <li><p>Let <var>promise</var> be a new promise.</p></li>
-      <li>
-<p>Run the following steps asynchronously:</p>
-        <ol>
-          <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
-          <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
-          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-
-          <li>
-            <p>Let <var title="true">media keys</var> be a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object, and initialize it as follows:</p>
-            <ol>
-              <li><p>Set the <code><a href="#dom-keysystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
-            </ol>
-          </li>
-          <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
-        </ol>
-      </li>
-      <li><p>Return <var>promise</var>.</p></li>
-    </ol>
 
     <p>The <dfn id="dom-createsession"><code>createSession(sessionType)</code></dfn> method returns a new <code><a href="#dom-mediakeysession">MediaKeySession</a></code> object. It must run the following steps:</p>
 
@@ -381,6 +354,32 @@ interface <dfn id="dom-mediakeys">MediaKeys</dfn> {
           <li><p>Use the <var title="true">cdm</var> to process <var>certificate</var>.</p></li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
           <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <dfn id="dom-create"><code>create(keySystem)</code></dfn> method creates a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object for <var title="true">keySystem</var>. It must run the following steps:</p>
+
+    <ol>
+      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not supported or not allowed on the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the media element's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code>, return a promise rejected with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li>
+<p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
+          <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
+          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+
+          <li>
+            <p>Let <var title="true">media keys</var> be a new <code><a href="#dom-mediakeys">MediaKeys</a></code> object, and initialize it as follows:</p>
+            <ol>
+              <li><p>Set the <code><a href="#dom-keysystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
+            </ol>
+          </li>
+          <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
         </ol>
       </li>
       <li><p>Return <var>promise</var>.</p></li>
@@ -772,67 +771,6 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
       </li>
     </ol>
 
-    
-    <h3 id="exceptions">2.1. Exceptions</h3>
-    <p id="error-names">The methods report errors by rejecting the returned promise with a <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code>.
-    The following <a href="http://www.w3.org/TR/dom/#error-names">DOMException names from DOM4</a> are used in the algorithms.
-    Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
-    </p>
-
-    
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <th>Possible Causes (non-exhaustive)</th>
-        </tr>
-        <tr>
-          <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
-          <td>
-            The existing MediaKeys object cannot be removed.<br>
-            The key system is not supported.<br>
-            The key system is not supported on insecure origins.<br>
-            The initialization data type is not supported by the key system.<br>
-            The session type is not supported by the key system.<br>
-            The initialization data is not supported by the key system.<br>
-            The operation is not supported by the key system.
-          </td>
-        </tr>
-        <tr>
-          <td><dfn id="dfn-InvalidStateError"><code>InvalidStateError</code></dfn></td>
-          <td>The existing MediaKeys object cannot be removed at this time.<br>
-            The session has already been used.<br>
-            The session is not yet initialized.<br>
-            The session is closed.
-          </td>
-        </tr>
-        <tr>
-          <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
-          <td>
-            The parameter is empty.<br>
-            Invalid initialization data.<br>
-            The operation is not supported on sessions of this type.<br>
-            Invalid response format.<br>
-            A persistent license was provided for a "temporary" session.
-          </td>
-        </tr>
-        <tr>
-          <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
-          <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br>
-            A non-closed session already exists for this sessionId.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    
-    <h3 id="media-element-restictions">2.2 Media Element Restrictions</h3>
-    <p><i>This section is non-normative.</i></p>
-    <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
-    This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
-    <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, may not be available. One likely restriction is that
-    video media may be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
-
     <h3 id="mediakeysession-event-definitions">Event Definitions</h3>
     <pre class="idl">
 [Constructor(DOMString type, optional <a href="#dom-mediaencryptedeventinit">MediaEncryptedEventInit</a> eventInitDict)]
@@ -904,6 +842,8 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
 
     <h3 id="mediakeysession-events">Event Summary</h3>
     <p><i>This section is non-normative.</i></p>
+
+    <p>Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
     <p>The following event is fired at <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code>.</p>
     <table>
@@ -1021,20 +961,70 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
       <li><p>Resolve <var>promise</var>.</p></li>
     </ol>
 
+    <h3 id="exceptions">Exceptions</h3>
+    <p id="error-names">The methods report errors by rejecting the returned promise with a <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code>.
+    The following <a href="http://www.w3.org/TR/dom/#error-names">DOMException names from DOM4</a> are used in the algorithms.
+    Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
+    </p>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <th>Possible Causes (non-exhaustive)</th>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
+          <td>
+            The existing MediaKeys object cannot be removed.<br>
+            The key system is not supported.<br>
+            The key system is not supported on insecure origins.<br>
+            The initialization data type is not supported by the key system.<br>
+            The session type is not supported by the key system.<br>
+            The initialization data is not supported by the key system.<br>
+            The operation is not supported by the key system.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-InvalidStateError"><code>InvalidStateError</code></dfn></td>
+          <td>The existing MediaKeys object cannot be removed at this time.<br>
+            The session has already been used.<br>
+            The session is not yet initialized.<br>
+            The session is closed.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
+          <td>
+            The parameter is empty.<br>
+            Invalid initialization data.<br>
+            The operation is not supported on sessions of this type.<br>
+            Invalid response format.<br>
+            A persistent license was provided for a "temporary" session.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
+          <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br>
+            A non-closed session already exists for this sessionId.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
 
     <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
     <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
-    
     <pre class="idl">
 enum <dfn id="dom-mediawaitingfor">MediaWaitingFor</dfn> { "<dfn id="dom-waitingfornone">none</dfn>", "<dfn id="dom-waitingfordata">data</dfn>", "<dfn id="dom-waitingforkey">key</dfn>" };
 partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
   // Encrypted Media
-  readonly attribute <a href="#dom-mediakeys">MediaKeys</a>? <a href="#dom-attrmediakeys">mediaKeys</a>;
-  Promise&lt;void&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
   
+  readonly attribute <a href="#dom-mediakeys">MediaKeys</a>? <a href="#dom-attrmediakeys">mediaKeys</a>;
+  readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
   attribute <a href="http://www.w3.org/TR/html5/webappapis.html#eventhandler">EventHandler</a> <a href="#dom-onencrypted">onencrypted</a>;
 
-  readonly attribute <a href="#dom-mediawaitingfor">MediaWaitingFor</a> <a href="#dom-waitingfor">waitingFor</a>;
+  Promise&lt;void&gt; <a href="#dom-setmediakeys">setMediaKeys</a>(<a href="#dom-mediakeys">MediaKeys</a>? mediaKeys);
 };
 </pre>
 
@@ -1099,8 +1089,6 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
     
     <p class="non-normative">Note: Support for clearing or replacing the associated <code><a href="#dom-mediakeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <code><a href="#dom-setmediakeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
-    
-    <p class="non-normative">Note: In some implementations, <code><a href="#dom-mediakeysession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#dom-mediakeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#dom-setmediakeys">setMediaKeys()</a></code>.</p>
 
     <h3 id="htmlmediaelement-algorithms">Algorithms</h3>
 
@@ -1224,13 +1212,6 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
     </ol>
     </div>
 
-    
-    <p>The following steps are added to readyState change algorithms in <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>:</p>
-    <ul>
-      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</li>
-      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</li>
-    </ul>
-
     <h4 id="algorithms-queue-waiting">Queue a "waiting" Event</h4>
     <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
     Requests to run this algorithm include a target <code><a href="#dom-htmlmediaelement">HTMLMediaElement</a></code> object.
@@ -1268,6 +1249,20 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
         <p>Otherwise, the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the <var title="true">media element</var> must not be "<code><a href="#dom-waitingfornone">none</a></code>".</p>
       </li>
     </ol>
+
+    <h4 id="htmlmediaelement-playing-the-media-resource">Playing the Media Resource Algorithm Modifications</h4>
+    <p>The following steps are added to readyState change algorithms in <a href="http://www.w3.org/TR/html5/embedded-content-0.html#playing-the-media-resource">Playing the media resource</a>:</p>
+    <ul>
+      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-waiting">waiting</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfordata">data</a></code>".</li>
+      <li>If a readyState change queues a task to fire a <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplay">canplay</a></code> event, the user agent must also set the <code><a href="#dom-waitingfor">waitingFor</a></code> attribute on the Media Element to "<code><a href="#dom-waitingfornone">none</a></code>".</li>
+    </ul>
+
+    <h3 id="media-element-restictions">Media Element Restrictions</h3>
+    <p><i>This section is non-normative.</i></p>
+    <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
+    This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
+    <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, may not be available. One likely restriction is that
+    video media may be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
 
 
     <h2 id="simple-decryption">5. Simple Decryption</h2>
