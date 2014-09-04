@@ -146,7 +146,6 @@
     or other server.</p>
  
     <h2>Status of This Document</h2>
-    <div class="issue"><p class="">The specification is being reordered, and the table of contents has been temporarily removed. Until these updates are complete, please use the <a href="https://dvcs.w3.org/hg/html-media/raw-file/0713fffe9928/encrypted-media/encrypted-media.html">previous version</a>.</p></div>
 
     <p><em>
       This section describes the status of this document at the time of its publication. Other documents may supersede this document.
@@ -178,7 +177,6 @@
       </p>
 
 
-<!-- 
     <h2 id="toc">Table of Contents</h2>
 
     <ul style="list-style-type:none">
@@ -186,28 +184,9 @@
         <li><ul style="list-style-type:none">
           <li><a href="#definitions">1.1. Definitions</a></li>
         </ul></li>
-      <li><a href="#extensions">2. Media Element Extensions</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#exceptions">2.1. Exceptions</a></li>
-          <li><a href="#media-element-restictions">2.2. Media Element Restrictions</a></li>
-        </ul></li>
-      <li><a href="#events">3. Events</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#event-definitions">3.1 Event Definitions</a></li>
-          <li><a href="#event-summary">3.2 Event Summary</a></li>
-        </ul></li>
-      <li><a href="#algorithms">4. Algorithms</a></li>
-        <li><ul style="list-style-type:none">
-          <li><a href="#algorithms-initdata-encountered">4.1. Initialization Data Encountered</a></li>
-          <li><a href="#algorithms-encrypted-block">4.2. Encrypted Block Encountered</a></li>
-          <li><a href="#algorithms-queue-message">4.3. Queue a "message" Event</a></li>
-          <li><a href="#algorithms-queue-error">4.4. Queue an "error" Event</a></li>
-          <li><a href="#algorithms-keys-changed">4.5. Usable Keys Changed</a></li>
-          <li><a href="#algorithms-update-expiration">4.6. Update Expiration</a></li>
-          <li><a href="#algorithms-session-close">4.7. Session Close</a></li>
-          <li><a href="#algorithms-queue-waiting">4.8. Queue a "waiting" Event</a></li>
-          <li><a href="#algorithms-resume-playback">4.9. Attempt to Resume Playback If Necessary</a></li>
-        </ul></li>
+      <li><a href="#mediakeys">2. MediaKeys Object</a></li>
+      <li><a href="#mediakeysession">3. MediaKeySession Object</a></li>
+      <li><a href="#htmlmediaelement-extensions">4. HTMLMediaElement Extensions</a></li>
       <li><a href="#simple-decryption">5. Simple Decryption</a></li>
         <li><ul style="list-style-type:none">
           <li><a href="#clear-key">5.1. Clear Key</a></li>
@@ -217,7 +196,6 @@
       <li><a href="#examples">8. Examples</a></li>
       <li><a href="#revision-history">9. Revision History</a></li>
     </ul>
- -->
 
 
     <h2 id="introduction">1. Introduction</h2>
@@ -330,7 +308,7 @@
     on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
     </p>
 
-    <h2 id="mediakeys">MediaKeys Object</h2>
+    <h2 id="mediakeys">2. MediaKeys Object</h2>
     <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <videoanchor name="media-data">media data</videoanchor> during playback.
       It also represents a CDM instance.
     </p>
@@ -348,11 +326,11 @@ interface <precodedfn>MediaKeys</precodedfn> {
 };
 </pre>
 
-    <h3 id="mediakeys-attributes">Attributes</h3>
+    <h3 id="mediakeys-attributes">2.1. Attributes</h3>
 
     <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
 
-    <h3 id="mediakeys-methods">Methods</h3>
+    <h3 id="mediakeys-methods">2.2. Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -501,7 +479,7 @@ interface <precodedfn>MediaKeys</precodedfn> {
     </ol>
     
 
-    <h2 id="mediakeysession">MediaKeySession Object</h2>
+    <h2 id="mediakeysession">3. MediaKeySession Object</h2>
     <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
     <pre class="idl">
 interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
@@ -523,7 +501,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 };
 </pre>
 
-    <h3 id="mediakeysession-attributes">Attributes</h3>
+    <h3 id="mediakeysession-attributes">3.1. Attributes</h3>
 
     <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
 
@@ -533,7 +511,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
     <p>The <codedfn>closed</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
     This promise can only be fulfilled and is never rejected.</p>
 
-    <h3 id="mediakeysession-methods">Methods</h3>
+    <h3 id="mediakeysession-methods">3.2. Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -770,7 +748,7 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
       </li>
     </ol>
 
-    <h3 id="mediakeysession-event-definitions">Event Definitions</h3>
+    <h3 id="mediakeysession-event-definitions">3.3. Event Definitions</h3>
     <pre class="idl">
 [Constructor(DOMString type, optional <precoderef>MediaEncryptedEventInit</precoderef> eventInitDict)]
 interface <precodedfn>MediaEncryptedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
@@ -828,7 +806,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>Events are constructed as defined in <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#constructing-events">Constructing events</a>, in [DOM4].</p>
     </div>
 
-    <h3 id="mediakeysession-events">Event Summary</h3>
+    <h3 id="mediakeysession-events">3.4. Event Summary</h3>
     <non-normative-section/>
 
     <p>Note: In some implementations, <coderef>MediaKeySession</coderef> objects may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
@@ -881,9 +859,9 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </tbody>
     </table>
 
-    <h3 id="mediakeysession-algorithms">Algorithms</h3>
+    <h3 id="mediakeysession-algorithms">3.5. Algorithms</h3>
 
-    <h4 id="algorithms-queue-message">Queue a "message" Event</h4>
+    <h4 id="algorithms-queue-message">3.5.1. Queue a "message" Event</h4>
     <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
     Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, a <var title="true">request</var>, and a <var title="true">destination URL</var>.
     </p>
@@ -900,10 +878,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </li>
     </ol>
 
-    <h4 id="algorithms-queue-error">Queue an "error" Event</h4>
+    <h4 id="algorithms-queue-error">3.5.2. Queue an "error" Event</h4>
     <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - There is currently no mechanism for reporting errors and other events not related to a specific method call.</p></div>
 
-    <h4 id="algorithms-keys-changed">Usable Keys Changed</h4>
+    <h4 id="algorithms-keys-changed">3.5.3. Usable Keys Changed</h4>
     <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
     This can happen as the result of an <methodref>update</methodref> call or some other event.
     Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object.
@@ -917,7 +895,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       </li>
     </ol>
 
-    <h4 id="algorithms-update-expiration">Update Expiration</h4>
+    <h4 id="algorithms-update-expiration">3.5.4. Update Expiration</h4>
     <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
     This can happen as the result of an <methodref>update</methodref> call or some other event.
     Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object and the new expiration time, which may be <code>NaN</code>.
@@ -930,7 +908,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Set the <var title="true">session</var>'s <coderef>expiration</coderef> attribute to <var title="true">expiration time</var>.</p></li>
     </ol>
 
-    <h4 id="algorithms-session-close">Session Close</h4>
+    <h4 id="algorithms-session-close">3.5.5. Session Close</h4>
     <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
     <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>close</methodref> call, when the session is no longer needed, or when system resources are lost.
     Keys in other sessions should be unaffected, even if they have overlapping key IDs.
@@ -944,7 +922,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
       <li><p>Resolve <var>promise</var>.</p></li>
     </ol>
 
-    <h3 id="exceptions">Exceptions</h3>
+    <h3 id="exceptions">3.6. Exceptions</h3>
     <p id="error-names">The methods report errors by rejecting the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
     The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> are used in the algorithms.
     Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
@@ -996,7 +974,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     </table>
 
 
-    <h2 id="htmlmediaelement-extensions">HTMLMediaElement Extensions</h2>
+    <h2 id="htmlmediaelement-extensions">4. HTMLMediaElement Extensions</h2>
     <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
     <pre class="idl">
 enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
@@ -1011,7 +989,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 };
 </pre>
 
-    <h3 id="htmlmediaelement-attributes">Attributes</h3>
+    <h3 id="htmlmediaelement-attributes">4.1. Attributes</h3>
 
     <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
 
@@ -1019,7 +997,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 
     <p>The <codedfn>onencrypted</codedfn> event handler for the <coderef>encrypted</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
 
-    <h3 id="htmlmediaelement-methods">Methods</h3>
+    <h3 id="htmlmediaelement-methods">4.2. Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -1068,9 +1046,9 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <p class="non-normative">Note: Support for clearing or replacing the associated <coderef>MediaKeys</coderef> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
 
-    <h3 id="htmlmediaelement-algorithms">Algorithms</h3>
+    <h3 id="htmlmediaelement-algorithms">4.3. Algorithms</h3>
 
-    <h4 id="algorithms-initdata-encountered">Initialization Data Encountered</h4>
+    <h4 id="algorithms-initdata-encountered">4.3.1. Initialization Data Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1097,7 +1075,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
     </ol>
 
-    <h4 id="algorithms-encrypted-block">Encrypted Block Encountered</h4>
+    <h4 id="algorithms-encrypted-block">4.3.2. Encrypted Block Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1183,7 +1161,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     </ol>
     </div>
 
-    <h4 id="algorithms-queue-waiting">Queue a "waiting" Event</h4>
+    <h4 id="algorithms-queue-waiting">4.3.3. Queue a "waiting" Event</h4>
     <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
     </p>
@@ -1199,7 +1177,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p>Suspend playback.</p></li>
     </ol>
 
-    <h4 id="algorithms-resume-playback">Attempt to Resume Playback If Necessary</h4>
+    <h4 id="algorithms-resume-playback">4.3.4. Attempt to Resume Playback If Necessary</h4>
     <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
     If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
@@ -1219,14 +1197,14 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       </li>
     </ol>
 
-    <h4 id="htmlmediaelement-playing-the-media-resource">Playing the Media Resource Algorithm Modifications</h4>
+    <h4 id="htmlmediaelement-playing-the-media-resource">4.3.5. Playing the Media Resource Algorithm Modifications</h4>
     <p>The following steps are added to readyState change algorithms in <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>:</p>
     <ul>
       <li>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
       <li>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
     </ul>
 
-    <h3 id="media-element-restictions">Media Element Restrictions</h3>
+    <h3 id="media-element-restictions">4.4. Media Element Restrictions</h3>
     <non-normative-section/>
     <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
     This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
@@ -1896,6 +1874,10 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>3 September 2014</td>
+          <td>Reorganized by object.</td>
+        </tr>
         <tr>
           <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/3a5e8f5332a2/encrypted-media/encrypted-media.html">27 August 2014</a></td>
           <td>Moved license request generation and session loading to MediaKeySession.</td>
