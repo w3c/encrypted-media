@@ -541,13 +541,14 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
               <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
               <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p></li>
               <li><p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>, and <var title="true">session type</var>.</p>
-                <p>If <var title="true">session type</var> is "<coderef prefix="sessiontype">temporary</coderef>", the request is for a temporary non-persisted license.
-                If <var title="true">session type</var> is "<coderef prefix="sessiontype">persistent</coderef>", the request is for a persistable session, possibly with a persistable license.</p>
+                <p>If <var title="true">session type</var> is "<coderef prefix="sessiontype">temporary</coderef>", the request is for a temporary non-persisted session. <span class="non-normative">(The returned license must not be persistable.)</span>
+                If <var title="true">session type</var> is "<coderef prefix="sessiontype">persistent</coderef>", the request is for a persistable session. <span class="non-normative">(The returned license may be persistable.)</span>
+                </p>
                 <p>If <var title="true">session type</var> is <em>not</em> "<coderef prefix="sessiontype">persistent</coderef>", the CDM must <em>not</em> store a record of or data related to the session at any point.</p>
                 <p>When storage is allowed, data must always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code> can access it and only in the current profile of this user agent.
                   Other user agent profiles, user agents, and applications must not be able to access the stored data.
                 </p>
-                <p class="non-normative">Note: The license server may reject the requested type, but it should not issue a different type.</p>
+                <p class="non-normative">Note: The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p>
                 <p><var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var>init data</var>.</p>
               </li>
             </ol>
