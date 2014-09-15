@@ -560,7 +560,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
           <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session id</var>.</p></li>
-          <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to <var title="true">media keys</var>'s <var title="true">list of active session IDs</var>.</p></li>
           <li><p>Let this object's <var title="true">callable</var> be true.</p></li>
           <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">request</var> and <code>null</code>.</p></li>
           <li><p>Resolve <var>promise</var>.</p></li>
@@ -581,9 +580,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
-          <li><p>If <var title="true">media keys</var>'s <var title="true">list of active session IDs</var> includes an entry for <var title="true">sessionId</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p>
-            <p class="non-normative">In other words, do not create a session if a non-closed session already exists for this <var title="true">sessionId</var>.</p>
-          </li>
           <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
           <li><p>Let <var title="true">request</var> be null.</p></li>
           <li><p>Let <var title="true">destination URL</var> be null.</p></li>
@@ -594,6 +590,9 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
               <li><p>If there is no data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>, resolve <var>promise</var> with <code>false</code>.</p></li><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
               <li><p>Let <var title="true">session data</var> be the data stored for the <var title="true">sessionId</var> in the <var title="true">origin</var>.
               This must not include data from other origin(s) or that is not associated with an origin.</p></li>
+              <li><p>If there is an unclosed "<coderef prefix="sessiontype">persistent</coderef>" session in any <dom4ref name="document">Document</dom4ref> representing the <var title="true">session data</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p>
+                <p class="non-normative">In other words, do not create a session if a non-closed persistent session already exists for this <var title="true">sessionId</var> in any browsing context.</p>
+              </li>
               <li><p>Load the <var title="true">session data</var>.</p></li>
               <li><p>If the <var title="true">session data</var> indicates an expiration time for the session, let <var title="true">expiration time</var> be the expiration time in milliseconds since 01 January 1970 UTC.</p></li>
               <li><p>If the CDM needs to send a message:</p>
@@ -606,7 +605,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
           </li>
           <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
           <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">sessionId</var>.</p></li>
-          <li><p>Add an entry for the value of the <coderef>sessionId</coderef> attribute to <var title="true">media keys</var>'s <var title="true">list of active session IDs</var>.</p></li>
           <li><p>Let this object's <var title="true">callable</var> be true.</p></li>
           <li><p>If the loaded session contains usable keys, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
             <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
@@ -926,7 +924,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
       <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
-      <li><p>Remove the entry for the value of the <var title="true">session</var>'s <coderef>sessionId</coderef> attribute from <var title="true">media keys</var>'s <var title="true">list of active session IDs</var>.</p></li>
       <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
       <li><p>Resolve <var>promise</var>.</p></li>
     </ol>
@@ -994,6 +991,10 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The CDM should not store session data, including the Session ID, until <methodref>update</methodref> is called the first time.
       Specifically, the CDM should not store session data during the <methodref>generateRequest</methodref> algorithm.
       This ensures that the application is aware of the session and knows it needs to eventually remove it.
+    </p>
+    <p>The CDM must ensure that data for a given session is only present in one active unclosed session in any <dom4ref name="document">Document</dom4ref>.
+      In other words, <methodref>load</methodref> must fail when there is already a <coderef>MediaKeySession</coderef> representing the session specified by <var title="true">sessionId</var>, either because the object that created it via <methodref>generateRequest</methodref> is still active or it has been loaded into another object via <methodref>load</methodref>.
+      A session may only be loaded again after the <a href="#algorithms-session-close">Session Close</a> algorithm has not been run on the object representing it.
     </p>
     <p>An application that creates a "<coderef prefix="sessiontype">persistent</coderef>" session should later remove the stored data using <methodref>remove</methodref>.
       The CDM may also remove sessions as appropriate, but applications should not rely on this.
