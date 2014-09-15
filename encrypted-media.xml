@@ -252,7 +252,7 @@
     <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
-    <span class="non-normative">(Note: Some use cases may require that Session IDs be unique within the origin over time, including across browsing sessions.)</span>
+      Session IDs for "<coderef prefix="sessiontype">persistent</coderef>" sessions must be unique within the origin over time, including across browsing sessions.
     </p>
 
     <h4 id="decryption-key">1.1.5. Key</h4>
@@ -549,7 +549,9 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
                 <p class="non-normative">Note: The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p>
               </li>
 
-              <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p></li>
+              <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p>
+                <p>If <var title="true">session type</var> is "<coderef prefix="sessiontype">persistent</coderef>", the ID must be unique within the the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code> over time, including across Documents and browsing sessions.</p>
+              </li>
               <li><p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
                 <p>The <var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var>init data</var>.</p>
                 <p>The <var title="true">cdm</var> should <em>not</em> store session data, including the session ID, at this point. See <a href="#session-storage">Session Storage and Persistence</a>.</p>
