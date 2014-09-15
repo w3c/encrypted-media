@@ -561,18 +561,24 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
             <ol>
               <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
               <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li>
+<p>Follow the steps for the first matching condition from the following list:</p>
+                <dl class="switch">
+                  <dt>If <var title="true">session type</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>"</dt>
+                  <dd>Let <var title="true">requested session type</var> be a temporary non-persisted session. <span class="non-normative">(The returned license must not be persistable.)</span>
+</dd>
+                  <dt>If <var title="true">session type</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>"</dt>
+                  <dd>Let <var title="true">requested session type</var> be a persistable session. <span class="non-normative">(The returned license may be persistable.)</span>
+</dd>
+                </dl>
+                <p class="non-normative">Note: The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p>
+              </li>
+
               <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p></li>
               <li>
-<p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>, and <var title="true">session type</var>.</p>
-                <p>If <var title="true">session type</var> is "<code><a href="#dom-sessiontypetemporary">temporary</a></code>", the request is for a temporary non-persisted session. <span class="non-normative">(The returned license must not be persistable.)</span>
-                If <var title="true">session type</var> is "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the request is for a persistable session. <span class="non-normative">(The returned license may be persistable.)</span>
-                </p>
-                <p>If <var title="true">session type</var> is <em>not</em> "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the CDM must <em>not</em> store a record of or data related to the session at any point.</p>
-                <p>When storage is allowed, data must always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code> can access it and only in the current profile of this user agent.
-                  Other user agent profiles, user agents, and applications must not be able to access the stored data.
-                </p>
-                <p class="non-normative">Note: The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p>
-                <p><var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
+<p>Let <var title="true">request</var> be a request <span class="non-normative">(e.g. a license request)</span> for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
+                <p>The <var title="true">cdm</var> must not use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
+                <p>The <var title="true">cdm</var> should <em>not</em> store session data, including the session ID, at this point. See <a href="#session-storage">Session Storage and Persistence</a>.</p>
               </li>
             </ol>
           </li>
@@ -672,6 +678,7 @@ interface <dfn id="dom-mediakeysession">MediaKeySession</dfn> : <a href="http://
                   <dt>Otherwise</dt>
                   <dd>Reject <var>promise</var> with a new <code><a href="http://www.w3.org/TR/dom/#exception-domexception">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</dd>
                 </dl>
+                <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
                 <p class="non-normative">Note: When <var>message</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
                 <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
                 <p class="non-normative">Note: Keys from different sessions should be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
@@ -1031,6 +1038,24 @@ dictionary <dfn id="dom-mediakeymessageeventinit">MediaKeyMessageEventInit</dfn>
         </tr>
       </tbody>
     </table>
+
+    <h3 id="session-storage">3.7. Session Storage and Persistence</h3>
+    <p>This section provides an overview of session stroage and persistence that complements the algorithms.</p>
+    <p>If this object's <var title="true">session type</var> is not "<code><a href="#dom-sessiontypepersistent">persistent</a></code>", the user agent and CDM must <em>not</em> persist a record of or data related to the session at any point.
+      This includes license(s), key(s), and the <a href="#session-id">Session ID</a>.
+    </p>
+    <p>The remainder of this section applies to "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" sessions, which implementatations may optionally support.</p>
+    <p>Persisted data must always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><a href="http://www.w3.org/TR/dom/#document">Document</a></code> can access it.
+      In addition, the data must only be accessible by the current profile of this user agent - other user agent profiles, user agents, and applications must not be able to access the stored data.
+    </p>
+    <p>The CDM should not store session data, including the Session ID, until <code><a href="#dom-update">update()</a></code> is called the first time.
+      Specifically, the CDM should not store session data during the <code><a href="#dom-generaterequest">generateRequest()</a></code> algorithm.
+      This ensures that the application is aware of the session and knows it needs to eventually remove it.
+    </p>
+    <p>An application that creates a "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" session should later remove the stored data using <code><a href="#dom-remove">remove()</a></code>.
+      The CDM may also remove sessions as appropriate, but applications should not rely on this.
+    </p>
+    <p class="non-normative">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p>
 
 
     <h2 id="htmlmediaelement-extensions">4. HTMLMediaElement Extensions</h2>
