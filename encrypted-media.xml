@@ -252,7 +252,7 @@
     <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
-      Session IDs for "<coderef prefix="sessiontype">persistent</coderef>" sessions must be unique within the origin over time, including across browsing sessions.
+      Session IDs for "<coderef prefix="sessiontype">persistent</coderef>" sessions must be unique within the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> over time, including across browsing sessions.
     </p>
 
     <h4 id="decryption-key">1.1.5. Key</h4>
@@ -301,11 +301,16 @@
     </p>
 
 
-    <h4 id="cross-origin-support">1.1.9. Cross Origin Support</h4>
-    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <coderef>encrypted</coderef>
-    and <coderef prefix="event">message</coderef> events, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
+    <h4 id="cross-origin">1.1.9. Cross Origin Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
+    </p>
+
+    <h4 id="mixed-content">1.1.10. Mixed Content Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must not be mixed content as defined in [MIXED-CONTENT].
     </p>
 
     <h2 id="mediakeys">2. MediaKeys Object</h2>
@@ -1077,11 +1082,12 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
       <li>
-        <p>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/>, run the following steps:</p>
+        <p>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/> and <em>not</em> <a href="#mixed-content">mixed content</a>, run the following steps:</p>
         <ol>
-          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of that initialization data.</p></li>
-          <li><p>Let <var title="">initData</var> be that initialization data.</p></li>
+          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of the Initialization Data.</p></li>
+          <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
         </ol>
+        <div class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent must not expose Initialization Data from such media data to the application.</div>
       </li>
       <li>
         <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>encrypted</coderef> at the <a href="#media-element">media element</a>.</p>
@@ -1091,7 +1097,9 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
-        <p class="non-normative">Note that if the media is not <cors-same-origin/> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
+        <p class="non-normative">Note that the <coderef>initData</coderef> attribute will be null if the media data is <em>not</em> <cors-same-origin/> or is <a href="#mixed-content">mixed content</a>.
+          Applications may retrieve the Initialization Data from an alternate source.
+        </p>
       </li>
 
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
@@ -1397,7 +1405,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories, concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and user-specific information that may be used directly for user tracking.</p>
 
     <h4 id="privacy-fingerprinting">7.1.1 Fingerprinting</h4>
-    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between sites that are not CORS-same-origin.</p>
+    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between origins.</p>
 
     <h4 id="privacy-leakage">7.1.2 Information Leakage</h4>
     <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.

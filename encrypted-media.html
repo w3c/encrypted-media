@@ -255,7 +255,7 @@
     <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
     <p>Each Session ID shall be unique within the browsing context in which it was created.
-      Session IDs for "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" sessions must be unique within the origin over time, including across browsing sessions.
+      Session IDs for "<code><a href="#dom-sessiontypepersistent">persistent</a></code>" sessions must be unique within the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> over time, including across browsing sessions.
     </p>
 
     <h4 id="decryption-key">1.1.5. Key</h4>
@@ -304,11 +304,16 @@
     </p>
 
 
-    <h4 id="cross-origin-support">1.1.9. Cross Origin Support</h4>
-    <p>During playback, embedded media data is exposed to script in the embedding origin. In order for the API to fire <code><a href="#dom-encrypted">encrypted</a></code>
-    and <code><a href="#dom-eventmessage">message</a></code> events, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page.
+    <h4 id="cross-origin">1.1.9. Cross Origin Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <code><a href="#dom-initdata">initData</a></code> in the <code><a href="#dom-encrypted">encrypted</a></code> event, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must be <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> with the embedding page.
     If <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is cross-origin with the embedding document, authors should use the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-crossorigin">crossorigin</a> attribute
     on the <a href="#media-element">media element</a> and CORS headers on the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> response to make it <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>.
+    </p>
+
+    <h4 id="mixed-content">1.1.10. Mixed Content Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <code><a href="#dom-initdata">initData</a></code> in the <code><a href="#dom-encrypted">encrypted</a></code> event, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> must not be mixed content as defined in [MIXED-CONTENT].
     </p>
 
     <h2 id="mediakeys">2. MediaKeys Object</h2>
@@ -1139,11 +1144,12 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
       <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
       <li>
-        <p>If the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a>, run the following steps:</p>
+        <p>If the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> and <em>not</em> <a href="#mixed-content">mixed content</a>, run the following steps:</p>
         <ol>
-          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of that initialization data.</p></li>
-          <li><p>Let <var title="">initData</var> be that initialization data.</p></li>
+          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of the Initialization Data.</p></li>
+          <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
         </ol>
+        <div class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent must not expose Initialization Data from such media data to the application.</div>
       </li>
       <li>
         <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-encrypted">encrypted</a></code> at the <a href="#media-element">media element</a>.</p>
@@ -1153,7 +1159,9 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
           <code><a href="#dom-initdata">initData</a></code> = <var title="">initData</var>
         </li></ul>
         <p class="non-normative">Note that <code title="dom-media-readyState"><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
-        <p class="non-normative">Note that if the media is not <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> then the initData will be null. This allows applications that can retrieve initData from an alternative source to continue. Applications with no way to retrieve initData may wish to consider aborting playback in this case.</p>
+        <p class="non-normative">Note that the <code><a href="#dom-initdata">initData</a></code> attribute will be null if the media data is <em>not</em> <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> or is <a href="#mixed-content">mixed content</a>.
+          Applications may retrieve the Initialization Data from an alternate source.
+        </p>
       </li>
 
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>.</p></li>
@@ -1471,7 +1479,7 @@ partial interface <dfn id="dom-htmlmediaelement">HTMLMediaElement</dfn> {
     <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories, concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and user-specific information that may be used directly for user tracking.</p>
 
     <h4 id="privacy-fingerprinting">7.1.1 Fingerprinting</h4>
-    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between sites that are not CORS-same-origin.</p>
+    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between origins.</p>
 
     <h4 id="privacy-leakage">7.1.2 Information Leakage</h4>
     <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
