@@ -103,7 +103,7 @@
     <div class="head">
       <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
       <h1>Encrypted Media Extensions</h1>
-      <h2 id="draft-date">W3C Editor's Draft 19 September 2014</h2>
+      <h2 id="draft-date">W3C Editor's Draft 22 September 2014</h2>
       <dl>
         <dt>This Version:</dt>
         <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
@@ -785,19 +785,6 @@ interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget"
 
     <h3 id="mediakeysession-event-definitions">3.3. Event Definitions</h3>
     <pre class="idl">
-[Constructor(DOMString type, optional <precoderef>MediaEncryptedEventInit</precoderef> eventInitDict)]
-interface <precodedfn>MediaEncryptedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
-  readonly attribute DOMString <precoderef>initDataType</precoderef>;
-  readonly attribute ArrayBuffer? <precoderef>initData</precoderef>;
-};
-
-dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
-  DOMString <precoderef>initDataType</precoderef> = "";
-  ArrayBuffer? <precoderef>initData</precoderef> = null;
-};
-</pre>
-
-    <pre class="idl">
 enum <precodedfn>MediaKeyMessageType</precodedfn> { "<precodedfn>licenserequest</precodedfn>", "<precodedfn>licenserenewal</precodedfn>", "<precodedfn>licenserelease</precodedfn>" };
 
 [Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
@@ -813,14 +800,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 </pre>
 
     <dl class="domintro">
-     <dt><var title="">event</var> . <coderef>initDataType</coderef></dt>
-     <dd>
-       <p>Returns a string indicating the <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
-     </dd>
-     <dt><var title="">event</var> . <coderef>initData</coderef></dt>
-     <dd>
-       <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
-     </dd>
      <dt><var title="">event</var> . <coderef>type</coderef></dt>
      <dd>
        <p>Returns the type of the message.</p>
@@ -843,29 +822,6 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
 
     <p>Note: In some implementations, <coderef>MediaKeySession</coderef> objects may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
 
-    <p>The following event is fired at <coderef>HTMLMediaElement</coderef>.</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Event name</th>
-          <th>Interface</th>
-          <th>Dispatched when...</th>
-          <th>Preconditions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><codedfn>encrypted</codedfn></td>
-          <td><coderef>MediaEncryptedEvent</coderef></td>
-          <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor>.</td>
-          <td><readystate/> is equal to <have-metadata/> or greater.
-          <span class="non-normative">It is possible that the element is playing or has played.</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p>The following events are fired at <coderef>MediaKeySession</coderef>.</p>
     <table>
       <thead>
         <tr>
@@ -1096,9 +1052,58 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <p class="non-normative">Note: Support for clearing or replacing the associated <coderef>MediaKeys</coderef> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
     <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
 
-    <h3 id="htmlmediaelement-algorithms">4.3. Algorithms</h3>
+    <h3 id="htmlmediaelement-event-definitions">4.3. Event Definitions</h3>
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaEncryptedEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaEncryptedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>initDataType</precoderef>;
+  readonly attribute ArrayBuffer? <precoderef>initData</precoderef>;
+};
 
-    <h4 id="algorithms-initdata-encountered">4.3.1. Initialization Data Encountered</h4>
+dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString <precoderef>initDataType</precoderef> = "";
+  ArrayBuffer? <precoderef>initData</precoderef> = null;
+};
+</pre>
+
+    <dl class="domintro">
+     <dt><var title="">event</var> . <coderef>initDataType</coderef></dt>
+     <dd>
+       <p>Returns a string indicating the <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>initData</coderef></dt>
+     <dd>
+       <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+     </dd>
+    </dl>
+
+    <h3 id="htmlmediaelement-events">4.4. Event Summary</h3>
+    <non-normative-section/>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+          <th>Preconditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><codedfn>encrypted</codedfn></td>
+          <td><coderef>MediaEncryptedEvent</coderef></td>
+          <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor>.</td>
+          <td><readystate/> is equal to <have-metadata/> or greater.
+          <span class="non-normative">It is possible that the element is playing or has played.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="htmlmediaelement-algorithms">4.5. Algorithms</h3>
+
+    <h4 id="algorithms-initdata-encountered">4.5.1. Initialization Data Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1128,7 +1133,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
     </ol>
 
-    <h4 id="algorithms-encrypted-block">4.3.2. Encrypted Block Encountered</h4>
+    <h4 id="algorithms-encrypted-block">4.5.2. Encrypted Block Encountered</h4>
     <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
 
     <ol>
@@ -1214,7 +1219,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     </ol>
     </div>
 
-    <h4 id="algorithms-queue-waiting">4.3.3. Queue a "waiting" Event</h4>
+    <h4 id="algorithms-queue-waiting">4.5.3. Queue a "waiting" Event</h4>
     <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
     </p>
@@ -1230,7 +1235,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li><p>Suspend playback.</p></li>
     </ol>
 
-    <h4 id="algorithms-resume-playback">4.3.4. Attempt to Resume Playback If Necessary</h4>
+    <h4 id="algorithms-resume-playback">4.5.4. Attempt to Resume Playback If Necessary</h4>
     <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
     If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
     Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
@@ -1250,7 +1255,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       </li>
     </ol>
 
-    <h4 id="htmlmediaelement-playing-the-media-resource">4.3.5. Playing the Media Resource Algorithm Modifications</h4>
+    <h4 id="htmlmediaelement-playing-the-media-resource">4.5.5. Playing the Media Resource Algorithm Modifications</h4>
     <p>The following steps are added to readyState change algorithms in <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>:</p>
     <ul>
       <li>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
