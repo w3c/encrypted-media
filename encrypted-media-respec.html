@@ -1,0 +1,1984 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+  <head>
+    <title>Encrypted Media Extensions</title>
+    <!-- script to register bugs -->
+    <script src="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/assets/scripts/bug-assist.js"></script>
+    <meta name="bug.product" content="HTML WG"/>
+    <meta name="bug.component" content="Encrypted Media Extensions"/>
+
+    <link rel="stylesheet" href="eme.css"/>
+    <style><!-- Legacy formatting from video-working-draft.css. -->
+    <!-- Makes the term being defined bold. -->
+    dt, dfn { font-weight: bold; font-style: normal; }
+
+    <!-- Makes links inside <code> orange. -->
+    @media screen { code { color: orangered; } code :link, code :visited { color: inherit; } }
+
+    <!-- Adds the lines in summary tables. -->
+    table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+    table thead, table tbody { border-bottom: solid; }
+    table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+
+    <!-- Adds the vertical bars and indentation for examples. -->
+    .example { display: block; color: #222222; background: #FCFCFC; border-left: double; margin-left: 2em; padding-left: 1em; }
+
+    <!--Adds the border and gray box around IDL text. -->
+    pre.idl { border: solid thin; background: #EEEEEE; color: black; padding: 0.5em 1em; }
+    <!--Causes links in IDL text to remain black. -->
+    pre.idl :link, pre.idl :visited { color: inherit; background: transparent; }
+
+    <!-- Adds the green box around attribute descriptions. -->
+    dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+    <!--Causes links for the attribute names to remain black. -->
+    dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+
+    <!-- Adds the '-> arrow in conditional steps. -->
+    dl.switch > dt:before { content: '\21AA'; padding: 0 0.5em 0 0; display: inline-block; width: 1em; text-align: right; line-height: 0.5em; }
+
+    <!-- Adds underlining of non-normative <span>. -->
+    p  > span:not([title=""]):not([class="XXX"]):not([class="impl"]):not([class="note"]),
+    li > span:not([title=""]):not([class="XXX"]):not([class="impl"]):not([class="note"]) { border-bottom: solid #9999CC; }
+
+    <!-- Adds the white box containing the non-normative note for the green box around attribute descriptions. -->
+    .domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: black; font-style: italic; border: solid 2px; background: white; padding: 0 0.25em; }
+    </style>
+    <style><!-- ISSUES/NOTES -->
+    div.issue-title, div.note-title {
+        padding-right:  1em;
+        min-width: 7.5em;
+        color: #b9ab2d;
+    }
+    div.issue-title { color: #e05252; }
+    div.note-title { color: #52e052; }
+    div.issue-title span, div.note-title span {
+        text-transform: uppercase;
+    }
+    div.note, div.issue {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+    .note > p:first-child, .issue > p:first-child { margin-top: 0 }
+    .issue, .note {
+        padding: .5em;
+        border-left-width: .5em;
+        border-left-style: solid;
+    }
+    div.issue, div.note {
+        padding: 0.5em;
+        margin: 1em 0;
+        position: relative;
+        clear: both;
+    }
+    span.note, span.issue { padding: .1em .5em .15em; }
+    
+    .issue {
+        border-color: #e05252;
+        background: #fbe9e9;
+    }
+    .note {
+        border-color: #52e052;
+        background: #e9fbe9;
+    }
+    .noteHeader {
+      font-weight: bold;
+      display: block;
+      color: #005a9c;
+      color: black;
+      padding-top: 0.5em;
+    }
+    </style>
+    <style type="text/css">
+      div.nonnormative { color: green; margin: 2em 0 2em 0em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+      .nonnormative:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This section is non-normative.'; color: black; font-style: italic; border: solid 2px; background: white; padding: 0 0.25em; }
+
+      <!-- For inline non-normative text. -->
+      .non-normative { font-style: italic; color: DarkSlateGrey; }
+      .non-normative em { font-style: normal;}
+      .non-normative var { font-style: normal;}
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://www.w3.org/StyleSheets/TR/w3c-ed.css"/>
+  </head>
+  <body>
+    <div class="head">
+      <p><a href="http://www.w3.org/"><img src="https://www.w3.org/Icons/w3c_home" alt="W3C" width="72" height="48" /></a></p>
+      <h1>Encrypted Media Extensions</h1>
+      <h2 id="draft-date">W3C Editor's Draft 7 October 2014</h2>
+      <dl>
+        <dt>This Version:</dt>
+        <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
+        <dt>Latest Published Version:</dt>
+        <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
+        <dt>Latest editor's draft:</dt>
+        <dd><a href="http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html">http://dvcs.w3.org/hg/html-media/raw-file/default/encrypted-media/encrypted-media.html</a></dd>
+        <dt>Previous Versions:</dt>
+        <dd><a href="http://www.w3.org/TR/2014/WD-encrypted-media-20140828/">http://www.w3.org/TR/2014/WD-encrypted-media-20140828/</a></dd>
+        <dd><a href="http://www.w3.org/TR/2014/WD-encrypted-media-20140218/">http://www.w3.org/TR/2014/WD-encrypted-media-20140218/</a></dd>
+        <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20130510/">http://www.w3.org/TR/2013/WD-encrypted-media-20130510/</a></dd>
+        <dd><a href="http://www.w3.org/TR/2013/WD-encrypted-media-20131022/">http://www.w3.org/TR/2013/WD-encrypted-media-20131022/</a></dd>
+        <dt>Editors:</dt>
+        <dd>David Dorwin, Google, Inc.</dd>
+        <dd>Jerry Smith, Microsoft Corporation</dd>
+        <dd>Mark Watson, Netflix, Inc.</dd>
+        <dd>Adrian Bateman, Microsoft Corporation (until May 2014)</dd>
+  <dt>Bug/Issue lists:</dt>
+  <dd><a href='http://w3.org/brief/MjY5'>Bugzilla</a>, <a href='http://www.w3.org/html/wg/tracker/products/19'>Tracker</a></dd>
+  <dt>Discussion list:</dt>
+  <dd><a href='http://lists.w3.org/Archives/Public/public-html-media/'>public-html-media@w3.org</a></dd>
+  <dt>Test Suite:</dt>
+  <dd>None yet</dd>
+      </dl>
+
+    <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &#169; 2014 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>&#174;</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+    <hr/>
+    </div>
+
+    <h2>Abstract</h2>
+
+    <p>This proposal extends HTMLMediaElement providing APIs to control playback of protected content.</p>
+    <p>The API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
+    License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.</p>
+    <p>This specification does not define a content protection or Digital Rights Management system. Rather, it defines a common API that may be used to discover, select and interact with
+    such systems as well as with simpler content encryption systems. Implementation of Digital Rights Management is not required for compliance with this specification: only the
+    Clear Key system is required to be implemented as a common baseline.</p>
+    <p>The common API supports a simple set of content encryption capabilities, leaving application functions such as authentication and authorization to page authors. This is achieved by
+    requiring content protection system-specific messaging to be mediated by the page rather than assuming out-of-band communication between the encryption system and a license
+    or other server.</p>
+ 
+    <h2>Status of This Document</h2>
+
+    <p><em>
+      This section describes the status of this document at the time of its publication. Other documents may supersede this document.
+      A list of current W3C publications and the latest revision of this technical report can be found in the
+      <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.
+    </em></p>
+    <p>Implementers should be aware that this specification is not stable. <strong>Implementers who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
+    <p>
+      This document was published by the <a href="http://www.w3.org/html/wg/">HTML working group</a> as an Editor's Draft.
+      Please submit comments regarding this document by using the W3C's (<a href="https://www.w3.org/Bugs/Public/enter_bug.cgi?product=HTML%20WG&amp;component=Encrypted%20Media%20Extensions">public bug database</a>) with the product set to <kbd>HTML WG</kbd> and the component set to
+      <kbd>Encrypted Media Extensions</kbd>.
+      If you cannot access the bug database, submit comments to <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a>
+      (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
+      <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>) and arrangements will be made to transpose the comments to the bug database.
+      All feedback is welcome.
+    </p>
+    <p>
+      Publication as an Editor's Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated,
+      replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.
+    </p>
+    <p class="non-normative">Note: It is an open issue whether and how the specification should do more to encourage/ensure CDM-level interoperability. See <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=20944">Bug 20944</a>.</p>
+    <p class="non-normative">Note: This specification contains sections for describing <a href="#security">security</a> and <a href="#privacy">privacy</a> considerations. These sections are not final and review is welcome.</p>
+    <p>
+      This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>.
+      W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent disclosures</a> made in connection with
+      the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which
+      the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+      information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.
+      </p>
+
+
+    <h2 id="toc">Table of Contents</h2>
+
+    <ul style="list-style-type:none">
+      <li><a href="#introduction">1. Introduction</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#definitions">1.1. Definitions</a></li>
+        </ul></li>
+      <li><a href="#mediakeys">2. MediaKeys Object</a></li>
+      <li><a href="#mediakeysession">3. MediaKeySession Object</a></li>
+      <li><a href="#htmlmediaelement-extensions">4. HTMLMediaElement Extensions</a></li>
+      <li><a href="#common-key-systems">5. Common Key Systems</a></li>
+        <li><ul style="list-style-type:none">
+          <li><a href="#clear-key">5.1. Clear Key</a></li>
+        </ul></li>
+      <li><a href="#security">6. Security Considerations</a></li>
+      <li><a href="#privacy">7. Privacy Considerations</a></li>
+      <li><a href="#examples">8. Examples</a></li>
+      <li><a href="#revision-history">9. Revision History</a></li>
+    </ul>
+
+
+    <h2 id="introduction">1. Introduction</h2>
+    <non-normative-section/>
+    <p>
+      This proposal allows JavaScript to select content protection mechanisms, control license/key exchange, and implement custom license management algorithms.
+      It supports a wide range of use cases without requiring client-side modifications in each user agent for each use case.
+      This also enables content providers to develop a single application solution for all devices.
+      A generic stack implemented using the proposed APIs is shown below.
+      This diagram shows an example flow: other combinations of API calls and events are possible.
+    </p>
+    <img src="stack_overview.svg" alt="A generic stack implemented using the proposed APIs" height="700"></img>
+
+    <h3 id="definitions">1.1. Definitions</h3>
+    <p>Text in <span class="non-normative">this font and color</span> is non-normative.</p>
+
+    <h4 id="cdm">1.1.1. Content Decryption Module (CDM)</h4>
+    <p>The Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a href="#key-system">Key Systems</a>.</p>
+    <p class="non-normative">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
+    This is transparent to the API and application.
+    A user agent may support one or more CDMs.</p>
+
+    <h4 id="key-system">1.1.2. Key System</h4>
+    <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
+    Key System strings provide unique identification of a Key System.
+    They are used by the user agent to select the <a href="#cdm">Content Decryption Modules</a> and identify the source of a key-related event.
+    The <a href="#common-key-systems">Common Key Systems</a> are supported by all user agents. User agents may also provide additional CDMs with corresponding Key System strings.
+    </p>
+
+    <p>A Key System string is always a reverse domain name. <span class="non-normative">For example, "com.example.somesystem".</span>
+    Key System strings are compared using case-sensitive matching. It is recommended that CDMs use simple lower-case ASCII key system strings.</p>
+
+    <p class="non-normative">
+    Within a given system ("somesystem" in the example), subsystems may be defined as determined by the key system provider.
+    For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".
+    Key System providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.
+    </p>
+
+    <h4 id="key-session">1.1.3. Key Session</h4>
+    <p>A Key Session, or simply Session, provides a context for message exchange with the CDM as a result of which key(s) are made available to be <a href="#cdm">CDM</a>.
+    Sessions are embodied as <coderef>MediaKeySession</coderef> objects.
+    Each Key session is associated with a single instance of <a href="#initialization-data">Initialization Data</a> provided in the <methodref>generateRequest</methodref> call.
+    </p>
+    <p>Each Key Session is associated with a single <coderef>MediaKeys</coderef> object, and only <a href="#media-element">media elements</a> associated with that object may access key(s) associated with the session.
+    Other <coderef>MediaKeys</coderef> objects, <a href="#cdm">CDM</a> instances, and media elements may <em>not</em> access the key session or use its key(s).
+    Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#algorithms-session-close">session is closed</a>, including when the <coderef>MediaKeySession</coderef> object is destroyed.
+    </p>
+
+    <h4 id="session-id">1.1.4. Session ID</h4>
+    <p>A Session ID is a unique string identifier generated by the <a href="#cdm">CDM</a> that can be used by the application to identify <coderef>MediaKeySession</coderef> objects.
+    <span class="non-normative">(The underlying content protection protocol does not necessarily need to support Session IDs.)</span>
+    </p>
+
+    <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
+
+    <p>Each Session ID shall be unique within the browsing context in which it was created.
+      Session IDs for "<coderef prefix="sessiontype">persistent</coderef>" sessions must be unique within the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> over time, including across browsing sessions.
+    </p>
+
+    <h4 id="decryption-key">1.1.5. Key</h4>
+    <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within <videoanchor name="media-data">media data</videoanchor>.
+    Each such key is uniquely identified by a <a href="#decryption-key-id">key ID</a>.
+    A key is associated with the <a href="#key-session">session</a> used to provide it to the CDM. (The same key may be present in multiple sessions.)
+    Such keys may only be provided to the <a href="#cdm">CDM</a> via an <methodref>update</methodref> call. (They may later be loaded by <methodref>load</methodref> as part of the stored session data.)
+    </p>
+    
+    <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable for decryption. <span class="non-normative">For example, a key is not usable if its license has expired.</span></p>
+        
+    <h4 id="decryption-key-id">1.1.6. Key ID</h4>
+    <p>A <a href="#decryption-key">key</a> is associated with a key ID, which uniquely identifies a key.
+    The container specifies the ID of the key that can decrypt a block or set of blocks within the <videoanchor name="media-data">media data</videoanchor>.
+    <a href="#initialization-data">Initialization Data</a> may contain key ID(s) to identify the keys that are needed to decrypt the media data.
+    However, there is no requirement that Initialization Data contain any or all key IDs used in the <videoanchor name="media-data">media data</videoanchor> or <videoanchor name="media-resource">media resource</videoanchor>.
+    <a href="#license">Licenses</a> provided to the CDM associate each key with a key ID so the <a href="#cdm">CDM</a> can select the appropriate key when decrypting an encrypted block of media data.
+    </p>
+
+    <h4 id="license">1.1.7. License</h4>
+    <p>A license is key system-specific state information that includes one or more <a href="#decryption-key">key(s)</a> - each associated with a <a href="#decryption-key-id">key ID</a> - and potentially other information about key usage.</p>
+
+    <h4 id="initialization-data">1.1.8. Initialization Data</h4>
+    <p class="non-normative">
+    <a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
+    This block could be a simple key or content ID or a more complex structure containing such information.
+    It should always allow unique identification of the key(s) needed to decrypt the content.
+    This initialization information may be obtained in some application-specific way or provided with the <videoanchor name="media-data">media data</videoanchor>.
+    </p>
+
+    <p>
+    Initialization Data is a generic term for container-specific data that is used by <a href="#cdm">CDMs</a> to generate a license request.
+    Initialization data found with the <videoanchor name="media-data">media data</videoanchor> is provided to the application in the <coderef>initData</coderef> attribute of the <coderef>encrypted</coderef> event.
+    </p>
+
+    <p>
+    The format of the initialization data depends upon the type of container, and containers may support more than one format
+    of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
+    format the initialization data is provided in. Initialization data type strings are always matched case-sensitively. It is
+    recommended that initialization data type strings are lower-case ASCII strings.
+    </p>
+
+    <p>
+    The <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>
+    provides the mapping from initialization data type string to the specification for each format.
+    </p>
+
+
+    <h4 id="cross-origin">1.1.9. Cross Origin Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
+    If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
+    on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
+    </p>
+
+    <h4 id="mixed-content">1.1.10. Mixed Content Limitations</h4>
+    <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
+    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must not be mixed content as defined in [MIXED-CONTENT].
+    </p>
+
+    <h2 id="mediakeys">2. MediaKeys Object</h2>
+    <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <videoanchor name="media-data">media data</videoanchor> during playback.
+      It also represents a CDM instance.
+    </p>
+    <div class="issue"><div class="issue-title"><span>Issue 1</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - Feature detection, including isTypeSupported(), and MediaKeys creation may change significantly.</p></div>
+    <pre class="idl">
+enum <precodedfn>IsTypeSupportedResult</precodedfn> { "<precodedfn prefix="istypesupportedresultempty"></precodedfn>" /* empty string */, "<precodedfn prefix="istypesupportedresult">maybe</precodedfn>", "<precodedfn prefix="istypesupportedresult">probably</precodedfn>" };
+enum <precodedfn>SessionType</precodedfn> { "<precodedfn prefix="sessiontype">temporary</precodedfn>", "<precodedfn prefix="sessiontype">persistent</precodedfn>" };
+interface <precodedfn>MediaKeys</precodedfn> {
+  readonly attribute DOMString <precoderef>keySystem</precoderef>;
+
+  <precoderef>MediaKeySession</precoderef> <premethodref>createSession</premethodref>(optional <precoderef>SessionType</precoderef> sessionType = "<precoderef prefix="sessiontype">temporary</precoderef>");
+  Promise&lt;void&gt; <premethodref>setServerCertificate</premethodref>((ArrayBuffer or ArrayBufferView) serverCertificate);
+
+  static Promise&lt;<precoderef>MediaKeys</precoderef>&gt; <premethodref>create</premethodref>(DOMString <a href="#key-system">keySystem</a>);
+  static <precoderef>IsTypeSupportedResult</precoderef> <premethodref>isTypeSupported</premethodref>(DOMstring <a href="#key-system">keySystem</a>, optional DOMString <a href="#initialization-data-type">initDataType</a>, optional DOMString contentType, optional DOMString capability);
+};
+</pre>
+
+    <h3 id="mediakeys-attributes">2.1. Attributes</h3>
+
+    <p>The <codedfn>keySystem</codedfn> attribute identifies the <a href="#key-system">Key System</a> being used.</p>
+
+    <h3 id="mediakeys-methods">2.2. Methods</h3>
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
+    <p>The <methoddfn name="createSession">createSession(<var title="true">sessionType</var>)</methoddfn> method returns a new <coderef>MediaKeySession</coderef> object. It must run the following steps:</p>
+
+    <ol>
+      <li><p>If <var title="true">sessionType</var> is not supported by the <a href="#cdm">content decryption module</a> corresponding to the <coderef>keySystem</coderef>, throw a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var title="true">session</var> be a new <coderef>MediaKeySession</coderef> object, and initialize it as follows:</p>
+        <ol>
+          <li><p>Let the <coderef>sessionId</coderef> attribute be the empty string.</p></li>
+          <li><p>Let the <coderef>expiration</coderef> attribute be <code>NaN</code>.</p></li>
+          <li><p>Let the <coderef>closed</coderef> attribute be a new promise.</p></li>
+          <li><p>Let the <var title="true">session type</var> be <var title="true">sessionType</var>.</p></li>
+          <li><p>Let <var title="true">uninitialized</var> be true.</p></li>
+          <li><p>Let <var title="true">callable</var> be false.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var title="true">session</var>.</p></li>
+    </ol>
+
+    <p id="server-certificate">The <methoddfn name="setServerCertificate">setServerCertificate(<var title="true">serverCertificate</var>)</methoddfn> method provides a server certificate to be used to encrypt messages to the license server. It must run the following steps:</p>
+    <p class="non-normative">The contents of <var title="true">serverCertificate</var> are <a href="#key-system">Key System</a>-specific.</p>
+    <p class="non-normative">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p>
+
+    <ol>
+      <li><p>If <var title="true">serverCertificate</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If the <coderef>keySystem</coderef> does not support server certificates, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var>certificate</var> be a copy of the contents of the <var title="true">serverCertificate</var> parameter.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <var title="true">cdm</var> during the <a href="#dom-create">initialization</a> of this object.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to process <var>certificate</var>.</p></li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="create">create(<var title="true">keySystem</var>)</methoddfn> method creates a new <coderef>MediaKeys</coderef> object for <var title="true">keySystem</var>. It must run the following steps:</p>
+
+    <ol>
+      <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">keySystem</var> is not supported or not allowed in the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the calling context's <code><dom4ref name="document">Document</dom4ref></code>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the <a href="#cdm">content decryption module</a> corresponding to <var title="true">keySystem</var>.</p></li>
+          <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
+          <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+
+          <li>
+            <p>Let <var title="true">media keys</var> be a new <coderef>MediaKeys</coderef> object, and initialize it as follows:</p>
+            <ol>
+              <li><p>Set the <coderef>keySystem</coderef> attribute to <var title="true">keySystem</var>.</p></li>
+            </ol>
+          </li>
+          <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="isTypeSupported">isTypeSupported(<var title="true">keySystem</var>, <var title="true">initDataType</var>, <var title="true">contentType</var>, <var title="true">capability</var>)</methoddfn> method returns whether <var title="true">keySystem</var> is supported with the <var title="true"><a href="#initialization-data-type">initDataType</a></var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
+    <div class="example">
+      <p>The following list shows some examples.</p>
+      <dl>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported. Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem")</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format "keyids". Specific containers and codecs may or may not be supported with Some System.</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", "keyids")</pre></dd>
+        <dt>Returns whether the Some System <a href="#key-system">Key System</a> may be supported and is capable of parsing the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var>, the user agent is capable of demuxing the container specified by <var title="true">mimeType</var>, and the codec(s) specified by <var title="true">mimeType</var> are supported, all as specified by capability "foo".</dt>
+        <dd><pre class="code">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>, <var title="true">mimeType</var>, "foo")</pre></dd>
+        <dt>Returns whether the user agent <em>probably</em> supports <a href="#clear-key">Clear Key</a> using the <a href="#initialization-data-type">initialization data type</a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</dt>
+        <dd><pre class="code">"probably" == MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">initDataType</var>, <var title="true">mimeType</var>)</pre></dd>
+      </dl>
+    </div>
+
+    <p>It must run the following steps:</p>
+    
+    <ol>
+      <li><p>If <var title="true">keySystem</var> is an empty string or contains an unrecognized or unsupported <a href="#key-system">Key System</a>, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>If the <var title="true">keySystem</var> implementation is not available and usable, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>
+      <li><p>Follow the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <methodref>create</methodref></dt>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupportedresult">probably</coderef>".</dd>
+          <dt>Otherwise <span class="non-normative">(as may be the case for strings that are only used for discovery)</span></dt>
+          <dd>Let <var title="true">probably result</var> be "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+        </dl>
+      </li>
+      
+      <li><p>If <var title="true">initDataType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation is available and usable</dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+
+      <li><p>If <var title="true">initDataType</var> is an empty string or contains an unrecognized or unsupported <a href="#initialization-data-type">initialization data type</a>, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>If <var title="true">initDataType</var> is not an <a href="#initialization-data-type">initialization data type</a> supported by the <var title="true">keySystem</var> implementation, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>      
+      <li><p>If the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is not available and usable, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable</dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+
+      <li><p>If <var title="true">contentType</var> is an empty string or contains an invalid or unrecognized MIME type, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>
+      <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
+      <li><p>Let <var title="true">parameters</var> be the <a href="http://tools.ietf.org/html/rfc6381">RFC 6381</a> parameters, if any, specified by <var title="true">contentType</var>.</p></li>
+      <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. <span class="non-normative">(For example, all of the codecs.)</span> It may be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification. <span class="non-normative">(Case-sensitive string comparison is recommended because <a href="http://tools.ietf.org/html/rfc6381#section-3.3">RFC 6381</a> says, "Values are case sensitive" for some formats.)</span></p></li>
+      <li><p>If the user agent does not support <var title="true">container</var>, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps. The case-sensitivity of string comparisons is determined by the appropriate RFC. <span class="non-normative">(Per <a href="http://tools.ietf.org/html/rfc6838#section-4.2">RFC 6838</a>, "Both top-level type and subtype names are case-insensitive.")</span></p></li>
+      <li><p>If the user agent and <var title="true">keySystem</var> implementation do not support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var>, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If <var title="true">capability</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var></dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>If the user agent did <em>not</em> recognize one or more <var title="true">parameters</var></dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+      
+      <li><p>If <var title="true">capability</var> is an empty string, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps.</p></li>
+      <li><p>If the <var title="true">keySystem</var> implementation does not support <var title="true">capability</var>, return the <a href="#dom-istypesupportedresultempty">empty string</a> and abort these steps. String comparison is case-sensitive.</p></li>
+      <li><p>Follow the steps for the first matching condition from the following list:</p>
+        <dl class="switch">
+          <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <videoanchor name="media-data">media data</videoanchor> for all <var title="true">media types</var> as specified by <var title="true">capability</var></dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>If the user agent did <em>not</em> recognize one or more <var title="true">parameters</var></dt>
+          <dd>Return "<coderef prefix="istypesupportedresult">maybe</coderef>".</dd>
+          <dt>Otherwise</dt>
+          <dd>Return <var title="true">probably result</var>.</dd>
+        </dl>
+      </li>
+    </ol>
+    
+
+    <h2 id="mediakeysession">3. MediaKeySession Object</h2>
+    <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+    <pre class="idl">
+interface <precodedfn>MediaKeySession</precodedfn> : <dom4ref name="eventtarget">EventTarget</dom4ref> {
+  // session properties
+  readonly attribute DOMString <precoderef>sessionId</precoderef>;
+  readonly attribute unrestricted double <precoderef>expiration</precoderef>;
+  readonly attribute Promise&lt;void&gt; <precoderef>closed</precoderef>;
+
+  // session initialization
+  Promise&lt;void&gt; <premethodref>generateRequest</premethodref>(DOMString <a href="#initialization-data-type">initDataType</a>, (ArrayBuffer or ArrayBufferView) initData);
+  Promise&lt;boolean&gt; <premethodref>load</premethodref>(DOMString sessionId);
+
+  // session operations
+  Promise&lt;void&gt; <premethodref>update</premethodref>((ArrayBuffer or ArrayBufferView) response);
+  Promise&lt;void&gt; <premethodref>close</premethodref>();
+  Promise&lt;void&gt; <premethodref>remove</premethodref>();
+  
+  Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; <premethodref>getUsableKeyIds</premethodref>();
+};
+</pre>
+
+    <h3 id="mediakeysession-attributes">3.1. Attributes</h3>
+
+    <p>The <codedfn>sessionId</codedfn> attribute is the <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
+
+    <p>The <codedfn>expiration</codedfn> attribute is the time, in milliseconds since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <videoanchor name="media-data">media data</videoanchor>, or <code>NaN</code> if no such time exists, as determined by the CDM.
+    </p>
+
+    <p>The <codedfn>closed</codedfn> attribute signals when object becomes closed as a result of the <a href="#algorithms-session-close">Session Close</a> algorithm being run.
+    This promise can only be fulfilled and is never rejected.</p>
+
+    <h3 id="mediakeysession-methods">3.2. Methods</h3>
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
+    <p>The <methoddfn name="generateRequest">generateRequest(<var title="true">initDataType</var>, <var title="true">initData</var>)</methoddfn> method generates a request based on the <var title="true">initData</var>. It must run the following steps:</p>
+    <p class="non-normative">The contents of <var title="true">initData</var> are container-specific <a href="#initialization-data">Initialization Data</a>.
+    <var title="true">initDataType</var> is the <a href="#initialization-data-type">initialization data type</a> that indicates how to interpret <var title="true">initData</var>.
+    </p>
+
+    <ol>
+      <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
+      <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If <var title="true">initData</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is<code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to <var title="true">media keys</var>'s <coderef>keySystem</coderef> attribute does not support <var title="true">initDataType</var> as an <a href="#initialization-data-type">initialization data type</a>, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>. String comparison is case-sensitive.</p></li>
+      <li><p>Let <var>init data</var> be a copy of the contents of the <var title="true">initData</var> parameter.</p></li>
+      <li><p>Let <var title="true">session type</var> be this object's <var title="true">session type</var>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+          <li><p>Let <var>sanitized init data</var> be a validated and/or sanitized version of <var>init data</var>.</p>
+            <div class="note">The user agent should thoroughly validate the Initialization Data before passing it to the CDM.
+              This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version.
+              The user agent should check that the length and values of fields are reasonable.
+              Unknown fields should be rejected or removed.
+              For Initialization Data formats that support multiple entries, the user agent should remove entries that are not needed by the CDM.
+            </div>
+          </li>
+          <li><p>If the previous step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+          <li><p>Let <var title="true">session id</var> be the empty string.</p></li>
+          <li><p>Let <var title="true">message</var> be null.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of <var title="true">media keys</var>.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li><p>If the <var>init data</var> is not supported by the <var title="true">cdm</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li><p>Follow the steps for the first matching condition from the following list:</p>
+                <dl class="switch">
+                  <dt>If <var title="true">session type</var> is "<coderef prefix="sessiontype">temporary</coderef>"</dt>
+                  <dd>Let <var title="true">requested session type</var> be a temporary non-persisted session. <span class="non-normative">(The returned license must not be persistable.)</span></dd>
+                  <dt>If <var title="true">session type</var> is "<coderef prefix="sessiontype">persistent</coderef>"</dt>
+                  <dd>Let <var title="true">requested session type</var> be a persistable session. <span class="non-normative">(The returned license may be persistable.)</span></dd>
+                </dl>
+                <p class="non-normative">Note: The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p>
+              </li>
+
+              <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p>
+                <p>If <var title="true">session type</var> is "<coderef prefix="sessiontype">persistent</coderef>", the ID must be unique within the the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code> over time, including across Documents and browsing sessions.</p>
+              </li>
+              <li><p>Let <var title="true">message</var> be a request <span class="non-normative">(e.g. a license request)</span> for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
+                <p>The <var title="true">cdm</var> must not use any stream-specific data, including <videoanchor name="media-data">media data</videoanchor>, not provided via the <var>init data</var>.</p>
+                <p>The <var title="true">cdm</var> should <em>not</em> store session data, including the session ID, at this point. See <a href="#session-storage">Session Storage and Persistence</a>.</p>
+              </li>
+            </ol>
+          </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+          <li><p>Set the <coderef>sessionId</coderef> attribute to <var title="true">session id</var>.</p></li>
+          <li><p>Let this object's <var title="true">callable</var> be true.</p></li>
+          <li><p>Run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing "<coderef>licenserequest</coderef>" and <var title="true">message</var>.</p></li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="load">load(<var title="true">sessionId</var>)</methoddfn> method loads the data stored for the <var title="true">sessionId</var> into the session represented by the object. It must run the following steps:</p>
+
+    <ol>
+      <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
+      <li><p>If <var title="true">sessionId</var> is an empty string, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If this object's <var title="true">session type</var> is not "<coderef prefix="sessiontype">persistent</coderef>", return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+      <li><p>If the <a href="#cdm">content decryption module</a> corresponding to <var title="true">media keys</var>'s <coderef>keySystem</coderef> attribute does not support loading previous sessions, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var>sanitized session ID</var> be a validated and/or sanitized version of <var title="true">sessionId</var>.</p>
+            <div class="note">The user agent should thoroughly validate the sessionId value before passing it to the CDM.
+              At a minimum, this should include checking that the length and value (e.g. alphanumeric) are reasonable.
+            </div>
+          </li>
+          <li><p>If the previous step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+          <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
+          <li><p>Let <var title="true">message</var> be null.</p></li>
+          <li><p>Let <var title="true">message type</var> be null.</p></li>
+          <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of <var title="true">media keys</var>.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var title="true">origin</var>, resolve <var>promise</var> with <code>false</code>.</p></li><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
+              <li><p>Let <var title="true">session data</var> be the data stored for the <var>sanitized session ID</var> in the <var title="true">origin</var>.
+              This must not include data from other origin(s) or that is not associated with an origin.</p></li>
+              <li><p>If there is an unclosed "<coderef prefix="sessiontype">persistent</coderef>" session in any <dom4ref name="document">Document</dom4ref> representing the <var title="true">session data</var>, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p>
+                <p class="non-normative">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
+              </li>
+              <li><p>Load the <var title="true">session data</var>.</p></li>
+              <li><p>If the <var title="true">session data</var> indicates an expiration time for the session, let <var title="true">expiration time</var> be the expiration time in milliseconds since 01 January 1970 UTC.</p></li>
+              <li><p>If the CDM needs to send a message:</p>
+                <ol>
+                  <li><p>Let <var title="true">message</var> be a message generated by the <a href="#cdm">CDM</a> based on the <var title="true">session data</var>.</p></li>
+                  <li><p>Let <var title="true">message type</var> be the appropriate <coderef>MediaKeyMessageType</coderef> for the message.</p></li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+          <li><p>Set the <coderef>sessionId</coderef> attribute to <var>sanitized session ID</var>.</p></li>
+          <li><p>Let this object's <var title="true">callable</var> be true.</p></li>
+          <li><p>If the loaded session contains usable keys, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
+            <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+          </li>
+          <li><p>Run the <a href="#algorithms-update-expiration">Update Expiration</a> algorithm on the <var title="true">session</var>, providing <var title="true">expiration time</var>.</p></li>
+          <li><p>If <var title="true">message</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">message type</var> and <var title="true">message</var>.</p></li>
+          <li><p>Resolve <var>promise</var> with <code>true</code>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="update">update(<var title="true">response</var>)</methoddfn> method provides messages, including licenses, to the CDM. It must run the following steps:</p>
+    <p class="non-normative">The contents of <var title="true">response</var> are <var title="true"><a href="#key-system">keySystem</a></var>-specific.</p>
+
+    <ol>
+      <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>If <var title="true">response</var> is an empty array, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>Let <var>response copy</var> be a copy of the contents of the <var title="true">response</var> parameter.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var>sanitized response</var> be a validated and/or sanitized version of <var>response copy</var>.</p>
+            <div class="note">The user agent should thoroughly validate the response before passing it to the CDM.
+              This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version.
+              The user agent should check that the length and values of fields are reasonable.
+              Unknown fields should be rejected or removed.
+            </div>
+          </li>
+          <li><p>If the previous step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+          <li><p>Let <var title="true">message</var> be null.</p></li>
+          <li><p>Let <var title="true">message type</var> be null.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li><p>If the format of <var>sanitized response</var> is invalid in any way, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+              <li><p>Process <var>sanitized response</var>, following the stipulation for the first matching condition from the following list:</p>
+                <dl class="switch">
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">temporary</coderef>" and <var>sanitized response</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
+                  <dd>Continue processing <var>sanitized response</var>, not storing any session data.</dd>
+                  <dt>If <var title="true">sessionType</var> is "<coderef prefix="sessiontype">persistent</coderef>"</dt>
+                  <dd>Continue processing <var>sanitized response</var>, storing the license, key(s), or similar session data contained in <var>sanitized response</var> as permitted or instructed by the license.
+                    Such data must be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code> can access it.
+                  </dd>
+                  <dt>Otherwise</dt>
+                  <dd>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</dd>
+                </dl>
+                <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
+                <p class="non-normative">Note: When <var>sanitized response</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
+                <p class="non-normative">Note: The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
+                <p class="non-normative">Note: Keys from different sessions should be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
+                <p class="non-normative">Note: It is recommended that CDMs support a standard and reasonably high minimum number of keys per <coderef>MediaKeySession</coderef> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <coderef>MediaKeySession</coderef> objects.
+                This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
+                </p>
+              </li> 
+              <li><p>If the set of usable keys changed, run the <a href="#algorithms-keys-changed">Usable Keys Changed</a> algorithm on the <var title="true">session</var>.</p>
+                <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+              </li>
+              <li><p>If the expiration time for the session changed, run the <a href="#algorithms-update-expiration">Update Expiration</a> algorithm on the <var title="true">session</var>, providing the new expiration time.</p></li>
+              <li><p>If a message needs to be sent to the server, execute the following steps:</p>
+                <ol>
+                  <li><p>Let <var title="true">message</var> be that message.</p></li>
+                  <li><p>Let <var title="true">message type</var> be the appropriate <coderef>MediaKeyMessageType</coderef> for the message.</p></li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+          <li><p>If <var title="true">message</var> is not null, run the <a href="#algorithms-queue-message">Queue a "message" Event</a> algorithm on the <var title="true">session</var>, providing <var title="true">message type</var> and <var title="true">message</var>.</p></li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="close">close()</methoddfn> method allows an application to indicate that it no longer needs the session and the CDM should release any resources associated with this object and close it.
+    <span class="non-normative">The returned promise is resolved when the request has been processed, and the <coderef>closed</coderef> attribute promise is resolved when the session is closed.</span>
+    It must run the following steps:</p>
+
+    <ol>
+      <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a resolved promise.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Process the close request.</p>
+                <p>Do not remove stored session data.</p>
+              </li>
+              <li><p>If the previous step caused the session to be closed, run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
+            </ol>
+          </li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <p>The <methoddfn name="remove">remove()</methoddfn> method allows an application to remove stored session data associated with this object.
+    It must run the following steps:</p>
+
+    <ol>
+      <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>If this object's <var title="true">session type</var> is not "<coderef prefix="sessiontype">persistent</coderef>", return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidAccessError">"InvalidAccessError"</a></code>.</p></li>
+      <li><p>If the <a href="#algorithms-session-close">Session Close</a> algorithm has been run on this object, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Process the remove request.</p>
+                <p>This may involve exchanging message(s) with the application.</p>
+                <p>Unless this step fails, the CDM must have cleared all stored session data associated with this object, including the <coderef>sessionId</coderef>, before proceeding to the next step.
+                  <span class="non-normative">(A subsequent call to <methodref>load</methodref> with <coderef>sessionId</coderef> would fail because there is no data stored for that session ID.)</span>
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li><p>Run the following steps asynchronously once the above step has completed:</p>
+            <ol>
+              <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+              <li><p>Run the <a href="#algorithms-session-close">Session Close</a> algorithm on this object.</p></li>
+              <li><p>Resolve <var>promise</var>.</p></li>
+            </ol>
+          </li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+
+    <div class="issue"><div class="issue-title"><span>Issue 2</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - getUsableKeyIds() may be replaced.</p></div>
+    <p>The <methoddfn name="getUsableKeyIds">getUsableKeyIds()</methoddfn> method allows an application to get the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <videoanchor name="media-data">media data</videoanchor>. It must run the following steps:</p>
+    
+    <ol>
+      <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+          <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+            <ol>
+              <li><p>Let <var title="true">usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <videoanchor name="media-data">media data</videoanchor>. <var title="true">usable key ids</var> must not contain IDs for keys that <em>may not</em> currently be usable. Each element must be unique.</p></li>
+            </ol>
+          </li>
+          <li>
+            <p>If the preceding step failed, reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p>
+          </li>
+          <li>
+            <p>Resolve <var>promise</var> with a new Sequence object, each element of which contains one element of <var title="true">usable key ids</var>.</p>
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+    <h3 id="mediakeysession-event-definitions">3.3. Event Definitions</h3>
+    <pre class="idl">
+enum <precodedfn>MediaKeyMessageType</precodedfn> { "<precodedfn>licenserequest</precodedfn>", "<precodedfn>licenserenewal</precodedfn>", "<precodedfn>licenserelease</precodedfn>" };
+
+[Constructor(DOMString type, optional <precoderef>MediaKeyMessageEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaKeyMessageEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute <precoderef>MediaKeyMessageType</precoderef> <precoderef>type</precoderef>;
+  readonly attribute ArrayBuffer <precoderef>message</precoderef>;
+};
+
+dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  <precoderef>MediaKeyMessageType</precoderef> <precoderef>type</precoderef> = "<precoderef>licenserequest</precoderef>";
+  ArrayBuffer <precoderef>message</precoderef> = ArrayBuffer();
+};
+</pre>
+
+    <dl class="domintro">
+     <dt><var title="">event</var> . <coderef>type</coderef></dt>
+     <dd>
+       <p>Returns the type of the message.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>message</coderef></dt>
+     <dd>
+       <p>Returns the message <span class="non-normative">(i.e. license request)</span> to send.</p>
+     </dd>
+    </dl>
+    <div class="impl">
+    <p>The <codedfn>type</codedfn> is the type of the message.</p>
+    <p>The <codedfn>message</codedfn> attribute contains a message from the CDM. Messages are Key System-specific.</p>
+    <p>Events are constructed as defined in <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#constructing-events">Constructing events</a>, in [DOM4].</p>
+    </div>
+
+    <h3 id="mediakeysession-events">3.4. Event Summary</h3>
+    <non-normative-section/>
+
+    <p>Note: In some implementations, <coderef>MediaKeySession</coderef> objects may not fire any events until the <coderef>MediaKeys</coderef> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><codedfn prefix="event">keyschange</codedfn></td>
+          <td><code><dom4ref name="event">Event</dom4ref></code></td>
+          <td>There has been a change in usable keys in the session.</td>
+        </tr>
+        <tr>
+          <td><codedfn prefix="event">message</codedfn></td>
+          <td><coderef>MediaKeyMessageEvent</coderef></td>
+          <td>The CDM has generated a message for the session.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="mediakeysession-algorithms">3.5. Algorithms</h3>
+
+    <h4 id="algorithms-queue-message">3.5.1. Queue a "message" Event</h4>
+    <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <coderef>MediaKeySession</coderef> object.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object, a <var title="true">message type</var>, and a <var title="true">message</var>.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
+      <li>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
+        <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>type</coderef> = the specified <var title="true">message type</var><br></br>
+          <coderef>message</coderef> = the specified <var title="true">message</var>
+        </li></ul>
+      </li>
+    </ol>
+
+    <h4 id="algorithms-keys-changed">3.5.2. Usable Keys Changed</h4>
+    <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
+    This can happen as the result of an <methodref>update</methodref> call or some other event.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
+      <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#media-element">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
+        <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. no additional keys became available)</span>.</p>
+      </li>
+    </ol>
+
+    <h4 id="algorithms-update-expiration">3.5.3. Update Expiration</h4>
+    <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
+    This can happen as the result of an <methodref>update</methodref> call or some other event.
+    Requests to run this algorithm include a target <coderef>MediaKeySession</coderef> object and the new expiration time, which may be <code>NaN</code>.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
+      <li><p>If the new expiration time is not <code>NaN</code>, let <var title="true">expiration time</var> be the new expiration time in milliseconds since 01 January 1970 UTC.</p></li>
+      <li><p>Set the <var title="true">session</var>'s <coderef>expiration</coderef> attribute to <var title="true">expiration time</var>.</p></li>
+    </ol>
+
+    <h4 id="algorithms-session-close">3.5.4. Session Close</h4>
+    <p>The Session Close algorithm is run when the CDM closes the session associated with a <coderef>MediaKeySession</coderef> object.</p>
+    <p class="non-normative">The CDM may close a session at any point, such as in response to a <methodref>close</methodref> call, when the session is no longer needed, or when system resources are lost.
+    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
+      <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object that created this object.</p></li>
+      <li><p>Let <var>promise</var> be the <coderef>closed</coderef> attribute of the <var title="true">session</var>.</p></li>
+      <li><p>Resolve <var>promise</var>.</p></li>
+    </ol>
+
+    <h3 id="exceptions">3.6. Exceptions</h3>
+    <p id="error-names">The methods report errors by rejecting the returned promise with a <code><dom4ref name="exception-domexception">DOMException</dom4ref></code>.
+    The following <dom4ref name="error-names">DOMException names from DOM4</dom4ref> are used in the algorithms.
+    Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
+    </p>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <th>Possible Causes (non-exhaustive)</th>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
+          <td>
+            The existing MediaKeys object cannot be removed.<br/>
+            The key system is not supported.<br/>
+            The key system is not supported on insecure origins.<br/>
+            The initialization data type is not supported by the key system.<br/>
+            The session type is not supported by the key system.<br/>
+            The initialization data is not supported by the key system.<br/>
+            The operation is not supported by the key system.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-InvalidStateError"><code>InvalidStateError</code></dfn></td>
+          <td>The existing MediaKeys object cannot be removed at this time.<br/>
+            The session has already been used.<br/>
+            The session is not yet initialized.<br/>
+            The session is closed.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
+          <td>
+            The parameter is empty.<br/>
+            Invalid initialization data.<br/>
+            The operation is not supported on sessions of this type.<br/>
+            Invalid response format.<br/>
+            A persistent license was provided for a "temporary" session.
+          </td>
+        </tr>
+        <tr>
+          <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
+          <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br/>
+            A non-closed session already exists for this sessionId.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="session-storage">3.7. Session Storage and Persistence</h3>
+    <p>This section provides an overview of session stroage and persistence that complements the algorithms.</p>
+    <p>If this object's <var title="true">session type</var> is not "<coderef prefix="sessiontype">persistent</coderef>", the user agent and CDM must <em>not</em> persist a record of or data related to the session at any point.
+      This includes license(s), key(s), and the <a href="#session-id">Session ID</a>.
+    </p>
+    <p>The remainder of this section applies to "<coderef prefix="sessiontype">persistent</coderef>" sessions, which implementatations may optionally support.</p>
+    <p>Persisted data must always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <code><dom4ref name="document">Document</dom4ref></code> can access it.
+      In addition, the data must only be accessible by the current profile of this user agent - other user agent profiles, user agents, and applications must not be able to access the stored data.
+    </p>
+    <p>The CDM should not store session data, including the Session ID, until <methodref>update</methodref> is called the first time.
+      Specifically, the CDM should not store session data during the <methodref>generateRequest</methodref> algorithm.
+      This ensures that the application is aware of the session and knows it needs to eventually remove it.
+    </p>
+    <p>The CDM must ensure that data for a given session is only present in one active unclosed session in any <dom4ref name="document">Document</dom4ref>.
+      In other words, <methodref>load</methodref> must fail when there is already a <coderef>MediaKeySession</coderef> representing the session specified by the <var title="true">sessionId</var> parameter, either because the object that created it via <methodref>generateRequest</methodref> is still active or it has been loaded into another object via <methodref>load</methodref>.
+      A session may only be loaded again after the <a href="#algorithms-session-close">Session Close</a> algorithm has not been run on the object representing it.
+    </p>
+    <p>An application that creates a "<coderef prefix="sessiontype">persistent</coderef>" session should later remove the stored data using <methodref>remove</methodref>.
+      The CDM may also remove sessions as appropriate, but applications should not rely on this.
+    </p>
+    <p class="non-normative">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p>
+
+
+    <h2 id="htmlmediaelement-extensions">4. HTMLMediaElement Extensions</h2>
+    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
+    <pre class="idl">
+enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
+partial interface <precodedfn>HTMLMediaElement</precodedfn> {
+  // Encrypted Media
+  
+  readonly attribute <precoderef>MediaKeys</precoderef>? <precoderef prefix="attr">mediaKeys</precoderef>;
+  readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
+  attribute <EventHandler/> <precoderef>onencrypted</precoderef>;
+
+  Promise&lt;void&gt; <premethodref>setMediaKeys</premethodref>(<precoderef>MediaKeys</precoderef>? mediaKeys);
+};
+</pre>
+
+    <h3 id="htmlmediaelement-attributes">4.1. Attributes</h3>
+
+    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
+
+    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
+
+    <p>The <codedfn>onencrypted</codedfn> event handler for the <coderef>encrypted</coderef> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+
+    <h3 id="htmlmediaelement-methods">4.2. Methods</h3>
+    <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+    <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
+
+    <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <coderef>MediaKeys</coderef> to use when decrypting media data during playback. It must run the following steps:</p>
+    
+    <ol>
+      <!-- For simplicity and consistency, do not allow multiple pending calls. -->
+      <li><p>If <var>mediaKeys</var> and the <coderef prefix="attr">mediaKeys</coderef> attribute are the same object, return a resolved promise.</p></li>
+      <li><p>If this object's <var title="true">attaching media keys</var> value is true, return a promise rejected with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+      <li><p>Let this object's <var title="true">attaching media keys</var> value be true.</p></li>
+      <li><p>Let <var>promise</var> be a new promise.</p></li>
+      <li><p>Run the following steps asynchronously:</p>
+        <ol>
+          <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
+          <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
+            <ol>
+              <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
+              <li><p>If the association cannot currently be removed <span class="non-normative">(i.e. during playback)</span>, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
+              <li><p>Stop using the CDM instance represented by the <coderef prefix="attr">mediaKeys</coderef> attribute to decrypt <videoanchor name="media-data">media data</videoanchor> and remove the association with the media element.</p></li>
+              <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+            </ol>
+          </li>
+          <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
+            <ol>
+              <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <videoanchor name="media-data">media data</videoanchor>.</p></li>
+              <li><p>If the preceding step failed, run the following steps:</p>
+                <ol>
+                  <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
+                  <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
+                  <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+                </ol>
+              </li>
+              <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
+                <p>The user agent may choose to skip this step if it knows resuming will fail <span class="non-normative">(i.e. <var>mediaKeys</var> has no sessions)</span>.</p>
+              </li>
+            </ol>
+          </li>
+          <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to <var>mediaKeys</var>.</p></li>
+          <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
+          <li><p>Resolve <var>promise</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Return <var>promise</var>.</p></li>
+    </ol>
+    
+    <p class="non-normative">Note: Support for clearing or replacing the associated <coderef>MediaKeys</coderef> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
+    <p class="non-normative">Note: As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
+
+    <h3 id="htmlmediaelement-event-definitions">4.3. Event Definitions</h3>
+    <pre class="idl">
+[Constructor(DOMString type, optional <precoderef>MediaEncryptedEventInit</precoderef> eventInitDict)]
+interface <precodedfn>MediaEncryptedEvent</precodedfn> : <dom4ref name="event">Event</dom4ref> {
+  readonly attribute DOMString <precoderef>initDataType</precoderef>;
+  readonly attribute ArrayBuffer? <precoderef>initData</precoderef>;
+};
+
+dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eventinit">EventInit</dom4ref> {
+  DOMString <precoderef>initDataType</precoderef> = "";
+  ArrayBuffer? <precoderef>initData</precoderef> = null;
+};
+</pre>
+
+    <dl class="domintro">
+     <dt><var title="">event</var> . <coderef>initDataType</coderef></dt>
+     <dd>
+       <p>Returns a string indicating the <a href="#initialization-data-type">initialization data type</a> of the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+     </dd>
+     <dt><var title="">event</var> . <coderef>initData</coderef></dt>
+     <dd>
+       <p>Returns the <a href="#initialization-data">Initialization Data</a> related to the event.</p>
+     </dd>
+    </dl>
+    <div class="impl">
+    <p>The <codedfn>initDataType</codedfn> attribute contains a string indicating the <a href="#initialization-data-type">initialization data type</a> specific to the event. The format of the <coderef>initData</coderef> will vary according to the <coderef>initDataType</coderef>.</p>
+    <p>The <codedfn>initData</codedfn> attribute contains <a href="#initialization-data">Initialization Data</a> specific to the event.</p>
+    <p>Events are constructed as defined in <a href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#constructing-events">Constructing events</a>, in [DOM4].</p>
+    </div>
+
+    <h3 id="htmlmediaelement-events">4.4. Event Summary</h3>
+    <non-normative-section/>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Event name</th>
+          <th>Interface</th>
+          <th>Dispatched when...</th>
+          <th>Preconditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><codedfn>encrypted</codedfn></td>
+          <td><coderef>MediaEncryptedEvent</coderef></td>
+          <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor>.</td>
+          <td><readystate/> is equal to <have-metadata/> or greater.
+          <span class="non-normative">It is possible that the element is playing or has played.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="htmlmediaelement-algorithms">4.5. Algorithms</h3>
+
+    <h4 id="algorithms-initdata-encountered">4.5.1. Initialization Data Encountered</h4>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
+
+    <ol>
+      <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
+      <li><p>Let <var title="">initData</var> be null.</p></li>
+      <li>
+        <p>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/> and <em>not</em> <a href="#mixed-content">mixed content</a>, run the following steps:</p>
+        <ol>
+          <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of the Initialization Data.</p></li>
+          <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
+        </ol>
+        <div class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent must not expose Initialization Data from such media data to the application.</div>
+      </li>
+      <li>
+        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>encrypted</coderef> at the <a href="#media-element">media element</a>.</p>
+        <p>The event is of type <coderef>MediaEncryptedEvent</coderef> and has:</p>
+        <ul style="list-style-type:none"><li>
+          <coderef>initDataType</coderef> = <var title="">initDataType</var><br></br>
+          <coderef>initData</coderef> = <var title="">initData</var>
+        </li></ul>
+        <p class="non-normative">Note that <readystate/> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
+        <p class="non-normative">Note that the <coderef>initData</coderef> attribute will be null if the media data is <em>not</em> <cors-same-origin/> or is <a href="#mixed-content">mixed content</a>.
+          Applications may retrieve the Initialization Data from an alternate source.
+        </p>
+      </li>
+
+      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
+    </ol>
+
+    <h4 id="algorithms-encrypted-block">4.5.2. Encrypted Block Encountered</h4>
+    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block <span class="non-normative">(i.e. frame)</span> of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
+
+    <ol>
+      <li><p>If the media element's <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
+        <ol>
+          <li><p>Let <var title="true">media keys</var> be the <coderef>MediaKeys</coderef> object referenced by that atribute.</p></li>
+          <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#dom-create">initialization</a> of the <var title="true">media keys</var>.</p></li>
+          <li><p>If there is at least one <coderef>MediaKeySession</coderef> created by the <var title="true">media keys</var> on which the <a href="#algorithms-session-close">Session Close</a> algorithm has not been run, run the following steps:</p>
+            <p class="non-normative">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
+            <ol>
+              <li><p>Let the <var title="true">block key ID</var> be the key ID of the current block <span class="non-normative">(as specified by the container)</span>.</p></li>
+              <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
+                <ol>
+                  <li><p>Let <var title="true">available keys</var> be the union of keys in sessions that were created by the <var title="true">media keys</var>.</p></li>
+                  <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                    <dt>If any of the <var title="true">available keys</var> corresponds to the <var title="">block key ID</var> and is usable</dt>
+                    <dd>Run the following steps:
+                      <ol>
+                        <li><p>Let <var title="">block key</var> be the matching key.</p>
+                          <p class="non-normative">Note: If multiple sessions contain a <em>usable</em> key for the <var title="">block key ID</var>, which key to use is <a href="#key-system">Key System</a>-dependent.</p>
+                        </li>
+                        <li><p>Use the <var title="true">cdm</var> to decrypt the block using <var title="">block key</var>.</p></li>
+                        <li><p>Follow the steps for the first matching condition from the following list:</p>
+                          <dl class="switch">
+                            <dt>If decryption fails</dt>
+                            <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
+                            <dt>Otherwise</dt>
+                            <dd>Run the following steps:
+                              <ol>
+                                <li><p>If the <coderef>waitingFor</coderef> attribute on the media element is "<coderef prefix="waitingfor">key</coderef>", set the <coderef>waitingFor</coderef> attribute on the media element to "<coderef prefix="waitingfor">none</coderef>".</p></li>      
+                                <li><p>Abort these steps and process the decrypted block as normal. <span class="non-normative">(Decode the block.)</span></p></li>
+                              </ol>
+                            </dd>
+                          </dl>
+                          <p class="non-normative">Note: Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
+                        </li>
+                      </ol>
+                    </dd>
+                    <dt>If any of the <var title="true">available keys</var> corresponds to the <var title="">block key ID</var> and is unusable</dt>
+                    <dd>
+                      <div class="issue"><div class="issue-title"><span>Issue 3</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - It is TBD whether anything should happen in this case.</p></div>
+                    </dd>
+                    <dt class="non-normative">Otherwise (there is no key for the <var title="true">block key ID</var> in any session)</dt>
+                    <dd class="non-normative">Continue.</dd>
+                    </dl>
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+        </ol>
+      </li>
+      <li>
+        <p><span class="non-normative">There is no usable key for the block.</span>
+          Run the following steps:
+        </p>
+        <ol>
+          <li><p>Run the <a href="#algorithms-queue-waiting">Queue a "waiting" Event</a> algorithm on the media element.</p></li>
+          <li><p>Wait for a signal to resume playback.</p></li>
+        </ol>
+      </li>
+    </ol>
+
+    <div class="non-normative">
+    <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <resource-fetch-algorithm/>:</p>
+    <ol>
+      <li><p>Let <var title="">encrypted</var> be false.</p></li>
+      <li><p>Detect whether the frame is encrypted.</p>
+        <dl class="switch">
+          <dt>If the frame is encrypted</dt>
+          <dd>Run the steps above.</dd>
+          <dt>Otherwise</dt>
+          <dd>Continue.</dd>
+        </dl>
+      </li>
+      <li><p>Decode the frame.</p></li>
+      <li><p>Provide the frame for rendering.</p></li>
+    </ol>
+    </div>
+
+    <h4 id="algorithms-queue-waiting">4.5.3. Queue a "waiting" Event</h4>
+    <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
+    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    </p>
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
+      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", run the following steps:</p>
+        <ol>
+          <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "<coderef prefix="waitingfor">key</coderef>".</p></li>
+          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-waiting">waiting</videoref> at the <var title="true">media element</var>.</p></li>
+        </ol>
+      </li>
+      <li><p>Suspend playback.</p></li>
+    </ol>
+
+    <h4 id="algorithms-resume-playback">4.5.4. Attempt to Resume Playback If Necessary</h4>
+    <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
+    If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
+    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    </p>
+
+    <p>The following steps are run:</p>
+    <ol>
+      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
+      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", abort these steps.</p></li>
+      <li><p>Attempt to resume the <resource-fetch-algorithm/> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
+      <li><p>If the user agent can advance the <videoref name="current-playback-position">current playback position</videoref> in the <videoref name="direction-of-playback">direction of playback</videoref>, run the following steps:</p>
+        <ol>
+          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-canplay">canplay</videoref> at the <var title="true">media element</var>.</p></li>
+          <li><p>If the <videoref name="dom-media-paused">paused</videoref> attribute on the <var title="true">media element</var> is false, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-playing">playing</videoref> at the <var title="true">media element</var>.</p></li>
+       </ol>
+        <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
+      </li>
+    </ol>
+
+    <h4 id="htmlmediaelement-playing-the-media-resource">4.5.5. Playing the Media Resource Algorithm Modifications</h4>
+    <p>The following steps are added to readyState change algorithms in <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>:</p>
+    <ul>
+      <li>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
+      <li>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
+    </ul>
+
+    <h3 id="media-element-restictions">4.4. Media Element Restrictions</h3>
+    <non-normative-section/>
+    <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
+    This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
+    <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, may not be available. One likely restriction is that
+    video media may be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
+
+
+    <h2 id="common-key-systems">5. Common Key Systems</h2>
+    <p>All user agents must support the common key systems described in this section.
+    <span class="non-normative">This ensures that there is a common baseline level of protection that is guaranteed to be supported in all user agents, including those that are entirely open source.
+    Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.</span>
+    </p>
+
+    <span id="simple-decryption-clear-key"></span> <!-- Legacy anchor name. -->
+    <h3 id="clear-key">5.1. Clear Key</h3>
+    <p>The "org.w3.clearkey" <a href="#key-system">Key System</a> uses plain-text clear (unencrypted) key(s) to decrypt the source.
+    No additional client-side content protection is required.
+    This Key System is described below.
+    </p>
+    
+    <h4 id="clear-key-capabilities">5.1.1. Capabilities</h4>
+    <p>The following describe how Clear Key supports key system-specific capabilities:</p>
+    <ul>
+      <li><p>The <methodref>setMediaKeys</methodref> method: Implementations may support associating the <coderef>MediaKeys</coderef> object with more than one <coderef>HTMLMediaElement</coderef>.</p></li>
+      <li><p>The <methodref>setServerCertificate</methodref> method: Not supported.</p></li>
+      <li><p>The <methodref>isTypeSupported</methodref> method: There are no supported <var title="true">capability</var> values.</p></li>
+      <li><p>The "<coderef prefix="sessiontype">persistent</coderef>" <coderef>SessionType</coderef>: Implementations may support this type.</p></li>
+    </ul>
+    
+    <h4 id="clear-key-behavior">5.1.2. Behavior</h4>
+    <p>The following describe how Clear Key implements key system-specific behaviors:</p>
+    <ul>
+      <li><p>In the <methodref>generateRequest</methodref> algorithm:</p>
+        <ul>
+          <li><p>The generated <var title="true">message</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-request-format">License Request Format</a>.</p></li>
+          <li><p>The request is generated by extracting the key IDs from the <var>init data</var>.</p></li>
+          <li><p>The "type" member value is the value of the <var title="true">sessionType</var> parameter.</p></li>
+        </ul>
+      </li>
+      <li><p>The <coderef>sessionId</coderef> attribute is a numerical value representable by a 32-bit integer.</p></li>
+      <li><p>The <coderef>expiration</coderef> attribute is always <code>NaN</code>.</p></li>
+      <li><p>In the <methodref>update</methodref> algorithm:</p>
+        <ul>
+          <li><p>The <var title="true">response</var> parameter is a JWK Set as described in <a href="#clear-key-license-format">License Format</a>.</p></li>
+          <li><p><var>sanitized response</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
+        </ul>
+      </li>
+      <li><p>The <methodref>getUsableKeyIds</methodref> method always returns all key IDs that have been provided via <methodref>update</methodref>.</p></li>
+      <li><p><a href="#initialization-data">Initialization Data</a>: Implementations may support any combination of <a href="initdata-format-registry.html">registered Initialization Data types</a>.
+        Implementations should support the "<a href="keyids-format.html">keyids</a>" type and other types appropriate for content types supported by the user agent.
+      </p></li>
+    </ul>
+
+    <h4 id="clear-key-request-format">5.1.3. License Request Format</h4>
+    <p>This section describes the format of the license request provided to the application via the <coderef>message</coderef> attribute of the <precoderef prefix="event">message</precoderef> event.</p>
+    
+    <p>The format is a JSON object containing the following members:</p>
+    <dl>
+      <dt>"kids"</dt>
+      <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+      <dt>"type"</dt>
+      <dd>The requested <coderef>SessionType</coderef></dd>
+    </dl>
+
+    <p>When contained in the ArrayBuffer <coderef>message</coderef> attribute of a <coderef>MediaKeyMessageEvent</coderef> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
+    </p>
+
+    <!-- Will be <section class="informative"> -->
+    <h5 id="clear-key-request-format-example">5.1.3.1. Example</h5>
+    <non-normative-section/>
+    <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
+    <pre class="example">
+{
+  "kids": 
+    [
+     "67ef0gd8pvfd0",
+     "77ef0gd8pvfd0"
+    ],
+  "type":"<precoderef prefix="sessiontype">temporary</precoderef>"
+}
+</pre>
+
+    <h4 id="clear-key-license-format">5.1.4. License Format</h4>
+    <p>This section describes the format of the license to be provided via the <var title="true">response</var> parameter of the <methodref>update</methodref> method.</p>
+
+    <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>.</p>
+
+    <p>For each JWK in the set, the parameter values are as follows:</p>
+    <dl>
+      <dt>"kty" (key type)</dt>
+      <dd>"oct" (octet sequence)</dd>
+      <dt>"alg" (algorithm)</dt>
+      <dd>"A128KW" (AES key wrap using a 128-bit key)</dd>
+      <dt>"k" (key value)</dt>
+      <dd>The base64url encoding of the octet sequence containing the symmetric <a href="#decryption-key">key</a> value</dd>
+      <dt>"kid" (key ID)</dt>
+      <dd>The base64url encoding of the octet sequence containing the <a href="#decryption-key-id">key ID</a> value</dd>
+    </dl>
+
+    <p>The JSON object may have an optional "type" member value, which may be any of the <coderef>SessionType</coderef> values.
+      If not specified, the default value of "<coderef prefix="sessiontype">temporary</coderef>" is used.
+      The <methodref>update</methodref> algorithm compares this value to the <var title="true">sessionType</var>.
+    </p>
+
+    <p>When passed to the <methodref>update</methodref> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
+      Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
+    </p>
+
+    <!-- Will be <section class="informative"> -->
+    <h5 id="clear-key-license-format-example">5.1.4.1. Example</h5>
+    <non-normative-section/>
+    <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
+    <pre class="example">
+{
+  "keys": 
+    [{
+      "kty":"oct",
+      "alg":"A128KW",
+      "k":"GawgguFyGrWKav7AX4VKUg"
+      "kid":"67ef0gd8pvfd0",
+    }],
+  "type":"<precoderef prefix="sessiontype">temporary</precoderef>"
+}</pre>
+
+    <!-- Will be <section class="informative"> -->
+    <h4 id="using-base64url">5.1.5. Using base64url</h4>
+    <non-normative-section/>
+    <p>For more information on base64url and working with it, see the Base64url Encoding entry in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#section-2">Terminology section</a> and <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#appendix-C">Notes on implementing base64url encoding without padding</a> of the JSON Web Signature (JWS) specification.
+      Specifically, there is no '=' padding, and the characters '-' and '_' must be used instead of '+' and '/', respectively. 
+    </p>
+
+
+    <h2 id="security">6. Security Considerations</h2>
+    <div class="nonnormative">
+
+    <p>User Agent and Key System implementations must consider <videoanchor name="media-data">media data</videoanchor>, <a href="#initialization-data">Initialization Data</a>, responses (i.e. data passed to <methodref>update</methodref>), licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
+    They must use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
+    User Agents may want to validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering).
+    </p>
+    <p>Implementations should not return active content or passive content that affects program control flow to the application.
+    For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the Initialization Data passed to <methodref>generateRequest</methodref>.
+    Applications should determine the URLs to use. The <coderef>type</coderef> attribute of the <coderef prefix="event">message</coderef> event can be used by the application to select among a set of URLs if applicable.
+    </p>
+    <p>User Agents are responsible for providing users with a secure way to browse the web. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to properly asses the security implications of integrating with the Key System.</p>
+    <p>Note: Unsandboxed CDMs (or CDMs that use platform features) and UAs that use them must be especially careful in all areas of security, including parsing of key and media data, etc. due to the potential for compromises to provide access to OS/platform features, interact with or run as root, access drivers, kernel, firmware, hardware, etc., all of which may not be written to be robust against hostile software or web-based attacks. Additionally, CDMs may not be updated with security fixes as frequently, especially when part of the OS, platform or hardware.</p>
+
+    <p>User agents may choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+    This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
+    Such user agents should also properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid potential exposure to insecure content.
+    See also <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
+    </p>
+    
+    <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent should ensure that users are fully informed and/or give explicit consent before loading or invoking it.
+    See also <a href="#privacy-prompts">User Alerts / Prompts</a>.
+    </p>
+
+    </div>
+
+
+    <h2 id="privacy">7. Privacy Considerations</h2>
+    <div class="nonnormative">
+
+    <p>The presence or use of Key Systems on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself, or within messages from Key Systems and (b) user-specific information that may be persistently stored on the users device.</p>
+    <p>User Agents should take responsibility for providing users with adequate control over their own privacy. Since User Agents may integrate with third party CDM implementations, CDM implementers must provide sufficient information and controls to user agent implementers to enable them to implement appropriate techniques to ensure users have control over their privacy, including but not limited to the techniques described below.</p>
+
+    <h3 id="privacy-disclosure">7.1. Information Disclosed by EME and Key Systems</h3>
+    <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories, concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and user-specific information that may be used directly for user tracking.</p>
+
+    <h4 id="privacy-fingerprinting">7.1.1 Fingerprinting</h4>
+    <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information. If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems should not share key or other data between origins.</p>
+
+    <h4 id="privacy-leakage">7.1.2 Information Leakage</h4>
+    <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
+    It is important that steps be taken to avoid information leakage, especially across origins.
+    This includes both in-memory and stored data.
+    Failure to do so could lead to information leakage to/from Incognito/Private Browsing sessions, across profiles, and even across different browsers, applications, and operating system user accounts.
+    </p>
+    
+    <p>To avoid such issues, user agent and CDM implementations should ensure that:</p>
+    <ul>
+      <li>CDMs have a concept of a CDM instance that is associated 1:1 with a MediaKeys object.</li>
+      <li>Keys, licenses, other session data, and the presence of sessions are restricted to the CDM instance associated with the MediaKeys object that created the session.</li>
+      <li>Session data is not shared between MediaKeys objects or CDM instances.</li>
+      <li>Session data is not shared with media elements not associated with the MediaKeys object that created the session. Among other things, this means a session's keys may not be used to decrypt content loaded by a media element whose <coderef prefix="attr">mediaKeys</coderef> attribute is not the MediaKeys object.</li>
+      <li>MediaKeys objects and the underlying implementation do not expose information outside the origin.</li>
+      <li>Persisted session data, if applicable, is stored on a per-origin basis.</li>
+      <li>Only data stored by the requesting origin may be loaded.</li>
+    </ul>
+
+    <h4 id="privacy-tracking">7.1.3 Tracking</h4>
+    <p>User-specific information may be obtained over the EME API in two ways: through detection of stored keys and through Key System messages.</p>
+
+    <p>Key Systems may access or create persistent or semi-persistent identifiers for a device or user of a device. In some cases these identifiers may be bound to a specific device in a secure manner. If these identifiers are present in Key System messages, then devices and/or users may be tracked. If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device. If not mitigated, such tracking may take three forms depending on the design of the Key System:</p>
+    <ul>
+      <li>In all cases, such identifiers are expected to be available to sites and/or servers that fully support the Key System (and thus can interpret Key System messages) enabling tracking by such sites.</li>
+      <li>If identifiers exposed by Key Systems are not origin-specific, then two sites and/or servers that fully support the Key System may collude to track the user</li>
+      <li>If a Key System messages contains information derived from a user identifier in a consistent manner, for example such that a portion of the initial Key System message for a specific content item does not change over time and is dependent on the user identifier, then this information could be used by any application to track the device or user over time.</li>
+    </ul>
+
+    <p>If a Key System permits keys to be stored and to be re-used between origins, then it may be possible for two origins to collude and track a unique user by recording their ability to access a common key.</p>
+    <p>Finally, if any user interface for user control of Key Systems presents data separately from data in HTTP session cookies or persistent storage, then users are likely to modify site authorization or delete data in one and not the others. This would allow sites to use the various features as redundant backup for each other, defeating a user's attempts to protect his privacy.</p>
+    <p>There are a number of techniques that can be used to mitigate these risks of tracking without user consent:</p>
+
+    <dl>
+      <dt>User deletion of persistent identifiers</dt>
+      <dd>User agents could provide users with the ability to clear any persistent identifiers maintained by Key Systems.</dd>
+
+      <dt>Use of (non-reversible) per-origin identifiers</dt>
+      <dd>The user / device identifier exposed by a Key System may be different for each origin, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</dd>
+
+      <dt id="identifier-encryption">Encryption of user identifiers</dt>
+      <dd>User identifiers in Key System messages could be encrypted, together with a timestamp or nonce, such that the Key System messages are always different. This would prevent the use of Key System messages for tracking except by applications fully supporting the Key System.
+      This may be implemented using a <a href="#server-certificate">server certificate</a>.
+      </dd>
+
+      <dt>Site-specific white-listing of access to each Key System</dt>
+      <dd>User agents could require the user to explicitly authorize access by each site to each Key System. User agents should enable users to revoke this authorization either temporarily or permanently.</dd>
+
+      <dt>Treating Key System persistent identifiers as cookies</dt>
+      <dd>User agents should present the presence of persistent identifiers stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies. This might encourage users to view such identifiers with healthy suspicion.</dd>
+
+      <dt>Shared blacklists</dt>
+      <dd>User agents may allow users to share their Key System domain blacklists. This would allow communities to act together to protect their privacy.</dd>
+
+      <dt id="privacy-prompts">User Alerts / Prompts</dt>
+      <dd>User Agents should ensure that users are fully informed and/or give explicit consent before identifiers are exposed in messages from Key Systems.
+        Such alerts and consent should be per origin to avoid valid uses enabling subsequent malicious access.
+        User agents that consider such alerts or consent appropriate should only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
+        (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.)
+      </dd>
+
+      <dt>User controls to disable Key Systems or Key System use of identifiers</dt>
+      <dd>User Agents could provide users with a global control of whether a Key System is enabled / disabled and/or whether Key System use of user / device identifiers is enabled or disabled (if supported by the Key System).</dd>
+    </dl>
+
+    <p>While these suggestions prevent trivial use of this feature for user tracking, they do not block it altogether. Within a single domain, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not per-origin, then a profile can still be created.</p>
+    <p>It is important to note that identifiers that are non-clearable, non-origin-specific or hardware-bound exceed the tracking impact of existing techniques such as cookies or session identifiers embedded in URLs.</p>
+    <p>Thus, in addition to the various mitigations described above, if a browser supports a mode of operation intended to preserve user anonymity, then User Agent implementers should carefully consider whether access to Key Systems should be disabled in this mode.</p>
+
+    <h3 id="privacy-storedinfo">7.2. Information Stored on User Devices</h3>
+    <p>Key Systems may store information on a user's device, or user agents may store information on behalf of Key Systems. Potentially, this could reveal information about a user to another user of the same device, including potentially the origins that have used a particular Key System (i.e. sites visited) or even the content that has been decrypted using a Key System.</p>
+    <p>If information stored by one origin affects the operation of the Key System for another origin, then potentially the sites visited or content viewed by a user on one site may be revealed to another, potentially malicious, site.</p>
+    <p>There are a number of techniques that can be used to mitigate these privacy risk to users:</p>
+
+    <dl>
+      <dt>Origin-specific Key System storage</dt>
+      <dd>User agents may require that some or all of the Key System's persistently stored data is stored in an origin-specific way. Session data, licenses, and keys that are persistently stored should be stored per-origin.</dd>
+
+      <dt>User deletion of Key System storage</dt>
+      <dd>User agents may present the user with a way to delete Key System storage for a specific origin or all origins.</dd>
+
+      <dt>Treating Key System stored data like cookies / Web Storage</dt>
+      <dd>User agents should present the presence of persistent data stored by Key Systems to the user in a way that associates it strongly with HTTP session cookies and/or Web Storage. This might encourage users to view such data with healthy suspicion.</dd>
+
+      <dt>Encryption or obfuscation of Key System stored data</dt>
+      <dd>User agents should treat data stored by Key Systems as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information. To this end, user agents should ensure that such data is securely stored and when deleting data, it is promptly deleted from the underlying storage.</dd>
+    </dl>
+    
+    <p>User agent and CDM implementations that allow the CDM to persist data should:</p>
+    <ul>
+      <li>Ensure it is restricted to the origin for which it was created.</li>
+      <li>Ensure it is restricted to the current profile and does not leak to or from Incognito/Private Browsing sessions.</li>
+      <li>Allow the user to clear it, preferably by origin.</li>
+      <li>Treat it like other site data, including presenting it along with cookies, including it in "remove all data", and presenting it in the same UI locations.</li>
+    </ul>
+
+    <h3 id="privacy-secureorigin">7.3. Use Secure Origin and Transport</h3>
+    <p>In order to protect identifiers and other information discussed in previous sections, user agents may choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+    This is especially important if a user agent chooses to support a Key System implementation that exposes identifiers or other such information without effectively anonymizing it in transit (i.e. without <a href="#identifier-encryption">encrypting identifiers</a>).
+    </p>
+    <p>Regardless of user agent limitations, applications should use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <coderef prefix="event">message</coderef> events and to <methodref>update</methodref>).</p>
+    <p>All user agents should properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
+
+    </div>
+
+    <h2 id="examples">8. Examples</h2>
+    <non-normative-sections/>
+    <p>This section contains example solutions for various use cases using the proposed extensions.
+    These are not the only solutions to these use cases.
+    Video elements are used in the examples, but the same would apply to all <a href="#media-element">media element</a>s.
+    In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
+    </p>
+
+    <h3 id="example-source-and-key-known" class="exampleheader">8.1. Source and Key Known at Page Load (Clear Key)</h3>
+    <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page.
+    Only one session will ever be created.</p>
+
+    <pre class="example">
+&lt;script&gt;
+  function load() {
+    var video = document.getElementById("video");
+
+    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
+      var promise = <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>("org.w3.clearkey");
+      promise.catch(
+        console.error.bind(console, "Unable to create MediaKeys")
+      );
+      promise.then(
+        function(createdMediaKeys) {
+          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to set MediaKeys")
+      );
+      promise.then(
+        function(createdMediaKeys) {
+          var initData = new Uint8Array([ ... ]);
+          var keySession = createdMediaKeys.<premethodref>createSession</premethodref>();
+          keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+          return keySession.<premethodref>generateRequest</premethodref>("webm", initData);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to create or initialize key session")
+      );
+    }
+  }
+
+  function handleMessage(event) {
+    var keySession = event.target;
+
+    var license = new Uint8Array([ ... ]);
+    keySession.<premethodref>update</premethodref>(license).catch(
+      console.error.bind(console, "update() failed")
+    );
+  }
+&lt;/script&gt;
+
+&lt;body onload="load()"&gt;
+  &lt;video src="foo.webm" autoplay id="video"&gt;&lt;/video&gt;
+&lt;/body&gt;
+</pre>
+
+    <h3 id="example-selecting-key-system" class="exampleheader">8.2. Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
+    <p class="exampledescription">This example selects a supported <a href="#key-system">Key System</a> using the <methodref>isTypeSupported</methodref> method then uses
+    the <a href="#initialization-data">Initialization Data</a> from the <videoanchor name="media-data">media data</videoanchor> to generate the license request and send it to the appropriate license server.
+    One of the supported key systems uses a serverCertificate, which is provided proactively.
+    </p>
+
+    <pre class="example">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var serverCertificate;
+
+  function selectKeySystem() {
+    if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.example.somesystem", "webm", "video/webm; codecs='vp8, vorbis'")) {
+      licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
+      keySystem = "com.example.somesystem";
+      serverCertificate = new Uint8Array([ ... ]);
+    } else if (<precoderef>MediaKeys</precoderef>.<premethodref>isTypeSupported</premethodref>("com.foobar", "webm", "video/webm; codecs='vp8, vorbis'")) {
+      licenseUrl = "https://license.foobar.com/request";
+      keySystem = "com.foobar";
+    } else {
+      throw "Key System not supported";
+    }
+  }
+
+  function handleInitData(event) {
+    var video = event.target;
+    if (video.mediaKeysObject === undefined) {
+      selectKeySystem();
+      video.mediaKeysObject = null; // Prevent entering this path again.
+      video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
+      <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+        function(createdMediaKeys) {
+          video.mediaKeysObject = createdMediaKeys;
+
+          if (serverCertificate)
+            createdMediaKeys.<premethodref>setServerCertificate</premethodref>(serverCertificate);
+
+          for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
+            var data = video.pendingSessionData[i];
+            makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
+          }
+          video.pendingSessionData = [];
+
+          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to create or use new MediaKeys")
+      );
+    }
+    addSession(video, event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
+  }
+
+  function addSession(video, initDataType, initData) {
+    if (video.mediaKeysObject) {
+      makeNewRequest(video.mediaKeysObject, initDataType, initData);
+    } else {
+      video.pendingSessionData.push({initDataType: initDataType, initData: initData});
+    }
+  }
+
+  function makeNewRequest(mediaKeys, initDataType, initData) {
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>();
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", licenseRequestReady, false);
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).catch(
+      console.error.bind(console, "Unable to create or initialize key session")
+    );
+  }
+
+  function licenseRequestReady(event) {
+    var request = event.<precoderef>message</precoderef>;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.keySession = event.target;
+    xmlhttp.open("POST", licenseUrl);
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4) {
+        var license = new Uint8Array(xmlhttp.response);
+        xmlhttp.keySession.<premethodref>update</premethodref>(license).catch(
+          console.error.bind(console, "update() failed")
+        );
+      }
+    }
+    xmlhttp.send(request);
+  }
+&lt;/script&gt;
+
+&lt;video src="foo.webm" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+</pre>
+
+    <h3 id="example-mediakeys-before-source" class="exampleheader">8.3. Create MediaKeys Before Loading Media</h3>
+    <p class="exampledescription">Initialization is much simpler if encrypted events do not need to be handled during MediaKeys initialization.
+    This can be accomplished either by providing the <a href="#initialization-data">Initialization Data</a> in other ways or setting the source after the MediaKeys object has been created.
+    This example does the latter.
+    </p>
+
+    <pre class="example">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var serverCertificate;
+  var mediaKeys;
+
+  // See the previous example for implementations of these functions.
+  function selectKeySystem() { ... }
+  function makeNewRequest(mediaKeys, initDataType, initData) { ... }
+  function licenseRequestReady(event) { ... }
+
+  function handleInitData(event) {
+    makeNewRequest(mediaKeys, event.<precoderef>initDataType</precoderef>, event.<precoderef>initData</precoderef>);
+  }
+
+  selectKeySystem();
+  <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.<premethodref>setServerCertificate</premethodref>(serverCertificate);
+      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or initialize key session")
+  );
+&lt;/script&gt;
+
+&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+</pre>
+
+    <h3 id="example-using-all-events" class="exampleheader">8.4. Using All Events</h3>
+    <p class="exampledescription">This is a more complete example showing all events being used.</p>
+    <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <methodref>update</methodref> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+
+    <pre class="example">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var serverCertificate;
+  var mediaKeys;
+
+  // See previous examples for implementations of these functions.
+  // selectKeySystem() additionally sets renewalUrl.
+  function selectKeySystem() { ... }
+  function handleInitData(event) { ... }
+
+  // This replaces the implementation in the previous example.
+  function makeNewRequest(mediaKeys, initDataType, initData) {
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>();
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.addEventListener("<precoderef prefix="event">keyschange</precoderef>", handleKeysChange, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      console.log.bind(console, "Session closed")
+    );
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).catch(
+      console.error.bind(console, "Unable to create or initialize key session")
+    );
+  }
+
+  function handleMessageResponse(keySession, response) {
+    var license = new Uint8Array(response);
+    keySession.<premethodref>update</premethodref>(license).catch(
+      function(err) {
+        console.error("update() failed: " + err);
+      }
+    );
+  }
+
+  function sendMessage(type, message, keySession) {
+    var url = licenseUrl;
+    if (type == "<precoderef>licenserenewal</precoderef>")
+      url = renewalUrl;
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.keySession = keySession;
+    xmlhttp.open("POST", url);
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == 4)
+        handleMessageResponse(xmlhttp.keySession, xmlhttp.response);
+    }
+    xmlhttp.send(message);
+  }
+
+  function handleMessage(event) {
+    sendMessage(event.<precoderef>type</precoderef>, event.<precoderef>message</precoderef>, event.target);
+  }
+
+  function handleKeysChange(event) {
+    event.target.<precoderef>getUsableKeyIds</precoderef>().then(
+      function(keyIdSequence) {
+        // Process keyIdSequence and respond appropriately.
+      }
+    ).catch(
+      console.error.bind(console, "Failed handling usable keys change")
+    );
+  }
+
+  function handleError(event) {
+    // Report <!-- TODO: Remove or fix when bug 26372 is addressed.
+    event.target.error.name and event.target.error.<precoderef>systemCode</precoderef>,
+    //  -->and do some bookkeeping with event.target.<precoderef>sessionId</precoderef> if necessary.
+  }
+
+  selectKeySystem();
+  <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.<premethodref>setServerCertificate</premethodref>(serverCertificate);
+      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or use new MediaKeys")
+  );
+&lt;/script&gt;
+
+&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+</pre>
+
+    <h3 id="example-stored-license" class="exampleheader">8.5. Stored License</h3>
+    <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
+
+    <pre class="example">
+&lt;script&gt;
+  var keySystem;
+  var licenseUrl;
+  var serverCertificate;
+  var mediaKeys;
+
+  // See the previous examples for implementations of these functions.
+  function selectKeySystem() { ... }
+  function sendMessage(message, keySession) { ... }
+  function handleMessage(event) { ... }
+  function handleError(event) { ... }
+
+  // Called if the application does not have a stored sessionId for the media resource.
+  function makeNewRequest(mediaKeys, initDataType, initData) {
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>("persistent");
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      function() {
+        console.log("Session " + this.sessionId + " closed");
+      }.bind(keySession)        
+    );
+    keySession.<premethodref>generateRequest</premethodref>(initDataType, initData).then(
+      function() {
+        // Store this.<precoderef>sessionId</precoderef> in the application.
+      }.bind(keySession)
+    ).catch(
+      console.error.bind(console, "Unable to create or initialize a persistable key session")
+    );
+  }
+
+  // Called if the application has a stored sessionId for the media resource.
+  function loadStoredSession(mediaKeys, sessionId) {
+    var keySession = mediaKeys.<premethodref>createSession</premethodref>("persistent");
+    keySession.addEventListener("<precoderef prefix="event">message</precoderef>", handleMessage, false);
+    keySession.<precoderef>closed</precoderef>.then(
+      console.log.bind(console, "Session closed")
+    );
+    keySession.<premethodref>load</premethodref>(sessionId).then(
+      function(loaded) {
+        if (!loaded) {
+          console.error("No stored session with the ID " + sessionId + " was found.");
+          // The application should remove its record of |sessionId|.
+          return;
+        }
+      }
+    ).catch(
+      console.error.bind(console, "Unable to load or initialize the stored session with the ID " + sessionId)
+    );
+  }
+
+  // Called when the application wants to stop using the session without removing the stored license.
+  function closeSession(keySession) {
+    keySession.<premethodref>close</premethodref>();
+  }
+
+  // Called when the application wants to remove the stored license.
+  // The stored session data has not been completely removed until the promise returned by remove() is fulfilled.
+  // The remove() call may initiate a series of messages to/from the server that must be completed before this occurs.
+  function removeStoredSession(keySession) {
+    keySession.<premethodref>remove</premethodref>().then(
+      function() {
+        console.log("Session " + this.sessionId + " removed");
+        // The application should remove its record of this.sessionId.
+      }.bind(keySession)
+    ).catch(
+      console.error.bind(console, "Failed to remove the session")
+    );
+  }
+
+  // This replaces the implementation in the previous example.
+  function handleMessageResponse(keySession, response) {
+    var license = new Uint8Array(response);
+    keySession.<premethodref>update</premethodref>(license).then(
+      function() {
+        // If this was the last required message from the server, the license is
+        // now stored. Update the application state as appropriate.
+      }
+    ).catch(
+      console.error.bind(console, "update() failed")
+    );
+  }
+
+  selectKeySystem();
+  <precoderef>MediaKeys</precoderef>.<premethodref>create</premethodref>(keySystem).then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      if (serverCertificate)
+        mediaKeys.<premethodref>setServerCertificate</premethodref>(serverCertificate);
+      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+    }
+  ).catch(
+    console.error.bind(console, "Unable to create or use new MediaKeys")
+  );
+&lt;/script&gt;
+
+&lt;video id="v" src="foo.webm" autoplay&gt;&lt;/video&gt;
+</pre>
+
+
+    <h2 id="revision-history">9. Revision History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/a291ac57bad3/encrypted-media/encrypted-media.html">3 September 2014</a></td>
+          <td>Reorganized by object.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/3a5e8f5332a2/encrypted-media/encrypted-media.html">27 August 2014</a></td>
+          <td>Moved license request generation and session loading to MediaKeySession.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/9a94854a5999/encrypted-media/encrypted-media.html">18 August 2014</a></td>
+          <td>Produced candidate WD.</td>
+        </tr>
+        <tr>
+          <td><a href="https://dvcs.w3.org/hg/html-media/raw-file/9842af174b80/encrypted-media/encrypted-media.html">14 April 2014</a></td>
+          <td>Use promises.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/ef65c237d053/encrypted-media/encrypted-media.html">1 April 2014</a></td>
+          <td>Moved Container Guidelines to the <a href="initdata-format-registry.html">Encrypted Media Extensions Stream Format and Initialization Data Format Registry</a>.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/11245f9516cf/encrypted-media/encrypted-media.html">3 February 2014</a></td>
+          <td>Produced candidate WD.</td>
+        </tr>
+        <tr>
+          <td>17 September 2013</td>
+          <td>Produced candidate WD.</td>
+        </tr>
+        <tr>
+          <td>6 May 2013</td>
+          <td>Produced updated candidate FPWD.</td>
+        </tr>
+        <tr>
+          <td>14 January 2013</td>
+          <td>Produced candidate FPWD.</td>
+        </tr>
+        <tr>
+          <td>16 August 2012</td>
+          <td>Converted to the object-oriented API.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html">0.1b</a></td>
+          <td>Last non-object-oriented revision.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1a/encrypted-media/encrypted-media.html">0.1a</a></td>
+          <td>Corrects minor mistakes in 0.1.</td>
+        </tr>
+        <tr>
+          <td><a href="http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1/encrypted-media/encrypted-media.html">0.1</a></td>
+          <td>Initial Proposal</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
