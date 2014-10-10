@@ -51,11 +51,6 @@
     <code><a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/>()</a></code>
   </xsl:template>
 
-  <!-- Still used in IDL and event definitions. -->
-  <xsl:template match="//dom4ref">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/dom/#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
-  </xsl:template>
-
   <!-- Used in IDL. -->
   <xsl:template match="//EventHandler">
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#eventhandler</xsl:attribute>EventHandler</a>
