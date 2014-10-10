@@ -141,6 +141,26 @@
   var emeDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
 
+    'sessiontype': { func: idlref_helper, fragment: 'idl-def-SessionType', link_text: 'SessionType',  },
+    'persistent-session': { func: idlref_helper, fragment: 'idl-def-SessionType.persistent', link_text: '"persistent"',  },
+    'temporary-session': { func: idlref_helper, fragment: 'idl-def-SessionType.temporary', link_text: '"temporary"',  },
+
+    'IsTypeSupportedResult-empty': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.empty-string', link_text: '""',  },
+    'IsTypeSupportedResult-maybe': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.maybe', link_text: '"maybe"',  },
+    'IsTypeSupportedResult-probably': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.probably', link_text: '"probably"',  },
+
+    'mediakeys': { func: idlref_helper, fragment: 'idl-def-MediaKeys', link_text: 'MediaKeys',  },
+    'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeys-keySystem', link_text: 'keySystem',  },
+    'mediakeys-create': { func: idlref_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: 'create()',  },
+    'mediakeys-create-call': { func: idlref_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: 'create',  },
+    'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession()',  },
+    'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession',  },
+    'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate', link_text: 'setServerCertificate()',  },
+    'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate', link_text: 'setServerCertificate',  },
+    'isTypeSupported': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported()',  },
+    'isTypeSupported-call': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported',  },
+    'mediakeys-initialization': { func: term_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: ''  },
+
     'keyschange': { func: eventref_helper, fragment: 'keyschange', link_text: 'keyschange',  },
     'message': { func: eventref_helper, fragment: 'message', link_text: 'message',  },
     'encrypted': { func: eventref_helper, fragment: 'encrypted', link_text: 'encrypted',  },
