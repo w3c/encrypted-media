@@ -140,8 +140,8 @@
       <dd>
     <p>The Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
     <p class="note">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
-    This is transparent to the API and application.
-    A user agent may support one or more CDMs.</p>
+    This is transparent to the API and application.</p>
+    <p>A user agent MAY support one or more CDMs.</p>
       </dd>
 
       <dt id="key-system">Key System</dt>
@@ -149,11 +149,11 @@
     <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
     Key System strings provide unique identification of a Key System.
     They are used by the user agent to select a <a def-id="cdm"></a> and identify the source of a key-related event.
-    The <a href="#common-key-systems">Common Key Systems</a> are supported by all user agents. User agents may also provide additional CDMs with corresponding Key System strings.
+    The <a href="#common-key-systems">Common Key Systems</a> are supported by all user agents. User agents MAY also provide additional CDMs with corresponding Key System strings.
     </p>
 
     <p>A Key System string is always a reverse domain name.
-    Key System strings are compared using case-sensitive matching. It is recommended that CDMs use simple lower-case ASCII key system strings.</p>
+    Key System strings are compared using case-sensitive matching. It is RECOMMENDED that CDMs use simple lower-case ASCII key system strings.</p>
     <p class="note">For example, "com.example.somesystem".</p>
 
     <p class="note">
@@ -170,7 +170,7 @@
     Each Key session is associated with a single instance of <a def-id="initialization-data"></a> provided in the <a def-id="generateRequest"></a> call.
     </p>
     <p>Each Key Session is associated with a single <a def-id="mediakeys"></a> object, and only media element(s) associated with that object may access key(s) associated with the session.
-    Other <a def-id="mediakeys"></a> objects, <a def-id="cdm"></a> instances, and media elements may <em>not</em> access the key session or use its key(s).
+    Other <a def-id="mediakeys"></a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
     Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#algorithms-session-close">session is closed</a>, including when the <a def-id="mediakeysession"></a> object is destroyed.
     </p>
       </dd>
@@ -181,8 +181,8 @@
 
     <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
-    <p>Each Session ID shall be unique within the browsing context in which it was created.
-      Session IDs for <a def-id="persistent-session"></a> sessions must be unique within the <a def-id="origin"></a> over time, including across browsing sessions.
+    <p>Each Session ID SHALL be unique within the browsing context in which it was created.
+      Session IDs for <a def-id="persistent-session"></a> sessions MUST be unique within the <a def-id="origin"></a> over time, including across browsing sessions.
     </p>
 
     <p class="note">The underlying content protection protocol does not necessarily need to support Session IDs.</p>
@@ -193,7 +193,7 @@
     <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within <a def-id="media-data"></a>.
     Each such key is uniquely identified by a <a href="#decryption-key-id">key ID</a>.
     A key is associated with the <a href="#key-session">session</a> used to provide it to the CDM. (The same key may be present in multiple sessions.)
-    Such keys may only be provided to the <a def-id="cdm"></a> via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
+    Such keys MUST only be provided to the <a def-id="cdm"></a> via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
     </p>
     
     <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable for decryption.</p>
@@ -204,7 +204,7 @@
       <dd>
     <p>A <a href="#decryption-key">key</a> is associated with a key ID, which uniquely identifies a key.
     The container specifies the ID of the key that can decrypt a block or set of blocks within the <a def-id="media-data"></a>.
-    <a def-id="initialization-data"></a> may contain key ID(s) to identify the keys that are needed to decrypt the media data.
+    <a def-id="initialization-data"></a> MAY contain key ID(s) to identify the keys that are needed to decrypt the media data.
     However, there is no requirement that Initialization Data contain any or all key IDs used in the <a def-id="media-data"></a> or <a def-id="media-resource"></a>.
     <a href="#license">Licenses</a> provided to the CDM associate each key with a key ID so the <a def-id="cdm"></a> can select the appropriate key when decrypting an encrypted block of media data.
     </p>
@@ -221,7 +221,7 @@
     <a def-id="keysystems"></a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
     This block could be a simple key or content ID or a more complex structure containing such information.
     It should always allow unique identification of the key(s) needed to decrypt the content.
-    This initialization information may be obtained in some application-specific way or provided with the <a def-id="media-data"></a>.
+    This initialization information MAY be obtained in some application-specific way or provided with the <a def-id="media-data"></a>.
     </p>
 
     <p>
@@ -230,10 +230,10 @@
     </p>
 
     <p>
-    The format of the initialization data depends upon the type of container, and containers may support more than one format
+    The format of the initialization data depends upon the type of container, and containers MAY support more than one format
     of initialization data. The <dfn id="initialization-data-type">initialization data type</dfn> is a string that indicates what
     format the initialization data is provided in. Initialization data type strings are always matched case-sensitively. It is
-    recommended that initialization data type strings are lower-case ASCII strings.
+    RECOMMENDED that initialization data type strings are lower-case ASCII strings.
     </p>
 
     <p>
@@ -245,8 +245,8 @@
       <dt id="cross-origin">Cross Origin Limitations</dt>
       <dd>
     <p>During playback, embedded media data is exposed to script in the embedding <a def-id="origin"></a>.
-    In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> must be <a def-id="cors-same-origin"></a> with the embedding page.
-    If <a def-id="media-data"></a> is cross-origin with the embedding document, authors should use the <a def-id="media-crossorigin"></a> attribute
+    In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST be <a def-id="cors-same-origin"></a> with the embedding page.
+    If <a def-id="media-data"></a> is cross-origin with the embedding document, authors SHOULD use the <a def-id="media-crossorigin"></a> attribute
     on the <a def-id="htmlmediaelement"></a> and CORS headers on the <a def-id="media-data"></a> response to make it <a def-id="cors-same-origin"></a>.
     </p>
       </dd>
@@ -254,7 +254,7 @@
       <dt id="mixed-content">Mixed Content Limitations</dt>
       <dd>
     <p>During playback, embedded media data is exposed to script in the embedding <a def-id="origin"></a>.
-    In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> must not be Mixed Content [[!MIXED-CONTENT]].
+    In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST NOT be Mixed Content [[!MIXED-CONTENT]].
     </p>
       </dd>
     </dl>
@@ -432,8 +432,8 @@
       <li><p>If <var title="true">contentType</var> is an empty string or contains an invalid or unrecognized MIME type, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
       <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
       <li><p>Let <var title="true">parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var title="true">contentType</var>.</p></li>
-      <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. It may be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-        <p class="note">For example, all of the codecs. Case-sensitive string comparison is recommended because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+      <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+        <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
       </li>
       <li><p>If the user agent does not support <var title="true">container</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
         <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
@@ -543,12 +543,12 @@
               </li>
 
               <li><p>Let <var title="true">session id</var> be a unique <a def-id="session-id"></a> string.</p>
-                <p>If <var title="true">session type</var> is <a def-id="persistent-session"></a>, the ID must be unique within the the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
+                <p>If <var title="true">session type</var> is <a def-id="persistent-session"></a>, the ID MUST be unique within the the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
               </li>
               <li><p>Let <var title="true">message</var> be a request for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
                 <p class="note">For example, a license request.</p>
-                <p>The <var title="true">cdm</var> must not use any stream-specific data, including <a def-id="media-data"></a>, not provided via the <var>init data</var>.</p>
-                <p>The <var title="true">cdm</var> should <em>not</em> store session data, including the session ID, at this point. See <a def-id="session-storage"></a>.</p>
+                <p>The <var title="true">cdm</var> MUST NOT use any stream-specific data, including <a def-id="media-data"></a>, not provided via the <var>init data</var>.</p>
+                <p>The <var title="true">cdm</var> SHOULD NOT store session data, including the session ID, at this point. See <a def-id="session-storage"></a>.</p>
               </li>
             </ol>
           </li>
@@ -592,7 +592,7 @@
             <ol>
               <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var title="true">origin</var>, resolve <var>promise</var> with <code>false</code>.</p></li><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
               <li><p>Let <var title="true">session data</var> be the data stored for the <var>sanitized session ID</var> in the <var title="true">origin</var>.
-              This must not include data from other origin(s) or that is not associated with an origin.</p></li>
+              This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
               <li><p>If there is an unclosed <a def-id="persistent-session"></a> session in any <a def-id="document-concept"></a> representing the <var title="true">session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
                 <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
               </li>
@@ -610,7 +610,7 @@
           <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
           <li><p>Let this object's <var title="true">callable</var> be true.</p></li>
           <li><p>If the loaded session contains usable keys, run the <a def-id="keys-changed-algorithm"></a> on the <var title="true">session</var>.</p>
-            <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+            <p>The algorithm MAY also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
           </li>
           <li><p>Run the <a def-id="update-expiration-algorithm"></a> on the <var title="true">session</var>, providing <var title="true">expiration time</var>.</p></li>
           <li><p>If <var title="true">message</var> is not null, run the <a def-id="queue-message-algorithm"></a> on the <var title="true">session</var>, providing <var title="true">message type</var> and <var title="true">message</var>.</p></li>
@@ -653,7 +653,7 @@
                   <dd>Continue processing <var>sanitized response</var>, not storing any session data.</dd>
                   <dt>If <var title="true">sessionType</var> is <a def-id="persistent-session"></a></dt>
                   <dd>Continue processing <var>sanitized response</var>, storing the license, key(s), or similar session data contained in <var>sanitized response</var> as permitted or instructed by the license.
-                    Such data must be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
+                    Such data MUST be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
                   </dd>
                   <dt>Otherwise</dt>
                   <dd>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</dd>
@@ -661,13 +661,13 @@
                 <p>See also <a def-id="session-storage"></a>.</p>
                 <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p>
                 <p class="note">The replacement algorithm within a session is <a def-id="keysystem"></a>-dependent.</p>
-                <p class="note">Keys from different sessions should be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
-                <p class="note">It is recommended that CDMs support a standard and reasonably high minimum number of keys per <a def-id="mediakeysession"></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a def-id="mediakeysession"></a> objects.
+                <p>Keys from different sessions SHOULD be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
+                <p class="note">It is RECOMMENDED that CDMs support a standard and reasonably high minimum number of keys per <a def-id="mediakeysession"></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a def-id="mediakeysession"></a> objects.
                 This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                 </p>
               </li> 
               <li><p>If the set of usable keys changed, run the <a def-id="keys-changed-algorithm"></a> on the <var title="true">session</var>.</p>
-                <p>The algorithm may also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+                <p>The algorithm MAY also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
               </li>
               <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> on the <var title="true">session</var>, providing the new expiration time.</p></li>
               <li><p>If a message needs to be sent to the server, execute the following steps:</p>
@@ -731,8 +731,8 @@
             <ol>
               <li>
                 <p>Process the remove request.</p>
-                <p>This may involve exchanging message(s) with the application.</p>
-                <p>Unless this step fails, the CDM must have cleared all stored session data associated with this object, including the <a def-id="sessionId"></a>, before proceeding to the next step.</p>
+                <p>This MAY involve exchanging message(s) with the application.</p>
+                <p>Unless this step fails, the CDM MUST have cleared all stored session data associated with this object, including the <a def-id="sessionId"></a>, before proceeding to the next step.</p>
                 <p class="note">A subsequent call to <a def-id="load"></a> with the value <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.)</p>
               </li>
             </ol>
@@ -763,7 +763,7 @@
           <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <a def-id="mediakeys"></a> object that created this object.</p></li>
           <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
             <ol>
-              <li><p>Let <var title="true">usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>. <var title="true">usable key ids</var> must not contain IDs for keys that <em>may not</em> currently be usable. Each element must be unique.</p></li>
+              <li><p>Let <var title="true">usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>. <var title="true">usable key ids</var> MUST NOT contain IDs for keys that <em>may not</em> currently be usable. Each element MUST be unique.</p></li>
             </ol>
           </li>
           <li>
@@ -886,8 +886,8 @@
       <li><p>Let the <var title="true">session</var> be the associated <a def-id="mediakeysession"></a> object.</p></li>
       <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keyschange"></a> at the <var title="true">session</var>.</p></li>
       <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
-        <p>The user agent may choose to skip this step if it knows resuming will fail.</p>
-        <p class="note">For example, the user agenet may skip this step if no additional keys became available.</p>
+        <p>The user agent MAY choose to skip this step if it knows resuming will fail.</p>
+        <p class="note">For example, the user agent may skip this step if no additional keys became available.</p>
       </li>
     </ol>
     </section>
@@ -911,7 +911,7 @@
     <h4>Session Close</h4>
     <p>The Session Close algorithm is run when the CDM closes the session associated with a <a def-id="mediakeysession"></a> object.</p>
     <p class="note">The CDM may close a session at any point, such as in response to a <a def-id="close"></a> call, when the session is no longer needed, or when system resources are lost.
-    Keys in other sessions should be unaffected, even if they have overlapping key IDs.
+    Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.
     </p>
     <p>The following steps are run:</p>
     <ol>
@@ -927,7 +927,7 @@
     <h3>Exceptions</h3>
     <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="domexception"></a>.
     The following <a def-id="domexception-names">DOMException names from WebIDL</a> are used in the algorithms.
-    Causes specified specified in the algorithms are listed alongside each name, though these names may be used for other reasons as well. 
+    Causes specified specified in the algorithms are listed alongside each name, though these names MAY be used for other reasons as well.
     </p>
 
     <table class="old-table">
@@ -979,23 +979,23 @@
     <section id="session-storage">
     <h3>Session Storage and Persistence</h3>
     <p>This section provides an overview of session stroage and persistence that complements the algorithms.</p>
-    <p>If this object's <var title="true">session type</var> is not <a def-id="persistent-session"></a>, the user agent and CDM must <em>not</em> persist a record of or data related to the session at any point.
+    <p>If this object's <var title="true">session type</var> is not <a def-id="persistent-session"></a>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
       This includes license(s), key(s), and the <a def-id="session-id"></a>.
     </p>
-    <p>The remainder of this section applies to <a def-id="persistent-session"></a> sessions, which implementatations may optionally support.</p>
-    <p>Persisted data must always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
-      In addition, the data must only be accessible by the current profile of this user agent - other user agent profiles, user agents, and applications must not be able to access the stored data.
+    <p>The remainder of this section applies to <a def-id="persistent-session"></a> sessions, which are OPTIONAL for implementatations to support.</p>
+    <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
+      In addition, the data MUST only be accessible by the current profile of this user agent - other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
     </p>
-    <p>The CDM should not store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
-      Specifically, the CDM should not store session data during the <a def-id="generateRequest"></a> algorithm.
+    <p>The CDM SHOULD NOT store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
+      Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
       This ensures that the application is aware of the session and knows it needs to eventually remove it.
     </p>
-    <p>The CDM must ensure that data for a given session is only present in one active unclosed session in any <a def-id="document-concept"></a>.
-      In other words, <a def-id="load"></a> must fail when there is already a <a def-id="mediakeysession"></a> representing the session specified by the <var title="true">sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
-      A session may only be loaded again after the <a def-id="session-close-algorithm"></a> has not been run on the object representing it.
+    <p>The CDM MUST ensure that data for a given session is only present in one active unclosed session in any <a def-id="document-concept"></a>.
+      In other words, <a def-id="load"></a> MUST fail when there is already a <a def-id="mediakeysession"></a> representing the session specified by the <var title="true">sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
+      A session MAY only be loaded again after the <a def-id="session-close-algorithm"></a> has not been run on the object representing it.
     </p>
-    <p>An application that creates a <a def-id="persistent-session"></a> session should later remove the stored data using <a def-id="remove"></a>.
-      The CDM may also remove sessions as appropriate, but applications should not rely on this.
+    <p>An application that creates a <a def-id="persistent-session"></a> session SHOULD later remove the stored data using <a def-id="remove"></a>.
+      The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
     </p>
     <p class="note">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p>
     </section>
@@ -1037,7 +1037,7 @@
 
       <dt>attribute EventHandler onencrypted</dt>
       <dd>
-        <p>Event handler for the <a def-id="encrypted"></a> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+        <p>Event handler for the <a def-id="encrypted"></a> event MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
       </dd>
     
       <dt>Promise&lt;void&gt; setMediaKeys(MediaKeys? mediaKeys)</dt>
@@ -1074,8 +1074,8 @@
                 </ol>
               </li>
               <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> on the media element.</p>
-                <p>The user agent may choose to skip this step if it knows resuming will fail.<p>
-                <p class="note">For example, the user agenet may skip this step if <var>mediaKeys</var> has no sessions.</p>
+                <p>The user agent MAY choose to skip this step if it knows resuming will fail.<p>
+                <p class="note">For example, the user agent may skip this step if <var>mediaKeys</var> has no sessions.</p>
               </li>
             </ol>
           </li>
@@ -1170,7 +1170,7 @@
           <li><p>Let <var title="">initDataType</var> be the string representing the <a def-id="initialization-data-type"></a> of the Initialization Data.</p></li>
           <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
         </ol>
-        <p class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent must not expose Initialization Data from such media data to the application.</p>
+        <p class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent MUST NOT expose Initialization Data from such media data to the application.</p>
       </li>
       <li>
         <p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="encrypted"></a> at the media element.</p>
@@ -1310,7 +1310,7 @@
           <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="canplay"></a> at the <var title="true">media element</var>.</p></li>
           <li><p>If the <a def-id="paused"></a> attribute on the <var title="true">media element</var> is false, <a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="playing"></a> at the <var title="true">media element</var>.</p></li>
        </ol>
-        <p>Otherwise, the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> must not be <a def-id="MediaWaitingFor-none"></a>.</p>
+        <p>Otherwise, the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> MUST NOT be <a def-id="MediaWaitingFor-none"></a>.</p>
       </li>
     </ol>
     </section>
@@ -1319,25 +1319,25 @@
     <h4>Playing the Media Resource Algorithm Modifications</h4>
     <p>The following steps are added to <a def-id="readystate"></a> change algorithms in <a def-id="videoref" name="playing-the-media-resource">Playing the media resource</a>:</p>
     <ul>
-      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="waiting"></a> event, the user agent must also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-data"></a>.</li>
-      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="canplay"></a> event, the user agent must also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-none"></a>.</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="waiting"></a> event, the user agent MUST also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-data"></a>.</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="canplay"></a> event, the user agent MUST also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-none"></a>.</li>
     </ul>
     </section>
     </section>
 
     <section id="media-element-restictions" class="informative">
     <h3>Media Element Restrictions</h3>
-    <p>Media data processed by a CDM may not be available through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
-    This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs may behave as if no media data was present at all.</p>
-    <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, may not be available. One likely restriction is that
-    video media may be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
+    <p>Media data processed by a CDM MAY be unavailable through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
+    This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs MAY behave as if no media data was present at all.</p>
+    <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, MAY be unavailable. One likely restriction is that
+    video media MAY be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
     </section>
     </section>
 
 
     <section id="common-key-systems">
     <h2>Common Key Systems</h2>
-    <p>All user agents must support the common key systems described in this section.<p>
+    <p>All user agents MUST support the common key systems described in this section.<p>
     <p class="note">This ensures that there is a common baseline level of protection that is guaranteed to be supported in all user agents, including those that are entirely open source.
       Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.
     </p>
@@ -1354,10 +1354,10 @@
     <h4>Capabilities</h4>
     <p>The following describe how Clear Key supports key system-specific capabilities:</p>
     <ul>
-      <li><p>The <a def-id="setMediaKeys"></a> method: Implementations may support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
+      <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
       <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
       <li><p>The <a def-id="isTypeSupported"></a> method: There are no supported <var title="true">capability</var> values.</p></li>
-      <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations may support this type.</p></li>
+      <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations MAY support this type.</p></li>
     </ul>
     </section>
 
@@ -1381,8 +1381,8 @@
         </ul>
       </li>
       <li><p>The <a def-id="getUsableKeyIds"></a> method always returns all key IDs that have been provided via <a def-id="update"></a>.</p></li>
-      <li><p><a def-id="initialization-data"></a>: Implementations may support any combination of registered Initialization Data types [[EME-REGISTRY]].
-        Implementations should support the "<a href="keyids-format.html">keyids</a>" type and other types appropriate for content types supported by the user agent.
+      <li><p><a def-id="initialization-data"></a>: Implementations MAY support any combination of registered Initialization Data types [[EME-REGISTRY]].
+        Implementations SHOULD support the "<a href="keyids-format.html">keyids</a>" type and other types appropriate for content types supported by the user agent.
       </p></li>
     </ul>
     </section>
@@ -1400,7 +1400,7 @@
     </dl>
 
     <p>When contained in the ArrayBuffer <a def-id="message-event-message-attribute"></a> attribute of a <a def-id="MediaKeyMessageEvent"></a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
-      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a def-id="interface-textdecoder"></a> [[!ENCODING]].
+      Applications MAY decode the contents of the ArrayBuffer to a JSON string using the <a def-id="interface-textdecoder"></a> [[!ENCODING]].
     </p>
 
     <section id="clear-key-request-format-example" class="informative">
@@ -1437,13 +1437,13 @@
       <dd>The base64url encoding of the octet sequence containing the <a href="#decryption-key-id">key ID</a> value</dd>
     </dl>
 
-    <p>The JSON object may have an optional "type" member value, which may be any of the <a def-id="sessiontype"></a> values.
+    <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a def-id="sessiontype"></a> values.
       If not specified, the default value of <a def-id="temporary-session"></a> is used.
       The <a def-id="update"></a> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
-      Applications may encode the JSON string using the <a def-id="interface-textencoder"></a> [[!ENCODING]].
+    <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
+      Applications MAY encode the JSON string using the <a def-id="interface-textencoder"></a> [[!ENCODING]].
     </p>
 
     <section id="clear-key-license-format-example" class="informative">
@@ -1466,7 +1466,7 @@
     <section id="using-base64url" class="informative">
     <h4>Using base64url</h4>
     <p>For more information on base64url and working with it, see the "Base64url Encoding" terminology definition and "Notes on implementing base64url encoding without padding" in [[JWS]].
-      Specifically, there is no '=' padding, and the characters '-' and '_' must be used instead of '+' and '/', respectively. 
+      Specifically, there is no '=' padding, and the characters '-' and '_' MUST be used instead of '+' and '/', respectively.
     </p>
     </section>
     </section>
