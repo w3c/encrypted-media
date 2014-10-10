@@ -141,9 +141,25 @@
   var emeDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
 
+    'keyschange': { func: eventref_helper, fragment: 'keyschange', link_text: 'keyschange',  },
+    'message': { func: eventref_helper, fragment: 'message', link_text: 'message',  },
+    'encrypted': { func: eventref_helper, fragment: 'encrypted', link_text: 'encrypted',  },
+
+    'message-type-licenserequest': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.licenserequest', link_text: '"licenserequest"',  },
+    'message-type-licenserenewal': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.licenserenewal', link_text: '"licenserenewal"',  },
+
+    'MediaKeyMessageType': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType', link_text: 'MediaKeyMessageType',  },
+    'MediaKeyMessageEvent': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageEvent', link_text: 'MediaKeyMessageEvent',  },
+    'message-event-type-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-type', link_text: 'type',  },
+    'message-event-message-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-message', link_text: 'message',  },
+    'MediaEncryptedEvent': { func: idlref_helper, fragment: 'idl-def-MediaEncryptedEvent', link_text: 'MediaEncryptedEvent',  },
+    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initDataType', link_text: 'initDataType',  },
+    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initData', link_text: 'initData',  },
+
     'interface-textencoder': { func: encodingapi_helper, fragment: 'interface-textencoder', link_text: 'TextEncoder interface',  },
     
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
+    'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
     'videoref': { func: videoref_helper, fragment: '', link_text: '', },
     'media-timeline': { func: videoref_helper, fragment: 'media-timeline', link_text: 'media timeline',  },
