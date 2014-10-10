@@ -71,6 +71,14 @@
               href: "initdata-format-registry.html",
               authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
               publisher: "W3C",
+          },
+          "JWS": {
+              authors: ["M. Jones", "J. Bradley", "N. Sakimura"],
+              date: "25 September 2014",
+              href: "https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-33",
+              publisher: "IETF",
+              status: "Internet Draft",
+              title: "JSON Web Signature (JWS)",
           }
        }
       };
@@ -246,7 +254,7 @@
       <dt id="mixed-content">Mixed Content Limitations</dt>
       <dd>
     <p>During playback, embedded media data is exposed to script in the embedding <a def-id="origin"></a>.
-    In order for the API to provide <a href="#initialization-data">Initialization Data</a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> must not be mixed content as defined in [MIXED-CONTENT].
+    In order for the API to provide <a href="#initialization-data">Initialization Data</a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> must not be Mixed Content [[!MIXED-CONTENT]].
     </p>
       </dd>
     </dl>
@@ -423,12 +431,12 @@
 
       <li><p>If <var title="true">contentType</var> is an empty string or contains an invalid or unrecognized MIME type, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
       <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
-      <li><p>Let <var title="true">parameters</var> be the <a href="http://tools.ietf.org/html/rfc6381">RFC 6381</a> parameters, if any, specified by <var title="true">contentType</var>.</p></li>
+      <li><p>Let <var title="true">parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var title="true">contentType</var>.</p></li>
       <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. It may be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-        <p class="note">For example, all of the codecs. Case-sensitive string comparison is recommended because <a href="http://tools.ietf.org/html/rfc6381#section-3.3">RFC 6381</a> says, "Values are case sensitive" for some formats.</p>
+        <p class="note">For example, all of the codecs. Case-sensitive string comparison is recommended because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
       </li>
       <li><p>If the user agent does not support <var title="true">container</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
-        <p class="note">Per <a href="http://tools.ietf.org/html/rfc6838#section-4.2">RFC 6838</a>, "Both top-level type and subtype names are case-insensitive.")</p>
+        <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
       </li>
       <li><p>If the user agent and <var title="true">keySystem</var> implementation do not support playback of encrypted <a def-id="media-data"></a> for all <var title="true">media types</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
       <li><p>If <var title="true">capability</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
@@ -1391,8 +1399,8 @@
       <dd>The requested <a def-id="sessiontype"></a></dd>
     </dl>
 
-    <p>When contained in the ArrayBuffer <a def-id="message-event-message-attribute"></a> attribute of a <a def-id="MediaKeyMessageEvent"></a> object, the JSON string is encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a>.
+    <p>When contained in the ArrayBuffer <a def-id="message-event-message-attribute"></a> attribute of a <a def-id="MediaKeyMessageEvent"></a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
+      Applications may decode the contents of the ArrayBuffer to a JSON string using the <a def-id="interface-textdecoder"></a> [[!ENCODING]].
     </p>
 
     <section id="clear-key-request-format-example" class="informative">
@@ -1415,7 +1423,7 @@
     <h4>License Format</h4>
     <p>This section describes the format of the license to be provided via the <var title="true">response</var> parameter of the <a def-id="update"></a> method.</p>
 
-    <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key">IETF Internet-draft JSON Web Key (JWK) specification</a>.</p>
+    <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the JSON Web Key (JWK) specification [[!JWK]].</p>
 
     <p>For each JWK in the set, the parameter values are as follows:</p>
     <dl>
@@ -1434,8 +1442,8 @@
       The <a def-id="update"></a> algorithm compares this value to the <var title="true">sessionType</var>.
     </p>
 
-    <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the <a href="http://www.w3.org/TR/encoding/">Encoding</a> specification.
-      Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a>.
+    <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var title="true">response</var> parameter, the JSON string must be encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
+      Applications may encode the JSON string using the <a def-id="interface-textencoder"></a> [[!ENCODING]].
     </p>
 
     <section id="clear-key-license-format-example" class="informative">
@@ -1457,7 +1465,7 @@
 
     <section id="using-base64url" class="informative">
     <h4>Using base64url</h4>
-    <p>For more information on base64url and working with it, see the Base64url Encoding entry in the <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#section-2">Terminology section</a> and <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature#appendix-C">Notes on implementing base64url encoding without padding</a> of the JSON Web Signature (JWS) specification.
+    <p>For more information on base64url and working with it, see the "Base64url Encoding" terminology definition and "Notes on implementing base64url encoding without padding" in [[JWS]].
       Specifically, there is no '=' padding, and the characters '-' and '_' must be used instead of '+' and '/', respectively. 
     </p>
     </section>
@@ -1481,7 +1489,7 @@
 
     <p>User agents may choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
     This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
-    Such user agents should also properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid potential exposure to insecure content.
+    Such user agents should also properly handle Mixed Content [[MIXED-CONTENT]] to avoid potential exposure to insecure content.
     See also <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
     </p>
     
@@ -1616,7 +1624,7 @@
     This is especially important if a user agent chooses to support a Key System implementation that exposes identifiers or other such information without effectively anonymizing it in transit (i.e. without <a href="#identifier-encryption">encrypting identifiers</a>).
     </p>
     <p>Regardless of user agent limitations, applications should use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
-    <p>All user agents should properly handle <a href="https://w3c.github.io/webappsec/specs/mixedcontent/">Mixed Content</a> to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
+    <p>All user agents should properly handle Mixed Content [[MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
     </section>
 
     </div>
