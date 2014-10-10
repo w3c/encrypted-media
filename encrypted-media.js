@@ -194,6 +194,15 @@
     'getUsableKeyIds': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds()',  },
     'getUsableKeyIds-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds',  },
 
+    'queue-message-algorithm': { func: term_helper, fragment: 'algorithms-queue-message', link_text: 'queue a "message" event algorithm',  },
+    'session-close-algorithm': { func: term_helper, fragment: 'algorithms-session-close', link_text: 'session close algorithm',  },
+    'encrypted-block-algorithm': { func: term_helper, fragment: 'algorithms-encrypted-block', link_text: 'encrypted block encountered algorithm',  },
+    'keys-changed-algorithm': { func: term_helper, fragment: 'algorithms-keys-changed', link_text: 'usable keys changed algorithm',  },
+    'update-expiration-algorithm': { func: term_helper, fragment: 'algorithms-update-expiration', link_text: 'update expiration algorithm',  },
+    'resume-playback-algorithm': { func: term_helper, fragment: 'algorithms-resume-playback', link_text: 'attempt to resume playback if necessary algorithm',  },
+    'queue-waiting-algorithm': { func: term_helper, fragment: 'algorithms-queue-waiting', link_text: 'queue a "waiting" event algorithm',  },
+    'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
+
     'MediaWaitingFor-none': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.none', link_text: '"none"',  },
     'MediaWaitingFor-key': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.key', link_text: '"key"',  },
     'MediaWaitingFor-data': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.data', link_text: '"data"',  },
