@@ -2,6 +2,7 @@
   var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
   var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
   var DOM_spec_url = "http://dom.spec.whatwg.org/";
+  var IDL_spec_url = "http://heycam.github.io/webidl/";
 
   function url_helper(doc, url) {
     if (url[0] == "#" && doc.emeDefGroupName != window.respecConfig.emeDefGroupName) {
@@ -56,6 +57,32 @@
 
   function link_helper(doc, df, id, text) {
     df.appendChild($("<a/>").attr({href: url_helper(doc, id)}).text(text)[0]);
+  }
+
+  function dom_helper(doc, df, id, text) {
+    link_helper(doc, df, DOM_spec_url + '#' + id, text);
+  }
+
+  function code_dom_helper(doc, df, id, text) {
+    df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: DOM_spec_url + "#" + id}).text(text))[0]);
+  }
+  
+  function webidl_helper(doc, df, id, text) {
+    link_helper(doc, df, IDL_spec_url + '#' + id, text);
+  }
+
+  function code_webidl_helper(doc, df, id, text) {
+    df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: IDL_spec_url + "#" + id}).text(text))[0]);
+  }
+  
+  function domexception_helper(doc, df, id) {
+    code_webidl_helper(doc, df, 'dfn-DOMException', "DOMException");
+  }
+
+  function new_domexception_helper(doc, df, id) {
+    df.appendChild(doc.createTextNode('a new '));
+    domexception_helper(doc, df, id)
+    df.appendChild(doc.createTextNode(' whose name is'));
   }
 
   function exception_helper(doc, df, id, text) {
@@ -126,6 +153,12 @@
     'normalized-timeranges-object': { func: videoref_helper, fragment: 'normalized-timeranges-object', link_text: 'normalized TimeRanges object',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
+    'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
+    'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
+    'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
+    'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
+    'media-element-decode-error': { func: videoref_helper, fragment: 'dom-mediaerror-media_err_decode', link_text: 'MEDIA_ERR_DECODE',  },
+    'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
     'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
     'timerange': { func: code_videoref_helper, fragment: 'timeranges', link_text: 'TimeRange',  },
     'timeranges': { func: code_videoref_helper, fragment: 'timeranges', link_text: 'TimeRanges',  },
@@ -170,6 +203,9 @@
     'loadeddata': { func: code_videoref_helper, fragment: 'event-media-loadeddata', link_text: 'loadeddata',  },
     'canplay': { func: code_videoref_helper, fragment: 'event-media-canplay', link_text: 'canplay',  },
     'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
+    'paused': { func: code_videoref_helper, fragment: 'dom-media-paused', link_text: 'paused',  },
+    'playing': { func: code_videoref_helper, fragment: 'dom-media-playing', link_text: 'playing',  },
+    'waiting': { func: code_videoref_helper, fragment: 'event-media-waiting', link_text: 'waiting',  },
     'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
     'hme-duration': { func: code_videoref_helper, fragment: 'media-controller-duration', link_text: 'media controller duration',  },
     'hme-buffered': { func: code_videoref_helper, fragment: 'dom-media-buffered', link_text: 'HTMLMediaElement.buffered',  },
@@ -187,6 +223,9 @@
     'not-found-err': { func: exception_helper, fragment: 'not_found_err', link_text: 'NOT_FOUND_ERR',  },
     'not-supported-err': { func: exception_helper, fragment: 'not_supported_err', link_text: 'NOT_SUPPORTED_ERR',  },
     'quota-exceeded-err': { func: exception_helper, fragment: 'quota_exceeded_err', link_text: 'QUOTA_EXCEEDED_ERR',  },
+    'new-domexception-named': { func: new_domexception_helper, fragment: '', },
+    'domexception': { func: domexception_helper, fragment: '', },
+    'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
 
     'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
@@ -195,6 +234,7 @@
     'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
     'provide-a-stable-state': { func: webappapis_helper, fragment: 'provide-a-stable-state', link_text: 'provide a stable state',  },
 
+    'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
     'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
     'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },

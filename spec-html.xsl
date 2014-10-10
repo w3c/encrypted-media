@@ -51,15 +51,7 @@
     <code><a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/>()</a></code>
   </xsl:template>
 
-  <xsl:template match="//videoref">
-    <code><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a></code>
-  </xsl:template>
-
-  <!-- videoref without <code> -->
-  <xsl:template match="//videoanchor">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
-  </xsl:template>
-
+  <!-- Still used in IDL and event definitions. -->
   <xsl:template match="//dom4ref">
     <a><xsl:attribute name="href">http://www.w3.org/TR/dom/#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
