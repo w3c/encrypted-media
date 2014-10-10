@@ -141,6 +141,13 @@
   var emeDefinitions = {
 //    'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
 
+    'cdm': { func: term_helper, fragment: 'cdm', link_text: 'CDM'  },
+    'keysystem': { func: term_helper, fragment: 'key-system', link_text: 'Key System'  },
+    'keysystems': { func: term_helper, fragment: 'key-system', link_text: 'Key Systems'  },
+    'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
+    'initialization-data-type': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
+    'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session Id'  },
+    
     'sessiontype': { func: idlref_helper, fragment: 'idl-def-SessionType', link_text: 'SessionType',  },
     'persistent-session': { func: idlref_helper, fragment: 'idl-def-SessionType.persistent', link_text: '"persistent"',  },
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-SessionType.temporary', link_text: '"temporary"',  },
