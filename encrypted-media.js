@@ -89,6 +89,15 @@
     df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: DOM_spec_url + '#dom-domexception-' + id}).text(text))[0]);
   }
 
+  function local_exception_helper(doc, df, id, text) {
+    df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: url_helper(doc, "#dfn-" + text)}).text(text))[0]);
+  }
+
+  function appropriate_error_name_helper(doc, df, id, text) {
+    df.appendChild(doc.createTextNode('the appropriate '));
+    term_helper(doc, df, 'error-names', 'error name');
+  }
+  
   function webmref_helper(doc, df, id, text) {
     link_helper(doc, df, 'http://www.webmproject.org/code/specs/container/#' + id, text);
   }
@@ -209,6 +218,12 @@
     'MediaEncryptedEvent': { func: idlref_helper, fragment: 'idl-def-MediaEncryptedEvent', link_text: 'MediaEncryptedEvent',  },
     'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initDataType', link_text: 'initDataType',  },
     'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initData', link_text: 'initData',  },
+
+    'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
+    'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
+    'InvalidAccessError': { func: local_exception_helper, fragment: '', link_text: 'InvalidAccessError'  },
+    'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
+    'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
 
     'interface-textdecoder': { func: encodingapi_helper, fragment: 'interface-textdecoder', link_text: 'TextDecoder interface',  },
     'interface-textencoder': { func: encodingapi_helper, fragment: 'interface-textencoder', link_text: 'TextEncoder interface',  },
