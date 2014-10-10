@@ -84,6 +84,11 @@
     df.appendChild(doc.createTextNode(' interface,'));
   }
 
+  function queue_and_run_helper(doc, df, id, text) {
+    webappapis_helper(doc, df, 'queue-a-task', text);
+    df.appendChild(doc.createTextNode(' to run the'));
+  }
+
   function fragment_helper(doc, df, id, text) {
     var f = doc.createElement('span')
     f.innerHTML = text;
@@ -155,7 +160,7 @@
     'texttrack-showing': { func: code_videoref_helper, fragment: 'dom-texttrack-showing', link_text: '"showing"', },
     'texttrack-hidden': { func: code_videoref_helper, fragment: 'dom-texttrack-hidden', link_text: '"hidden"',  },
     'texttrack-sourceBuffer': { func: idlref_helper, fragment: 'widl-TextTrack-sourceBuffer', link_text: 'sourceBuffer', },
-    'ready-state': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'HTMLMediaElement.readyState',  },
+    'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
     'have-nothing': { func: code_videoref_helper, fragment: 'dom-media-have_nothing', link_text: 'HAVE_NOTHING',  },
     'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
     'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
@@ -187,10 +192,12 @@
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-and-fire-addtrack': { func: queue_and_fire_track_event_helper, fragment: '', link_text: 'addtrack',  },
     'Queue-and-fire-removetrack': { func: queue_and_fire_track_event_helper, fragment: '', link_text: 'removetrack',  },
+    'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
     'provide-a-stable-state': { func: webappapis_helper, fragment: 'provide-a-stable-state', link_text: 'provide a stable state',  },
 
     'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
     'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
+    'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
 
     'media-data-cannot-be-fetched': { func: fragment_helper, fragment: '', link_text: '&quot;<i>If the media data cannot be fetched at all, due to network errors, causing the user agent to give up trying to fetch the resource</i>&quot;', },

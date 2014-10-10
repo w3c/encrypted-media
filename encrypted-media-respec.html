@@ -160,7 +160,7 @@
     Sessions are embodied as <coderef>MediaKeySession</coderef> objects.
     Each Key session is associated with a single instance of <a href="#initialization-data">Initialization Data</a> provided in the <methodref>generateRequest</methodref> call.
     </p>
-    <p>Each Key Session is associated with a single <coderef>MediaKeys</coderef> object, and only <a href="#media-element">media elements</a> associated with that object may access key(s) associated with the session.
+    <p>Each Key Session is associated with a single <coderef>MediaKeys</coderef> object, and only <a href="#htmlmediaelement-extensions">media element(s)</a> associated with that object may access key(s) associated with the session.
     Other <coderef>MediaKeys</coderef> objects, <a href="#cdm">CDM</a> instances, and media elements may <em>not</em> access the key session or use its key(s).
     Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#algorithms-session-close">session is closed</a>, including when the <coderef>MediaKeySession</coderef> object is destroyed.
     </p>
@@ -236,9 +236,9 @@
     <section id="cross-origin">
     <h4>Cross Origin Limitations</h4>
     <p>During playback, embedded media data is exposed to script in the embedding <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
-    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must be <cors-same-origin/> with the embedding page.
+    In order for the API to provide <coderef>initData</coderef> in the <coderef>encrypted</coderef> event, <videoanchor name="media-data">media data</videoanchor> must be <a def-id="cors-same-origin"></a> with the embedding page.
     If <videoanchor name="media-data">media data</videoanchor> is cross-origin with the embedding document, authors should use the <videoanchor name="attr-media-crossorigin">crossorigin</videoanchor> attribute
-    on the <a href="#media-element">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <cors-same-origin/>.
+    on the <a href="#htmlmediaelement-extensions">media element</a> and CORS headers on the <videoanchor name="media-data">media data</videoanchor> response to make it <a def-id="cors-same-origin"></a>.
     </p>
     </section>
 
@@ -816,7 +816,7 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <ol>
       <li><p>Let the <var title="true">session</var> be the specified <coderef>MediaKeySession</coderef> object.</p></li>
       <li>
-        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
+        <p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <coderef prefix="event">message</coderef> at the <var title="true">session</var>.</p>
         <p>The event is of type <coderef>MediaKeyMessageEvent</coderef> and has:</p>
         <ul style="list-style-type:none"><li>
           <coderef>type</coderef> = the specified <var title="true">message type</var><br></br>
@@ -835,8 +835,8 @@ dictionary <precodedfn>MediaKeyMessageEventInit</precodedfn> : <dom4ref name="ev
     <p>The following steps are run:</p>
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <coderef>MediaKeySession</coderef> object.</p></li>
-      <li><p><Queue-a-task/> to <fire-a-simple-event/> named <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
-      <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#media-element">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
+      <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <coderef prefix="event">keyschange</coderef> at the <var title="true">session</var>.</p></li>
+      <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#htmlmediaelement-extensions">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
         <p>The user agent may choose to skip this step if it knows resuming will fail.</p>
         <p class="note">For example, the user agenet may skip this step if no additional keys became available.</p>
       </li>
@@ -972,7 +972,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <section id="htmlmediaelement-attributes">
     <h3>Attributes</h3>
 
-    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#media-element">media element</a>.</p>
+    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <coderef>MediaKeys</coderef> being used when decrypting encrypted <videoanchor name="media-data">media data</videoanchor> for this <a href="#htmlmediaelement-extensions">media element</a>.</p>
 
     <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <videoref name="event-media-waiting">waiting</videoref> and <videoref name="event-media-canplay">canplay</videoref> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
 
@@ -1015,7 +1015,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
                   <li><p>Reject <var>promise</var> with a new <code><dom4ref name="exception-domexception">DOMException</dom4ref></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
                 </ol>
               </li>
-              <li><p><Queue-a-task/> to run the <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
+              <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on the media element.</p>
                 <p>The user agent may choose to skip this step if it knows resuming will fail.<p>
                 <p class="note">For example, the user agenet may skip this step if <var>mediaKeys</var> has no sessions.</p>
               </li>
@@ -1030,7 +1030,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     </ol>
     
     <p class="note">Support for clearing or replacing the associated <coderef>MediaKeys</coderef> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
-    <p class="note">As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute of the <a href="#media-element">media element</a>). This avoids potential delays in some implementations.</p>
+    <p class="note">As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <videoanchor name="media-data">media data</videoanchor> (for example, setting the src attribute). This avoids potential delays in some implementations.</p>
     </section>
 
     <section id="htmlmediaelement-event-definitions">
@@ -1082,7 +1082,7 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
           <td><codedfn>encrypted</codedfn></td>
           <td><coderef>MediaEncryptedEvent</coderef></td>
           <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor>.</td>
-          <td><readystate/> is equal to <have-metadata/> or greater.
+          <td><a def-id="readystate"></a> is equal to <a def-id="have-metadata"></a> or greater.
           <p class="note">It is possible that the element is playing or has played.</p>
           </td>
         </tr>
@@ -1095,13 +1095,13 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
 
     <section id="algorithms-initdata-encountered">
     <h4>Initialization Data Encountered</h4>
-    <p>The following steps are run when the <a href="#media-element">media element</a> encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
+    <p>The following steps are run when the media element encounters <a href="#initialization-data">Initialization Data</a> in the <videoanchor name="media-data">media data</videoanchor> during the <a def-id="resource-fetch-algorithm"></a>:</p>
 
     <ol>
       <li><p>Let <var title="">initDataType</var> be the empty string.</p></li>
       <li><p>Let <var title="">initData</var> be null.</p></li>
       <li>
-        <p>If the <videoanchor name="media-data">media data</videoanchor> is <cors-same-origin/> and <em>not</em> <a href="#mixed-content">mixed content</a>, run the following steps:</p>
+        <p>If the <videoanchor name="media-data">media data</videoanchor> is <a def-id="cors-same-origin"></a> and <em>not</em> <a href="#mixed-content">mixed content</a>, run the following steps:</p>
         <ol>
           <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">initialization data type</a> of the Initialization Data.</p></li>
           <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
@@ -1109,25 +1109,25 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
         <p class="note">While the media element may allow loading of "Optionally-blockable Content" [MIXED-CONTENT], the user agent must not expose Initialization Data from such media data to the application.</p>
       </li>
       <li>
-        <p><Queue-a-task/> to <fire-a-simple-event/> named <coderef>encrypted</coderef> at the <a href="#media-element">media element</a>.</p>
+        <p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <coderef>encrypted</coderef> at the media element.</p>
         <p>The event is of type <coderef>MediaEncryptedEvent</coderef> and has:</p>
         <ul style="list-style-type:none"><li>
           <coderef>initDataType</coderef> = <var title="">initDataType</var><br></br>
           <coderef>initData</coderef> = <var title="">initData</var>
         </li></ul>
-        <p class="note"><readystate/> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
-        <p class="note">The <coderef>initData</coderef> attribute will be null if the media data is <em>not</em> <cors-same-origin/> or is <a href="#mixed-content">mixed content</a>.
+        <p class="note"><a def-id="readystate"></a> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
+        <p class="note">The <coderef>initData</coderef> attribute will be null if the media data is <em>not</em> <a def-id="cors-same-origin"></a> or is <a href="#mixed-content">mixed content</a>.
           Applications may retrieve the Initialization Data from an alternate source.
         </p>
       </li>
 
-      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <resource-fetch-algorithm/>.</p></li>
+      <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a>.</p></li>
     </ol>
     </section>
 
     <section id="algorithms-encrypted-block">
     <h4>Encrypted Block Encountered</h4>
-    <p>The following steps are run when the <a href="#media-element">media element</a> encounters a block of encrypted <videoanchor name="media-data">media data</videoanchor> during the <resource-fetch-algorithm/>:</p>
+    <p>The following steps are run when the media element encounters a block of encrypted <videoanchor name="media-data">media data</videoanchor> during the <a def-id="resource-fetch-algorithm"></a>:</p>
 
     <ol>
       <li><p>If the media element's <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
@@ -1155,7 +1155,7 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
                         <li><p>Follow the steps for the first matching condition from the following list:</p>
                           <dl class="switch">
                             <dt>If decryption fails</dt>
-                            <dd>Abort the media element's <resource-fetch-algorithm/>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
+                            <dd>Abort the media element's <a def-id="resource-fetch-algorithm"></a>, run the steps to report a <videoref name="dom-mediaerror-media_err_decode">MEDIA_ERR_DECODE</videoref> error, and abort these steps.</dd>
                             <dt>Otherwise</dt>
                             <dd>Run the following steps:
                               <ol>
@@ -1194,7 +1194,7 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
     </ol>
 
     <div class="note">
-    <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <resource-fetch-algorithm/>:</p>
+    <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a def-id="resource-fetch-algorithm"></a>:</p>
     <ol>
       <li><p>Let <var title="">encrypted</var> be false.</p></li>
       <li><p>Detect whether the frame is encrypted.</p>
@@ -1222,7 +1222,7 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
       <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", run the following steps:</p>
         <ol>
           <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "<coderef prefix="waitingfor">key</coderef>".</p></li>
-          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-waiting">waiting</videoref> at the <var title="true">media element</var>.</p></li>
+          <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <videoref name="event-media-waiting">waiting</videoref> at the <var title="true">media element</var>.</p></li>
         </ol>
       </li>
       <li><p>Suspend playback.</p></li>
@@ -1240,11 +1240,11 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
     <ol>
       <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
       <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", abort these steps.</p></li>
-      <li><p>Attempt to resume the <resource-fetch-algorithm/> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
+      <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
       <li><p>If the user agent can advance the <videoref name="current-playback-position">current playback position</videoref> in the <videoref name="direction-of-playback">direction of playback</videoref>, run the following steps:</p>
         <ol>
-          <li><p><Queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-canplay">canplay</videoref> at the <var title="true">media element</var>.</p></li>
-          <li><p>If the <videoref name="dom-media-paused">paused</videoref> attribute on the <var title="true">media element</var> is false, <queue-a-task/> to <fire-a-simple-event/> named <videoref name="event-media-playing">playing</videoref> at the <var title="true">media element</var>.</p></li>
+          <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <videoref name="event-media-canplay">canplay</videoref> at the <var title="true">media element</var>.</p></li>
+          <li><p>If the <videoref name="dom-media-paused">paused</videoref> attribute on the <var title="true">media element</var> is false, <a def-id="queue-a-task-to-fire-an-event-named"></a> <videoref name="event-media-playing">playing</videoref> at the <var title="true">media element</var>.</p></li>
        </ol>
         <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
       </li>
@@ -1255,8 +1255,8 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
     <h4>Playing the Media Resource Algorithm Modifications</h4>
     <p>The following steps are added to readyState change algorithms in <videoanchor name="playing-the-media-resource">Playing the media resource</videoanchor>:</p>
     <ul>
-      <li>If a readyState change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
-      <li>If a readyState change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <videoref name="event-media-waiting">waiting</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <videoref name="event-media-canplay">canplay</videoref> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
     </ul>
     </section>
     </section>
@@ -1570,7 +1570,7 @@ dictionary <precodedfn>MediaEncryptedEventInit</precodedfn> : <dom4ref name="eve
     <h2>Examples</h2>
     <p>This section contains example solutions for various use cases using the proposed extensions.
     These are not the only solutions to these use cases.
-    Video elements are used in the examples, but the same would apply to all <a href="#media-element">media element</a>s.
+    Video elements are used in the examples, but the same would apply to all media elements.
     In some cases, such as using synchronous XHR, the examples are simplified to keep the focus on the extensions.
     </p>
 

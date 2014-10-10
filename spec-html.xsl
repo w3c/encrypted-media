@@ -64,60 +64,9 @@
     <a><xsl:attribute name="href">http://www.w3.org/TR/dom/#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="."/></a>
   </xsl:template>
 
-  <xsl:template match="//media-element-load-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#media-element-load-algorithm</xsl:attribute>media element load algorithm</a>
-  </xsl:template>
-
-  <xsl:template match="//resource-selection-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-algorithm</xsl:attribute>resource selection algorithm</a>
-  </xsl:template>
-
-  <xsl:template match="//resource-fetch-algorithm">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource</xsl:attribute>resource fetch algorithm</a>
-  </xsl:template>
-
-  <xsl:template match="//readystate">
-    <code title="dom-media-readyState"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate</xsl:attribute>readyState</a></code>
-  </xsl:template>
-
-  <xsl:template match="//have-metadata">
-    <code title="dom-media-HAVE_METADATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata</xsl:attribute>HAVE_METADATA</a></code>
-  </xsl:template>
-
-  <xsl:template match="//have-future-data">
-    <code title="dom-media-HAVE_FUTURE_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_future_data</xsl:attribute>HAVE_FUTURE_DATA</a></code>
-  </xsl:template>
-
-  <xsl:template match="//have-enough-data">
-    <code title="dom-media-HAVE_ENOUGH_DATA"><a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_enough_data</xsl:attribute>HAVE_ENOUGH_DATA</a></code>
-  </xsl:template>
-
-  <xsl:template match="//queue-a-task">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#queue-a-task</xsl:attribute>queue a task</a>
-  </xsl:template>
-
-  <xsl:template match="//Queue-a-task">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#queue-a-task</xsl:attribute>Queue a task</a>
-  </xsl:template>
-
-  <xsl:template match="//fire-a-simple-event">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event</xsl:attribute>fire a simple event</a>
-  </xsl:template>
-
-  <xsl:template match="//synchronous-section">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#synchronous-section</xsl:attribute>synchronous section</a>
-  </xsl:template>
-
+  <!-- Used in IDL. -->
   <xsl:template match="//EventHandler">
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#eventhandler</xsl:attribute>EventHandler</a>
-  </xsl:template>
-
-  <xsl:template match="//media-element">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/embedded-content-0.html#media-element</xsl:attribute>media element</a>
-  </xsl:template>
-
-  <xsl:template match="//cors-same-origin">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin</xsl:attribute>CORS-same-origin</a>
   </xsl:template>
 
 </xsl:stylesheet>
