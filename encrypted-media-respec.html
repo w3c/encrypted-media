@@ -85,7 +85,7 @@
   <body>
 
     <section id="abstract">
-    <p>This proposal extends HTMLMediaElement providing APIs to control playback of protected content.</p>
+    <p>This proposal extends <a def-id="htmlmediaelement"></a> [[!HTML5]] providing APIs to control playback of protected content.</p>
     <p>The API supports use cases ranging from simple clear key decryption to high value video (given an appropriate user agent implementation).
     License/key exchange is controlled by the application, facilitating the development of robust playback applications supporting a range of content decryption and protection technologies.</p>
     <p>This specification does not define a content protection or Digital Rights Management system. Rather, it defines a common API that may be used to discover, select and interact with
@@ -818,7 +818,7 @@
     <section id="mediakeysession-events" class="informative">
     <h3>Event Summary</h3>
 
-    <p class="note">In some implementations, <a def-id="mediakeysession"></a> objects may not fire any events until the <a def-id="mediakeys"></a> object is associated with a media element using <methodref>setMediaKeys</methodref>.</p>
+    <p class="note">In some implementations, <a def-id="mediakeysession"></a> objects may not fire any events until the <a def-id="mediakeys"></a> object is associated with a media element using <a def-id="setMediaKeys"></a>.</p>
 
     <table class="old-table">
       <thead>
@@ -875,7 +875,7 @@
     <ol>
       <li><p>Let the <var title="true">session</var> be the associated <a def-id="mediakeysession"></a> object.</p></li>
       <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keyschange"></a> at the <var title="true">session</var>.</p></li>
-      <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#htmlmediaelement-extensions">media element(s)</a> whose <coderef prefix="attr">mediaKeys</coderef> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
+      <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a href="#algorithms-resume-playback">Attempt to Resume Playback If Necessary</a> algorithm on each of the <a href="#htmlmediaelement-extensions">media element(s)</a> whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
         <p>The user agent may choose to skip this step if it knows resuming will fail.</p>
         <p class="note">For example, the user agenet may skip this step if no additional keys became available.</p>
       </li>
@@ -994,53 +994,62 @@
 
     <section id="htmlmediaelement-extensions">
     <h2>HTMLMediaElement Extensions</h2>
-    <p>This section specifies additions to and modifications of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a> when the Encrypted Media Extensions are supported.</p>
-    <pre class="was-idl">
-enum <precodedfn>MediaWaitingFor</precodedfn> { "<precodedfn prefix="waitingfor">none</precodedfn>", "<precodedfn prefix="waitingfor">data</precodedfn>", "<precodedfn prefix="waitingfor">key</precodedfn>" };
-partial interface <precodedfn>HTMLMediaElement</precodedfn> {
-  // Encrypted Media
-  
-  readonly attribute <a def-id="mediakeys"></a>? <precoderef prefix="attr">mediaKeys</precoderef>;
-  readonly attribute <precoderef>MediaWaitingFor</precoderef> <precoderef>waitingFor</precoderef>;
-  attribute <EventHandler/> <precoderef>onencrypted</precoderef>;
+    <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported.</p>
 
-  Promise&lt;void&gt; <premethodref>setMediaKeys</premethodref>(<a def-id="mediakeys"></a>? mediaKeys);
-};
-</pre>
-
-    <section id="htmlmediaelement-attributes">
-    <h3>Attributes</h3>
-
-    <p>The <codedfn prefix="attr">mediaKeys</codedfn> attribute is the <a def-id="mediakeys"></a> being used when decrypting encrypted <a def-id="media-data"></a> for this <a href="#htmlmediaelement-extensions">media element</a>.</p>
-
-    <p>The <codedfn>waitingFor</codedfn> attribute indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
-
-    <p>The <codedfn>onencrypted</codedfn> event handler for the <a def-id="encrypted"></a> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-    </section>
-
-    <section id="htmlmediaelement-methods">
-    <h3>Methods</h3>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
-    <p>The <methoddfn name="setMediaKeys">setMediaKeys(<var title="true">mediaKeys</var></methoddfn>) method provides the <a def-id="mediakeys"></a> to use when decrypting media data during playback.</p>
+    <dl title="enum MediaWaitingFor" class="idl">
+      <dt>none</dt>
+      <dd>
+        The media element is not waiting for anything.
+      </dd>
+      <dt>data</dt>
+      <dd>
+        The media element is not waiting for data.
+      </dd>
+      <dt>key</dt>
+      <dd>
+        The media element is not waiting for a key.
+      </dd>
+    </dl>
+
+    <dl title="partial interface HTMLMediaElement : EventTarget" class='idl'>
+      <dt>readonly attribute MediaKeys? mediaKeys</dt>
+      <dd>
+        <p>The <a def-id="mediakeys"></a> being used when decrypting encrypted <a def-id="media-data"></a> for this <a href="#htmlmediaelement-extensions">media element</a>.</p>
+      </dd>
+
+      <dt>readonly attribute MediaWaitingFor waitingFor</dt>
+      <dd>
+        <p>Indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p>
+      </dd>
+
+      <dt>attribute EventHandler onencrypted</dt>
+      <dd>
+        <p>Event handler for the <a def-id="encrypted"></a> event must be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+      </dd>
     
+      <dt>Promise&lt;void&gt; setMediaKeys(MediaKeys? mediaKeys)</dt>
+      <dd>
+    <p>Provides the <a def-id="mediakeys"></a> to use when decrypting media data during playback.</p>
+
     <ol class="method-algorithm">
       <!-- For simplicity and consistency, do not allow multiple pending calls. -->
-      <li><p>If <var>mediaKeys</var> and the <coderef prefix="attr">mediaKeys</coderef> attribute are the same object, return a resolved promise.</p></li>
+      <li><p>If <var>mediaKeys</var> and the <a def-id="mediaKeys-attribute"></a> attribute are the same object, return a resolved promise.</p></li>
       <li><p>If this object's <var title="true">attaching media keys</var> value is true, return a promise rejected with <a def-id="new-domexception-named"></a> <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p></li>
       <li><p>Let this object's <var title="true">attaching media keys</var> value be true.</p></li>
       <li><p>Let <var>promise</var> be a new promise.</p></li>
       <li><p>Run the following steps asynchronously:</p>
         <ol>
           <li><p>If <var>mediaKeys</var> is not null, it is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <code><a href="#dfn-QuotaExceededError">"QuotaExceededError"</a></code>.</p></li>
-          <li><p>If the <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
+          <li><p>If the <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
             <ol>
               <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <code><a href="#dfn-NotSupportedError">"NotSupportedError"</a></code>.</p></li>
               <li><p>If the association cannot currently be removed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <code><a href="#dfn-InvalidStateError">"InvalidStateError"</a></code>.</p>
                 <p class="note">For example, some implementations may not allow removal during playback.</p>
               </li>
-              <li><p>Stop using the CDM instance represented by the <coderef prefix="attr">mediaKeys</coderef> attribute to decrypt <a def-id="media-data"></a> and remove the association with the media element.</p></li>
+              <li><p>Stop using the CDM instance represented by the <a def-id="mediaKeys-attribute"></a> attribute to decrypt <a def-id="media-data"></a> and remove the association with the media element.</p></li>
               <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> the appropriate <a href="#error-names">error name</a>.</p></li>
             </ol>
           </li>
@@ -1049,7 +1058,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
               <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting <a def-id="media-data"></a>.</p></li>
               <li><p>If the preceding step failed, run the following steps:</p>
                 <ol>
-                  <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
+                  <li><p>Set the <a def-id="mediaKeys-attribute"></a> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
                   <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> the appropriate <a href="#error-names">error name</a>.</p></li>
                 </ol>
@@ -1060,7 +1069,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
               </li>
             </ol>
           </li>
-          <li><p>Set the <coderef prefix="attr">mediaKeys</coderef> attribute to <var>mediaKeys</var>.</p></li>
+          <li><p>Set the <a def-id="mediaKeys-attribute"></a> attribute to <var>mediaKeys</var>.</p></li>
           <li><p>Let this object's <var title="true">attaching media keys</var> value be false.</p></li>
           <li><p>Resolve <var>promise</var>.</p></li>
         </ol>
@@ -1069,8 +1078,9 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     </ol>
     
     <p class="note">Support for clearing or replacing the associated <a def-id="mediakeys"></a> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
-    <p class="note">As a best practice, applications should create a MediaKeys object and call <methodref>setMediaKeys</methodref> before providing <a def-id="media-data"></a> (for example, setting the <a def-id="media-src"></a> attribute). This avoids potential delays in some implementations.</p>
-    </section>
+    <p class="note">As a best practice, applications should create a MediaKeys object and call <a def-id="setMediaKeys"></a> before providing <a def-id="media-data"></a> (for example, setting the <a def-id="media-src"></a> attribute). This avoids potential delays in some implementations.</p>
+      </dd>
+    </dl>
 
     <section id="mediaencryptedevent">
       <h3>MediaEncryptedEvent</h3>
@@ -1174,7 +1184,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <p>The following steps are run when the media element encounters a block of encrypted <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>:</p>
 
     <ol>
-      <li><p>If the media element's <coderef prefix="attr">mediaKeys</coderef> attribute is not null, run the following steps:</p>
+      <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
         <ol>
           <li><p>Let <var title="true">media keys</var> be the <a def-id="mediakeys"></a> object referenced by that atribute.</p></li>
           <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <var title="true">media keys</var>.</p></li>
@@ -1203,7 +1213,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
                             <dt>Otherwise</dt>
                             <dd>Run the following steps:
                               <ol>
-                                <li><p>If the <coderef>waitingFor</coderef> attribute on the media element is "<coderef prefix="waitingfor">key</coderef>", set the <coderef>waitingFor</coderef> attribute on the media element to "<coderef prefix="waitingfor">none</coderef>".</p></li>      
+                                <li><p>If the <a def-id="waitingFor"></a> attribute on the media element is <a def-id="MediaWaitingFor-key"></a>, set the <a def-id="waitingFor"></a> attribute on the media element to <a def-id="MediaWaitingFor-none"></a>.</p></li>
                                 <li><p>Abort these steps and process the decrypted block as normal.</p>
                                   <p class="note">In other words, decode the block.</p>
                                 </li>
@@ -1257,15 +1267,15 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
 
     <section id="algorithms-queue-waiting">
     <h4>Queue a "waiting" Event</h4>
-    <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <coderef>HTMLMediaElement</coderef> object.
-    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <a def-id="htmlmediaelement"></a> object.
+    Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
     </p>
     <p>The following steps are run:</p>
     <ol>
-      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
-      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", run the following steps:</p>
+      <li><p>Let the <var title="true">media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
+      <li><p>If the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> is not <a def-id="MediaWaitingFor-key"></a>, run the following steps:</p>
         <ol>
-          <li><p>Set the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> to "<coderef prefix="waitingfor">key</coderef>".</p></li>
+          <li><p>Set the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> to <a def-id="MediaWaitingFor-key"></a>.</p></li>
           <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waiting"></a> at the <var title="true">media element</var>.</p></li>
         </ol>
       </li>
@@ -1277,20 +1287,20 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <h4>Attempt to Resume Playback If Necessary</h4>
     <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
     If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
-    Requests to run this algorithm include a target <coderef>HTMLMediaElement</coderef> object.
+    Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
     </p>
 
     <p>The following steps are run:</p>
     <ol>
-      <li><p>Let the <var title="true">media element</var> be the specified <coderef>HTMLMediaElement</coderef> object.</p></li>
-      <li><p>If the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> is not "<coderef prefix="waitingfor">key</coderef>", abort these steps.</p></li>
+      <li><p>Let the <var title="true">media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
+      <li><p>If the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> is not <a def-id="MediaWaitingFor-key"></a>, abort these steps.</p></li>
       <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> by running the <a href="#algorithms-encrypted-block">Encrypted Block Encountered</a> algorithm.</p></li>
       <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>, run the following steps:</p>
         <ol>
           <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="canplay"></a> at the <var title="true">media element</var>.</p></li>
           <li><p>If the <a def-id="paused"></a> attribute on the <var title="true">media element</var> is false, <a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="playing"></a> at the <var title="true">media element</var>.</p></li>
        </ol>
-        <p>Otherwise, the <coderef>waitingFor</coderef> attribute on the <var title="true">media element</var> must not be "<coderef prefix="waitingfor">none</coderef>".</p>
+        <p>Otherwise, the <a def-id="waitingFor"></a> attribute on the <var title="true">media element</var> must not be <a def-id="MediaWaitingFor-none"></a>.</p>
       </li>
     </ol>
     </section>
@@ -1299,8 +1309,8 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <h4>Playing the Media Resource Algorithm Modifications</h4>
     <p>The following steps are added to <a def-id="readystate"></a> change algorithms in <a def-id="videoref" name="playing-the-media-resource">Playing the media resource</a>:</p>
     <ul>
-      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="waiting"></a> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">data</coderef>".</li>
-      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="canplay"></a> event, the user agent must also set the <coderef>waitingFor</coderef> attribute on the Media Element to "<coderef prefix="waitingfor">none</coderef>".</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="waiting"></a> event, the user agent must also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-data"></a>.</li>
+      <li>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="canplay"></a> event, the user agent must also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-none"></a>.</li>
     </ul>
     </section>
     </section>
@@ -1334,7 +1344,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
     <h4>Capabilities</h4>
     <p>The following describe how Clear Key supports key system-specific capabilities:</p>
     <ul>
-      <li><p>The <methodref>setMediaKeys</methodref> method: Implementations may support associating the <a def-id="mediakeys"></a> object with more than one <coderef>HTMLMediaElement</coderef>.</p></li>
+      <li><p>The <a def-id="setMediaKeys"></a> method: Implementations may support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
       <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
       <li><p>The <a def-id="isTypeSupported"></a> method: There are no supported <var title="true">capability</var> values.</p></li>
       <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations may support this type.</p></li>
@@ -1510,7 +1520,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       <li>CDMs have a concept of a CDM instance that is associated 1:1 with a MediaKeys object.</li>
       <li>Keys, licenses, other session data, and the presence of sessions are restricted to the CDM instance associated with the MediaKeys object that created the session.</li>
       <li>Session data is not shared between MediaKeys objects or CDM instances.</li>
-      <li>Session data is not shared with media elements not associated with the MediaKeys object that created the session. Among other things, this means a session's keys may not be used to decrypt content loaded by a media element whose <coderef prefix="attr">mediaKeys</coderef> attribute is not the MediaKeys object.</li>
+      <li>Session data is not shared with media elements not associated with the MediaKeys object that created the session. Among other things, this means a session's keys may not be used to decrypt content loaded by a media element whose <a def-id="mediaKeys-attribute"></a> attribute is not the MediaKeys object.</li>
       <li>MediaKeys objects and the underlying implementation do not expose information outside the origin.</li>
       <li>Persisted session data, if applicable, is stored on a per-origin basis.</li>
       <li>Only data stored by the requesting origin may be loaded.</li>
@@ -1628,14 +1638,14 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   function load() {
     var video = document.getElementById("video");
 
-    if (!video.<precoderef prefix="attr">mediaKeys</precoderef>) {
+    if (!video.<a def-id="mediaKeys-attribute"></a>) {
       var promise = <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>("org.w3.clearkey");
       promise.catch(
         console.error.bind(console, "Unable to create MediaKeys")
       );
       promise.then(
         function(createdMediaKeys) {
-          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
         }
       ).catch(
         console.error.bind(console, "Unable to set MediaKeys")
@@ -1714,7 +1724,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
           }
           video.pendingSessionData = [];
 
-          return video.<premethodref>setMediaKeys</premethodref>(createdMediaKeys);
+          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
         }
       ).catch(
         console.error.bind(console, "Unable to create or use new MediaKeys")
@@ -1757,7 +1767,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
   }
 &lt;/script&gt;
 
-&lt;video src="foo.webm" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video src="foo.webm" autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
     </section>
 
@@ -1792,14 +1802,14 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       video.src = "foo.webm";
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
     console.error.bind(console, "Unable to create or initialize key session")
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
     </section>
 
@@ -1884,14 +1894,14 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       video.src = "foo.webm";
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
     console.error.bind(console, "Unable to create or use new MediaKeys")
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay on<precoderef>encrypted</precoderef>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
 </pre>
     </section>
 
@@ -1989,7 +1999,7 @@ partial interface <precodedfn>HTMLMediaElement</precodedfn> {
       var video = document.getElementById("v");
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<premethodref>setMediaKeys</premethodref>(mediaKeys);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
     console.error.bind(console, "Unable to create or use new MediaKeys")

@@ -178,6 +178,16 @@
     'getUsableKeyIds': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds()',  },
     'getUsableKeyIds-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds',  },
 
+    'MediaWaitingFor-none': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.none', link_text: '"none"',  },
+    'MediaWaitingFor-key': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.key', link_text: '"key"',  },
+    'MediaWaitingFor-data': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.data', link_text: '"data"',  },
+
+    'mediaKeys-attribute': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-mediaKeys', link_text: 'mediaKeys',  },
+    'waitingFor': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-waitingFor', link_text: 'waitingFor',  },
+    'onencrypted': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-onencrypted', link_text: 'onencrypted',  },
+    'setMediaKeys': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys()',  },
+    'setMediaKeys-call': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys',  },
+
     'keyschange': { func: eventref_helper, fragment: 'keyschange', link_text: 'keyschange',  },
     'message': { func: eventref_helper, fragment: 'message', link_text: 'message',  },
     'encrypted': { func: eventref_helper, fragment: 'encrypted', link_text: 'encrypted',  },
@@ -393,6 +403,7 @@
       'void': { spec: 'webidl', fragment: 'idl-void' },
       'ArrayBuffer': { spec: 'typed-array', fragment: 'ArrayBuffer' },
       'ArrayBufferView': { spec: 'typed-array', fragment: 'ArrayBufferView' },
+      'EventHandler': { spec: 'webappapis', fragment: 'eventhandler' },
     };
     $("a:not([href])").each(function () {
       var $ant = $(this);

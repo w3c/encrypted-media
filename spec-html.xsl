@@ -21,39 +21,4 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Optionally use the prefix attribute to differentiate between different definitions with the same name. -->
-
-  <xsl:template match="//precoderef">
-    <a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/></a>
-  </xsl:template>
-
-  <xsl:template match="//premethodref">
-    <a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/></a>
-  </xsl:template>
-
-  <xsl:template match="//precodedfn">
-    <dfn><xsl:attribute name="id">dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/></dfn>
-  </xsl:template>
-
-  <xsl:template match="//coderef">
-    <code><a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/></a></code>
-  </xsl:template>
-
-  <xsl:template match="//codedfn">
-    <dfn><xsl:attribute name="id">dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><code><xsl:value-of select="."/></code></dfn>
-  </xsl:template>
-
-  <xsl:template match="//methoddfn">
-    <dfn><xsl:attribute name="id">dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(@name,$upper,$lower)"/></xsl:attribute><code><xsl:value-of select="."/></code></dfn>
-  </xsl:template>
-
-  <xsl:template match="//methodref">
-    <code><a><xsl:attribute name="href">#dom-<xsl:value-of select="translate(@prefix,$upper,$lower)"/><xsl:value-of select="translate(.,$upper,$lower)"/></xsl:attribute><xsl:value-of select="."/>()</a></code>
-  </xsl:template>
-
-  <!-- Used in IDL. -->
-  <xsl:template match="//EventHandler">
-    <a><xsl:attribute name="href">http://www.w3.org/TR/html5/webappapis.html#eventhandler</xsl:attribute>EventHandler</a>
-  </xsl:template>
-
 </xsl:stylesheet>
