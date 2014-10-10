@@ -120,12 +120,4 @@
     <a><xsl:attribute name="href">http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin</xsl:attribute>CORS-same-origin</a>
   </xsl:template>
 
-  <xsl:template match="//non-normative-section">
-    <p><i>This section is non-normative.</i></p>
-  </xsl:template>
-
-  <xsl:template match="//non-normative-sections">
-    <p><i>This section and its subsections are non-normative.</i></p>
-  </xsl:template>
-
 </xsl:stylesheet>
