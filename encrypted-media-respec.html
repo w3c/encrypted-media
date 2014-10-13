@@ -264,16 +264,198 @@
 
 
     <section>
+      <h2>Obtaining Access to Key Systems</h2>
+
+      <section>
+        <h2 id="requestMediaKeySystemAccess">requestMediaKeySystemAccess()</h2>
+
+        <dl title="partial interface Navigator" class="idl">
+          <dt>Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
+          <dd>
+            <p>Requests access to the specified <a def-id="keysystem"></a>.
+              When <code>supportedConfigurations</code> is specified, the combination specified by at least one of its elements must be supported.
+              The resulting <a>MediaKeySystemAccess</a> will correspond to the first such elment.
+            </p>
+            <p>Any permission checks or user interaction, such as a prompt, SHOULD be performed before resolving the promise.</p>
+            <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
+              Otherwise, it is resolved with a new MediaKeySystemAccess object.
+            </p>
+
+            <dl class='parameters'>
+              <dt>DOMString keySystem</dt>
+              <dd>
+                The <a def-id="keysystem"></a> for which access is being requested.
+              </dd>
+              <!-- TODO: The template type is lost! 'Promise' is handled correctly. -->
+              <dt>optional Sequence&lt;<a>MediaKeySystemOptions</a>&gt; supportedConfigurations</dt>
+              <dd>
+                A Sequence of <a>MediaKeySystemOptions</a> configurations to try in order.
+                The first element with a satisfiable combination will be used. 
+              </dd>
+            </dl>
+
+            <ol class="method-algorithm">
+              <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+              <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+              <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+              <li><p>Let <var>promise</var> be a new promise.</p></li>
+              <li><p>Run the following steps asynchronously:</p>
+                <ol>
+                  <li><p>If <var title="true">keySystem</var> is not supported or not allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+                    <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p>
+                  </li>
+                  <li><p>If <code>supportedConfigurations</code> was not provided, resolve the promise with a new <a>MediaKeySystemAccess</a> object, execute the following steps:</p>
+                    <ol>
+                      <li>
+                        <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                        <ol>
+                          <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                        </ol>
+                      </li>
+                      <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
+                    </ol>
+                  </li>
+                  <li>
+                    <p>For each element of <code>supportedConfigurations</code>:</p>
+                    <ol>
+                      <li><p>Let <var>combination</var> be the element.</p></li>
+                      <li>
+                        <p>For each dictionary member in <var>combination</var>:</p>
+                        <ol>
+                          <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
+                        </ol>
+                        <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorith. Thus, they cannot be considered as part of the combination.</p>
+                        <li>
+                          <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a> in the configuration specified by the combination of the values in <var>combination</var>, execute the following steps:</p>
+                          <ol>
+                            <li>
+                              <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                              <ol>
+                                <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                                <!-- TODO: Initialize the object further if necessary. -->
+                              </ol>
+                            </li>
+                            <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
+                          </ol>
+                        </li>
+                      </li>
+                    </ol>
+                  </li>
+                  <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p> 
+                    <p class="note">There were no supported combinations in <code>supportedConfigurations</code>.</p>
+                  </li>
+                </ol>
+              </li>
+              <li><p>Return <var>promise</var>.</p></li>
+            </ol>
+          </dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2><a>MediaKeySystemOptions</a> dictionary</h2>
+  
+        <dl title="enum MediaKeysRequirement" class="idl">
+          <dt>required</dt>
+          <dd>
+            The returned object MUST support this feature.
+          <dt>optional</dt>
+          <dd>
+            The returned object MAY support this feature.
+          <dt>disallowed</dt>
+          <dd>
+            The returned object MUST NOT support this feature.
+          </dd>
+        </dl>
+
+        <dl title="dictionary MediaKeySystemOptions" class='idl'>
+          <dt>DOMString initDataType = ""</dt>
+          <dd>
+            The required <a def-id="initialization-data-type"></a>.
+          </dd>
+          <dt>DOMString audioType = ""</dt>
+          <dd>
+            The required audio content type.
+          </dd>
+          <dt>DOMString audioCapability = ""</dt>
+          <dd>
+            The required audio capability.
+          </dd>
+          <dt>DOMString videoType = ""</dt>
+          <dd>
+            The required video content type.
+          </dd>
+          <dt>DOMString videoCapability = ""</dt>
+          <dd>
+            The required video capability.
+          </dd>
+          <dt>MediaKeysRequirement uniqueidentifier = "optional"</dt>
+          <dd>
+            Whether a unique identifier is required.
+          </dd>
+          <dt>MediaKeysRequirement stateful = "optional"</dt>
+          <dd>
+            Whether the ability to persist state is required. This includes session data and any other type of state.<br/>
+            Only <a def-id="temporary-session"></a> sessions may be created when statefulness is not supported.
+            <p class="note">
+              Except for <a def-id="persistent-session"></a> sessions, the need and ability to store state is Key System implementation-specific and may vary by feature used.</p>
+          </dd>
+        </dl>
+  
+        <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - The structure of the <code>DOMString</code> members may change. If it is, other methods may be added.</p>
+  
+        <p>Implementations SHOULD NOT add members to the this dictionary.
+          Should member(s) be added, they MUST be of type MediaKeysRequirement, and it is RECOMMENED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
+        </p>
+        <p>This dictionary MUST NOT be used to pass state or data to the CDM.</p>
+
+      </section>
+    </section>
+
+        
+    <section>
+      <h2><a>MediaKeySystemAccess</a> Interface</h2>
+      <p>The MediaKeySystemAccess object provides access to a <a def-id="keysystem"></a>.</p>
+
+      <dl title="interface MediaKeySystemAccess" class='idl'>
+        <dt>readonly attribute DOMString keySystem</dt>
+        <dd>
+          Identifies the <a def-id="keysystem"></a> being used.
+        </dd>
+  
+        <dt>Promise&lt;MediaKeys&gt; createMediaKeys()</dt>
+        <dd>
+          <p>Creates a new <a def-id="mediakeys"></a> object for <var title="true">keySystem</var>.</p>
+      
+          <ol class="method-algorithm">
+            <li><p>Let <var>promise</var> be a new promise.</p></li>
+            <li><p>Run the following steps asynchronously:</p>
+              <ol>
+                <li><p>Let <var title="true">cdm</var> be the <a def-id="cdm"></a> corresponding to this object.</p></li>
+                <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
+                <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                <li><p>Let <var title="true">media keys</var> be a new <a def-id="mediakeys"></a> object.</p></li>
+                <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
+              </ol>
+            </li>
+            <li><p>Return <var>promise</var>.</p></li>
+          </ol>
+        </dd>
+      </dl>
+    </section>
+
+
+    <section>
       <h2><a>MediaKeys</a> Interface</h2>
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
       
-      <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - Feature detection, including isTypeSupported(), and MediaKeys creation may change significantly.</p>
+  <!-- TODO: Move or remove depending on the outcome of Bug 25923.
       <dl title="enum IsTypeSupportedResult" class="idl">
-        <dt>/* empty string */</dt><!-- TODO: Fix. -->
+        <dt>/* empty string */</dt><!-- TODO: Fix. -- >
         <dd>
           The combination is not supported.
         </dd>
@@ -286,6 +468,7 @@
           The combination is likely supported.
         </dd>
       </dl>
+-->
   
       <dl title="enum SessionType" class="idl">
         <dt>temporary</dt>
@@ -302,17 +485,14 @@
       </dl>
   
       <dl title="interface MediaKeys" class='idl'>
-        <dt>readonly attribute DOMString keySystem</dt>
-        <dd>
-          Identifies the <a def-id="keysystem"></a> being used.
-        </dd>
-  
         <dt>MediaKeySession createSession(optional SessionType sessionType = "temporary")</dt>
         <dd>
           <p>Returns a new <a def-id="mediakeysession"></a> object.</p>
       
           <ol class="method-algorithm">
-            <!-- TODO: Reference the CDM loaded during initialization instead of "<a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute". Here and elsewhere. -->
+            <!-- TODO: Find a better way to reference MediaKeySystemAccess attributes, including the outcome vs. what was specified. -->
+            <li><p>If this object was created by a <a>MediaKeySystemAccess</a> object that was created with a <a def-id="option-stateful"></a> value of <a def-id="requirement-disallowed"></a> and <var title="true">sessionType</var> is not <a def-id="temporary-session"></a>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <!-- TODO: Reference the CDM loaded during initialization instead of "<a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute", especially since it is now a member of MediaKeySystemAccess. Here and elsewhere. -->
             <li><p>If <var title="true">sessionType</var> is not supported by the <a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
             <li><p>Let <var title="true">session</var> be a new <a def-id="mediakeysession"></a> object, and initialize it as follows:</p>
               <ol>
@@ -351,34 +531,7 @@
           </ol>
         </dd>
   
-        <dt>static Promise&lt;MediaKeys&gt; create(DOMString keySystem)</dt>
-        <dd>
-          <p>Creates a new <a def-id="mediakeys"></a> object for <var title="true">keySystem</var>.</p>
-      
-          <ol class="method-algorithm">
-            <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
-            <li><p>If <var title="true">keySystem</var> is not supported or not allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
-            <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>Run the following steps asynchronously:</p>
-              <ol>
-                <li><p>Let <var title="true">cdm</var> be the <a def-id="cdm"></a> corresponding to <var title="true">keySystem</var>.</p></li>
-                <li><p>Load and initialize the <var title="true">cdm</var> if necessary.</p></li>
-                <li><p>If <var title="true">cdm</var> fails to load or initialize, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-      
-                <li>
-                  <p>Let <var title="true">media keys</var> be a new <a def-id="mediakeys"></a> object, and initialize it as follows:</p>
-                  <ol>
-                    <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
-                  </ol>
-                </li>
-                <li><p>Resolve <var>promise</var> with <var title="true">media keys</var>.</p></li>
-              </ol>
-            </li>
-            <li><p>Return <var>promise</var>.</p></li>
-          </ol>
-        </dd>
-  
+  <!-- TODO: Move or remove depending on the outcome of Bug 25923.
         <dt>static IsTypeSupportedResult isTypeSupported(DOMstring keySystem, optional DOMString initDataType, optional DOMString contentType, optional DOMString capability)</dt>
         <dd>
           <p>Returns whether <var title="true">keySystem</var> is supported with the <var title="true">initDataType</var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
@@ -407,7 +560,7 @@
             <li><p>If the <var title="true">keySystem</var> implementation is not available and usable, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>Follow the steps for the first matching condition from the following list:</p>
               <dl class="switch">
-                <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <a def-id="mediakeys-create"></a></dt>
+                <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <a def-id="createMediaKeys"></a></dt>
                 <dd>Let <var title="true">probably result</var> be <a def-id="IsTypeSupportedResult-probably"></a>.</dd>
                 <dt>Otherwise</dt>
                 <dd>Let <var title="true">probably result</var> be <a def-id="IsTypeSupportedResult-maybe"></a>.
@@ -472,6 +625,7 @@
             </li>
           </ol>
         </dd>
+-->
       </dl>
 
     </section>
@@ -481,7 +635,7 @@
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
   
-      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
   
       <dl title="interface MediaKeySession : EventTarget" class='idl'>
@@ -934,7 +1088,7 @@
       <section>
         <h3>Exceptions</h3>
         <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="domexception"></a>.
-        The following <a def-id="domexception-names">DOMException names from WebIDL</a> are used in the algorithms.
+        The following <a def-id="domexception-names">DOMException names from WebIDL</a> [[!WebIDL]] are used in the algorithms.
         Causes specified specified in the algorithms are listed alongside each name, though these names MAY be used for other reasons as well.
         </p>
     
@@ -1014,7 +1168,7 @@
       <h2><a>HTMLMediaElement</a> Extensions</h2>
       <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported.</p>
   
-      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes WebIDL type mapping errors.</p>
+      <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
   
       <dl title="enum MediaWaitingFor" class="idl">
@@ -1364,7 +1518,7 @@
           <ul>
             <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
-            <li><p>The <a def-id="isTypeSupported"></a> method: There are no supported <var title="true">capability</var> values.</p></li>
+            <li><p>The <a>MediaKeySystemOptions</a>: There are no supported capability values.</p></li>
             <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations MAY support this type.</p></li>
           </ul>
         </section>
@@ -1654,28 +1808,32 @@
     var video = document.getElementById("video");
 
     if (!video.<a def-id="mediaKeys-attribute"></a>) {
-      var promise = <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>("org.w3.clearkey");
-      promise.catch(
-        console.error.bind(console, "Unable to create MediaKeys")
-      );
-      promise.then(
-        function(createdMediaKeys) {
-          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+      navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey").then(
+        function(keySystemAccess) {
+          var promise =  keySystemAccess.<a def-id="createMediaKeys-call"></a>();
+          promise.catch(
+            console.error.bind(console, "Unable to create MediaKeys")
+          );
+          promise.then(
+            function(createdMediaKeys) {
+              return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+            }
+          ).catch(
+            console.error.bind(console, "Unable to set MediaKeys")
+          );
+          promise.then(
+            function(createdMediaKeys) {
+              var initData = new Uint8Array([ ... ]);
+              var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
+              keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
+              return keySession.<a def-id="generateRequest-call"></a>("webm", initData);
+            }
+          ).catch(
+            console.error.bind(console, "Unable to create or initialize key session")
+          );
         }
-      ).catch(
-        console.error.bind(console, "Unable to set MediaKeys")
-      );
-      promise.then(
-        function(createdMediaKeys) {
-          var initData = new Uint8Array([ ... ]);
-          var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
-          keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
-          return keySession.<a def-id="generateRequest-call"></a>("webm", initData);
-        }
-      ).catch(
-        console.error.bind(console, "Unable to create or initialize key session")
-      );
-    }
+      }
+    );
   }
 
   function handleMessage(event) {
@@ -1696,7 +1854,7 @@
   
       <section id="example-selecting-key-system">
         <h3>Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
-        <p class="exampledescription">This example selects a supported <a def-id="keysystem"></a> using the <a def-id="isTypeSupported"></a> method then uses
+        <p class="exampledescription">This example selects a supported <a def-id="keysystem"></a> using the <a def-id="requestMediaKeySystemAccess"></a> method then uses
         the <a def-id="initialization-data"></a> from the <a def-id="media-data"></a> to generate the license request and send it to the appropriate license server.
         One of the supported key systems uses a serverCertificate, which is provided proactively.
         </p>
@@ -1707,42 +1865,67 @@
   var licenseUrl;
   var serverCertificate;
 
+  // TODO: The structure of the original example makes this overly complex. Fix this.
   function selectKeySystem() {
-    if (<a def-id="mediakeys"></a>.<a def-id="isTypeSupported-call"></a>("com.example.somesystem", "webm", "video/webm; codecs='vp8, vorbis'")) {
-      licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-      keySystem = "com.example.somesystem";
-      serverCertificate = new Uint8Array([ ... ]);
-    } else if (<a def-id="mediakeys"></a>.<a def-id="isTypeSupported-call"></a>("com.foobar", "webm", "video/webm; codecs='vp8, vorbis'")) {
-      licenseUrl = "https://license.foobar.com/request";
-      keySystem = "com.foobar";
-    } else {
-      throw "Key System not supported";
-    }
+    someSystemOptions = [
+     { <a def-id="option-videoType"></a>: "webm",
+       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
+     }
+    ];
+    fooOptions = [
+     { <a def-id="option-initDataType"></a>: "webm",
+       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
+     }
+    ];
+  
+    navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("com.example.somesystem", someSystemOptions).then(
+      function(keySystemAccess) {
+        licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
+        keySystem = "com.example.somesystem";
+        serverCertificate = new Uint8Array([ ... ]);
+        promise = new Promise();
+        promise.resolve(keySystemAccess); 
+        return promise;
+      }
+    ).catch(
+      function(error) {
+        // Try the next key system.
+        navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("com.foobar", fooOptions).then(
+          function(keySystemAccess) {
+          licenseUrl = "https://license.foobar.com/request";
+          keySystem = "com.foobar";
+          promise = new Promise();
+          promise.resolve(keySystemAccess); 
+          return promise;
+    ); // Do not catch - let the caller handle the failure.
   }
 
   function handleInitData(event) {
     var video = event.target;
     if (video.mediaKeysObject === undefined) {
-      selectKeySystem();
       video.mediaKeysObject = null; // Prevent entering this path again.
-      video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
-      <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>(keySystem).then(
-        function(createdMediaKeys) {
-          video.mediaKeysObject = createdMediaKeys;
-
-          if (serverCertificate)
-            createdMediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-
-          for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
-            var data = video.pendingSessionData[i];
-            makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
-          }
-          video.pendingSessionData = [];
-
-          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+      selectKeySystem().then(
+        function(keySystemAccess) {
+          video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
+          keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
+            function(createdMediaKeys) {
+              video.mediaKeysObject = createdMediaKeys;
+    
+              if (serverCertificate)
+                createdMediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+    
+              for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
+                var data = video.pendingSessionData[i];
+                makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
+              }
+              video.pendingSessionData = [];
+    
+              return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+            }
+          ).catch(
+            console.error.bind(console, "Unable to create or use new MediaKeys")
+          );
         }
-      ).catch(
-        console.error.bind(console, "Unable to create or use new MediaKeys")
       );
     }
     addSession(video, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
@@ -1809,18 +1992,23 @@
     makeNewRequest(mediaKeys, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
   }
 
-  selectKeySystem();
-  <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>(keySystem).then(
-    function(createdMediaKeys) {
-      mediaKeys = createdMediaKeys;
-      var video = document.getElementById("v");
-      video.src = "foo.webm";
-      if (serverCertificate)
-        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+  selectKeySystem().then(
+    function(keySystemAccess) {
+      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+        function(createdMediaKeys) {
+          mediaKeys = createdMediaKeys;
+          var video = document.getElementById("v");
+          video.src = "foo.webm";
+          if (serverCertificate)
+            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to create or initialize key session")
+      );
     }
   ).catch(
-    console.error.bind(console, "Unable to create or initialize key session")
+    console.error.bind(console, "No supported key systems supporting the required combinations")
   );
 &lt;/script&gt;
 
@@ -1901,18 +2089,23 @@
     //  -->and do some bookkeeping with event.target.<a def-id="sessionId"></a> if necessary.
   }
 
-  selectKeySystem();
-  <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>(keySystem).then(
-    function(createdMediaKeys) {
-      mediaKeys = createdMediaKeys;
-      var video = document.getElementById("v");
-      video.src = "foo.webm";
-      if (serverCertificate)
-        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+  selectKeySystem().then(
+    function(keySystemAccess) {
+      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+        function(createdMediaKeys) {
+          mediaKeys = createdMediaKeys;
+          var video = document.getElementById("v");
+          video.src = "foo.webm";
+          if (serverCertificate)
+            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to create or use new MediaKeys")
+      );
     }
   ).catch(
-    console.error.bind(console, "Unable to create or use new MediaKeys")
+    console.error.bind(console, "No supported key systems supporting the required combinations")
   );
 &lt;/script&gt;
 
@@ -2007,17 +2200,22 @@
     );
   }
 
-  selectKeySystem();
-  <a def-id="mediakeys"></a>.<a def-id="mediakeys-create-call"></a>(keySystem).then(
-    function(createdMediaKeys) {
-      mediaKeys = createdMediaKeys;
-      var video = document.getElementById("v");
-      if (serverCertificate)
-        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+  selectKeySystem().then(
+    function(keySystemAccess) {
+      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+        function(createdMediaKeys) {
+          mediaKeys = createdMediaKeys;
+          var video = document.getElementById("v");
+          if (serverCertificate)
+            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+        }
+      ).catch(
+        console.error.bind(console, "Unable to create or use new MediaKeys")
+      );
     }
   ).catch(
-    console.error.bind(console, "Unable to create or use new MediaKeys")
+    console.error.bind(console, "No supported key systems supporting the required combinations")
   );
 &lt;/script&gt;
 

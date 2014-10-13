@@ -156,26 +156,44 @@
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
     'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session Id'  },
+
+    'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-Sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
+    'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-Sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
     
+//    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
+//    'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
+    'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
+    'requirement-disallowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.disallowed', link_text: '"disallowed"',  },
+
+    'option-initDataType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-initDataType', link_text: 'initDataType',  },
+    'option-videoType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoType', link_text: 'videoType',  },
+    'option-stateful': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-stateful', link_text: 'stateful',  },
+    
+    'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
+//  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
+    'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
+
     'sessiontype': { func: idlref_helper, fragment: 'idl-def-SessionType', link_text: 'SessionType',  },
     'persistent-session': { func: idlref_helper, fragment: 'idl-def-SessionType.persistent', link_text: '"persistent"',  },
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-SessionType.temporary', link_text: '"temporary"',  },
 
+    /* TODO: Move or remove depending on the outcome of Bug 25923.
     'IsTypeSupportedResult-empty': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.empty-string', link_text: '""',  },
     'IsTypeSupportedResult-maybe': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.maybe', link_text: '"maybe"',  },
     'IsTypeSupportedResult-probably': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.probably', link_text: '"probably"',  },
+    */
 
+    // TODO: Replace uses with simple <a>.
     'mediakeys': { func: idlref_helper, fragment: 'idl-def-MediaKeys', link_text: 'MediaKeys',  },
-    'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeys-keySystem', link_text: 'keySystem',  },
-    'mediakeys-create': { func: idlref_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: 'create()',  },
-    'mediakeys-create-call': { func: idlref_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: 'create',  },
 //    'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession()',  },
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate', link_text: 'setServerCertificate',  },
+    /* TODO: Move or remove depending on the outcome of Bug 25923.
     'isTypeSupported': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported()',  },
     'isTypeSupported-call': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported',  },
-    'mediakeys-initialization': { func: term_helper, fragment: 'widl-MediaKeys-create-Promise-MediaKeys--DOMString-keySystem', link_text: ''  },
+    */
+    'mediakeys-initialization': { func: term_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: ''  },
 
     'mediakeysession': { func: idlref_helper, fragment: 'idl-def-MediaKeySession', link_text: 'MediaKeySession',  },
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
