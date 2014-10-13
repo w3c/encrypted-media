@@ -154,7 +154,7 @@
     'keysystem': { func: term_helper, fragment: 'key-system', link_text: 'Key System'  },
     'keysystems': { func: term_helper, fragment: 'key-system', link_text: 'Key Systems'  },
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
-    'initialization-data-type': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
+    'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session Id'  },
     
     'sessiontype': { func: idlref_helper, fragment: 'idl-def-SessionType', link_text: 'SessionType',  },
