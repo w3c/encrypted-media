@@ -1860,18 +1860,18 @@
     
         <pre class="example highlight">
 &lt;script&gt;
-  var keySystem;
   var licenseUrl;
   var serverCertificate;
 
+  // Returns a Promise&lt;<a>MediaKeySystemAccess</a>&gt;.
   // TODO: The structure of the original example makes this overly complex. Fix this.
   function selectKeySystem() {
     someSystemOptions = [
-     { <a def-id="option-videoType"></a>: "webm",
+     { <a def-id="option-initDataType"></a>: "webm",
        <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
      }
     ];
-    fooOptions = [
+    clearKeyOptions = [
      { <a def-id="option-initDataType"></a>: "webm",
        <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
      }
@@ -1879,8 +1879,7 @@
   
     navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("com.example.somesystem", someSystemOptions).then(
       function(keySystemAccess) {
-        licenseUrl = "https://license.example.com/getkey"; // OR "https://example.&lt;My Video Site domain&gt;"
-        keySystem = "com.example.somesystem";
+        licenseUrl = "https://license.example.com/getkey";
         serverCertificate = new Uint8Array([ ... ]);
         promise = new Promise();
         promise.resolve(keySystemAccess); 
@@ -1889,10 +1888,9 @@
     ).catch(
       function(error) {
         // Try the next key system.
-        navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("com.foobar", fooOptions).then(
+        navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey", clearKeyOptions).then(
           function(keySystemAccess) {
-          licenseUrl = "https://license.foobar.com/request";
-          keySystem = "com.foobar";
+          licenseUrl = "https://license.example.com/clearkey/request";
           promise = new Promise();
           promise.resolve(keySystemAccess); 
           return promise;
@@ -1903,9 +1901,9 @@
     var video = event.target;
     if (video.mediaKeysObject === undefined) {
       video.mediaKeysObject = null; // Prevent entering this path again.
+      video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
       selectKeySystem().then(
         function(keySystemAccess) {
-          video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
           keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
             function(createdMediaKeys) {
               video.mediaKeysObject = createdMediaKeys;
@@ -1977,7 +1975,6 @@
     
         <pre class="example highlight">
 &lt;script&gt;
-  var keySystem;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -1993,7 +1990,7 @@
 
   selectKeySystem().then(
     function(keySystemAccess) {
-      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
         function(createdMediaKeys) {
           mediaKeys = createdMediaKeys;
           var video = document.getElementById("v");
@@ -2022,7 +2019,6 @@
     
         <pre class="example highlight">
 &lt;script&gt;
-  var keySystem;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -2090,7 +2086,7 @@
 
   selectKeySystem().then(
     function(keySystemAccess) {
-      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
         function(createdMediaKeys) {
           mediaKeys = createdMediaKeys;
           var video = document.getElementById("v");
@@ -2118,7 +2114,6 @@
     
         <pre class="example highlight">
 &lt;script&gt;
-  var keySystem;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -2201,7 +2196,7 @@
 
   selectKeySystem().then(
     function(keySystemAccess) {
-      <a def-id="mediakeys"></a>.<a def-id="createMediaKeys-call"></a>(keySystem).then(
+      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
         function(createdMediaKeys) {
           mediaKeys = createdMediaKeys;
           var video = document.getElementById("v");
