@@ -445,7 +445,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-10-14T00:29:28.000Z" id="w3c-editor-s-draft-13-october-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-10-13">13 October 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-10-14T00:58:48.000Z" id="w3c-editor-s-draft-13-october-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-10-13">13 October 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -2175,9 +2175,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   </span><span class="kwd">var</span><span class="pln"> licenseUrl</span><span class="pun">;</span><span class="pln">
   </span><span class="kwd">var</span><span class="pln"> serverCertificate</span><span class="pun">;</span><span class="pln">
 
-  </span><span class="com">// Returns a Promise&lt;</span><a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a><span class="com">&gt;.</span><span class="pln">
-  </span><span class="com">// TODO: The structure of the original example makes this overly complex. Fix this.</span><span class="pln">
-  </span><span class="kwd">function</span><span class="pln"> selectKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// Returns a Promise&lt;</span><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a><span class="com">&gt;.</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> createSupportedKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
     someSystemOptions </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="pln">
      </span><span class="pun">{</span><span class="pln"> </span><code><a href="#widl-MediaKeySystemOptions-initDataType">initDataType</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"webm"</span><span class="pun">,</span><span class="pln">
        </span><code><a href="#widl-MediaKeySystemOptions-videoType">videoType</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"video/webm; codecs='vp8, vorbis'"</span><span class="pln">
@@ -2193,20 +2192,21 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
         licenseUrl </span><span class="pun">=</span><span class="pln"> </span><span class="str">"https://license.example.com/getkey"</span><span class="pun">;</span><span class="pln">
         serverCertificate </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">]);</span><span class="pln">
-        promise </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Promise</span><span class="pun">();</span><span class="pln">
-        promise</span><span class="pun">.</span><span class="pln">resolve</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">);</span><span class="pln"> 
-        </span><span class="kwd">return</span><span class="pln"> promise</span><span class="pun">;</span><span class="pln">
+        </span><span class="kwd">return</span><span class="pln"> keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">();</span><span class="pln">
       </span><span class="pun">}</span><span class="pln">
     </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
       </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">error</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
         </span><span class="com">// Try the next key system.</span><span class="pln">
         navigator</span><span class="pun">.</span><code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations">requestMediaKeySystemAccess</a></code><span class="pun">(</span><span class="str">"org.w3.clearkey"</span><span class="pun">,</span><span class="pln"> clearKeyOptions</span><span class="pun">).</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
           </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-          licenseUrl </span><span class="pun">=</span><span class="pln"> </span><span class="str">"https://license.example.com/clearkey/request"</span><span class="pun">;</span><span class="pln">
-          promise </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Promise</span><span class="pun">();</span><span class="pln">
-          promise</span><span class="pun">.</span><span class="pln">resolve</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">);</span><span class="pln"> 
-          </span><span class="kwd">return</span><span class="pln"> promise</span><span class="pun">;</span><span class="pln">
-    </span><span class="pun">);</span><span class="pln"> </span><span class="com">// Do not catch - let the caller handle the failure.</span><span class="pln">
+            licenseUrl </span><span class="pun">=</span><span class="pln"> </span><span class="str">"https://license.example.com/clearkey/request"</span><span class="pun">;</span><span class="pln">
+            </span><span class="kwd">return</span><span class="pln"> keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">();</span><span class="pln">
+          </span><span class="pun">}</span><span class="pln">
+        </span><span class="pun">);</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
+      console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to instantiate a key system supporting the required combinations"</span><span class="pun">)</span><span class="pln">
+    </span><span class="pun">);</span><span class="pln">
   </span><span class="pun">}</span><span class="pln">
 
   </span><span class="kwd">function</span><span class="pln"> handleInitData</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
@@ -2214,27 +2214,23 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">video</span><span class="pun">.</span><span class="pln">mediaKeysObject </span><span class="pun">===</span><span class="pln"> </span><span class="kwd">undefined</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
       video</span><span class="pun">.</span><span class="pln">mediaKeysObject </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">;</span><span class="pln"> </span><span class="com">// Prevent entering this path again.</span><span class="pln">
       video</span><span class="pun">.</span><span class="pln">pendingSessionData </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[];</span><span class="pln"> </span><span class="com">// Will store all initData until the MediaKeys is ready.</span><span class="pln">
-      selectKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-        </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-          keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-            </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-              video</span><span class="pun">.</span><span class="pln">mediaKeysObject </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
-    
-              </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
-                createdMediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
-    
-              </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln"> i </span><span class="pun">&lt;</span><span class="pln"> video</span><span class="pun">.</span><span class="pln">pendingSessionData</span><span class="pun">.</span><span class="pln">length</span><span class="pun">;</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-                </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> video</span><span class="pun">.</span><span class="pln">pendingSessionData</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln">
-                makeNewRequest</span><span class="pun">(</span><span class="pln">video</span><span class="pun">.</span><span class="pln">mediaKeysObject</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">initDataType</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">initData</span><span class="pun">);</span><span class="pln">
-              </span><span class="pun">}</span><span class="pln">
-              video</span><span class="pun">.</span><span class="pln">pendingSessionData </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[];</span><span class="pln">
-    
-              </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">);</span><span class="pln">
-            </span><span class="pun">}</span><span class="pln">
-          </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-            console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to create or use new MediaKeys"</span><span class="pun">)</span><span class="pln">
-          </span><span class="pun">);</span><span class="pln">
+      createSupportedKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
+        </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+          video</span><span class="pun">.</span><span class="pln">mediaKeysObject </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
+
+          </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
+            createdMediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
+
+          </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">var</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln"> i </span><span class="pun">&lt;</span><span class="pln"> video</span><span class="pun">.</span><span class="pln">pendingSessionData</span><span class="pun">.</span><span class="pln">length</span><span class="pun">;</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+            </span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> video</span><span class="pun">.</span><span class="pln">pendingSessionData</span><span class="pun">[</span><span class="pln">i</span><span class="pun">];</span><span class="pln">
+            makeNewRequest</span><span class="pun">(</span><span class="pln">video</span><span class="pun">.</span><span class="pln">mediaKeysObject</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">initDataType</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">.</span><span class="pln">initData</span><span class="pun">);</span><span class="pln">
+          </span><span class="pun">}</span><span class="pln">
+          video</span><span class="pun">.</span><span class="pln">pendingSessionData </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[];</span><span class="pln">
+
+          </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">);</span><span class="pln">
         </span><span class="pun">}</span><span class="pln">
+      </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
+        console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Failed to create and initialize a MediaKeys object"</span><span class="pun">)</span><span class="pln">
       </span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
     addSession</span><span class="pun">(</span><span class="pln">video</span><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><code><a href="#widl-MediaEncryptedEventInit-initDataType">initDataType</a></code><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code><span class="pun">);</span><span class="pln">
@@ -2290,7 +2286,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   </span><span class="kwd">var</span><span class="pln"> mediaKeys</span><span class="pun">;</span><span class="pln">
 
   </span><span class="com">// See the previous example for implementations of these functions.</span><span class="pln">
-  </span><span class="kwd">function</span><span class="pln"> selectKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> createSupportedKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> makeNewRequest</span><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">,</span><span class="pln"> initDataType</span><span class="pun">,</span><span class="pln"> initData</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> licenseRequestReady</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
 
@@ -2298,23 +2294,17 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     makeNewRequest</span><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><code><a href="#widl-MediaEncryptedEventInit-initDataType">initDataType</a></code><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code><span class="pun">);</span><span class="pln">
   </span><span class="pun">}</span><span class="pln">
 
-  selectKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-      keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-        </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-          mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
-          </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
-          video</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><span class="str">"foo.webm"</span><span class="pun">;</span><span class="pln">
-          </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
-            mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
-          </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
-        </span><span class="pun">}</span><span class="pln">
-      </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-        console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to create or initialize key session"</span><span class="pun">)</span><span class="pln">
-      </span><span class="pun">);</span><span class="pln">
+  createSupportedKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
+    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
+      video</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><span class="str">"foo.webm"</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
+        mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
   </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"No supported key systems supporting the required combinations"</span><span class="pun">)</span><span class="pln">
+    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Failed to create and initialize a MediaKeys object"</span><span class="pun">)</span><span class="pln">
   </span><span class="pun">);</span><span class="pln">
 </span><span class="tag">&lt;/script&gt;</span><span class="pln">
 
@@ -2332,8 +2322,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   </span><span class="kwd">var</span><span class="pln"> mediaKeys</span><span class="pun">;</span><span class="pln">
 
   </span><span class="com">// See previous examples for implementations of these functions.</span><span class="pln">
-  </span><span class="com">// selectKeySystem() additionally sets renewalUrl.</span><span class="pln">
-  </span><span class="kwd">function</span><span class="pln"> selectKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+  </span><span class="com">// createSupportedKeySystem() additionally sets renewalUrl.</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> createSupportedKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> handleInitData</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
 
   </span><span class="com">// This replaces the implementation in the previous example.</span><span class="pln">
@@ -2392,23 +2382,17 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     //  --><span class="com">and do some bookkeeping with event.target.</span><code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code><span class="com"> if necessary.</span><span class="pln">
   </span><span class="pun">}</span><span class="pln">
 
-  selectKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-      keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-        </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-          mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
-          </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
-          video</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><span class="str">"foo.webm"</span><span class="pun">;</span><span class="pln">
-          </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
-            mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
-          </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
-        </span><span class="pun">}</span><span class="pln">
-      </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-        console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to create or use new MediaKeys"</span><span class="pun">)</span><span class="pln">
-      </span><span class="pun">);</span><span class="pln">
+  createSupportedKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
+    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
+      video</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><span class="str">"foo.webm"</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
+        mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
   </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"No supported key systems supporting the required combinations"</span><span class="pun">)</span><span class="pln">
+    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Failed to create and initialize a MediaKeys object"</span><span class="pun">)</span><span class="pln">
   </span><span class="pun">);</span><span class="pln">
 </span><span class="tag">&lt;/script&gt;</span><span class="pln">
 
@@ -2425,7 +2409,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   </span><span class="kwd">var</span><span class="pln"> mediaKeys</span><span class="pun">;</span><span class="pln">
 
   </span><span class="com">// See the previous examples for implementations of these functions.</span><span class="pln">
-  </span><span class="kwd">function</span><span class="pln"> selectKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+  </span><span class="com">// createSupportedKeySystem() additionally sets </span><code><a href="#widl-MediaKeySystemOptions-stateful">stateful</a></code><span class="com">: </span><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code><span class="com"> in each options dictionary.</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> createSupportedKeySystem</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> sendMessage</span><span class="pun">(</span><span class="pln">message</span><span class="pun">,</span><span class="pln"> keySession</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> handleMessage</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
   </span><span class="kwd">function</span><span class="pln"> handleError</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
@@ -2500,22 +2485,16 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     </span><span class="pun">);</span><span class="pln">
   </span><span class="pun">}</span><span class="pln">
 
-  selectKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keySystemAccess</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-      keySystemAccess</span><span class="pun">.</span><code><a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">createMediaKeys</a></code><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
-        </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-          mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
-          </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
-          </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
-            mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
-          </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
-        </span><span class="pun">}</span><span class="pln">
-      </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-        console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to create or use new MediaKeys"</span><span class="pun">)</span><span class="pln">
-      </span><span class="pun">);</span><span class="pln">
+  createSupportedKeySystem</span><span class="pun">().</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
+    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      mediaKeys </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">;</span><span class="pln">
+      </span><span class="kwd">var</span><span class="pln"> video </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">getElementById</span><span class="pun">(</span><span class="str">"v"</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">)</span><span class="pln">
+        mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate">setServerCertificate</a></code><span class="pun">(</span><span class="pln">serverCertificate</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pln"> video</span><span class="pun">.</span><code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></code><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
   </span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
-    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"No supported key systems supporting the required combinations"</span><span class="pun">)</span><span class="pln">
+    console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Failed to create and initialize a MediaKeys object"</span><span class="pun">)</span><span class="pln">
   </span><span class="pun">);</span><span class="pln">
 </span><span class="tag">&lt;/script&gt;</span><span class="pln">
 

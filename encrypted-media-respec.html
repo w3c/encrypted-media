@@ -1863,9 +1863,8 @@
   var licenseUrl;
   var serverCertificate;
 
-  // Returns a Promise&lt;<a>MediaKeySystemAccess</a>&gt;.
-  // TODO: The structure of the original example makes this overly complex. Fix this.
-  function selectKeySystem() {
+  // Returns a Promise&lt;<a>MediaKeys</a>&gt;.
+  function createSupportedKeySystem() {
     someSystemOptions = [
      { <a def-id="option-initDataType"></a>: "webm",
        <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
@@ -1881,20 +1880,21 @@
       function(keySystemAccess) {
         licenseUrl = "https://license.example.com/getkey";
         serverCertificate = new Uint8Array([ ... ]);
-        promise = new Promise();
-        promise.resolve(keySystemAccess); 
-        return promise;
+        return keySystemAccess.<a def-id="createMediaKeys-call"></a>();
       }
     ).catch(
       function(error) {
         // Try the next key system.
         navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey", clearKeyOptions).then(
           function(keySystemAccess) {
-          licenseUrl = "https://license.example.com/clearkey/request";
-          promise = new Promise();
-          promise.resolve(keySystemAccess); 
-          return promise;
-    ); // Do not catch - let the caller handle the failure.
+            licenseUrl = "https://license.example.com/clearkey/request";
+            return keySystemAccess.<a def-id="createMediaKeys-call"></a>();
+          }
+        );
+      }
+    ).catch(
+      console.error.bind(console, "Unable to instantiate a key system supporting the required combinations")
+    );
   }
 
   function handleInitData(event) {
@@ -1902,27 +1902,23 @@
     if (video.mediaKeysObject === undefined) {
       video.mediaKeysObject = null; // Prevent entering this path again.
       video.pendingSessionData = []; // Will store all initData until the MediaKeys is ready.
-      selectKeySystem().then(
-        function(keySystemAccess) {
-          keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
-            function(createdMediaKeys) {
-              video.mediaKeysObject = createdMediaKeys;
-    
-              if (serverCertificate)
-                createdMediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-    
-              for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
-                var data = video.pendingSessionData[i];
-                makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
-              }
-              video.pendingSessionData = [];
-    
-              return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
-            }
-          ).catch(
-            console.error.bind(console, "Unable to create or use new MediaKeys")
-          );
+      createSupportedKeySystem().then(
+        function(createdMediaKeys) {
+          video.mediaKeysObject = createdMediaKeys;
+
+          if (serverCertificate)
+            createdMediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+
+          for (var i = 0; i &lt; video.pendingSessionData.length; i++) {
+            var data = video.pendingSessionData[i];
+            makeNewRequest(video.mediaKeysObject, data.initDataType, data.initData);
+          }
+          video.pendingSessionData = [];
+
+          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
         }
+      ).catch(
+        console.error.bind(console, "Failed to create and initialize a MediaKeys object")
       );
     }
     addSession(video, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
@@ -1980,7 +1976,7 @@
   var mediaKeys;
 
   // See the previous example for implementations of these functions.
-  function selectKeySystem() { ... }
+  function createSupportedKeySystem() { ... }
   function makeNewRequest(mediaKeys, initDataType, initData) { ... }
   function licenseRequestReady(event) { ... }
 
@@ -1988,23 +1984,17 @@
     makeNewRequest(mediaKeys, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
   }
 
-  selectKeySystem().then(
-    function(keySystemAccess) {
-      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
-        function(createdMediaKeys) {
-          mediaKeys = createdMediaKeys;
-          var video = document.getElementById("v");
-          video.src = "foo.webm";
-          if (serverCertificate)
-            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
-        }
-      ).catch(
-        console.error.bind(console, "Unable to create or initialize key session")
-      );
+  createSupportedKeySystem().then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "No supported key systems supporting the required combinations")
+    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
   );
 &lt;/script&gt;
 
@@ -2024,8 +2014,8 @@
   var mediaKeys;
 
   // See previous examples for implementations of these functions.
-  // selectKeySystem() additionally sets renewalUrl.
-  function selectKeySystem() { ... }
+  // createSupportedKeySystem() additionally sets renewalUrl.
+  function createSupportedKeySystem() { ... }
   function handleInitData(event) { ... }
 
   // This replaces the implementation in the previous example.
@@ -2084,23 +2074,17 @@
     //  -->and do some bookkeeping with event.target.<a def-id="sessionId"></a> if necessary.
   }
 
-  selectKeySystem().then(
-    function(keySystemAccess) {
-      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
-        function(createdMediaKeys) {
-          mediaKeys = createdMediaKeys;
-          var video = document.getElementById("v");
-          video.src = "foo.webm";
-          if (serverCertificate)
-            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
-        }
-      ).catch(
-        console.error.bind(console, "Unable to create or use new MediaKeys")
-      );
+  createSupportedKeySystem().then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      video.src = "foo.webm";
+      if (serverCertificate)
+        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "No supported key systems supporting the required combinations")
+    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
   );
 &lt;/script&gt;
 
@@ -2119,7 +2103,8 @@
   var mediaKeys;
 
   // See the previous examples for implementations of these functions.
-  function selectKeySystem() { ... }
+  // createSupportedKeySystem() additionally sets <a def-id="option-stateful"></a>: <a def-id="requirement-required"></a> in each options dictionary.
+  function createSupportedKeySystem() { ... }
   function sendMessage(message, keySession) { ... }
   function handleMessage(event) { ... }
   function handleError(event) { ... }
@@ -2194,22 +2179,16 @@
     );
   }
 
-  selectKeySystem().then(
-    function(keySystemAccess) {
-      keySystemAccess.<a def-id="createMediaKeys-call"></a>().then(
-        function(createdMediaKeys) {
-          mediaKeys = createdMediaKeys;
-          var video = document.getElementById("v");
-          if (serverCertificate)
-            mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-          return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
-        }
-      ).catch(
-        console.error.bind(console, "Unable to create or use new MediaKeys")
-      );
+  createSupportedKeySystem().then(
+    function(createdMediaKeys) {
+      mediaKeys = createdMediaKeys;
+      var video = document.getElementById("v");
+      if (serverCertificate)
+        mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
+      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "No supported key systems supporting the required combinations")
+    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
   );
 &lt;/script&gt;
 
