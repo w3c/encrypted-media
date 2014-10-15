@@ -445,7 +445,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-10-15T16:52:30.000Z" id="w3c-editor-s-draft-15-october-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-10-15">15 October 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-10-15T17:12:08.000Z" id="w3c-editor-s-draft-15-october-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-10-15">15 October 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -620,10 +620,21 @@ table.simple {
         <dl>
           <dt id="cdm">Content Decryption Module (CDM)</dt>
           <dd>
-            <p>The Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a href="#key-system">Key Systems</a>.</p>
+            <p>Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a href="#key-system">Key Systems</a>.</p>
             <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_1"><span>Note</span></div><p class="">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
             This is transparent to the API and application.</p></div>
-            <p>A user agent <em class="rfc2119" title="MAY">MAY</em> support one or more CDMs.</p>
+
+            <p>All messages and communication to and from the CDM, such as between the CDM and a license server, <em class="rfc2119" title="MUST">MUST</em> be passed through the user agent.
+              The CDM <em class="rfc2119" title="MUST NOT">MUST NOT</em> make direct out-of band network requests.
+              All messages and communication other than those covered in the following paragraph <em class="rfc2119" title="MUST">MUST</em> be passed through the application via the APIs defined in this specification.
+            </p> 
+            <p>Messages related to "one-time" application-independent initialization that are sent to a pre-defined URL <em class="rfc2119" title="MAY">MAY</em> be handled by the user agent and not passed to the application via the APIs.
+              The related operations <em class="rfc2119" title="MUST">MUST</em> be performed by the user agent, and such messages <em class="rfc2119" title="MUST">MUST</em> still be transmitted via the user agent's network stack.
+            </p>
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_2"><span>Note</span></div><p class="">For example, an initialization or provisioning process for a client device that involves communicating with a server hosted by the user agent or CDM vendor could be performed by the user agent without involving the application.
+              The same applies to reinitialization or reprovisioning. Application- or content provider-specific initialization and other operations must be passed be passed through the application via the APIs.
+            </p></div>
+            
           </dd>
     
           <dt id="key-system">Key System</dt>
@@ -631,14 +642,15 @@ table.simple {
             <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
             Key System strings provide unique identification of a Key System.
             They are used by the user agent to select a <a href="#cdm">CDM</a> and identify the source of a key-related event.
-            The <a href="#common-key-systems">Common Key Systems</a> are supported by all user agents. User agents <em class="rfc2119" title="MAY">MAY</em> also provide additional CDMs with corresponding Key System strings.
+            User agents <em class="rfc2119" title="MUST">MUST</em> support the <a href="#common-key-systems">Common Key Systems</a>.
+            User agents <em class="rfc2119" title="MAY">MAY</em> also provide additional CDMs with corresponding Key System strings.
             </p>
         
             <p>A Key System string is always a reverse domain name.
             Key System strings are compared using case-sensitive matching. It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDMs use simple lower-case ASCII key system strings.</p>
-            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_2"><span>Note</span></div><p class="">For example, "com.example.somesystem".</p></div>
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_3"><span>Note</span></div><p class="">For example, "com.example.somesystem".</p></div>
         
-            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_3"><span>Note</span></div><p class="">
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_4"><span>Note</span></div><p class="">
             Within a given system ("somesystem" in the example), subsystems may be defined as determined by the key system provider.
             For example, "com.example.somesystem.1" and "com.example.somesystem.1_5".
             Key System providers should keep in mind that these will be used for comparison and discovery, so they should be easy to compare and the structure should remain reasonably simple.
@@ -667,7 +679,7 @@ table.simple {
               Session IDs for <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code> sessions <em class="rfc2119" title="MUST">MUST</em> be unique within the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> over time, including across browsing sessions.
             </p>
         
-            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_4"><span>Note</span></div><p class="">The underlying content protection protocol does not necessarily need to support Session IDs.</p></div>
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_5"><span>Note</span></div><p class="">The underlying content protection protocol does not necessarily need to support Session IDs.</p></div>
           </dd>
     
           <dt id="decryption-key">Key</dt>
@@ -679,7 +691,7 @@ table.simple {
             </p>
             
             <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable for decryption.</p>
-            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_5"><span>Note</span></div><p class="">For example, a key is not usable if its license has expired.</p></div>
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_6"><span>Note</span></div><p class="">For example, a key is not usable if its license has expired.</p></div>
           </dd>
     
           <dt id="decryption-key-id">Key ID</dt>
@@ -699,7 +711,7 @@ table.simple {
     
           <dt id="initialization-data">Initialization Data</dt>
           <dd>
-            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_6"><span>Note</span></div><p class="">
+            <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_7"><span>Note</span></div><p class="">
             <a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
             This block could be a simple key or content ID or a more complex structure containing such information.
             It should always allow unique identification of the key(s) needed to decrypt the content.
@@ -802,7 +814,7 @@ table.simple {
                         <ol>
                           <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
                         </ol>
-                        <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_7"><span>Note</span></div><p class="">Unrecognized dictionary members are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>], and will never reach this algorith. Thus, they cannot be considered as part of the combination.</p></div>
+                        <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_8"><span>Note</span></div><p class="">Unrecognized dictionary members are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>], and will never reach this algorith. Thus, they cannot be considered as part of the combination.</p></div>
                         </li><li>
                           <p>If <var title="true">keySystem</var> is supported and allowed in the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the calling context's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> in the configuration specified by the combination of the values in <var>combination</var>, execute the following steps:</p>
                           <ol>
@@ -820,7 +832,7 @@ table.simple {
                     </ol>
                   </li>
                   <li><p>Reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p> 
-                    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_8"><span>Note</span></div><p class="">There were no supported combinations in <code>supportedConfigurations</code>.</p></div>
+                    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_9"><span>Note</span></div><p class="">There were no supported combinations in <code>supportedConfigurations</code>.</p></div>
                   </li>
                 </ol>
               </li>
@@ -860,7 +872,7 @@ table.simple {
           </dd><dt id="widl-MediaKeySystemOptions-stateful"><code>stateful</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.<br>
             Only <code><a href="#idl-def-SessionType.temporary">"temporary"</a></code> sessions may be created when statefulness is not supported.
-            <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_9"><span>Note</span></div><p class="">
+            <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_10"><span>Note</span></div><p class="">
               Except for <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code> sessions, the need and ability to store state is Key System implementation-specific and may vary by feature used.</p></div>
           </dd><dt id="widl-MediaKeySystemOptions-uniqueidentifier"><code>uniqueidentifier</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether a unique identifier is required.
@@ -972,8 +984,8 @@ table.simple {
             <li><p>Return <var title="true">session</var>.</p></li>
           </ol></dd><dt id="widl-MediaKeys-setServerCertificate-Promise-void--ArrayBuffer-ArrayBufferView-serverCertificate"><code>setServerCertificate</code></dt><dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_10"><span>Note</span></div><p class="">The contents of <var title="true">serverCertificate</var> are <a href="#key-system">Key System</a>-specific.</p></div>
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_11"><span>Note</span></div><p class="">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_11"><span>Note</span></div><p class="">The contents of <var title="true">serverCertificate</var> are <a href="#key-system">Key System</a>-specific.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_12"><span>Note</span></div><p class="">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p></div>
       
           
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">serverCertificate</td><td class="prmType"><code>(ArrayBuffer or ArrayBufferView)</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
@@ -1021,7 +1033,7 @@ table.simple {
           <p>The <a href="#session-id">Session Id</a> for this object and the associated key(s) or license(s).</p>
         </dd></dl></section><section id="methods-3"><h3 role="heading" id="h3_methods-3"><span class="secno">5.2 </span>Methods</h3><dl class="methods"><dt id="widl-MediaKeySession-close-Promise-void"><code>close</code></dt><dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it.</p>
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_12"><span>Note</span></div><p class="">The returned promise is resolved when the request has been processed, and the <code><a href="#widl-MediaKeySession-closed">closed</a></code> attribute promise is resolved when the session is closed.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_13"><span>Note</span></div><p class="">The returned promise is resolved when the request has been processed, and the <code><a href="#widl-MediaKeySession-closed">closed</a></code> attribute promise is resolved when the session is closed.</p></div>
       
           
         <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
@@ -1065,7 +1077,7 @@ table.simple {
               <ol>
                 <li><p>If the <var>init data</var> is not valid for <var title="true">initDataType</var>, reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">InvalidAccessError</a></code>.</p></li>
                 <li><p>Let <var>sanitized init data</var> be a validated and/or sanitized version of <var>init data</var>.</p>
-                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_13"><span>Note</span></div><p class="">The user agent should thoroughly validate the Initialization Data before passing it to the CDM.
+                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_14"><span>Note</span></div><p class="">The user agent should thoroughly validate the Initialization Data before passing it to the CDM.
                     This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version.
                     The user agent should check that the length and values of fields are reasonable.
                     Unknown fields should be rejected or removed.
@@ -1083,21 +1095,21 @@ table.simple {
                       <dl class="switch">
                         <dt>If <var title="true">session type</var> is <code><a href="#idl-def-SessionType.temporary">"temporary"</a></code></dt>
                         <dd>Let <var title="true">requested session type</var> be a temporary non-persisted session.<p></p>
-                          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_14"><span>Note</span></div><p class="">The returned license must not be persistable.</p></div>
+                          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_15"><span>Note</span></div><p class="">The returned license must not be persistable.</p></div>
                         </dd>
                         <dt>If <var title="true">session type</var> is <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code></dt>
                         <dd>Let <var title="true">requested session type</var> be a persistable session.<p>
-                          </p><div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_15"><span>Note</span></div><p class="">The returned license may be persistable.)</p></div>
+                          </p><div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_16"><span>Note</span></div><p class="">The returned license may be persistable.)</p></div>
                         </dd>
                       </dl>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_16"><span>Note</span></div><p class="">The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_17"><span>Note</span></div><p class="">The license server determines the type of license that is returned, either persistent or non-persistent. A persistent license cannot be added to a non-persistable session.</p></div>
                     </li>
       
                     <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session Id</a> string.</p>
                       <p>If <var title="true">session type</var> is <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code>, the ID <em class="rfc2119" title="MUST">MUST</em> be unique within the the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li><p>Let <var title="true">message</var> be a request for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_17"><span>Note</span></div><p class="">For example, a license request.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_18"><span>Note</span></div><p class="">For example, a license request.</p></div>
                       <p>The <var title="true">cdm</var> <em class="rfc2119" title="MUST NOT">MUST NOT</em> use any stream-specific data, including <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, not provided via the <var>init data</var>.</p>
                       <p>The <var title="true">cdm</var> <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> store session data, including the session ID, at this point. See <a href="#session-storage">Session Storage and Persistence</a>.</p>
                     </li>
@@ -1150,7 +1162,7 @@ table.simple {
             <li><p>Run the following steps asynchronously:</p>
               <ol>
                 <li><p>Let <var>sanitized session ID</var> be a validated and/or sanitized version of <var title="true">sessionId</var>.</p>
-                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_18"><span>Note</span></div><p class="">The user agent should thoroughly validate the sessionId value before passing it to the CDM.
+                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_19"><span>Note</span></div><p class="">The user agent should thoroughly validate the sessionId value before passing it to the CDM.
                     At a minimum, this should include checking that the length and value (e.g. alphanumeric) are reasonable.
                   </p></div>
                 </li>
@@ -1166,7 +1178,7 @@ table.simple {
                     <li><p>Let <var title="true">session data</var> be the data stored for the <var>sanitized session ID</var> in the <var title="true">origin</var>.
                     This <em class="rfc2119" title="MUST NOT">MUST NOT</em> include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code> session in any <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> representing the <var title="true">session data</var>, reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">QuotaExceededError</a></code>.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_19"><span>Note</span></div><p class="">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_20"><span>Note</span></div><p class="">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p></div>
                     </li>
                     <li><p>Load the <var title="true">session data</var>.</p></li>
                     <li><p>If the <var title="true">session data</var> indicates an expiration time for the session, let <var title="true">expiration time</var> be the expiration time in milliseconds since 01 January 1970 UTC.</p></li>
@@ -1208,7 +1220,7 @@ table.simple {
                       <p>Process the remove request.</p>
                       <p>This <em class="rfc2119" title="MAY">MAY</em> involve exchanging message(s) with the application.</p>
                       <p>Unless this step fails, the CDM <em class="rfc2119" title="MUST">MUST</em> have cleared all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code>, before proceeding to the next step.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_20"><span>Note</span></div><p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.)</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_21"><span>Note</span></div><p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.)</p></div>
                     </li>
                   </ol>
                 </li>
@@ -1224,7 +1236,7 @@ table.simple {
             <li><p>Return <var>promise</var>.</p></li>
           </ol></dd><dt id="widl-MediaKeySession-update-Promise-void--ArrayBuffer-ArrayBufferView-response"><code>update</code></dt><dd>
           <p>Provides messages, including licenses, to the CDM.</p>
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_21"><span>Note</span></div><p class="">The contents of <var title="true">response</var> are <a href="#key-system">Key System</a>-specific.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_22"><span>Note</span></div><p class="">The contents of <var title="true">response</var> are <a href="#key-system">Key System</a>-specific.</p></div>
       
           
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">response</td><td class="prmType"><code>(ArrayBuffer or ArrayBufferView)</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
@@ -1235,7 +1247,7 @@ table.simple {
             <li><p>Run the following steps asynchronously:</p>
               <ol>
                 <li><p>Let <var>sanitized response</var> be a validated and/or sanitized version of <var>response copy</var>.</p>
-                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_22"><span>Note</span></div><p class="">The user agent should thoroughly validate the response before passing it to the CDM.
+                  <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_23"><span>Note</span></div><p class="">The user agent should thoroughly validate the response before passing it to the CDM.
                     This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version.
                     The user agent should check that the length and values of fields are reasonable.
                     Unknown fields should be rejected or removed.
@@ -1260,10 +1272,10 @@ table.simple {
                         <dd>Reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">InvalidAccessError</a></code>.</dd>
                       </dl>
                       <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_23"><span>Note</span></div><p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p></div>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_24"><span>Note</span></div><p class="">The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_24"><span>Note</span></div><p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var title="true">cdm</var> will likely cache the key and related data indexed by key ID.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_25"><span>Note</span></div><p class="">The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p></div>
                       <p>Keys from different sessions <em class="rfc2119" title="SHOULD">SHOULD</em> be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_25"><span>Note</span></div><p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDMs support a standard and reasonably high minimum number of keys per <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> objects.
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_26"><span>Note</span></div><p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDM implementations support a standard and reasonably high minimum number of keys per <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> objects.
                       This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                       </p></div>
                     </li> 
@@ -1326,7 +1338,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
       <section id="mediakeysession-events" class="informative" typeof="bibo:Chapter" resource="#mediakeysession-events" rel="bibo:Chapter">
         <h3 role="heading" id="h3_mediakeysession-events"><span class="secno">5.4 </span>Event Summary</h3><p><em>This section is non-normative.</em></p>
     
-        <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_26"><span>Note</span></div><p class="">In some implementations, <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.</p></div>
+        <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_27"><span>Note</span></div><p class="">In some implementations, <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> objects may not fire any events until the <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object is associated with a media element using <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.</p></div>
     
         <table class="old-table">
           <thead>
@@ -1385,7 +1397,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
             <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-keyschange">keyschange</a></code> at the <var title="true">session</var>.</p></li>
             <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the <a href="#algorithms-resume-playback">attempt to resume playback if necessary algorithm</a> on each of the media element(s) whose <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute is the MediaKeys object that created the <var title="true">session</var>.</p>
               <p>The user agent <em class="rfc2119" title="MAY">MAY</em> choose to skip this step if it knows resuming will fail.</p>
-              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_27"><span>Note</span></div><p class="">For example, the user agent may skip this step if no additional keys became available.</p></div>
+              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_28"><span>Note</span></div><p class="">For example, the user agent may skip this step if no additional keys became available.</p></div>
             </li>
           </ol>
         </section>
@@ -1408,7 +1420,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
         <section id="algorithms-session-close" typeof="bibo:Chapter" resource="#algorithms-session-close" rel="bibo:Chapter">
           <h4 role="heading" id="h4_algorithms-session-close"><span class="secno">5.5.4 </span>Session Close</h4>
           <p>The Session Close algorithm is run when the CDM closes the session associated with a <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> object.</p>
-          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_28"><span>Note</span></div><p class="">The CDM may close a session at any point, such as in response to a <code><a href="#widl-MediaKeySession-close-Promise-void">close()</a></code> call, when the session is no longer needed, or when system resources are lost.
+          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_29"><span>Note</span></div><p class="">The CDM may close a session at any point, such as in response to a <code><a href="#widl-MediaKeySession-close-Promise-void">close()</a></code> call, when the session is no longer needed, or when system resources are lost.
           Keys in other sessions <em class="rfc2119" title="SHOULD">SHOULD</em> be unaffected, even if they have overlapping key IDs.
           </p></div>
           <p>The following steps are run:</p>
@@ -1495,7 +1507,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
         <p>An application that creates a <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code> session <em class="rfc2119" title="SHOULD">SHOULD</em> later remove the stored data using <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code>.
           The CDM <em class="rfc2119" title="MAY">MAY</em> also remove sessions as appropriate, but applications <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> rely on this.
         </p>
-        <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_29"><span>Note</span></div><p class="">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p></div>
+        <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_30"><span>Note</span></div><p class="">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p></div>
       </section>
     </section>
 
@@ -1535,8 +1547,8 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
       
           
           
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_32"><span>Note</span></div><p class="">Support for clearing or replacing the associated <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p></div>
-          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_33"><span>Note</span></div><p class="">As a best practice, applications should create a MediaKeys object and call <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-src">src</a></code> attribute). This avoids potential delays in some implementations.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_33"><span>Note</span></div><p class="">Support for clearing or replacing the associated <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p></div>
+          <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_34"><span>Note</span></div><p class="">As a best practice, applications should create a MediaKeys object and call <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> before providing <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> (for example, setting the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#attr-media-src">src</a></code> attribute). This avoids potential delays in some implementations.</p></div>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mediaKeys</td><td class="prmType"><code><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a></code></td><td class="prmNullTrue"><span role="img" aria-label="True">✔</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
             <li><p>If <var>mediaKeys</var> and the <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute are the same object, return a resolved promise.</p></li>
@@ -1550,7 +1562,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
                   <ol>
                     <li><p>If the user agent or CDM do not support removing the association, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p></li>
                     <li><p>If the association cannot currently be removed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
-                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_30"><span>Note</span></div><p class="">For example, some implementations may not allow removal during playback.</p></div>
+                      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_31"><span>Note</span></div><p class="">For example, some implementations may not allow removal during playback.</p></div>
                     </li>
                     <li><p>Stop using the CDM instance represented by the <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
                     <li><p>If the preceding step failed, let this object's <var title="true">attaching media keys</var> value be false and reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
@@ -1568,7 +1580,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
                     </li>
                     <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the <a href="#algorithms-resume-playback">attempt to resume playback if necessary algorithm</a> on the media element.</p>
                       <p>The user agent <em class="rfc2119" title="MAY">MAY</em> choose to skip this step if it knows resuming will fail.</p><p>
-                      </p><div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_31"><span>Note</span></div><p class="">For example, the user agent may skip this step if <var>mediaKeys</var> has no sessions.</p></div>
+                      </p><div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_32"><span>Note</span></div><p class="">For example, the user agent may skip this step if <var>mediaKeys</var> has no sessions.</p></div>
                     </li>
                   </ol>
                 </li>
@@ -1628,7 +1640,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
               <td><a href="#idl-def-MediaEncryptedEvent" class="idlType"><code>MediaEncryptedEvent</code></a></td>
               <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</td>
               <td><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
-              <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_34"><span>Note</span></div><p class="">It is possible that the element is playing or has played.</p></div>
+              <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_35"><span>Note</span></div><p class="">It is possible that the element is playing or has played.</p></div>
               </td>
             </tr>
           </tbody>
@@ -1651,7 +1663,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                 <li><p>Let <var title="">initDataType</var> be the string representing the <a href="#initialization-data-type">Initialization Data Type</a> of the Initialization Data.</p></li>
                 <li><p>Let <var title="">initData</var> be the Initialization Data.</p></li>
               </ol>
-              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_35"><span>Note</span></div><p class="">While the media element may allow loading of "Optionally-blockable Content" [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>], the user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose Initialization Data from such media data to the application.</p></div>
+              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_36"><span>Note</span></div><p class="">While the media element may allow loading of "Optionally-blockable Content" [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>], the user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose Initialization Data from such media data to the application.</p></div>
             </li>
             <li>
               <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-encrypted">encrypted</a></code> at the media element.</p>
@@ -1660,8 +1672,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                 <code><a href="#widl-MediaEncryptedEventInit-initDataType">initDataType</a></code> = <var title="">initDataType</var><br><br>
                 <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> = <var title="">initData</var>
               </li></ul>
-              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_36"><span>Note</span></div><p class=""><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p></div>
-              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_37"><span>Note</span></div><p class="">The <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> attribute will be null if the media data is <em>not</em> <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> or is <a href="#mixed-content">mixed content</a>.
+              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_37"><span>Note</span></div><p class=""><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p></div>
+              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_38"><span>Note</span></div><p class="">The <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> attribute will be null if the media data is <em>not</em> <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> or is <a href="#mixed-content">mixed content</a>.
                 Applications may retrieve the Initialization Data from an alternate source.
               </p></div>
             </li>
@@ -1680,10 +1692,10 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                 <li><p>Let <var title="true">media keys</var> be the <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object referenced by that atribute.</p></li>
                 <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">initialization</a> of the <var title="true">media keys</var>.</p></li>
                 <li><p>If there is at least one <code><a href="#idl-def-MediaKeySession">MediaKeySession</a></code> created by the <var title="true">media keys</var> on which the <a href="#algorithms-session-close">session close algorithm</a> has not been run, run the following steps:</p>
-                  <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_38"><span>Note</span></div><p class="">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p></div>
+                  <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_39"><span>Note</span></div><p class="">This check ensures the <var title="true">cdm</var> has finished loading and is a prequisite for a matching key being available.</p></div>
                   <ol>
                     <li><p>Let the <var title="true">block key ID</var> be the key ID of the current block.</p>
-                      <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_39"><span>Note</span></div><p class="">The key ID is generally specified by the container.</p></div>
+                      <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_40"><span>Note</span></div><p class="">The key ID is generally specified by the container.</p></div>
                     </li>
                     <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
                       <ol>
@@ -1694,7 +1706,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                           <dd>Run the following steps:
                             <ol>
                               <li><p>Let <var title="">block key</var> be the matching key.</p>
-                                <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_40"><span>Note</span></div><p class="">If multiple sessions contain a <em>usable</em> key for the <var title="">block key ID</var>, which key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
+                                <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_41"><span>Note</span></div><p class="">If multiple sessions contain a <em>usable</em> key for the <var title="">block key ID</var>, which key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
                               </li>
                               <li><p>Use the <var title="true">cdm</var> to decrypt the block using <var title="">block key</var>.</p></li>
                               <li><p>Follow the steps for the first matching condition from the following list:</p>
@@ -1706,12 +1718,12 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                                     <ol>
                                       <li><p>If the <code><a href="#widl-HTMLMediaElement-waitingFor">waitingFor</a></code> attribute on the media element is <code><a href="#idl-def-MediaWaitingFor.key">"key"</a></code>, set the <code><a href="#widl-HTMLMediaElement-waitingFor">waitingFor</a></code> attribute on the media element to <code><a href="#idl-def-MediaWaitingFor.none">"none"</a></code>.</p></li>
                                       <li><p>Abort these steps and process the decrypted block as normal.</p>
-                                        <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_41"><span>Note</span></div><p class="">In other words, decode the block.</p></div>
+                                        <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_42"><span>Note</span></div><p class="">In other words, decode the block.</p></div>
                                       </li>
                                     </ol>
                                   </dd>
                                 </dl>
-                                <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_42"><span>Note</span></div><p class="">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p></div>
+                                <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_43"><span>Note</span></div><p class="">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p></div>
                               </li>
                             </ol>
                           </dd>
@@ -1720,7 +1732,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                             <div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_7"><span>Issue 7</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - It is TBD whether anything should happen in this case.</p></div>
                           </dd>
                           </dl>
-                          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_43"><span>Note</span></div><p class="">Otherwise, there is no key for the <var title="true">block key ID</var> in any session so continue.</p></div>
+                          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_44"><span>Note</span></div><p class="">Otherwise, there is no key for the <var title="true">block key ID</var> in any session so continue.</p></div>
                         </li>
                       </ol>
                     </li>
@@ -1730,7 +1742,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             </li>
             <li>
               <p>Run the following steps:</p>
-              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_44"><span>Note</span></div><p class="">These steps are reached when there is no usable key for the block.</p></div>
+              <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_45"><span>Note</span></div><p class="">These steps are reached when there is no usable key for the block.</p></div>
               <ol>
                 <li><p>Run the <a href="#algorithms-queue-waiting">queue a "waiting" event algorithm</a> on the media element.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
@@ -1738,7 +1750,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             </li>
           </ol>
       
-          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_45"><span>Note</span></div><div class="">
+          <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_46"><span>Note</span></div><div class="">
             <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
             <ol>
               <li><p>Let <var title="">encrypted</var> be false.</p></li>
@@ -1819,7 +1831,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     <section id="common-key-systems" typeof="bibo:Chapter" resource="#common-key-systems" rel="bibo:Chapter">
       <!--OddPage--><h2 role="heading" id="h2_common-key-systems"><span class="secno">7. </span>Common Key Systems</h2>
       <p>All user agents <em class="rfc2119" title="MUST">MUST</em> support the common key systems described in this section.</p><p>
-      </p><div class="note"><div class="note-title" aria-level="1" role="heading" id="h_note_46"><span>Note</span></div><p class="">This ensures that there is a common baseline level of protection that is guaranteed to be supported in all user agents, including those that are entirely open source.
+      </p><div class="note"><div class="note-title" aria-level="1" role="heading" id="h_note_47"><span>Note</span></div><p class="">This ensures that there is a common baseline level of protection that is guaranteed to be supported in all user agents, including those that are entirely open source.
         Thus, content providers that need only basic protection can build simple applications that will work on all platforms without needing to work with any content protection providers.
       </p></div>
   
