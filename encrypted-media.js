@@ -168,6 +168,7 @@
     'option-initDataType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-initDataType', link_text: 'initDataType',  },
     'option-videoType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoType', link_text: 'videoType',  },
     'option-stateful': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-stateful', link_text: 'stateful',  },
+    'option-uniqueidentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-uniqueidentifier', link_text: 'uniqueidentifier',  },
     
     'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
