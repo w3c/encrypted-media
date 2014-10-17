@@ -115,19 +115,29 @@
     <section id="init-data">
       <h2>Initialization Data and Events</h2>
       <p>Common Encryption files may contain one or more protection system specific header ('pssh') boxes, each for a unique SystemID at each location where a 'pssh' box is necessary.</p>
-      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.  The CDM must be able to examine multiple 'pssh' boxes in the Initialization Data to find a 'pssh' box that it supports.</p>
-      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes must be provided together if and only if they appear directly next to each other in the file.</p>
+      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.
+        An implementation (the user agent and/or CDM) MUST be able to examine multiple 'pssh' boxes in the Initialization Data to find a 'pssh' box that it supports.
+        At least one of the concatenated 'pssh' boxes SHOULD contain the SystemID defined in the <a href="#common-system">Common SystemID and PSSH Box Format</a> section.
+      </p>
+      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes MUST be provided together if and only if they appear directly next to each other in the file.</p>
       <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
 
-      <p class="note">'pssh' boxes stored in movie fragment boxes are intended to store keys referenced by KID in a sample group description contained in that movie fragment, where the KID in the sample group description overrides the default_KID specified for the track in the track encryption box ('tenc').  Each 'moof'/'pssh' box must protect the contained keys with a SystemID specific method.  Sample groups and 'pssh' key storage in movie fragments enable keys to be changed and accessed without interruption during playback of a track.</p>
       <p class="note">ISO Common Encryption 2nd Edition [[!CENC-2ND]] also specifies storage of a 'pssh' box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 'pssh')&gt;.  For instance, DASH manifests may provide 'pssh' boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These 'pssh' boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
     </section>
     
     <section id="common-system">
       <h2>Common SystemID and PSSH Box Format</h2>
       <p>This section defines a common open SystemID and PSSH box format for use with EME.
-        Key System implementations supporting ISO Common Encryption should support this SystemID and format, though they may prefer another SystemID when present in the Initialization Data.
-        It is also recommended that media resources contain appropriate PSSH box(es) for this SystemID so that they may be used by any Key System implementation that supports it.</p>
+        Key System implementations supporting ISO Common Encryption MUST support this SystemID and format.
+        Media resources for use with EME SHOULD contain appropriate PSSH box(es) for this SystemID.
+      <p class="note">
+        Use of this SystemID is RECOMMENDED for applications, packagers, and implementors.
+        Use of other SystemIDs with the EME APIs is discouraged.
+        'pssh' box(es) for this SystemID SHOULD be included in all new or repackaged content so that the content can be used with any compliant Key System.
+        For existing content, applications may alternatively obtain a 'pssh' box containing this SystemID or another Initialization Data Type (e.g. <a href="keyids-format.html">keyids</a>) from another source. 
+      </p>
+      <p class="note">Implementations MAY support other SystemIDs for backwards compatibility with existing streams.</p>
+
       <p><a href="encrypted-media.html#clear-key">Clear Key</a> uses this SystemID for ISO Common Encryption content.
         When <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
       </p>
