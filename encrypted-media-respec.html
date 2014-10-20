@@ -146,14 +146,16 @@
             <p>All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
               The CDM MUST NOT make direct out-of band network requests.
               All messages and communication other than those covered in the following paragraph MUST be passed through the application via the APIs defined in this specification.
-            </p> 
-            <p>Messages related to "one-time" application-independent initialization that are sent to a pre-defined URL MAY be handled by the user agent and not passed to the application via the APIs.
-              The related operations MUST be performed by the user agent, and such messages MUST still be transmitted via the user agent's network stack.
+              Specifically, all communication that contains application-, origin-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
+              This includes all license exchange messages.              
             </p>
-            <p class="note">For example, an initialization or provisioning process for a client device that involves communicating with a server hosted by the user agent or CDM vendor could be performed by the user agent without involving the application.
-              The same applies to reinitialization or reprovisioning. Application- or content provider-specific initialization and other operations must be passed be passed through the application via the APIs.
+            <p>Application- and origin-independent messages related to per-client initialization (or reinitialization) that are sent to a fixed non-application-dependent URL MUST be handled by the user agent and MUST NOT be passed to the application via the APIs.
+              The related message exchange and operations MUST be performed by the user agent via the user agent's network stack.
             </p>
-            
+            <p class="note">For example, an initialization, provisioning, or individualization process for a client device that involves communicating with a server hosted by the user agent or CDM vendor and does not contain application- or origin-specific information MUST be performed by the user agent without involving the application.
+              The same applies to reinitialization, reprovisioning, or reindividualization.
+            </p>
+            <p>For implementations that support per-origin initialization, such messages MUST be passed to the application via the APIs.</p>
           </dd>
     
           <dt id="key-system">Key System</dt>
