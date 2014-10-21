@@ -450,11 +450,11 @@
         <dd>
           Identifies the <a def-id="keysystem"></a> being used.
         </dd>
-  
+
         <dt>Promise&lt;MediaKeys&gt; createMediaKeys()</dt>
         <dd>
           <p>Creates a new <a def-id="mediakeys"></a> object for <var title="true">keySystem</var>.</p>
-      
+
           <ol class="method-algorithm">
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
@@ -513,10 +513,17 @@
       </dl>
   
       <dl title="interface MediaKeys" class='idl'>
-        <dt>MediaKeySession createSession(optional SessionType sessionType = "temporary")</dt>
+        <dt>MediaKeySession createSession()</dt>
         <dd>
           <p>Returns a new <a def-id="mediakeysession"></a> object.</p>
-      
+
+          <dl class='parameters'>
+            <dt>optional SessionType sessionType = "temporary"</dt>
+            <dd>
+              The type of session to create. The session type affects the behavior of the returned object.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <!-- TODO: Find a better way to reference MediaKeySystemAccess attributes, including the outcome vs. what was specified. -->
             <li><p>If this object was created by a <a>MediaKeySystemAccess</a> object that was created with a <a def-id="option-stateful"></a> value of <a def-id="requirement-disallowed"></a> and <var title="true">sessionType</var> is not <a def-id="temporary-session"></a>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
@@ -535,13 +542,23 @@
             <li><p>Return <var title="true">session</var>.</p></li>
           </ol>
         </dd>
-  
-        <dt>Promise&lt;void&gt; setServerCertificate(BufferSource serverCertificate)</dt>
+
+        <dt>Promise&lt;void&gt; setServerCertificate()</dt>
         <dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
-          <p class="note">The contents of <var title="true">serverCertificate</var> are <a def-id="keysystem"></a>-specific.</p>
-          <p class="note">Key systems that use such certificates should also support requesting the certificate from the server via an  additional round trip. This simplifies interoperability for applications that are not designed to provide certificates to specific key systems.</p>
-      
+          <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a>.</p>
+          <p class="note">This method allows an application to proactively provide a server certificate to implementations that support it to avod the additional round trip should the CDM request it.
+            It is intended as an optimization, and applications are not required to use it.
+          </p>
+
+          <dl class='parameters'>
+            <dt>BufferSource serverCertificate</dt>
+            <dd>
+              The server certificate.
+              The contents are <a def-id="keysystem"></a>-specific.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <li><p>If <var title="true">serverCertificate</var> is an empty array, return a promise rejected with a new <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If the <a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute does not support server certificates, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
@@ -558,7 +575,7 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-  
+
   <!-- TODO: Move or remove depending on the outcome of Bug 25923.
         <dt>static IsTypeSupportedResult isTypeSupported(DOMstring keySystem, optional DOMString initDataType, optional DOMString contentType, optional DOMString capability)</dt>
         <dd>
@@ -671,25 +688,33 @@
         <dd>
           <p>The <a def-id="session-id"></a> for this object and the associated key(s) or license(s).</p>
         </dd>
-  
+
         <dt>readonly attribute unrestricted double expiration</dt>
         <dd>
           <p>The time, in milliseconds since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <a def-id="media-data"></a>, or <code>NaN</code> if no such time exists, as determined by the CDM.</p>
         </dd>
-  
+
         <dt>readonly attribute Promise&lt;void&gt; closed</dt>
         <dd>
           <p>Signals when object becomes closed as a result of the <a def-id="session-close-algorithm"></a> being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd>
-      
-        <dt>Promise&lt;void&gt; generateRequest(DOMString initDataType, BufferSource initData)</dt>
+
+        <dt>Promise&lt;void&gt; generateRequest()</dt>
         <dd>
           <p>Generates a request based on the <var title="true">initData</var>.</p>
-          <p><var title="true">initData</var> is <a def-id="initialization-data"></a>, and
-          <var title="true">initDataType</var> is an <a def-id="initialization-data-type"></a> that indicates how to interpret <var title="true">initData</var>.
-          </p>
-      
+
+          <dl class='parameters'>
+            <dt>DOMString initDataType</dt>
+            <dd>
+              <a def-id="initialization-data"></a>
+            </dd>
+            <dt>BufferSource initData</dt>
+            <dd>
+              The <a def-id="initialization-data-type"></a> of the <var title="true">initData</var>.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
@@ -751,11 +776,18 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-  
-        <dt>Promise&lt;boolean&gt; load(DOMString sessionId)</dt>
+
+        <dt>Promise&lt;boolean&gt; load()</dt>
         <dd>
-          <p>Loads the data stored for the <var title="true">sessionId</var> into the session represented by the object.</p>
-      
+          <p>Loads the data stored for the specified session into this object.</p>
+
+          <dl class='parameters'>
+            <dt>DOMString sessionId</dt>
+            <dd>
+              The <a def-id="session-id"></a> of the session to load.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
@@ -809,12 +841,19 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-      
-        <dt>Promise&lt;void&gt; update(BufferSource response)</dt>
+
+        <dt>Promise&lt;void&gt; update()</dt>
         <dd>
           <p>Provides messages, including licenses, to the CDM.</p>
-          <p class="note">The contents of <var title="true">response</var> are <a def-id="keysystem"></a>-specific.</p>
-      
+
+          <dl class='parameters'>
+            <dt>BufferSource response</dt>
+            <dd>
+              A message to be provided to the CDM.
+              The contents are <a def-id="keysystem"></a>-specific.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If <var title="true">response</var> is an empty array, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
@@ -875,12 +914,12 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-  
+
         <dt>Promise&lt;void&gt; close()</dt>
         <dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
-      
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the <a def-id="session-close-algorithm"></a> has been run on this object, return a resolved promise.</p></li>
@@ -903,11 +942,11 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-  
+
         <dt>Promise&lt;void&gt; remove()</dt>
         <dd>
           <p>Removes stored session data associated with this object.</p>
-      
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var title="true">session type</var> is not <a def-id="persistent-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
@@ -938,12 +977,12 @@
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         </dd>
-        
+
         <dt>Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; getUsableKeyIds()</dt>
         <dd>
           <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - getUsableKeyIds() may be replaced.</p>
           <p>Gets the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>.</p>
-          
+
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -1219,27 +1258,34 @@
           The media element is not waiting for a key.
         </dd>
       </dl>
-  
+
       <dl title="partial interface HTMLMediaElement : EventTarget" class='idl'>
         <dt>readonly attribute MediaKeys? mediaKeys</dt>
         <dd>
           <p>The <a def-id="mediakeys"></a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
         </dd>
-  
+
         <dt>readonly attribute MediaWaitingFor waitingFor</dt>
         <dd>
           <p>Indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a def-id="encrypted-block-algorithm"></a>.</p>
         </dd>
-  
+
         <dt>attribute EventHandler onencrypted</dt>
         <dd>
           <p>Event handler for the <a def-id="encrypted"></a> event MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd>
-      
-        <dt>Promise&lt;void&gt; setMediaKeys(MediaKeys? mediaKeys)</dt>
+
+        <dt>Promise&lt;void&gt; setMediaKeys()</dt>
         <dd>
           <p>Provides the <a def-id="mediakeys"></a> to use when decrypting media data during playback.</p>
-      
+
+          <dl class='parameters'>
+            <dt>MediaKeys? mediaKeys</dt>
+            <dd>
+              A <a def-id="mediakeys"></a> object.
+            </dd>
+          </dl>
+
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
             <li><p>If <var>mediaKeys</var> and the <a def-id="mediaKeys-attribute"></a> attribute are the same object, return a resolved promise.</p></li>
