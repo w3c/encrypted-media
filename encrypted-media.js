@@ -241,7 +241,7 @@
 
     'MediaKeyMessageType': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType', link_text: 'MediaKeyMessageType',  },
     'MediaKeyMessageEvent': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageEvent', link_text: 'MediaKeyMessageEvent',  },
-    'message-event-type-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-type', link_text: 'type',  },
+    'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-messageType', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-message', link_text: 'message',  },
     'MediaEncryptedEvent': { func: idlref_helper, fragment: 'idl-def-MediaEncryptedEvent', link_text: 'MediaEncryptedEvent',  },
     'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initDataType', link_text: 'initDataType',  },
