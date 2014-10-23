@@ -156,7 +156,11 @@
               The same applies to reinitialization, reprovisioning, or reindividualization.
             </p>
             <p>For implementations that support per-origin initialization, such messages MUST be passed to the application via the APIs.
+              Such messages MUST NOT contain non-origin-specific per-client information, such as unique client identifiers.
               As with all other uses of the APIs, responses passed to the CDM MUST NOT contain executable code.
+            </p>
+            <p class="note">To preserve the privacy properties of per-origin initialization, applications and key system servers should not defer initialization to a non-origin-specific server.
+              See <a href="#privacy-individualization">Individualization</a>.
             </p>
           </dd>
     
@@ -1033,7 +1037,7 @@
           <dt>readonly attribute MediaKeyMessageType messageType</dt>
           <dd>
             The type of the message.
-            <p>Applications MAY ignore this attribute and MUST NOT be required to handle message types.
+            <p>Implementations MUST NOT require applications to handle message types.
               Implementations MUST support applications that do not differentiate messages and MUST NOT require that applications handle message types.
               Specifically, Key Systems MUST support passing all types of messages to a single URL.
             </p>
@@ -1832,6 +1836,20 @@
         <p>Thus, in addition to the various mitigations described above, if a browser supports a mode of operation intended to preserve user anonymity, then User Agent implementers should carefully consider whether access to Key Systems should be disabled in this mode.
           For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that are <a def-id="option-stateful"></a> or use a <a def-id="option-uniqueidentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
         </p>
+
+        <section id="privacy-individualization">
+          <h5>Individualization</h5>
+          <p>Identifiers are sometimes obtained via a process called individualization or provisioning.
+            In all cases, implementations should avoid sending per-origin information to centralized servers since this could create a central record of all origins visited by a user or device.
+          </p>
+          <p>Per-origin individualization (resulting in a per-origin identifier) can - with appropriate precautions - provide better privacy than other individualization models. 
+            To preserve the benefits of such a design and to avoid introducing other privacy concerns:
+          </p>
+          <ul>
+            <li><p>Such implementations should not use identifiers for a device or user of a device in the individualization process.</p></li>
+            <li><p>Such implementations and the applications that support them should also avoid deferring or forwarding the individualization process to a central server or other server not controlled by the application author.</p></li>
+          </ul>
+        </section>
       </section>
   
       <section id="privacy-storedinfo">
