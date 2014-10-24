@@ -314,8 +314,6 @@
               Otherwise, it is resolved with a new MediaKeySystemAccess object.
             </p>
 
-            <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26332">Bug 26332</a> - This method may be required to fail on non-secure origins.</p>
-
             <dl class='parameters'>
               <dt>DOMString keySystem</dt>
               <dd>
@@ -331,6 +329,7 @@
             <ol class="method-algorithm">
               <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+              <li><p>If the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a> is not an <a def-id="authenticated-origin"></a> [[!MIXED-CONTENT]], return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
               <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps asynchronously:</p>

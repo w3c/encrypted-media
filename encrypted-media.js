@@ -47,6 +47,10 @@
     link_helper(doc, df, 'http://www.w3.org/TR/html5/browsers.html#' + id, text);
   }
 
+  function mixedcontent_helper(doc, df, id, text) {
+    link_helper(doc, df, 'http://www.w3.org/TR/mixed-content/#' + id, text);
+  }
+
   function term_helper(doc, df, id, text) {
     link_helper(doc, df, url_helper(doc, '#' + id), text);
   }
@@ -303,6 +307,8 @@
     'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
+
+    'authenticated-origin': { func: mixedcontent_helper, fragment: 'authenticated-origin', link_text: 'authenticated origin', },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
