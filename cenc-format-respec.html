@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>ISO Common Encryption EME Stream Format and Initialization Data</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
+    <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
@@ -36,6 +37,11 @@
         href: "https://github.com/w3c/encrypted-media/"}
       ],
 
+      emeDefGroupName: "cenc-format",
+      emeUnusedGroupNameExcludeList: ["encrypted-media",
+                                      "eme-references-from-registry"
+      ],
+
       // name of the WG
       wg:           "HTML Working Group",
 
@@ -59,6 +65,14 @@
       // Empty definitions for objects declared in the document are here to
       // prevent error messages from being displayed for references to these objects.
       definitionMap: {},
+
+      preProcess: [ encryptedMediaPreProcessor ],
+
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+
+      postProcess: [ encryptedMediaPostProcessor ],
 
       localBiblio: {
           "BMFF": {
@@ -105,7 +119,7 @@
     <section id="stream-format">
       <h2>Stream Format</h2>
       <p>Under the ISO Common Encryption ('cenc') protection scheme [[!CENC-1ST]], ISO Base media File Format [[!BMFF]] content is encrypted at the sample level with AES-128 CTR encryption. This protection method enables multiple Key Systems to decrypt the same media content.</p>
-      <p>Each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
+      <p>Each key is identified by a <a def-id="key-id"></a> and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
     </section>
 
     <section id="detect-encrypt">
@@ -120,12 +134,12 @@
     <section id="init-data">
       <h2>Initialization Data and Events</h2>
       <p>Common Encryption files may contain one or more protection system specific header ('pssh') boxes, each for a unique SystemID at each location where a 'pssh' box is necessary.</p>
-      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.
+      <p><a def-id="initialization-data"></a> is always one or more concatenated 'pssh' boxes.
         An implementation (the user agent and/or CDM) MUST be able to examine multiple 'pssh' boxes in the Initialization Data to find a 'pssh' box that it supports.
         At least one of the concatenated 'pssh' boxes SHOULD contain the SystemID defined in the <a href="#common-system">Common SystemID and PSSH Box Format</a> section.
       </p>
-      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes MUST be provided together if and only if they appear directly next to each other in the file.</p>
-      <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
+      <p>Each time one or more 'pssh' boxes are encountered, the <a def-id="initdata-encountered-algorithm"></a> shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes MUST be provided together if and only if they appear directly next to each other in the file.</p>
+      <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <a def-id="createSession"></a> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
 
       <p class="note">ISO Common Encryption 2nd Edition [[!CENC-2ND]] also specifies storage of a 'pssh' box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 'pssh')&gt;.  For instance, DASH manifests may provide 'pssh' boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These 'pssh' boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p>
     </section>
@@ -143,8 +157,8 @@
       </p>
       <p class="note">Implementations MAY support other SystemIDs for backwards compatibility with existing streams.</p>
 
-      <p><a href="encrypted-media.html#clear-key">Clear Key</a> uses this SystemID for ISO Common Encryption content.
-        When <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
+      <p><a def-id="clear-key"></a> uses this SystemID for ISO Common Encryption content.
+        When <a def-id="createSession"></a> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
       </p>
       <section id="common-system-definition">
         <h3>Definition</h3>
@@ -154,7 +168,7 @@
           <dt>version</dt>
           <dd>1</dd>
           <dt>KID and KID_count</dt>
-          <dd>The key ID(s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
+          <dd>The <a def-id="key-id"></a>(s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
           <dt>Data and DataSize</dt>
           <dd>Reserved for future use. DataSize SHALL be set to 0 when constructing this box. When processing, if dataSize is non-zero the Data field SHALL be ignored.</dd>
         </dl>

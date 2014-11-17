@@ -152,11 +152,10 @@
   }
 
   var emeDefinitions = {
-//    'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-
     'cdm': { func: term_helper, fragment: 'cdm', link_text: 'CDM'  },
     'keysystem': { func: term_helper, fragment: 'key-system', link_text: 'Key System'  },
     'keysystems': { func: term_helper, fragment: 'key-system', link_text: 'Key Systems'  },
+    'key-id': { func: term_helper, fragment: 'decryption-key-id', link_text: 'key ID'  },
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
     'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
@@ -190,7 +189,6 @@
 
     // TODO: Replace uses with simple <a>.
     'mediakeys': { func: idlref_helper, fragment: 'idl-def-MediaKeys', link_text: 'MediaKeys',  },
-//    'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession()',  },
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
@@ -313,6 +311,15 @@
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
 
+  // These definitions referring to locations in the main EME spec are only referenced from the registry.
+  var emeRegistryReferencesDefinitions = {
+    'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
+    'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
+    'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession()',  },
+    'initdata-encountered-algorithm': { func: term_helper, fragment: 'algorithms-initdata-encountered', link_text: 'Initialization Data encountered algorithm',  },
+    'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
+  };
+
   var definitionInfo = {};
   var groupBaseURLs = {};
   var helperTypes = {
@@ -337,11 +344,11 @@
   }
 
   function encryptedMediaPreProcessor() {
+    var original_EME_spec_url = EME_spec_url; // The loop may change multiple groupBaseURLs.
     for (var x in groupBaseURLs) {
-      if (groupBaseURLs[x] == EME_spec_url && window.respecConfig.specStatus == "ED") {
+      if (groupBaseURLs[x] == original_EME_spec_url && window.respecConfig.specStatus == "ED") {
 	  EME_spec_url = "encrypted-media.html";
 	  groupBaseURLs[x] = EME_spec_url;
-	  break;
       }
     }
 
@@ -469,6 +476,7 @@
   }
 
   encryptedMediaAddDefinitionInfo("encrypted-media", EME_spec_url, emeDefinitions);
+  encryptedMediaAddDefinitionInfo("eme-references-from-registry", EME_spec_url, emeRegistryReferencesDefinitions);
 
   window.encryptedMediaAddDefinitionInfo = encryptedMediaAddDefinitionInfo;
   window.encryptedMediaPreProcessor = encryptedMediaPreProcessor;

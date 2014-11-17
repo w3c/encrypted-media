@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>WebM EME Stream Format and Initialization Data</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
+    <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
@@ -34,6 +35,11 @@
         href: "https://github.com/w3c/encrypted-media/"}
       ],
 
+      emeDefGroupName: "webm-format",
+      emeUnusedGroupNameExcludeList: ["encrypted-media",
+                                      "eme-references-from-registry"
+      ],
+
       // name of the WG
       wg:           "HTML Working Group",
 
@@ -57,6 +63,14 @@
       // Empty definitions for objects declared in the document are here to
       // prevent error messages from being displayed for references to these objects.
       definitionMap: {},
+
+      preProcess: [ encryptedMediaPreProcessor ],
+
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+
+      postProcess: [ encryptedMediaPostProcessor ],
       };
     </script>
     <!-- script to register bugs -->
@@ -90,13 +104,13 @@
     <section id="detect-encrypt">
       <h2>Detecting Encryption</h2>
       <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.
-      <p><a href="encrypted-media.html#algorithms-encrypted-block">Encrypted blocks</a> are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
+      <p>For the purposes of the <a def-id="encrypted-block-algorithm"></a>, encrypted blocks are those marked encrypted by the <a href="http://wiki.webmproject.org/encryption/webm-encryption-rfc#TOC-4.6-Signal-Byte-Format">Signal Byte.</a></p>
     </section>
   
     <section id="init-data">
       <h2>Initialization Data and Events</h2>
-      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always a single key ID, as defined by the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element of the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.</p>
-      <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element is encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "webm" and <var title="">initData</var> = the value in that element.</p>
+      <p><a def-id="initialization-data"></a> is always a single <a def-id="key-id"></a>, as defined by the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element of the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.</p>
+      <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element is encountered, the <a def-id="initdata-encountered-algorithm"></a> shall be invoked with <var title="">initDataType</var> = "webm" and <var title="">initData</var> = the value in that element.</p>
     </section>
   </body>
 </html>
