@@ -5,6 +5,7 @@
     <title>ISO Common Encryption EME Stream Format and Initialization Data</title>
     
     
+    
     <!-- script to register bugs -->
     <script src="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/assets/scripts/bug-assist.js"></script>
     <meta name="bug.product" content="HTML WG">
@@ -208,7 +209,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption EME Stream Format and Initialization Data</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-14T21:13:36.000Z" id="w3c-editor-s-draft-14-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-14">14 November 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-17T22:46:12.000Z" id="w3c-editor-s-draft-17-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-17">17 November 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -365,7 +366,7 @@ table.simple {
     <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" rel="bibo:Chapter">
       <!--OddPage--><h2 role="heading" id="h2_stream-format"><span class="secno">1. </span>Stream Format</h2>
       <p>Under the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC-1ST">CENC-1ST</a></cite>], ISO Base media File Format [<cite><a class="bibref" href="#bib-BMFF">BMFF</a></cite>] content is encrypted at the sample level with AES-128 CTR encryption. This protection method enables multiple Key Systems to decrypt the same media content.</p>
-      <p>Each key is identified by a Key ID and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
+      <p>Each key is identified by a <a href="index.html#decryption-key-id">key ID</a> and each encrypted sample is associated with the Key ID of the key needed to decrypt it. This association is signaled either through the specification of a default Key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a Key ID. Common encryption files may contain a mixture of encrypted and unencrypted samples.</p>
     </section>
 
     <section id="detect-encrypt" typeof="bibo:Chapter" resource="#detect-encrypt" rel="bibo:Chapter">
@@ -380,12 +381,12 @@ table.simple {
     <section id="init-data" typeof="bibo:Chapter" resource="#init-data" rel="bibo:Chapter">
       <!--OddPage--><h2 role="heading" id="h2_init-data"><span class="secno">3. </span>Initialization Data and Events</h2>
       <p>Common Encryption files may contain one or more protection system specific header ('pssh') boxes, each for a unique SystemID at each location where a 'pssh' box is necessary.</p>
-      <p><a href="encrypted-media.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.
+      <p><a href="index.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes.
         An implementation (the user agent and/or CDM) <em class="rfc2119" title="MUST">MUST</em> be able to examine multiple 'pssh' boxes in the Initialization Data to find a 'pssh' box that it supports.
         At least one of the concatenated 'pssh' boxes <em class="rfc2119" title="SHOULD">SHOULD</em> contain the SystemID defined in the <a href="#common-system">Common SystemID and PSSH Box Format</a> section.
       </p>
-      <p>Each time one or more 'pssh' boxes are encountered, the <a href="encrypted-media.html#algorithms-initdata-encountered">Initialization Data Encountered</a> algorithm shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes <em class="rfc2119" title="MUST">MUST</em> be provided together if and only if they appear directly next to each other in the file.</p>
-      <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
+      <p>Each time one or more 'pssh' boxes are encountered, the <a href="index.html#algorithms-initdata-encountered">Initialization Data encountered algorithm</a> shall be invoked with <var title="">initDataType</var> = "cenc" and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes <em class="rfc2119" title="MUST">MUST</em> be provided together if and only if they appear directly next to each other in the file.</p>
+      <p>If a supported 'pssh' box (based on SystemID) is not found while processing the <var>initData</var> in the <code><a href="index.html#widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType">createSession()</a></code> algorithm, follow the algorithm step for "<var>init data</var> is not supported by the <var>cdm</var>."</p>
 
       <div class="note"><div class="note-title" aria-level="1" role="heading" id="h_note_1"><span>Note</span></div><p class="">ISO Common Encryption 2nd Edition [<cite><a class="bibref" href="#bib-CENC-2ND">CENC-2ND</a></cite>] also specifies storage of a 'pssh' box base64 encoded in an XML element of the form &lt;cenc:pssh (base64 'pssh')&gt;.  For instance, DASH manifests may provide 'pssh' boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.  These 'pssh' boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.</p></div>
     </section>
@@ -403,8 +404,8 @@ table.simple {
       </p></div>
       <div class="note"><div class="note-title" aria-level="1" role="heading" id="h_note_3"><span>Note</span></div><p class="">Implementations <em class="rfc2119" title="MAY">MAY</em> support other SystemIDs for backwards compatibility with existing streams.</p></div>
 
-      <p><a href="encrypted-media.html#clear-key">Clear Key</a> uses this SystemID for ISO Common Encryption content.
-        When <code><a href="encrypted-media.html#dom-createsession">createSession()</a></code> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
+      <p><a href="index.html#clear-key">Clear Key</a> uses this SystemID for ISO Common Encryption content.
+        When <code><a href="index.html#widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType">createSession()</a></code> is called with <var>initDataType</var> "cenc", the Clear Key CDM will use the PSSH box with this SystemID to generate a license request.
       </p>
       <section id="common-system-definition" typeof="bibo:Chapter" resource="#common-system-definition" rel="bibo:Chapter">
         <h3 role="heading" id="h3_common-system-definition"><span class="secno">4.1 </span>Definition</h3>
@@ -414,7 +415,7 @@ table.simple {
           <dt>version</dt>
           <dd>1</dd>
           <dt>KID and KID_count</dt>
-          <dd>The key ID(s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
+          <dd>The <a href="index.html#decryption-key-id">key ID</a>(s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
           <dt>Data and DataSize</dt>
           <dd>Reserved for future use. DataSize <em class="rfc2119" title="SHALL">SHALL</em> be set to 0 when constructing this box. When processing, if dataSize is non-zero the Data field <em class="rfc2119" title="SHALL">SHALL</em> be ignored.</dd>
         </dl>

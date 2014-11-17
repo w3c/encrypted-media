@@ -347,7 +347,7 @@
     var original_EME_spec_url = EME_spec_url; // The loop may change multiple groupBaseURLs.
     for (var x in groupBaseURLs) {
       if (groupBaseURLs[x] == original_EME_spec_url && window.respecConfig.specStatus == "ED") {
-	  EME_spec_url = "encrypted-media.html";
+	  EME_spec_url = "index.html";
 	  groupBaseURLs[x] = EME_spec_url;
       }
     }
