@@ -70,7 +70,7 @@
   function code_dom_helper(doc, df, id, text) {
     df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: DOM_spec_url + "#" + id}).text(text))[0]);
   }
-  
+
   function webidl_helper(doc, df, id, text) {
     link_helper(doc, df, IDL_spec_url + '#' + id, text);
   }
@@ -78,7 +78,6 @@
   function code_webidl_helper(doc, df, id, text) {
     df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: IDL_spec_url + "#" + id}).text(text))[0]);
   }
-  
   function domexception_helper(doc, df, id) {
     code_webidl_helper(doc, df, 'dfn-DOMException', "DOMException");
   }
@@ -101,7 +100,6 @@
     df.appendChild(doc.createTextNode('the appropriate '));
     term_helper(doc, df, 'error-names', 'error name');
   }
-  
   function webmref_helper(doc, df, id, text) {
     link_helper(doc, df, 'http://www.webmproject.org/code/specs/container/#' + id, text);
   }
@@ -142,7 +140,7 @@
     var str = "";
     for (var i = 0; i < contributors.length - 1; ++i) {
       if (i > 0)
-	str += ", ";
+        str += ", ";
       str += contributors[i];
     }
     str += ", and ";
@@ -162,7 +160,6 @@
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
-    
 //    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
@@ -172,7 +169,6 @@
     'option-videoType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoType', link_text: 'videoType',  },
     'option-stateful': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-stateful', link_text: 'stateful',  },
     'option-uniqueidentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-uniqueidentifier', link_text: 'uniqueidentifier',  },
-    
     'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
@@ -257,7 +253,6 @@
 
     'interface-textdecoder': { func: encodingapi_helper, fragment: 'interface-textdecoder', link_text: 'TextDecoder interface',  },
     'interface-textencoder': { func: encodingapi_helper, fragment: 'interface-textencoder', link_text: 'TextEncoder interface',  },
-    
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
     'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
@@ -330,16 +325,16 @@
   function encryptedMediaAddDefinitionInfo(groupName, groupBaseURL, definitions) {
       groupBaseURLs[groupName] = groupBaseURL;
       for (var def_id in definitions) {
-	  if (definitionInfo[def_id]) {
-	      console.log("Overriding previous definition of def-id '" + def_id + "'.");
-	  }
+          if (definitionInfo[def_id]) {
+              console.log("Overriding previous definition of def-id '" + def_id + "'.");
+          }
           var info = definitions[def_id];
           info.groupName = groupName;
           if (!info.func) {
-	      var helper_type = info.helper_type || "link";
+              var helper_type = info.helper_type || "link";
               info.func = helperTypes[helper_type];
-	  }
-	  definitionInfo[def_id] = info;
+          }
+          definitionInfo[def_id] = info;
       }
   }
 
@@ -347,8 +342,8 @@
     var original_EME_spec_url = EME_spec_url; // The loop may change multiple groupBaseURLs.
     for (var x in groupBaseURLs) {
       if (groupBaseURLs[x] == original_EME_spec_url && window.respecConfig.specStatus == "ED") {
-	  EME_spec_url = "index.html";
-	  groupBaseURLs[x] = EME_spec_url;
+          EME_spec_url = "index.html";
+          groupBaseURLs[x] = EME_spec_url;
       }
     }
 
@@ -368,29 +363,29 @@
       var def_id = $ant.attr('def-id');
       var info = definitionInfo[def_id];
       if (info) {
-	if (!usedMap[def_id]) {
-	  usedMap[def_id] = 1;
-	} else {
-	  usedMap[def_id]++;
-	}
+        if (!usedMap[def_id]) {
+          usedMap[def_id] = 1;
+        } else {
+          usedMap[def_id]++;
+        }
 
-	var id = info.fragment;
-	var text = info.link_text;
+        var id = info.fragment;
+        var text = info.link_text;
 
-	if ($ant.attr('name')) {
-	  id = $ant.attr('name');
-	}
+        if ($ant.attr('name')) {
+          id = $ant.attr('name');
+        }
 
-	var element_text = this.innerHTML;
-	if (element_text) {
-	  text = element_text;
-	}
+        var element_text = this.innerHTML;
+        if (element_text) {
+          text = element_text;
+        }
 
-	var df = doc.createDocumentFragment();
+        var df = doc.createDocumentFragment();
         doc.emeDefGroupName = info.groupName;
         info.func(doc, df, id, text);
         doc.emeDefGroupName = "";
-	this.parentNode.replaceChild(df, this);
+        this.parentNode.replaceChild(df, this);
 
       } else {
         console.log("Found def-id '" + def_id + "' but it does not correspond to anything");
@@ -421,25 +416,25 @@
       var className = this.innerHTML;
       var info = externalClassInfo[className];
       if (info) {
-	var id = info.fragment;
-	var df = doc.createDocumentFragment();
-	var baseURL = null;
-	if (info.spec == 'html5') {
-	  baseURL = HTML_spec_url;
-	} else if (info.spec == 'dom') {
-	  baseURL = DOM_spec_url;
+        var id = info.fragment;
+        var df = doc.createDocumentFragment();
+        var baseURL = null;
+        if (info.spec == 'html5') {
+          baseURL = HTML_spec_url;
+        } else if (info.spec == 'dom') {
+          baseURL = DOM_spec_url;
         } else if (info.spec == 'webidl') {
-	  baseURL = "http://dev.w3.org/2006/webapi/WebIDL/";
+          baseURL = "http://dev.w3.org/2006/webapi/WebIDL/";
         } else if (info.spec == 'typed-array') {
-	  baseURL = "http://www.khronos.org/registry/typedarray/specs/latest/";
-  	} else if (info.spec == 'eme') {
-	  baseURL = EME_spec_url;
-	}
+          baseURL = "http://www.khronos.org/registry/typedarray/specs/latest/";
+        } else if (info.spec == 'eme') {
+          baseURL = EME_spec_url;
+        }
 
-	if (baseURL) {
-	  df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: baseURL + "#" + id, 'class': 'idlType'}).text(className))[0]);
-	  this.parentNode.replaceChild(df, this);
-	}
+        if (baseURL) {
+          df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: baseURL + "#" + id, 'class': 'idlType'}).text(className))[0]);
+          this.parentNode.replaceChild(df, this);
+        }
       }
     });
 
@@ -456,7 +451,7 @@
     for (var k in definitionInfo) {
       var defGroupName = definitionInfo[k].groupName;
       if (!usedMap[k] && !(excludeList.indexOf(defGroupName) != -1)) {
-	console.log("def-id '" + k + "' from groupName '" + defGroupName + "' never used.");
+        console.log("def-id '" + k + "' from groupName '" + defGroupName + "' never used.");
       }
     }
 
@@ -465,10 +460,10 @@
       var href = link.attr('href');
       var matched = /^#(.+)$/.exec(href);
       if (matched) {
-	var id = matched[1];
-	if (!document.getElementById(id)) {
-	  console.log("Internal link to an id '" + id + "' which does not exist");
-	}
+        var id = matched[1];
+        if (!document.getElementById(id)) {
+          console.log("Internal link to an id '" + id + "' which does not exist");
+        }
       }
     });
 
