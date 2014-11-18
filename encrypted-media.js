@@ -1,8 +1,8 @@
 (function() {
   var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
   var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
-  var DOM_spec_url = "http://dom.spec.whatwg.org/";
-  var IDL_spec_url = "http://heycam.github.io/webidl/";
+  var DOM_spec_url = "https://dom.spec.whatwg.org/";
+  var IDL_spec_url = "https://heycam.github.io/webidl/";
 
   function url_helper(doc, url) {
     if (url[0] == "#" && doc.emeDefGroupName != window.respecConfig.emeDefGroupName) {
@@ -426,7 +426,7 @@
         } else if (info.spec == 'webidl') {
           baseURL = "http://dev.w3.org/2006/webapi/WebIDL/";
         } else if (info.spec == 'typed-array') {
-          baseURL = "http://www.khronos.org/registry/typedarray/specs/latest/";
+          baseURL = "https://www.khronos.org/registry/typedarray/specs/latest/";
         } else if (info.spec == 'eme') {
           baseURL = EME_spec_url;
         }
