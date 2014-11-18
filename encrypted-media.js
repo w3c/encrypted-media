@@ -306,7 +306,7 @@
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
-    'authenticated-origin': { func: mixedcontent_helper, fragment: 'authenticated-origin', link_text: 'authenticated origin', },
+    'may-document-use-powerful-features-algorithm': { func: mixedcontent_helper, fragment: 'may-document-use-powerful-features', link_text: 'May Document use powerful features?', },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
