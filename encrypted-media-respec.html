@@ -336,7 +336,8 @@
               <!-- TODO: Convert all parameters to use <code>. -->
               <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on the calling context's <a def-id="document-concept"></a> is not <code>Allowed</code>:
+              <li><p>Let <var title="true">document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
+              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var title="true">document</var> is not <code>Allowed</code>:
                 <ul style="list-style-type:none">
                   <li>
                     <p class="issue">
@@ -347,9 +348,9 @@
                   </li>
                 </ul>
               </p>
-
               </li>
               <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+              <li><p>Let <var title="true">origin</var> be the <a def-id="origin"></a> of <var title="true">document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps asynchronously:</p>
                 <ol>
@@ -357,7 +358,7 @@
                     <dl class="switch">
                       <dt>If <code>supportedConfigurations</code> was not provided</dt>
                       <dd>
-                        <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a>, run the following steps:</p>
+                        <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -380,7 +381,7 @@
                             </ol>
                             <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
                             <li>
-                              <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a> in the configuration specified by the combination of the values in <var>combination</var>, run the following steps:</p>
+                              <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var> in the configuration specified by the combination of the values in <var>combination</var>, run the following steps:</p>
                               <ol>
                                 <li>
                                   <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -787,7 +788,7 @@
                     </li>
       
                     <li><p>Let <var title="true">session id</var> be a unique <a def-id="session-id"></a> string.</p>
-                      <p>If <var title="true">session type</var> is <a def-id="persistent-session"></a>, the ID MUST be unique within the the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
+                      <p>If <var title="true">session type</var> is <a def-id="persistent-session"></a>, the ID MUST be unique within the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li><p>Let <var title="true">message</var> be a request for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
                       <p class="note">For example, a license request.</p>
@@ -825,6 +826,7 @@
             <li><p>If this object's <var title="true">session type</var> is not <a def-id="persistent-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var title="true">media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
             <li><p>If the <a def-id="cdm"></a> corresponding to <var title="true">media keys</var>'s <a def-id="keySystem-attribute"></a> attribute does not support loading previous sessions, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>Let <var title="true">origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
@@ -837,7 +839,6 @@
                 <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
                 <li><p>Let <var title="true">message</var> be null.</p></li>
                 <li><p>Let <var title="true">message type</var> be null.</p></li>
-                <li><p>Let <var title="true">origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
                 <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of <var title="true">media keys</var>.</p></li>
                 <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
                   <ol>

@@ -7,7 +7,7 @@
     
     
     <!-- script to register bugs -->
-    <script src="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/assets/scripts/bug-assist.js"></script>
+    <script src="https://w3c.github.io/webcomponents/assets/scripts/bug-assist.js"></script>
     <meta name="bug.product" content="HTML WG">
     <meta name="bug.component" content="Encrypted Media Extensions">
 
@@ -445,7 +445,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-17T22:42:33.000Z" id="w3c-editor-s-draft-17-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-17">17 November 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-18T01:28:56.000Z" id="w3c-editor-s-draft-17-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-17">17 November 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -807,7 +807,7 @@ table.simple {
             </p>
             <p>Any permission checks or user interaction, such as a prompt, <em class="rfc2119" title="SHOULD">SHOULD</em> be performed before resolving the promise.</p>
             <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
-              Otherwise, it is resolved with a new MediaKeySystemAccess object.
+              Otherwise, it is resolved with a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object.
             </p>
 
             
@@ -819,9 +819,11 @@ table.simple {
                 A sequence of <a href="#idl-def-MediaKeySystemOptions" class="idlType"><code>MediaKeySystemOptions</code></a> configurations to try in order.
                 The first element with a satisfiable combination will be used. 
               </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;<a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a>&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
+              <!-- TODO: Convert all parameters to use <code>. -->
               <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">InvalidAccessError</a></code>.</p></li>
               <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">InvalidAccessError</a></code>.</p></li>
-              <li><p>If the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the calling context's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> is not an <a href="http://www.w3.org/TR/mixed-content/#authenticated-origin">authenticated origin</a> [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>]:
+              <li><p>Let <var title="true">document</var> be the calling context's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a>.</p></li>
+              <li><p>If the result of running the <a href="http://www.w3.org/TR/mixed-content/#may-document-use-powerful-features">May Document use powerful features?</a> algorithm [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>] on <var title="true">document</var> is not <code>Allowed</code>:
                 </p><ul style="list-style-type:none">
                   <li>
                     <div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_3"><span>Issue 3</span></div><p class="">
@@ -832,54 +834,59 @@ table.simple {
                   </li>
                 </ul>
               <p></p>
-
               </li>
               <li><p>If <var title="true">keySystem</var> is not one of the <a href="#key-system">Key Systems</a> supported by the user agent, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>. String comparison is case-sensitive.</p></li>
+              <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of <var title="true">document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps asynchronously:</p>
                 <ol>
-                  <li><p>If <var title="true">keySystem</var> is not supported or not allowed in the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the calling context's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a>, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p>
-                    <div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_4"><span>Issue 4</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p></div>
-                  </li>
-                  <li><p>If <code>supportedConfigurations</code> was not provided, resolve the promise with a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, execute the following steps:</p>
-                    <ol>
-                      <li>
-                        <p>Let <var title="true">access</var> be a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, and initialize it as follows:</p>
+                  <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                      <dt>If <code>supportedConfigurations</code> was not provided</dt>
+                      <dd>
+                        <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var>, run the following steps:</p>
                         <ol>
-                          <li><p>Set the <code><a href="#widl-MediaKeySystemAccess-keySystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
+                          <li>
+                            <p>Let <var title="true">access</var> be a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, and initialize it as follows:</p>
+                            <ol>
+                              <li><p>Set the <code><a href="#widl-MediaKeySystemAccess-keySystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
+                            </ol>
+                          </li>
+                          <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
                         </ol>
-                      </li>
-                      <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
-                    </ol>
-                  </li>
-                  <li>
-                    <p>For each element of <code>supportedConfigurations</code>:</p>
-                    <ol>
-                      <li><p>Let <var>combination</var> be the element.</p></li>
-                      <li>
-                        <p>For each dictionary member in <var>combination</var>:</p>
+                      </dd>
+                      <dt>Otherwise</dt>
+                      <dd>
+                        <p>For each element of <code>supportedConfigurations</code>:</p>
                         <ol>
-                          <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
-                        </ol>
-                        <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_10"><span>Note</span></div><p class="">Unrecognized dictionary members are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p></div>
-                        </li><li>
-                          <p>If <var title="true">keySystem</var> is supported and allowed in the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the calling context's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> in the configuration specified by the combination of the values in <var>combination</var>, execute the following steps:</p>
-                          <ol>
-                            <li>
-                              <p>Let <var title="true">access</var> be a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, and initialize it as follows:</p>
+                          <li><p>Let <var>combination</var> be the element.</p></li>
+                          <li>
+                            <p>For each dictionary member in <var>combination</var>:</p>
+                            <ol>
+                              <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
+                            </ol>
+                            <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_10"><span>Note</span></div><p class="">Unrecognized dictionary members are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p></div>
+                            </li><li>
+                              <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var> in the configuration specified by the combination of the values in <var>combination</var>, run the following steps:</p>
                               <ol>
-                                <li><p>Set the <code><a href="#widl-MediaKeySystemAccess-keySystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
-                                <!-- TODO: Initialize the object further if necessary. -->
+                                <li>
+                                  <p>Let <var title="true">access</var> be a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, and initialize it as follows:</p>
+                                  <ol>
+                                    <li><p>Set the <code><a href="#widl-MediaKeySystemAccess-keySystem">keySystem</a></code> attribute to <var title="true">keySystem</var>.</p></li>
+                                    <!-- TODO: Initialize the object further if necessary. -->
+                                  </ol>
+                                </li>
+                                <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
                               </ol>
                             </li>
-                            <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
-                          </ol>
-                        </li>
-                      
-                    </ol>
+                          
+                        </ol>
+                      </dd>
+                    </dl>
                   </li>
                   <li><p>Reject <var>promise</var> with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p> 
-                    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_11"><span>Note</span></div><p class="">There were no supported combinations in <code>supportedConfigurations</code>.</p></div>
+                    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_11"><span>Note</span></div><p class=""><code>keySystem</code> was is not supported/allowed or there were no supported/allowed combinations in <code>supportedConfigurations</code>.</p></div>
+                    <div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_4"><span>Issue 4</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p></div>
                   </li>
                 </ol>
               </li>
@@ -1167,7 +1174,7 @@ table.simple {
                     </li>
       
                     <li><p>Let <var title="true">session id</var> be a unique <a href="#session-id">Session ID</a> string.</p>
-                      <p>If <var title="true">session type</var> is <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code>, the ID <em class="rfc2119" title="MUST">MUST</em> be unique within the the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> over time, including across Documents and browsing sessions.</p>
+                      <p>If <var title="true">session type</var> is <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code>, the ID <em class="rfc2119" title="MUST">MUST</em> be unique within the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a> over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li><p>Let <var title="true">message</var> be a request for the <var title="true">requested session type</var> generated based on the <var>init data</var>, which is interpreted per <var title="true">initDataType</var>.</p>
                       <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_18"><span>Note</span></div><p class="">For example, a license request.</p></div>
@@ -1223,6 +1230,7 @@ table.simple {
             <li><p>If this object's <var title="true">session type</var> is not <code><a href="#idl-def-SessionType.persistent">"persistent"</a></code>, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-InvalidAccessError">InvalidAccessError</a></code>.</p></li>
             <li><p>Let <var title="true">media keys</var> be the <code><a href="#idl-def-MediaKeys">MediaKeys</a></code> object that created this object.</p></li>
             <li><p>If the <a href="#cdm">CDM</a> corresponding to <var title="true">media keys</var>'s <code><a href="#widl-MediaKeySystemAccess-keySystem">keySystem</a></code> attribute does not support loading previous sessions, return a promise rejected with a new <code><a href="http://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p></li>
+            <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
@@ -1235,7 +1243,6 @@ table.simple {
                 <li><p>Let <var title="true">expiration time</var> be <code>NaN</code>.</p></li>
                 <li><p>Let <var title="true">message</var> be null.</p></li>
                 <li><p>Let <var title="true">message type</var> be null.</p></li>
-                <li><p>Let <var title="true">origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="http://dom.spec.whatwg.org/#concept-document">Document</a>.</p></li>
                 <li><p>Let <var title="true">cdm</var> be the CDM loaded during the <a href="#widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys">initialization</a> of <var title="true">media keys</var>.</p></li>
                 <li><p>Use the <var title="true">cdm</var> to execute the following steps:</p>
                   <ol>
