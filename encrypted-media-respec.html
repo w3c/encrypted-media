@@ -317,7 +317,7 @@
             </p>
             <p>Any permission checks or user interaction, such as a prompt, SHOULD be performed before resolving the promise.</p>
             <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
-              Otherwise, it is resolved with a new MediaKeySystemAccess object.
+              Otherwise, it is resolved with a new <a>MediaKeySystemAccess</a> object.
             </p>
 
             <dl class='parameters'>
@@ -333,6 +333,7 @@
             </dl>
 
             <ol class="method-algorithm">
+              <!-- TODO: Convert all parameters to use <code>. -->
               <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on the calling context's <a def-id="document-concept"></a> is not <code>Allowed</code>:
@@ -352,48 +353,53 @@
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps asynchronously:</p>
                 <ol>
-                  <li><p>If <var title="true">keySystem</var> is not supported or not allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
-                    <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p>
-                  </li>
-                  <li><p>If <code>supportedConfigurations</code> was not provided, resolve the promise with a new <a>MediaKeySystemAccess</a> object, execute the following steps:</p>
-                    <ol>
-                      <li>
-                        <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                  <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                      <dt>If <code>supportedConfigurations</code> was not provided</dt>
+                      <dd>
+                        <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a>, run the following steps:</p>
                         <ol>
-                          <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                          <li>
+                            <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                            <ol>
+                              <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                            </ol>
+                          </li>
+                          <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
                         </ol>
-                      </li>
-                      <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
-                    </ol>
-                  </li>
-                  <li>
-                    <p>For each element of <code>supportedConfigurations</code>:</p>
-                    <ol>
-                      <li><p>Let <var>combination</var> be the element.</p></li>
-                      <li>
-                        <p>For each dictionary member in <var>combination</var>:</p>
+                      </dd>
+                      <dt>Otherwise</dt>
+                      <dd>
+                        <p>For each element of <code>supportedConfigurations</code>:</p>
                         <ol>
-                          <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
-                        </ol>
-                        <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
-                        <li>
-                          <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a> in the configuration specified by the combination of the values in <var>combination</var>, execute the following steps:</p>
-                          <ol>
+                          <li><p>Let <var>combination</var> be the element.</p></li>
+                          <li>
+                            <p>For each dictionary member in <var>combination</var>:</p>
+                            <ol>
+                              <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
+                            </ol>
+                            <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
                             <li>
-                              <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                              <p>If <var title="true">keySystem</var> is supported and allowed in the <a def-id="origin"></a> of the calling context's <a def-id="document-concept"></a> in the configuration specified by the combination of the values in <var>combination</var>, run the following steps:</p>
                               <ol>
-                                <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
-                                <!-- TODO: Initialize the object further if necessary. -->
+                                <li>
+                                  <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                                  <ol>
+                                    <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                                    <!-- TODO: Initialize the object further if necessary. -->
+                                  </ol>
+                                </li>
+                                <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
                               </ol>
                             </li>
-                            <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
-                          </ol>
-                        </li>
-                      </li>
-                    </ol>
+                          </li>
+                        </ol>
+                      </dd>
+                    </dl>
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p> 
-                    <p class="note">There were no supported combinations in <code>supportedConfigurations</code>.</p>
+                    <p class="note"><code>keySystem</code> was is not supported/allowed or there were no supported/allowed combinations in <code>supportedConfigurations</code>.</p>
+                    <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p>
                   </li>
                 </ol>
               </li>
