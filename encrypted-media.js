@@ -167,8 +167,8 @@
 
     'option-initDataType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-initDataType', link_text: 'initDataType',  },
     'option-videoType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoType', link_text: 'videoType',  },
-    'option-stateful': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-stateful', link_text: 'stateful',  },
-    'option-uniqueidentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-uniqueidentifier', link_text: 'uniqueidentifier',  },
+    'option-persistentState': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-persistentState', link_text: 'persistentState',  },
+    'option-persistentUniqueIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-persistentUniqueIdentifier', link_text: 'persistentUniqueIdentifier',  },
     'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
