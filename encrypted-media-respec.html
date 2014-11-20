@@ -500,7 +500,7 @@
               <li><p>For each value in <var>capabilities</var>:</p>
                 <ol>
                   <li><p>Let <var>contentType</var> be the value's <a def-id="capability-contentType"></a> member.</p></li>
-                  <li><p>Let <var>capability</var> be the value's <a def-id="capability-capability"></a> member.</p></li>
+                  <li><p>Let <var>robustness</var> be the value's <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>contentType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>contentType</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
                   <li><p>Let <var>configuration</var> be empty.</p></li>
@@ -522,14 +522,14 @@
                   <li><p>If <var>contentType</var> is not a <var>media type</var> type, continue to the next iteration.</p>
                     <p class="note">For example, if <var>media type</var> is Audio and the top-level type is not "audio" or <var>media types</var> contains non-audio codecs.</p>
                   </li>
-                  <li><p>If <var>capability</var> is not the empty string, run the following steps:</p>
+                  <li><p>If <var>robustness</var> is not the empty string, run the following steps:</p>
                     <ol>
-                      <li><p>If <var>capability</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                      <li><p>Add <var>capability</var> to <var>configuration</var>.</p></li>
+                      <li><p>If <var>robustness</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
+                      <li><p>Add <var>robustness</var> to <var>configuration</var>.</p></li>
                     </ol>
                   </li>
                   <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>accumulated configuration</var>, continue to the next iteration.</p>
-                    <p class="note">This configuration (content type and capability) must be supported with all previously added supported configurations.</p>
+                    <p class="note">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p>
                   </li>
                   <li><p>Add <var>configuration</var> to <var>media type configurations</var>.</p></li>
                   <li><p>Add <var>configuration</var> to <var>accumulated configuration</var>.</p>
@@ -568,6 +568,7 @@
           <dd>
             A list of supported <a def-id="initialization-data-type"></a> names.
             The <a def-id="initialization-data-type"></a> capability of this object is considered supported if the list is empty or contains at least one supported name.
+            Values in the sequence MUST not be the empty string.
           </dd>
           <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities</dt>
           <dd>
@@ -605,14 +606,16 @@
           <dt>DOMString contentType = ""</dt>
           <dd>
             The content type.
+            MUST not be the empty string.
           </dd>
-          <dt>DOMString capability = ""</dt>
+          <dt>DOMString robustness = ""</dt>
           <dd>
-            The capability associated with the content type.
+            The robustness level associated with the content type.
+            The empty string indicates that any ability to decrypt and decode the content type is acceptable.
           </dd>
         </dl>
         
-        <p>The entire <code>contentType</code>, including all codecs, must be supported with <code>capability</code> in order for the capability represented by this object to be considered supported.</p>
+        <p>The entire <a def-id="capability-contentType"></a>, including all codecs, must be supported with <a def-id="capability-robustness"></a> in order for the capability represented by this object to be considered supported.</p>
         <p class="note">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p>   
       </section>
     </section>
@@ -2163,11 +2166,11 @@
        ],
        <a def-id="option-videoCapabilities"></a>: [
          { <a def-id="capability-contentType"></a>: "video/webm; codecs='vp9'",
-           <a def-id="capability-capability"></a>: "foo" },
+           <a def-id="capability-robustness"></a>: "foo" },
          { <a def-id="capability-contentType"></a>: "video/webm; codecs='vp9'",
-           <a def-id="capability-capability"></a>: "bar" },
+           <a def-id="capability-robustness"></a>: "bar" },
          { <a def-id="capability-contentType"></a>: "video/webm; codecs='vp8'",
-           <a def-id="capability-capability"></a>: "bar" },
+           <a def-id="capability-robustness"></a>: "bar" },
        ]
      }
     ];

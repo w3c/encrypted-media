@@ -445,7 +445,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-20T23:15:11.000Z" id="w3c-editor-s-draft-20-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-20">20 November 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-20T23:17:30.000Z" id="w3c-editor-s-draft-20-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-20">20 November 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -984,7 +984,7 @@ table.simple {
               <li><p>For each value in <var>capabilities</var>:</p>
                 <ol>
                   <li><p>Let <var>contentType</var> be the value's <code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code> member.</p></li>
-                  <li><p>Let <var>capability</var> be the value's <code><a href="#widl-MediaKeySystemMediaCapability-capability">capability</a></code> member.</p></li>
+                  <li><p>Let <var>robustness</var> be the value's <code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code> member.</p></li>
                   <li><p>If <var>contentType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>contentType</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
                   <li><p>Let <var>configuration</var> be empty.</p></li>
@@ -1006,14 +1006,14 @@ table.simple {
                   <li><p>If <var>contentType</var> is not a <var>media type</var> type, continue to the next iteration.</p>
                     <div class="note"><div class="note-title" aria-level="4" role="heading" id="h_note_16"><span>Note</span></div><p class="">For example, if <var>media type</var> is Audio and the top-level type is not "audio" or <var>media types</var> contains non-audio codecs.</p></div>
                   </li>
-                  <li><p>If <var>capability</var> is not the empty string, run the following steps:</p>
+                  <li><p>If <var>robustness</var> is not the empty string, run the following steps:</p>
                     <ol>
-                      <li><p>If <var>capability</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                      <li><p>Add <var>capability</var> to <var>configuration</var>.</p></li>
+                      <li><p>If <var>robustness</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
+                      <li><p>Add <var>robustness</var> to <var>configuration</var>.</p></li>
                     </ol>
                   </li>
                   <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>accumulated configuration</var>, continue to the next iteration.</p>
-                    <div class="note"><div class="note-title" aria-level="4" role="heading" id="h_note_17"><span>Note</span></div><p class="">This configuration (content type and capability) must be supported with all previously added supported configurations.</p></div>
+                    <div class="note"><div class="note-title" aria-level="4" role="heading" id="h_note_17"><span>Note</span></div><p class="">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p></div>
                   </li>
                   <li><p>Add <var>configuration</var> to <var>media type configurations</var>.</p></li>
                   <li><p>Add <var>configuration</var> to <var>accumulated configuration</var>.</p>
@@ -1058,6 +1058,7 @@ table.simple {
           </dd><dt id="widl-MediaKeySystemOptions-initDataTypes"><code>initDataTypes</code> of type <span class="idlMemberType">sequence&lt;DOMString&gt;</span></dt><dd>
             A list of supported <a href="#initialization-data-type">Initialization Data Type</a> names.
             The <a href="#initialization-data-type">Initialization Data Type</a> capability of this object is considered supported if the list is empty or contains at least one supported name.
+            Values in the sequence <em class="rfc2119" title="MUST">MUST</em> not be the empty string.
           </dd><dt id="widl-MediaKeySystemOptions-persistentState"><code>persistentState</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
             <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_20"><span>Note</span></div><p class="">For the purposes of this member, persistent state does not include persistent unique identifiers controlled by the <a href="#key-system">Key System</a> implementation. <code><a href="#widl-MediaKeySystemOptions-persistentUniqueIdentifier">persistentUniqueIdentifier</a></code> independently reflects this requirement.</p></div>
@@ -1081,14 +1082,16 @@ table.simple {
         <h3 role="heading" id="h3_mediakeysystemmediacapability-dictionary"><span class="secno">2.3 </span><a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a> dictionary</h3>
         <pre class="idl"><span class="idlDictionary" id="idl-def-MediaKeySystemMediaCapability">dictionary <span class="idlDictionaryID">MediaKeySystemMediaCapability</span> {
 <span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></span> = <span class="idlMemberValue">""</span>;</span>
-<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemMediaCapability-capability">capability</a></span> = <span class="idlMemberValue">""</span>;</span>
-};</span></pre><section id="dictionary-mediakeysystemmediacapability-members"><h4 role="heading" id="h4_dictionary-mediakeysystemmediacapability-members"><span class="secno">2.3.1 </span>Dictionary <a class="idlType" href="#idl-def-MediaKeySystemMediaCapability"><code>MediaKeySystemMediaCapability</code></a> Members</h4><dl class="dictionary-members"><dt id="widl-MediaKeySystemMediaCapability-capability"><code>capability</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
-            The capability associated with the content type.
-          </dd><dt id="widl-MediaKeySystemMediaCapability-contentType"><code>contentType</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
+<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></span> = <span class="idlMemberValue">""</span>;</span>
+};</span></pre><section id="dictionary-mediakeysystemmediacapability-members"><h4 role="heading" id="h4_dictionary-mediakeysystemmediacapability-members"><span class="secno">2.3.1 </span>Dictionary <a class="idlType" href="#idl-def-MediaKeySystemMediaCapability"><code>MediaKeySystemMediaCapability</code></a> Members</h4><dl class="dictionary-members"><dt id="widl-MediaKeySystemMediaCapability-contentType"><code>contentType</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
             The content type.
+            <em class="rfc2119" title="MUST">MUST</em> not be the empty string.
+          </dd><dt id="widl-MediaKeySystemMediaCapability-robustness"><code>robustness</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
+            The robustness level associated with the content type.
+            The empty string indicates that any ability to decrypt and decode the content type is acceptable.
           </dd></dl></section>
         
-        <p>The entire <code>contentType</code>, including all codecs, must be supported with <code>capability</code> in order for the capability represented by this object to be considered supported.</p>
+        <p>The entire <code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code>, including all codecs, must be supported with <code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code> in order for the capability represented by this object to be considered supported.</p>
         <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_22"><span>Note</span></div><p class="">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p></div>   
       </section>
     </section>
@@ -2465,11 +2468,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
        </span><span class="pun">],</span><span class="pln">
        </span><code><a href="#widl-MediaKeySystemOptions-videoCapabilities">videoCapabilities</a></code><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="pln">
          </span><span class="pun">{</span><span class="pln"> </span><code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"video/webm; codecs='vp9'"</span><span class="pun">,</span><span class="pln">
-           </span><code><a href="#widl-MediaKeySystemMediaCapability-capability">capability</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"foo"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
+           </span><code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"foo"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
          </span><span class="pun">{</span><span class="pln"> </span><code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"video/webm; codecs='vp9'"</span><span class="pun">,</span><span class="pln">
-           </span><code><a href="#widl-MediaKeySystemMediaCapability-capability">capability</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"bar"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
+           </span><code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"bar"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
          </span><span class="pun">{</span><span class="pln"> </span><code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"video/webm; codecs='vp8'"</span><span class="pun">,</span><span class="pln">
-           </span><code><a href="#widl-MediaKeySystemMediaCapability-capability">capability</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"bar"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
+           </span><code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code><span class="pun">:</span><span class="pln"> </span><span class="str">"bar"</span><span class="pln"> </span><span class="pun">},</span><span class="pln">
        </span><span class="pun">]</span><span class="pln">
      </span><span class="pun">}</span><span class="pln">
     </span><span class="pun">];</span><span class="pln">
