@@ -421,6 +421,7 @@
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemOptions</a> <var>combination</var>, and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>Not Supported</code> as appropriate.</p>
             <ol>
               <li><p>If <a def-id="option-initDataType"></a> is not the empty string and the <var>implementation</var> does not support generating requests based on <a def-id="option-initDataType"></a>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+              <li><p>Let <var>audio configuration</var> be empty.</p></li>
               <li><p>If <a def-id="option-audioType"></a> is the empty string and <a def-id="option-audioCapability"></a> is not the empty string, return <code>Not Supported</code>.</p></li>
               <li><p>If <a def-id="option-audioType"></a> is not the empty string, run the following steps:</p>
                 <ol>
@@ -429,30 +430,30 @@
                   <li><p>If the user agent does not support <var>container</var>, return <code>Not Supported</code>. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
                     <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
                   </li>
+                  <li><p>Add <var>container</var> to <var>audio configuration</var>.</p></li>
                   <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <a def-id="option-audioType"></a>.</p></li>
-                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
-                  <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-                    <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                  <li><p>If <var>parameters</var> is not empty, run the following steps:</p>
+                    <ol>                  
+                      <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
+                      <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                        <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                      </li>
+                      <li><p>Add all <var>media types</var> to <var>audio configuration</var>.</p></li>
+                    </ol>
                   </li>
                   <li><p>If <a def-id="option-audioType"></a> is not an audio type, return <code>Not Supported</code>.</p>
                     <p class="note">For example, if the top-level type is not "audio/" or <var>media types</var> contains non-audio codecs.</p>
                   </li>
-                  <li><p>Follow the steps for the first matching condition from the following list:</p>
-                    <dl class="switch">
-                      <dt>If <a def-id="option-audioCapability"></a> is the empty string</dt>
-                      <dd>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a>.</dd>
-                      <dt>Otherwise</dt>
-                      <dd>Run the following steps:
-                        <ol>
-                          <li><p>If <a def-id="option-audioCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
-                          <li><p>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a> with <a def-id="option-audioCapability"></a>.</p></li>
-                        </ol>
-                      </dd>
-                    </dl>
+                  <li><p>If <a def-id="option-audioCapability"></a> is not the empty string, run the following steps:</p>
+                    <ol>
+                      <li><p>If <a def-id="option-audioCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+                      <li><p>Add <a def-id="option-audioCapability"></a> to <var>audio configuration</var>.</p></li>
+                    </ol>
                   </li>
-                  <li><p>If the user agent and <var>implementation</var> do not support <var>capability</var> for all <var>media types</var> in combination with the previously checked member, return <code>Not Supported</code>.</p></li>
+                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>audio configuration</var>, including all <var>media types</var>, in combination with the <a def-id="option-initDataType"></a>, return <code>Not Supported</code>.</p></li>
                 </ol>
               </li>
+              <li><p>Let <var>video configuration</var> be empty.</p></li>
               <li><p>If <a def-id="option-videoType"></a> is the empty string and <a def-id="option-videoCapability"></a> is not the empty string, return <code>Not Supported</code>.</p></li>
               <li><p>If <a def-id="option-videoType"></a> is not the empty string, run the following steps:</p>
                 <ol>
@@ -461,39 +462,38 @@
                   <li><p>If the user agent does not support <var>container</var>, return <code>Not Supported</code>. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
                     <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
                   </li>
+                  <li><p>Add <var>container</var> to <var>video configuration</var>.</p></li>
                   <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <a def-id="option-videoType"></a>.</p></li>
-                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
-                  <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-                    <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                  <li><p>If <var>parameters</var> is not empty, run the following steps:</p>
+                    <ol>                  
+                      <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
+                      <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                        <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                      </li>
+                      <li><p>Add all <var>media types</var> to <var>video configuration</var>.</p></li>
+                    </ol>
                   </li>
-                  <li><p>If <a def-id="option-videoType"></a> is not a video type, return <code>Not Supported</code>.</p>
+                  <li><p>If <a def-id="option-videoType"></a> is not an video type, return <code>Not Supported</code>.</p>
                     <p class="note">For example, if the top-level type is not "video/" or <var>media types</var> contains non-video codecs.</p>
                   </li>
-                  <li><p>Follow the steps for the first matching condition from the following list:</p>
-                    <dl class="switch">
-                      <dt>If <a def-id="option-videoCapability"></a> is the empty string</dt>
-                      <dd>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a>.</dd>
-                      <dt>Otherwise</dt>
-                      <dd>Run the following steps:
-                        <ol>
-                          <li><p>If <a def-id="option-videoCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
-                          <li><p>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a> with <a def-id="option-videoCapability"></a>.</p></li>
-                        </ol>
-                      </dd>
-                    </dl>
+                  <li><p>If <a def-id="option-videoCapability"></a> is not the empty string, run the following steps:</p>
+                    <ol>
+                      <li><p>If <a def-id="option-videoCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+                      <li><p>Add <a def-id="option-videoCapability"></a> to <var>video configuration</var>.</p></li>
+                    </ol>
                   </li>
-                  <li><p>If the user agent and <var>implementation</var> do not support <var>capability</var> for all <var>media types</var> in combination with the previously checked members, return <code>Not Supported</code>.</p></li>
+                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>video configuration</var>, including all <var>media types</var>, in combination with the <a def-id="option-initDataType"></a> and <var>audio configuration</var>, return <code>Not Supported</code>.</p></li>
                 </ol>
               </li>
               <li><p>Follow the steps for the value of <a def-id="option-persistentUniqueIdentifier"></a> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    If the <var>implementation</var> does not support a unique identifier in combination with the previously checked members, return <code>Not Supported</code>.
+                    If the <var>implementation</var> does not support a unique identifier in combination with <a def-id="option-initDataType"></a>, <var>audio configuration</var>, and <var>video configuration</var>, return <code>Not Supported</code>.
                   </dd>
                   <dt><a def-id="requirement-disallowed"></a></dt>
                   <dd>
-                    If the <var>implementation</var> requires a unique identifier in combination with the previously checked members, return <code>Not Supported</code>.
+                    If the <var>implementation</var> requires a unique identifier in combination with <a def-id="option-initDataType"></a>, <var>audio configuration</var>, and <var>video configuration</var>, return <code>Not Supported</code>.
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -505,11 +505,11 @@
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    If the <var>implementation</var> does not support persisting state in combination with the previously checked members, return <code>Not Supported</code>.
+                    If the <var>implementation</var> does not support persisting state in combination with <a def-id="option-initDataType"></a>, <var>audio configuration</var>, <var>video configuration</var>, and <a def-id="option-persistentUniqueIdentifier"></a>, return <code>Not Supported</code>.
                   </dd>
                   <dt><a def-id="requirement-disallowed"></a></dt>
                   <dd>
-                    If the <var>implementation</var> requires persisting state in combination with the previously checked members, return <code>Not Supported</code>.
+                    If the <var>implementation</var> requires persisting state in combination with <a def-id="option-initDataType"></a>, <var>audio configuration</var>, <var>video configuration</var>, and <a def-id="option-persistentUniqueIdentifier"></a>, return <code>Not Supported</code>.
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -517,7 +517,7 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>combination</var> is not supported or not allowed in the <var>origin</var>, return <code>Not Supported</code>.</p>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <a def-id="option-initDataType"></a>, <var>audio configuration</var>, <var>video configuration</var>, <a def-id="option-persistentUniqueIdentifier"></a>, and <a def-id="option-persistentState"></a> is not supported or not allowed in the <var>origin</var>, return <code>Not Supported</code>.</p>
                 <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
               </li>
               <li><p>Return <code>Supported</code>.</p></li>
