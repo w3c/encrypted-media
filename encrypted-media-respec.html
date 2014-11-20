@@ -334,7 +334,7 @@
 
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
-              <li><p>If <var title="true">keySystem</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+              <li><p>If <var title="true">keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var title="true">supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>Let <var title="true">document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
               <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var title="true">document</var> is not <code>Allowed</code>:
@@ -420,9 +420,71 @@
             <h2>Is Combination Supported?</h2>
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemOptions</a> <var>combination</var>, and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>Not Supported</code> as appropriate.</p>
             <ol>
-              <li><p>If <a def-id="option-initDataType"></a> is not an empty string and the <var>implementation</var> does not support generating requests based on <a def-id="option-initDataType"></a>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
-              <li><p>If the <var>implementation</var> does not support <a def-id="option-audioType"></a> with <a def-id="option-audioCapability"></a> in combination with the previously checked member, return <code>Not Supported</code>.</p></li>
-              <li><p>If the <var>implementation</var> does not support <a def-id="option-videoType"></a> with <a def-id="option-videoCapability"></a> in combination with the previously checked members, return <code>Not Supported</code>.</p></li>
+              <li><p>If <a def-id="option-initDataType"></a> is not the empty string and the <var>implementation</var> does not support generating requests based on <a def-id="option-initDataType"></a>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+              <li><p>If <a def-id="option-audioType"></a> is the empty string and <a def-id="option-audioCapability"></a> is not the empty string, return <code>Not Supported</code>.</p></li>
+              <li><p>If <a def-id="option-audioType"></a> is not the empty string, run the following steps:</p>
+                <ol>
+                  <li><p>If <a def-id="option-audioType"></a> is an invalid or unrecognized MIME type, return <code>Not Supported</code>.</p></li>
+                  <li><p>Let <var>container</var> be the container type specified by <a def-id="option-audioType"></a>.</p></li>
+                  <li><p>If the user agent does not support <var>container</var>, return <code>Not Supported</code>. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
+                    <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
+                  </li>
+                  <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <a def-id="option-audioType"></a>.</p></li>
+                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
+                  <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                    <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                  </li>
+                  <li><p>If <a def-id="option-audioType"></a> is not an audio type, return <code>Not Supported</code>.</p>
+                    <p class="note">For example, if the top-level type is not "audio/" or <var>media types</var> contains non-audio codecs.</p>
+                  </li>
+                  <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                      <dt>If <a def-id="option-audioCapability"></a> is the empty string</dt>
+                      <dd>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a>.</dd>
+                      <dt>Otherwise</dt>
+                      <dd>Run the following steps:
+                        <ol>
+                          <li><p>If <a def-id="option-audioCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+                          <li><p>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a> with <a def-id="option-audioCapability"></a>.</p></li>
+                        </ol>
+                      </dd>
+                    </dl>
+                  </li>
+                  <li><p>If the user agent and <var>implementation</var> do not support <var>capability</var> for all <var>media types</var> in combination with the previously checked member, return <code>Not Supported</code>.</p></li>
+                </ol>
+              </li>
+              <li><p>If <a def-id="option-videoType"></a> is the empty string and <a def-id="option-videoCapability"></a> is not the empty string, return <code>Not Supported</code>.</p></li>
+              <li><p>If <a def-id="option-videoType"></a> is not the empty string, run the following steps:</p>
+                <ol>
+                  <li><p>If <a def-id="option-videoType"></a> is an invalid or unrecognized MIME type, return <code>Not Supported</code>.</p></li>
+                  <li><p>Let <var>container</var> be the container type specified by <a def-id="option-videoType"></a>.</p></li>
+                  <li><p>If the user agent does not support <var>container</var>, return <code>Not Supported</code>. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
+                    <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
+                  </li>
+                  <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <a def-id="option-videoType"></a>.</p></li>
+                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, return <code>Not Supported</code>.</p></li>
+                  <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                    <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                  </li>
+                  <li><p>If <a def-id="option-videoType"></a> is not a video type, return <code>Not Supported</code>.</p>
+                    <p class="note">For example, if the top-level type is not "video/" or <var>media types</var> contains non-video codecs.</p>
+                  </li>
+                  <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <dl class="switch">
+                      <dt>If <a def-id="option-videoCapability"></a> is the empty string</dt>
+                      <dd>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a>.</dd>
+                      <dt>Otherwise</dt>
+                      <dd>Run the following steps:
+                        <ol>
+                          <li><p>If <a def-id="option-videoCapability"></a> is an unrecognized value or not supported by <var>implementation</var>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+                          <li><p>Let <var>capability</var> be playback of encrypted <a def-id="media-data"></a> with <a def-id="option-videoCapability"></a>.</p></li>
+                        </ol>
+                      </dd>
+                    </dl>
+                  </li>
+                  <li><p>If the user agent and <var>implementation</var> do not support <var>capability</var> for all <var>media types</var> in combination with the previously checked members, return <code>Not Supported</code>.</p></li>
+                </ol>
+              </li>
               <li><p>Follow the steps for the value of <a def-id="option-persistentUniqueIdentifier"></a> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
@@ -686,7 +748,7 @@
           </ul>
       
           <ol class="method-algorithm">
-            <li><p>If <var title="true">keySystem</var> is an empty string or contains an unrecognized or unsupported <a def-id="keysystem"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
+            <li><p>If <var title="true">keySystem</var> is the empty string or contains an unrecognized or unsupported <a def-id="keysystem"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
             <li><p>If the <var title="true">keySystem</var> implementation is not available and usable, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>Follow the steps for the first matching condition from the following list:</p>
               <dl class="switch">
@@ -708,7 +770,7 @@
               </dl>
             </li>
       
-            <li><p>If <var title="true">initDataType</var> is an empty string or contains an unrecognized or unsupported <a def-id="initialization-data-type"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
+            <li><p>If <var title="true">initDataType</var> is the empty string or contains an unrecognized or unsupported <a def-id="initialization-data-type"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
             <li><p>If <var title="true">initDataType</var> is not an <a def-id="initialization-data-type"></a> supported by the <var title="true">keySystem</var> implementation, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>If the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is not available and usable, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
@@ -720,7 +782,7 @@
               </dl>
             </li>
       
-            <li><p>If <var title="true">contentType</var> is an empty string or contains an invalid or unrecognized MIME type, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
+            <li><p>If <var title="true">contentType</var> is the empty string or contains an invalid or unrecognized MIME type, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
             <li><p>Let <var title="true">parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var title="true">contentType</var>.</p></li>
             <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
@@ -741,7 +803,7 @@
               </dl>
             </li>
             
-            <li><p>If <var title="true">capability</var> is an empty string, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
+            <li><p>If <var title="true">capability</var> is the empty string, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
             <li><p>If the <var title="true">keySystem</var> implementation does not support <var title="true">capability</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
             <li><p>Follow the steps for the first matching condition from the following list:</p>
               <dl class="switch">
@@ -803,7 +865,7 @@
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
-            <li><p>If <var title="true">initDataType</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If <var title="true">initDataType</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If <var title="true">initData</var> is an empty array, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var title="true">media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
             <li><p>If the <a def-id="cdm"></a> corresponding to <var title="true">media keys</var>'s <a def-id="keySystem-attribute"></a> attribute does not support <var title="true">initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
@@ -876,7 +938,7 @@
           <ol class="method-algorithm">
             <li><p>If this object's <var title="true">uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var title="true">uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
-            <li><p>If <var title="true">sessionId</var> is an empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If <var title="true">sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If this object's <var title="true">session type</var> is not <a def-id="persistent-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var title="true">media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
             <li><p>If the <a def-id="cdm"></a> corresponding to <var title="true">media keys</var>'s <a def-id="keySystem-attribute"></a> attribute does not support loading previous sessions, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
@@ -2052,12 +2114,14 @@
   function createSupportedKeySystem() {
     someSystemOptions = [
      { <a def-id="option-initDataType"></a>: "webm",
-       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
+       <a def-id="option-audioType"></a>: "audio/webm; codecs='vorbis'"
+       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8'"
      }
     ];
     clearKeyOptions = [
      { <a def-id="option-initDataType"></a>: "webm",
-       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8, vorbis'"
+       <a def-id="option-audioType"></a>: "audio/webm; codecs='vorbis'"
+       <a def-id="option-videoType"></a>: "video/webm; codecs='vp8'"
      }
     ];
   
