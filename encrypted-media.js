@@ -162,7 +162,7 @@
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
     'is-key-system-supported-algorithm': { func: term_helper, fragment: 'is-key-system-supported', link_text: 'Is Key System Supported?',  },
     'is-combination-supported-algorithm': { func: term_helper, fragment: 'is-combination-supported', link_text: 'Is Combination Supported?',  },
-    
+    'get-supported-content-type-and-capability-configuration-algorithm': { func: term_helper, fragment: 'get-supported-content-type-and-capability-configuration', link_text: 'Get Supported Content Type and Capability Configuration',  },
 //    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
