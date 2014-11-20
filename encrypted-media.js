@@ -160,15 +160,22 @@
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
+    'is-key-system-supported-algorithm': { func: term_helper, fragment: 'is-key-system-supported', link_text: 'Is Key System Supported?',  },
+    'is-combination-supported-algorithm': { func: term_helper, fragment: 'is-combination-supported', link_text: 'Is Combination Supported?',  },
+    
 //    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-disallowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.disallowed', link_text: '"disallowed"',  },
 
     'option-initDataType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-initDataType', link_text: 'initDataType',  },
+    'option-audioType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-audioType', link_text: 'audioType',  },
+    'option-audioCapability': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-audioCapability', link_text: 'audioCapability',  },
     'option-videoType': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoType', link_text: 'videoType',  },
+    'option-videoCapability': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-videoCapability', link_text: 'videoCapability',  },
     'option-persistentState': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-persistentState', link_text: 'persistentState',  },
     'option-persistentUniqueIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemOptions-persistentUniqueIdentifier', link_text: 'persistentUniqueIdentifier',  },
+
     'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },

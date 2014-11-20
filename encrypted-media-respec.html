@@ -306,7 +306,7 @@
       <h2>Obtaining Access to Key Systems</h2>
 
       <section>
-        <h2 id="requestMediaKeySystemAccess">requestMediaKeySystemAccess()</h2>
+        <h2><a>Navigator</a> Extension: <code>requestMediaKeySystemAccess()</code></h2>
 
         <dl title="partial interface Navigator" class="idl">
           <dt>Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
@@ -349,16 +349,17 @@
                 </ul>
               </p>
               </li>
-              <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
               <li><p>Let <var title="true">origin</var> be the <a def-id="origin"></a> of <var title="true">document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps asynchronously:</p>
                 <ol>
+                  <li><p>If <var title="true">keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+                  <li><p>Let <var>implementation</var> be the implementation of <var>keySystem</var>.</p></li>
                   <li><p>Follow the steps for the first matching condition from the following list:</p>
                     <dl class="switch">
                       <dt>If <code>supportedConfigurations</code> was not provided</dt>
                       <dd>
-                        <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var>, run the following steps:</p>
+                        <p>If the result of executing the <a def-id="is-key-system-supported-algorithm"></a> algorithm on <var>implementation</var> and <var>origin</var> is <code>Supported</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -371,28 +372,20 @@
                       </dd>
                       <dt>Otherwise</dt>
                       <dd>
-                        <p>For each element of <code>supportedConfigurations</code>:</p>
+                        <p>For each value in <code>supportedConfigurations</code>:</p>
                         <ol>
-                          <li><p>Let <var>combination</var> be the element.</p></li>
-                          <li>
-                            <p>For each dictionary member in <var>combination</var>:</p>
+                          <li><p>Let <var>combination</var> be the value.</p></li>
+                          <li><p>If the result of executing the <a def-id="is-combination-supported-algorithm"></a> algorithm on <var>implementation</var>, <var>combination</var>, and <var>origin</var> is <code>Supported</code>, run the following steps:</p>
                             <ol>
-                              <li><p>If the member’s value cannot be satisfied together in combination with the previous members, continue to the next iteration of the loop.</p></li>
+                              <li>
+                                <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
+                                <ol>
+                                  <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
+                                  <!-- TODO: Initialize the object further if necessary. -->
+                                </ol>
+                              </li>
+                              <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
                             </ol>
-                            <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
-                            <li>
-                              <p>If <var title="true">keySystem</var> is supported and allowed in the <var title="true">origin</var> in the configuration specified by the combination of the values in <var>combination</var>, run the following steps:</p>
-                              <ol>
-                                <li>
-                                  <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
-                                  <ol>
-                                    <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
-                                    <!-- TODO: Initialize the object further if necessary. -->
-                                  </ol>
-                                </li>
-                                <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
-                              </ol>
-                            </li>
                           </li>
                         </ol>
                       </dd>
@@ -408,6 +401,68 @@
             </ol>
           </dd>
         </dl>
+
+        <section>
+          <h3>Algorithms</h3>
+
+          <section>
+            <h2>Is Key System Supported?</h2>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var> and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>Not Supported</code> as appropriate.</p>
+            <ol>
+              <li><p>If <var>implementation</var> is not supported or not allowed in the <var>origin</var>, return <code>Not Supported</code>.</p>
+                <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
+              </li>
+              <li><p>Return <code>Supported</code>.</p></li>
+            </ol>
+          </section>
+
+          <section>
+            <h2>Is Combination Supported?</h2>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemOptions</a> <var>combination</var>, and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>Not Supported</code> as appropriate.</p>
+            <ol>
+              <li><p>If <a def-id="option-initDataType"></a> is not an empty string and the <var>implementation</var> does not support generating requests based on <a def-id="option-initDataType"></a>, return <code>Not Supported</code>. String comparison is case-sensitive.</p></li>
+              <li><p>If the <var>implementation</var> does not support <a def-id="option-audioType"></a> with <a def-id="option-audioCapability"></a> in combination with the previously checked member, return <code>Not Supported</code>.</p></li>
+              <li><p>If the <var>implementation</var> does not support <a def-id="option-videoType"></a> with <a def-id="option-videoCapability"></a> in combination with the previously checked members, return <code>Not Supported</code>.</p></li>
+              <li><p>Follow the steps for the value of <a def-id="option-persistentUniqueIdentifier"></a> from the following list:</p>
+                <dl class="switch">
+                  <dt><a def-id="requirement-required"></a></dt>
+                  <dd>
+                    If the <var>implementation</var> does not support a unique identifier in combination with the previously checked members, return <code>Not Supported</code>.
+                  </dd>
+                  <dt><a def-id="requirement-disallowed"></a></dt>
+                  <dd>
+                    If the <var>implementation</var> requires a unique identifier in combination with the previously checked members, return <code>Not Supported</code>.
+                  </dd>
+                  <dt><a def-id="requirement-optional"></a></dt>
+                  <dd>
+                    Continue.
+                  </dd>
+                </dl>
+              </li>
+              <li><p>Follow the steps for the value of <a def-id="option-persistentState"></a> from the following list:</p>
+                <dl class="switch">
+                  <dt><a def-id="requirement-required"></a></dt>
+                  <dd>
+                    If the <var>implementation</var> does not support persisting state in combination with the previously checked members, return <code>Not Supported</code>.
+                  </dd>
+                  <dt><a def-id="requirement-disallowed"></a></dt>
+                  <dd>
+                    If the <var>implementation</var> requires persisting state in combination with the previously checked members, return <code>Not Supported</code>.
+                  </dd>
+                  <dt><a def-id="requirement-optional"></a></dt>
+                  <dd>
+                    Continue.
+                  </dd>
+                </dl>
+              </li>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>combination</var> is not supported or not allowed in the <var>origin</var>, return <code>Not Supported</code>.</p>
+                <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
+              </li>
+              <li><p>Return <code>Supported</code>.</p></li>
+            </ol>
+            <p class="note">Unrecognized dictionary members are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
+          </section>
+        </section>
       </section>
 
       <section>
