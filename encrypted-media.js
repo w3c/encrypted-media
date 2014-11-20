@@ -161,9 +161,9 @@
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemOptions--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
     'is-key-system-supported-algorithm': { func: term_helper, fragment: 'is-key-system-supported', link_text: 'Is Key System Supported?',  },
-    'is-combination-supported-algorithm': { func: term_helper, fragment: 'is-combination-supported', link_text: 'Is Combination Supported?',  },
+    'get-supported-combination-algorithm': { func: term_helper, fragment: 'get-supported-combination', link_text: 'Get Supported Combination',  },
     'get-supported-capability-configurations-for-media-type-algorithm': { func: term_helper, fragment: 'get-supported-capability-configurations-for-media-type', link_text: 'Get Supported Capability Configurations for Media Type',  },
-//    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
+    'requirement': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement', link_text: 'MediaKeysRequirement',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-disallowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.disallowed', link_text: '"disallowed"',  },
@@ -178,6 +178,7 @@
     'capability-robustness' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-robustness', link_text: 'robustness',  },
     
     'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
+    'getConfiguration': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-getConfiguration-MediaKeySystemOptions', link_text: 'getConfiguration()',  },
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
 
