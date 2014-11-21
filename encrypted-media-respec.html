@@ -625,6 +625,7 @@
             <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-persistentUniqueIdentifier"></a> independently reflects this requirement.</p>
             Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.
             <p class="note">Except for <a def-id="persistent-session"></a> sessions, the need and ability to store state is <a def-id="keysystem"></a> implementation-specific and may vary by feature used.</p>
+            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this attribute to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess-call"></a>.</p>
           </dd>
         </dl>
 
@@ -1828,10 +1829,16 @@
           <h4>Capabilities</h4>
           <p>The following describe how Clear Key supports key system-specific capabilities:</p>
           <ul>
-            <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
-            <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
-            <li><p>The <a>MediaKeySystemOptions</a>: There are no supported capability values.</p></li>
+            <li><p><a>MediaKeySystemOptions</a>:<p>
+              <ol>
+                <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
+                <li><p><a def-id="option-persistentUniqueIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
+                <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
+              </ol>
+            </li>
             <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations MAY support this type.</p></li>
+            <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
+            <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a def-id="mediakeys"></a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
           </ul>
         </section>
     
@@ -2059,7 +2066,7 @@
         <p>While these suggestions prevent trivial use of this feature for user tracking, they do not block it altogether. Within a single domain, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not per-origin, then a profile can still be created.</p>
         <p>It is important to note that identifiers that are non-clearable, non-origin-specific or hardware-bound exceed the tracking impact of existing techniques such as cookies or session identifiers embedded in URLs.</p>
         <p>Thus, in addition to the various mitigations described above, if a browser supports a mode of operation intended to preserve user anonymity, then User Agent implementers should carefully consider whether access to Key Systems should be disabled in this mode.
-          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that are <a def-id="option-persistentState"></a> or use a <a def-id="option-persistentUniqueIdentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
+          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a <a def-id="option-persistentUniqueIdentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
         </p>
 
         <section id="privacy-individualization">
