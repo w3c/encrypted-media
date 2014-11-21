@@ -307,7 +307,7 @@
       <p>This section defines the mechanism for obtaining access to a key system.
         The inclusion of capabilities in the request also enables feature detection.
       </p>
-      <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - This section is new and may change.</p>
+      <p class="issue">This section is new and may change.</p>
 
       <section>
         <h2><a>Navigator</a> Extension: <code>requestMediaKeySystemAccess()</code></h2>
@@ -402,7 +402,6 @@
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p> 
                     <p class="note"><code>keySystem</code> was not supported/allowed or none of the configurations in <code>supportedConfigurations</code> were supported/allowed.</p>
-                    <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p>
                   </li>
                 </ol>
               </li>
@@ -717,23 +716,6 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
       
-  <!-- TODO: Move or remove depending on the outcome of Bug 25923.
-      <dl title="enum IsTypeSupportedResult" class="idl">
-        <dt>/* empty string */</dt><!-- TODO: Fix. -- >
-        <dd>
-          The combination is not supported.
-        </dd>
-        <dt>maybe</dt>
-        <dd>
-          The combination may be supported.
-        </dd>
-        <dt>probably</dt>
-        <dd>
-          The combination is likely supported.
-        </dd>
-      </dl>
--->
-  
       <dl title="enum SessionType" class="idl">
         <dt>temporary</dt>
         <dd>
@@ -813,101 +795,6 @@
           </ol>
         </dd>
 
-  <!-- TODO: Move or remove depending on the outcome of Bug 25923.
-        <dt>static IsTypeSupportedResult isTypeSupported(DOMstring keySystem, optional DOMString initDataType, optional DOMString contentType, optional DOMString capability)</dt>
-        <dd>
-          <p>Returns whether <var title="true">keySystem</var> is supported with the <var title="true">initDataType</var>, container and codec(s) specified by <var title="true">contentType</var>, and <var title="true">capability</var>.</p>
-          <p>The following list shows some examples.</p>
-          <ul>
-            <li>
-              <p>Returns whether the Some System <a def-id="keysystem"></a> may be supported. Specific containers and codecs may or may not be supported with Some System.</p>
-              <div class="example">MediaKeys.isTypeSupported("com.example.somesystem")</div
-            </li>
-            <li>
-              <p>Returns whether the Some System <a def-id="keysystem"></a> may be supported and is capable of parsing the <a def-id="initialization-data-type"></a> format "keyids". Specific containers and codecs may or may not be supported with Some System.</p>
-              <div class="example">MediaKeys.isTypeSupported("com.example.somesystem", "keyids")</div>
-            </li>
-            <li>
-              <p>Returns whether the Some System <a def-id="keysystem"></a> may be supported and is capable of parsing the <a def-id="initialization-data-type"></a> format <var title="true">initDataType</var>, the user agent is capable of demuxing the container specified by <var title="true">mimeType</var>, and the codec(s) specified by <var title="true">mimeType</var> are supported, all as specified by capability "foo".</p>
-              <div class="example">MediaKeys.isTypeSupported("com.example.somesystem", <var title="true">initDataType</var>, <var title="true">mimeType</var>, "foo")</div>
-            </li>
-            <li>
-              <p>Returns whether the user agent <em>probably</em> supports <a href="#clear-key">Clear Key</a> using the <a def-id="initialization-data-type"></a> format <var title="true">initDataType</var> and the container and codec(s) specified by <var title="true">mimeType</var>.</p>
-              <div class="example">"probably" == MediaKeys.isTypeSupported("org.w3.clearkey", <var title="true">initDataType</var>, <var title="true">mimeType</var>)</div>
-            </li>
-          </ul>
-      
-          <ol class="method-algorithm">
-            <li><p>If <var title="true">keySystem</var> is the empty string or contains an unrecognized or unsupported <a def-id="keysystem"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
-            <li><p>If the <var title="true">keySystem</var> implementation is not available and usable, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>Follow the steps for the first matching condition from the following list:</p>
-              <dl class="switch">
-                <dt>If <var title="true">keySystem</var> is a value that may be successfully passed to <a def-id="createMediaKeys"></a></dt>
-                <dd>Let <var title="true">probably result</var> be <a def-id="IsTypeSupportedResult-probably"></a>.</dd>
-                <dt>Otherwise</dt>
-                <dd>Let <var title="true">probably result</var> be <a def-id="IsTypeSupportedResult-maybe"></a>.
-                  <p class="note">This may, for example, be the case for strings that are only used for discovery.</p>
-                </dd>
-              </dl>
-            </li>
-            
-            <li><p>If <var title="true">initDataType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
-              <dl class="switch">
-                <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation is available and usable</dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>Otherwise</dt>
-                <dd>Return <var title="true">probably result</var>.</dd>
-              </dl>
-            </li>
-      
-            <li><p>If <var title="true">initDataType</var> is the empty string or contains an unrecognized or unsupported <a def-id="initialization-data-type"></a>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
-            <li><p>If <var title="true">initDataType</var> is not an <a def-id="initialization-data-type"></a> supported by the <var title="true">keySystem</var> implementation, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>If the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is not available and usable, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>If <var title="true">contentType</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
-              <dl class="switch">
-                <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable</dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>Otherwise</dt>
-                <dd>Return <var title="true">probably result</var>.</dd>
-              </dl>
-            </li>
-      
-            <li><p>If <var title="true">contentType</var> is the empty string or contains an invalid or unrecognized MIME type, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>Let <var title="true">container</var> be the container type specified by <var title="true">contentType</var>.</p></li>
-            <li><p>Let <var title="true">parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var title="true">contentType</var>.</p></li>
-            <li><p>Let <var title="true">media types</var> be the set of media types specified by <var title="true">parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-              <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
-            </li>
-            <li><p>If the user agent does not support <var title="true">container</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
-              <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
-            </li>
-            <li><p>If the user agent and <var title="true">keySystem</var> implementation do not support playback of encrypted <a def-id="media-data"></a> for all <var title="true">media types</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>If <var title="true">capability</var> was not provided, follow the steps for the first matching condition from the following list and abort these steps:</p>
-              <dl class="switch">
-                <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <a def-id="media-data"></a> for all <var title="true">media types</var></dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>If the user agent did <em>not</em> recognize one or more <var title="true">parameters</var></dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>Otherwise</dt>
-                <dd>Return <var title="true">probably result</var>.</dd>
-              </dl>
-            </li>
-            
-            <li><p>If <var title="true">capability</var> is the empty string, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps.</p></li>
-            <li><p>If the <var title="true">keySystem</var> implementation does not support <var title="true">capability</var>, return <a def-id="IsTypeSupportedResult-empty"></a> and abort these steps. String comparison is case-sensitive.</p></li>
-            <li><p>Follow the steps for the first matching condition from the following list:</p>
-              <dl class="switch">
-                <dt>If the user agent is <em>not</em> confident that the <var title="true">keySystem</var> implementation supporting <var title="true">initDataType</var> is available and usable to decrypt and enable playback of support playback of encrypted <a def-id="media-data"></a> for all <var title="true">media types</var> as specified by <var title="true">capability</var></dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>If the user agent did <em>not</em> recognize one or more <var title="true">parameters</var></dt>
-                <dd>Return <a def-id="IsTypeSupportedResult-maybe"></a>.</dd>
-                <dt>Otherwise</dt>
-                <dd>Return <var title="true">probably result</var>.</dd>
-              </dl>
-            </li>
-          </ol>
-        </dd>
--->
       </dl>
 
     </section>
