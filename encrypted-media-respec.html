@@ -316,7 +316,7 @@
           <dt>Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
           <dd>
             <p>Requests access to the specified <a def-id="keysystem"></a>.
-              When <code>supportedConfigurations</code> is specified, the combination specified by at least one of its elements must be supported.
+              When <code>supportedConfigurations</code> is specified, the configuration specified by at least one of its elements must be supported.
               The resulting <a>MediaKeySystemAccess</a> will correspond to the first such elment.
             </p>
             <p>Any permission checks or user interaction, such as a prompt, SHOULD be performed before resolving the promise.</p>
@@ -329,10 +329,10 @@
               <dd>
                 The <a def-id="keysystem"></a> for which access is being requested.
               </dd>
-              <dt>optional sequence&lt;<a>MediaKeySystemOptions</a>&gt; supportedConfigurations</dt>
+              <dt>optional sequence&lt;<a>MediaKeySystemConfiguration</a>&gt; supportedConfigurations</dt>
               <dd>
-                A sequence of <a>MediaKeySystemOptions</a> configurations to try in order.
-                The first element with a satisfiable combination will be used. 
+                A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
+                The first element with a satisfiable configuration will be used.
               </dd>
             </dl>
 
@@ -379,18 +379,18 @@
                       <dd>
                         <p>For each value in <code>supportedConfigurations</code>:</p>
                         <ol>
-                          <li><p>Let <var>configuration</var> be the value.</p></li>
-                          <li><p>Let <var>supported combination</var> be the result of executing the <a def-id="get-supported-combination-algorithm"></a> algorithm on <var>implementation</var>, <var>configuration</var>, and <var>origin</var>. 
-                          <li><p>If <var>supported combination</var> is not <code>null</code>, run the following steps:</p>
+                          <li><p>Let <var>candidate configuration</var> be the value.</p></li>
+                          <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
+                          <li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
                             <ol>
                               <li>
                                 <p>Let <var title="true">access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
                                 <ol>
                                   <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var title="true">keySystem</var>.</p></li>
-                                  <li><p>Let <var>supported configuration</var> be a new <a>MediaKeySystemOptions</a> object populated with the values in <var>supported combination</var>.</p>
-                                    <var>supported configuration</var> is a non-strict subset of <var>configuration</var>.<p>
+                                  <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
+                                    <var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.<p>
                                   </li>
-                                  <li><p>Let the object's <var>configuration</var> value be <var>supported configuration</var>.</p></li>
+                                  <li><p>Let the object's <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
                                 </ol>
                               </li>
                               <li><p>Resolve <var>promise</var> with <var title="true">access</var> and abort these steps.</p></li>
@@ -401,7 +401,7 @@
                     </dl>
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p> 
-                    <p class="note"><code>keySystem</code> was not supported/allowed or none of the combinations in <code>supportedConfigurations</code> were supported/allowed.</p>
+                    <p class="note"><code>keySystem</code> was not supported/allowed or none of the configurations in <code>supportedConfigurations</code> were supported/allowed.</p>
                     <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=25923">Bug 25923</a> - It is TBD whether rejecting the promise is the correct behavior or whether the promise should instead be resolved with <code>null</code>.</p>
                   </li>
                 </ol>
@@ -426,15 +426,15 @@
           </section>
 
           <section>
-            <h2>Get Supported Combination</h2>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemOptions</a> <var>combination</var>, and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>null</code> as appropriate.</p>
-            <p class="note">Unrecognized dictionary members in <var>combination</var> are ignored per [[WebIDL]], and will never reach this algorithm. Thus, they cannot be considered as part of the combination.</p>
+            <h2>Get Supported Configuration</h2>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
+            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
             <ol>
-              <li><p>Let <var>combined configuration</var> be empty.</p></li>
-              <li><p>If <a def-id="option-initDataTypes"></a> is not empty, run the following steps:</p>
+              <li><p>Let <var>accumulated configuration</var> be empty.</p></li>
+              <li><p>If <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> attribute is not empty, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>supported types</var> be empty.</p></li>
-                  <li><p>For each value in <a def-id="option-initDataTypes"></a>:</p>
+                  <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> attribute:</p>
                     <ol>
                       <li><p>Let <var>initDataType</var> be the value.</p></li>
                       <li><p>If <var>initDataType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
@@ -442,7 +442,7 @@
                     </ol>
                   </li>
                   <li><p>If <var>supported types</var> is empty, return <code>null</code>. String comparison is case-sensitive.</p></li>
-                  <li><p>Add <var>supported types</var> to <var>combined configuration</var>.</p></li>
+                  <li><p>Add <var>supported types</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
               <!-- Table of results for MediaKeysRequirement members based on implementation capabilities:
@@ -453,11 +453,11 @@
                 Optional   ||        Required        |       Disallowed       | Depends on combination |
                 Disallowed ||          null          |       Disallowed       |       Disallowed       |
                -->
-              <li><p>Follow the steps for the value of <a def-id="option-persistentUniqueIdentifier"></a> from the following list:</p>
+              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> attribute from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    If the <var>implementation</var> does not support a unique identifier in combination with <var>combined configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> does not support a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -465,16 +465,16 @@
                   </dd>
                   <dt><a def-id="requirement-disallowed"></a></dt>
                   <dd>
-                    If the <var>implementation</var> requires a unique identifier in combination with <var>combined configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> requires a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                 </dl>
               </li>
-              <li><p>Add <a def-id="option-persistentUniqueIdentifier"></a> and its value to <var>combined configuration</var>.
+              <li><p>Add <a def-id="option-persistentUniqueIdentifier"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
               <li><p>Follow the steps for the value of <a def-id="option-persistentState"></a> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    If the <var>implementation</var> does not support persisting state in combination with <var>combined configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -482,55 +482,55 @@
                   </dd>
                   <dt><a def-id="requirement-disallowed"></a></dt>
                   <dd>
-                    If the <var>implementation</var> requires persisting state in combination with <var>combined configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                 </dl>
               </li>
-              <li><p>Add <a def-id="option-persistentState"></a> and its value to <var>combined configuration</var>.
-              <li><p>If <a def-id="option-audioCapabilities"></a> is not empty, run the following steps:</p>
+              <li><p>Add <a def-id="option-persistentState"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
+              <li><p>If <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> attribute is not empty, run the following steps:</p>
                 <ol>
-                  <li><p>Let <var>audio configuration</var> be the result of executing the <a def-id="get-supported-capability-configurations-for-media-type-algorithm"></a> algorithm on Audio, <a def-id="option-audioCapabilities"></a>, and <var>combined configuration</var>.</p></li>
-                  <li><p>If <var>audio configuration</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
-                  <li><p>Add <var>audio configuration</var> to <var>combined configuration</var>.</p></li>
+                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> attribute, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                  <li><p>Add <var>audio capabilities</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
-              <li><p>If <a def-id="option-videoCapabilities"></a> is not empty, run the following steps:</p>
+              <li><p>If <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute is not empty, run the following steps:</p>
                 <ol>
-                  <li><p>Let <var>video configuration</var> be the result of executing the <a def-id="get-supported-capability-configurations-for-media-type-algorithm"></a> algorithm on Video, <a def-id="option-videoCapabilities"></a>, and <var>combined configuration</var>.</p></li>
-                  <li><p>If <var>video configuration</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
-                  <li><p>Add <var>video configuration</var> to <var>combined configuration</var>.</p></li>
+                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                  <li><p>Add <var>video capabilities</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
-              <li><p>If <var>combined configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
+              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <var>implementation</var> requires a unique identifier for any of the combinations in <var>combined configuration</var></dt>
-                  <dd>Change <var>combined configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-required"></a>.</dd>
+                  <dt>If the <var>implementation</var> requires a unique identifier for any of the combinations in <var>accumulated configuration</var></dt>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-required"></a>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>combined configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
                 </dl>
               </li>
-              <li><p>If <var>combined configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
+              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>combined configuration</var></dt>
-                  <dd>Change <var>combined configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</dd>
+                  <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>accumulated configuration</var></dt>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>combined configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
                 </dl>
               </li>
-              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>combined configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
                 <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
               </li>
-              <li><p>Return <var>combined configuration</var>.</p></li>
+              <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
           </section>
 
           <section>
-            <h2>Get Supported Capability Configurations for Media Type</h2>
+            <h2>Get Supported Capabilities for Media Type</h2>
             <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>capabilities</var>, and <var>partial configuration</var>, this algorithm returns a list of supported configurations for this media type or <code>null</code> as appropriate.</p>
             <ol>
-              <li><p>Let <var>accumulated configuration</var> be <var>partial configuration</var>.</p></li>
-              <li><p>Let <var>media type configurations</var> be empty.</p></li>
+              <li><p>Let <var>accumulated capabilities</var> be <var>partial configuration</var>.</p></li>
+              <li><p>Let <var>media type capabilities</var> be empty.</p></li>
               <li><p>For each value in <var>capabilities</var>:</p>
                 <ol>
                   <li><p>Let <var>contentType</var> be the value's <a def-id="capability-contentType"></a> member.</p></li>
@@ -562,26 +562,26 @@
                       <li><p>Add <var>robustness</var> to <var>configuration</var>.</p></li>
                     </ol>
                   </li>
-                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>accumulated configuration</var>, continue to the next iteration.</p>
+                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>accumulated capabilities</var>, continue to the next iteration.</p>
                     <p class="note">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p>
                   </li>
-                  <li><p>Add <var>configuration</var> to <var>media type configurations</var>.</p></li>
-                  <li><p>Add <var>configuration</var> to <var>accumulated configuration</var>.</p>
+                  <li><p>Add <var>configuration</var> to <var>media type capabilities</var>.</p></li>
+                  <li><p>Add <var>configuration</var> to <var>accumulated capabilities</var>.</p>
                     <p class="note">This step ensures that combinations of audio/video capabilities are always checked instead of only checking combinations of audio capabilities when checking a video capbility.</p>
                   </li>
                 </ol>
               </li>
-              <li><p>If <var>media type configurations</var> is empty, return <code>null</code>.</p>
+              <li><p>If <var>media type capabilities</var> is empty, return <code>null</code>.</p>
                 <p class="note">None of the <a>MediaKeySystemMediaCapability</a> elements in <var>capabilities</var> is supported in combination with <var>partial configuration</var>.</p>
               </li>
-              <li><p>Return <var>media type configurations</var>.</p></li>
+              <li><p>Return <var>media type capabilities</var>.</p></li>
             </ol>
           </section>
         </section>
       </section>
 
       <section>
-        <h2><a>MediaKeySystemOptions</a> dictionary</h2>
+        <h2><a>MediaKeySystemConfiguration</a> dictionary</h2>
   
         <dl title="enum MediaKeysRequirement" class="idl">
           <dt>required</dt>
@@ -596,7 +596,7 @@
           </dd>
         </dl>
 
-        <dl title="dictionary MediaKeySystemOptions" class='idl'>
+        <dl title="dictionary MediaKeySystemConfiguration" class='idl'>
           <dt>sequence&lt;DOMString&gt; initDataTypes</dt>
           <dd>
             A list of supported <a def-id="initialization-data-type"></a> names.
@@ -631,6 +631,9 @@
 
         <p>Implementations SHOULD NOT add members to the this dictionary.
           Should member(s) be added, they MUST be of type <a def-id="requirement"></a>, and it is RECOMMENDED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
+        </p>
+        <p class="note">Dictionary members not recognized by a user agent implementation are ignored per [[WebIDL]] and will not be considered in the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
+          Should an an application use non-standard dictionary member(s), it MUST NOT rely on user agent implementations rejecting a configuration that includes such dictionary members.
         </p>
         <p>This dictionary MUST NOT be used to pass state or data to the CDM.</p>
 
@@ -667,16 +670,16 @@
           Identifies the <a def-id="keysystem"></a> being used.
         </dd>
 
-        <dt>MediaKeySystemOptions? getConfiguration()</dt>
+        <dt>MediaKeySystemConfiguration? getConfiguration()</dt>
         <!-- This is a method instead of an attribute because per http://heycam.github.io/webidl/#idl-dictionaries, "Dictionaries must not be used as the type of an attribute or constant." -->
         <dd>
-          <p>Returns the supported combination of options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
+          <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
             Returns <code>null</code> if <code>supportedConfigurations</code> was not provided in the call.
           </p>
-          <p>The returned object is a non-strict subset of the first statisfiable <a>MediaKeySystemOptions</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
+          <p>The returned object is a non-strict subset of the first statisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
             It does not contain values capabilities not specified in that single configuration and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
-            All values may be used in any combination.
-            <a def-id="requirement"></a> members reflect whether capability is required for any combination and will not be <a def-id="requirement-optional"></a>.
+            All values in the configuration may be used in any combination.
+            <a def-id="requirement"></a> members reflect whether capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
           </p>
 
           <ol class="method-algorithm">
@@ -1829,7 +1832,7 @@
           <h4>Capabilities</h4>
           <p>The following describe how Clear Key supports key system-specific capabilities:</p>
           <ul>
-            <li><p><a>MediaKeySystemOptions</a>:<p>
+            <li><p><a>MediaKeySystemConfiguration</a>:<p>
               <ol>
                 <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
                 <li><p><a def-id="option-persistentUniqueIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
