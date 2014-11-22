@@ -186,22 +186,11 @@
     'persistent-session': { func: idlref_helper, fragment: 'idl-def-SessionType.persistent', link_text: '"persistent"',  },
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-SessionType.temporary', link_text: '"temporary"',  },
 
-    /* TODO: Move or remove depending on the outcome of Bug 25923.
-    'IsTypeSupportedResult-empty': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.empty-string', link_text: '""',  },
-    'IsTypeSupportedResult-maybe': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.maybe', link_text: '"maybe"',  },
-    'IsTypeSupportedResult-probably': { func: idlref_helper, fragment: 'idl-def-IsTypeSupportedResult.probably', link_text: '"probably"',  },
-    */
-
     // TODO: Replace uses with simple <a>.
     'mediakeys': { func: idlref_helper, fragment: 'idl-def-MediaKeys', link_text: 'MediaKeys',  },
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
-    /* TODO: Move or remove depending on the outcome of Bug 25923.
-    'isTypeSupported': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported()',  },
-    'isTypeSupported-call': { func: idlref_helper, fragment: 'widl-MediaKeys-isTypeSupported-IsTypeSupportedResult-DOMstring-keySystem-DOMString-initDataType-DOMString-contentType-DOMString-capability', link_text: 'isTypeSupported',  },
-    */
-    'mediakeys-initialization': { func: term_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: ''  },
 
     'mediakeysession': { func: idlref_helper, fragment: 'idl-def-MediaKeySession', link_text: 'MediaKeySession',  },
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },

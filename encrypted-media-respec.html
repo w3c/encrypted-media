@@ -369,7 +369,8 @@
                             <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
                             <ol>
                               <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var>keySystem</var>.</p></li>
-                              <li><p>Let the object's <var>configuration</var> value be <code>null</code>.</p></li>
+                              <li><p>Let the <var>configuration</var> value be <code>null</code>.</p></li>
+                              <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
                             </ol>
                           </li>
                           <li><p>Resolve <var>promise</var> with <var>access</var> and abort these steps.</p></li>
@@ -390,7 +391,8 @@
                                   <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
                                     <var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.<p>
                                   </li>
-                                  <li><p>Let the object's <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
+                                  <li><p>Let the <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
+                                  <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
                                 </ol>
                               </li>
                               <li><p>Resolve <var>promise</var> with <var>access</var> and abort these steps.</p></li>
@@ -694,10 +696,31 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the <a def-id="cdm"></a> corresponding to this object.</p></li>
-                <li><p>Load and initialize the <var>cdm</var> if necessary.</p></li>
-                <li><p>If <var>cdm</var> fails to load or initialize, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Let <var>media keys</var> be a new <a def-id="mediakeys"></a> object.</p></li>
+                <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
+                <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
+                <li><p>If either of the previous two steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                <li><p>Let <var>configuration</var> be the value of this object's <var>configuration</var> value.</p></li>
+                <li><p>Let <var>persistent state</var> be the value of <var>configuration</var>'s <a def-id="option-persistentState"></a> member.</p></li>
+                <li><p>Follow the steps for the value of <var>persistent state</var> from the following list:</p>
+                  <dl class="switch">
+                    <dt><a def-id="requirement-required"></a></dt>
+                    <dd>
+                      Let <var>persistent state allowed</var> be <code>true</code>.
+                    </dd>
+                    <dt><a def-id="requirement-disallowed"></a></dt>
+                    <dd>
+                      Let <var>persistent state allowed</var> be <code>false</code>.
+                    </dd>
+                    <p class="note">The value of <var>implementation</var> cannot be <a def-id="requirement-optional"></a>.</p>
+                  </dl>
+                </li>
+                <li><p>Let <var>media keys</var> be a new <a def-id="mediakeys"></a> object, and initialize it as follows:</p>
+                  <ol>
+                    <li><p>Let the <var>persistent state allowed</var> value be <var>persistent state allowed</var>.</p></li>
+                    <li><p>Let the <var>cdm implementation</var> value be this object's <var>cdm implementation</var> value.</p></li>
+                    <li><p>Let the <var>cdm instance</var> value be <var>instance</var>.</p></li>
+                  </ol>
+                </li>
                 <li><p>Resolve <var>promise</var> with <var>media keys</var>.</p></li>
               </ol>
             </li>
@@ -743,18 +766,18 @@
           </dl>
 
           <ol class="method-algorithm">
-            <!-- TODO: Find a better way to reference MediaKeySystemAccess attributes, including the outcome vs. what was specified. -->
-            <li><p>If this object was created by a <a>MediaKeySystemAccess</a> object that was created with a <a def-id="option-persistentState"></a> value of <a def-id="requirement-disallowed"></a> and <var>sessionType</var> is not <a def-id="temporary-session"></a>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
-            <!-- TODO: Reference the CDM loaded during initialization instead of "<a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute", especially since it is now a member of MediaKeySystemAccess. Here and elsewhere. -->
-            <li><p>If <var>sessionType</var> is not supported by the <a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>If this object's <var>persistent state allowed</var> value is <code>false</code> and <var>sessionType</var> is not <a def-id="temporary-session"></a>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>sessionType</var>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
             <li><p>Let <var>session</var> be a new <a def-id="mediakeysession"></a> object, and initialize it as follows:</p>
               <ol>
                 <li><p>Let the <a def-id="sessionId"></a> attribute be the empty string.</p></li>
                 <li><p>Let the <a def-id="expiration"></a> attribute be <code>NaN</code>.</p></li>
                 <li><p>Let the <a def-id="closed"></a> attribute be a new promise.</p></li>
-                <li><p>Let the <var>session type</var> be <var>sessionType</var>.</p></li>
-                <li><p>Let <var>uninitialized</var> be true.</p></li>
-                <li><p>Let <var>callable</var> be false.</p></li>
+                <li><p>Let the <var>session type</var> value be <var>sessionType</var>.</p></li>
+                <li><p>Let the <var>uninitialized</var> value be true.</p></li>
+                <li><p>Let the <var>callable</var> value be false.</p></li>
+                <li><p>Let the <var>cdm implementation</var> value be this object's <var>cdm implementation</var>.</p></li>
+                <li><p>Let the <var>cdm instance</var> value be this object's <var>cdm instance</var>.</p></li>
               </ol>
             </li>
             <li><p>Return <var>session</var>.</p></li>
@@ -780,14 +803,13 @@
 
           <ol class="method-algorithm">
             <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>If the <a def-id="cdm"></a> corresponding to the <a def-id="keySystem-attribute"></a> attribute does not support server certificates, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
             <li><p>Let <var>certificate</var> be a copy of the contents of the <var>serverCertificate</var> parameter.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the <var>cdm</var> during the <a def-id="mediakeys-initialization">initialization</a> of this object.</p></li>
-                <li><p>Use the <var>cdm</var> to process <var>certificate</var>.</p></li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                <li><p>Use this object's <var>cdm instance</var> to process <var>certificate</var>.</p></li>
+                <li><p>If the preceding step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
@@ -844,8 +866,7 @@
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If <var>initData</var> is an empty array, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>Let <var>media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
-            <li><p>If the <a def-id="cdm"></a> corresponding to <var>media keys</var>'s <a def-id="keySystem-attribute"></a> attribute does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
             <li><p>Let <var>init data</var> be a copy of the contents of the <var>initData</var> parameter.</p></li>
             <li><p>Let <var>session type</var> be this object's <var>session type</var>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -862,7 +883,7 @@
                 <li><p>If the previous step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
                 <li><p>Let <var>session id</var> be the empty string.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of <var>media keys</var>.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If the <var>init data</var> is not supported by the <var>cdm</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
@@ -917,8 +938,7 @@
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If this object's <var>session type</var> is not <a def-id="persistent-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>Let <var>media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
-            <li><p>If the <a def-id="cdm"></a> corresponding to <var>media keys</var>'s <a def-id="keySystem-attribute"></a> attribute does not support loading previous sessions, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support loading previous sessions, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
@@ -932,7 +952,7 @@
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>message type</var> be null.</p></li>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of <var>media keys</var>.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code>.</p></li><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
@@ -993,9 +1013,9 @@
                   </p>
                 </li>
                 <li><p>If the previous step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <a def-id="mediakeys"></a> object that created this object.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>message type</var> be null.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If the format of <var>sanitized response</var> is invalid in any way, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
@@ -1050,7 +1070,7 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <a def-id="mediakeys"></a> object that created this object.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li>
@@ -1078,7 +1098,7 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <a def-id="mediakeys"></a> object that created this object.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li>
@@ -1112,7 +1132,7 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <a def-id="mediakeys"></a> object that created this object.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>Let <var>usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>. <var>usable key ids</var> MUST NOT contain IDs for keys that <em>may not</em> currently be usable. Each element MUST be unique.</p></li>
@@ -1269,13 +1289,13 @@
         <section id="algorithms-session-close">
           <h4>Session Close</h4>
           <p>The Session Close algorithm is run when the CDM closes the session associated with a <a def-id="mediakeysession"></a> object.</p>
+          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available for decryption.</p>
           <p class="note">The CDM may close a session at any point, such as in response to a <a def-id="close"></a> call, when the session is no longer needed, or when system resources are lost.
           Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a def-id="mediakeysession"></a> object.</p></li>
-            <li><p>Let <var>media keys</var> be the <a def-id="mediakeys"></a> object that created this object.</p></li>
             <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
@@ -1563,7 +1583,7 @@
             <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
               <ol>
                 <li><p>Let <var>media keys</var> be the <a def-id="mediakeys"></a> object referenced by that atribute.</p></li>
-                <li><p>Let <var>cdm</var> be the CDM loaded during the <a def-id="mediakeys-initialization">initialization</a> of the <var>media keys</var>.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by <var>media keys</var>'s <var>cdm instance</var> value.</p></li>
                 <li><p>If there is at least one <a def-id="mediakeysession"></a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> has not been run, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
                   <ol>
