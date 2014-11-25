@@ -447,12 +447,12 @@
                 </ol>
               </li>
               <!-- Table of results for MediaKeysRequirement members based on implementation capabilities:
-                           ||                       Implementation Capabilities                        |
-                   Value   ||     Only Supported     |   Only Not Supported   |         Both           |
-                ========================================================================================
-                Required   ||        Required        |          null          |        Required        |
-                Optional   ||        Required        |       Disallowed       | Depends on combination |
-                Disallowed ||          null          |       Disallowed       |       Disallowed       |
+                              ||                        Implementation Capabilities                       |
+                  Input Value ||     Only Supported     |   Only Not Supported   |          Both          |
+                ===========================================================================================
+                "required"    ||       "required"       |       Return null      |       "required"       |
+                "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
+                "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
               <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> attribute from the following list:</p>
                 <dl class="switch">
@@ -464,7 +464,7 @@
                   <dd>
                     Continue.<!-- Will be updated below. -->
                   </dd>
-                  <dt><a def-id="requirement-disallowed"></a></dt>
+                  <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
                     If the <var>implementation</var> requires a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
@@ -481,7 +481,7 @@
                   <dd>
                     Continue.<!-- Will be updated below. -->
                   </dd>
-                  <dt><a def-id="requirement-disallowed"></a></dt>
+                  <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
                     If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
@@ -508,7 +508,7 @@
                   <dt>If the <var>implementation</var> requires a unique identifier for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-required"></a>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-not-allowed"></a>.</dd>
                 </dl>
               </li>
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
@@ -516,7 +516,7 @@
                   <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-disallowed"></a>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-not-allowed"></a>.</dd>
                 </dl>
               </li>
               <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
@@ -587,13 +587,28 @@
         <dl title="enum MediaKeysRequirement" class="idl">
           <dt>required</dt>
           <dd>
-            The returned object MUST support this feature.
+            <dl>
+              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dd>The returned object MUST support this feature.</dd>
+              <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
+              <dd>CDM instances created by the object MAY use this feature.</dd>
+            </dl>
           <dt>optional</dt>
           <dd>
-            The returned object MAY support this feature.
-          <dt>disallowed</dt>
+            <dl>
+              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dd>The returned object MAY support and use this feature.</dd>
+              <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
+              <dd>MUST NOT be returned.</dd>
+            </dl>
+          <dt>not-allowed</dt>
           <dd>
-            The returned object MUST NOT support this feature.
+            <dl>
+              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dd>The returned object MUST NOT support or use this feature.</dd>
+              <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
+              <dd>CDM instances created by the object MUST NOT use this feature.</dd>
+            </dl>
           </dd>
         </dl>
 
@@ -707,7 +722,7 @@
                     <dd>
                       Let <var>persistent state allowed</var> be <code>true</code>.
                     </dd>
-                    <dt><a def-id="requirement-disallowed"></a></dt>
+                    <dt><a def-id="requirement-not-allowed"></a></dt>
                     <dd>
                       Let <var>persistent state allowed</var> be <code>false</code>.
                     </dd>

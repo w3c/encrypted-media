@@ -445,7 +445,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-24T21:57:48.000Z" id="w3c-editor-s-draft-24-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-24">24 November 2014</time></h2>
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-11-25T00:13:34.000Z" id="w3c-editor-s-draft-24-november-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time class="dt-published" datetime="2014-11-24">24 November 2014</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -931,12 +931,12 @@ table.simple {
                 </ol>
               </li>
               <!-- Table of results for MediaKeysRequirement members based on implementation capabilities:
-                           ||                       Implementation Capabilities                        |
-                   Value   ||     Only Supported     |   Only Not Supported   |         Both           |
-                ========================================================================================
-                Required   ||        Required        |          null          |        Required        |
-                Optional   ||        Required        |       Disallowed       | Depends on combination |
-                Disallowed ||          null          |       Disallowed       |       Disallowed       |
+                              ||                        Implementation Capabilities                       |
+                  Input Value ||     Only Supported     |   Only Not Supported   |          Both          |
+                ===========================================================================================
+                "required"    ||       "required"       |       Return null      |       "required"       |
+                "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
+                "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
               <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentUniqueIdentifier">persistentUniqueIdentifier</a></code> attribute from the following list:</p>
                 <dl class="switch">
@@ -948,7 +948,7 @@ table.simple {
                   <dd>
                     Continue.<!-- Will be updated below. -->
                   </dd>
-                  <dt><code><a href="#idl-def-MediaKeysRequirement.disallowed">"disallowed"</a></code></dt>
+                  <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
                     If the <var>implementation</var> requires a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
@@ -965,7 +965,7 @@ table.simple {
                   <dd>
                     Continue.<!-- Will be updated below. -->
                   </dd>
-                  <dt><code><a href="#idl-def-MediaKeysRequirement.disallowed">"disallowed"</a></code></dt>
+                  <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
                     If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
@@ -992,7 +992,7 @@ table.simple {
                   <dt>If the <var>implementation</var> requires a unique identifier for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentUniqueIdentifier">persistentUniqueIdentifier</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentUniqueIdentifier">persistentUniqueIdentifier</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.disallowed">"disallowed"</a></code>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentUniqueIdentifier">persistentUniqueIdentifier</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.</dd>
                 </dl>
               </li>
               <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code>, follow the steps for the first matching condition from the following list:</p>
@@ -1000,7 +1000,7 @@ table.simple {
                   <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.disallowed">"disallowed"</a></code>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.</dd>
                 </dl>
               </li>
               <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
@@ -1071,13 +1071,28 @@ table.simple {
         <pre class="idl"><span class="idlEnum" id="idl-def-MediaKeysRequirement">enum <span class="idlEnumID">MediaKeysRequirement</span> {
     "<a href="#idl-def-MediaKeysRequirement.required" class="idlEnumItem">required</a>",
     "<a href="#idl-def-MediaKeysRequirement.optional" class="idlEnumItem">optional</a>",
-    "<a href="#idl-def-MediaKeysRequirement.disallowed" class="idlEnumItem">disallowed</a>"
+    "<a href="#idl-def-MediaKeysRequirement.not-allowed" class="idlEnumItem">not-allowed</a>"
 };</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeysRequirement.required">required</code></td><td>
-            The returned object <em class="rfc2119" title="MUST">MUST</em> support this feature.
+            <dl>
+              <dt>When used in a call to <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code></dt>
+              <dd>The returned object <em class="rfc2119" title="MUST">MUST</em> support this feature.</dd>
+              <dt>When returned by a <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object</dt>
+              <dd>CDM instances created by the object <em class="rfc2119" title="MAY">MAY</em> use this feature.</dd>
+            </dl>
           </td></tr><tr><td><code id="idl-def-MediaKeysRequirement.optional">optional</code></td><td>
-            The returned object <em class="rfc2119" title="MAY">MAY</em> support this feature.
-          </td></tr><tr><td><code id="idl-def-MediaKeysRequirement.disallowed">disallowed</code></td><td>
-            The returned object <em class="rfc2119" title="MUST NOT">MUST NOT</em> support this feature.
+            <dl>
+              <dt>When used in a call to <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code></dt>
+              <dd>The returned object <em class="rfc2119" title="MAY">MAY</em> support and use this feature.</dd>
+              <dt>When returned by a <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object</dt>
+              <dd><em class="rfc2119" title="MUST NOT">MUST NOT</em> be returned.</dd>
+            </dl>
+          </td></tr><tr><td><code id="idl-def-MediaKeysRequirement.not-allowed">not-allowed</code></td><td>
+            <dl>
+              <dt>When used in a call to <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code></dt>
+              <dd>The returned object <em class="rfc2119" title="MUST NOT">MUST NOT</em> support or use this feature.</dd>
+              <dt>When returned by a <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object</dt>
+              <dd>CDM instances created by the object <em class="rfc2119" title="MUST NOT">MUST NOT</em> use this feature.</dd>
+            </dl>
           </td></tr></tbody></table>
 
         <pre class="idl"><span class="idlDictionary" id="idl-def-MediaKeySystemConfiguration">dictionary <span class="idlDictionaryID">MediaKeySystemConfiguration</span> {
@@ -1166,7 +1181,7 @@ table.simple {
                     <dd>
                       Let <var>persistent state allowed</var> be <code>true</code>.
                     </dd>
-                    <dt><code><a href="#idl-def-MediaKeysRequirement.disallowed">"disallowed"</a></code></dt>
+                    <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                     <dd>
                       Let <var>persistent state allowed</var> be <code>false</code>.
                     </dd>
