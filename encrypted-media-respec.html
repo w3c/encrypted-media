@@ -198,7 +198,7 @@
             </p>
             <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that object may access key(s) associated with the session.
             Other <a>MediaKeys</a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
-            Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#algorithms-session-close">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
+            Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a def-id="session-close-algorithm">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
             </p>
             <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
           </dd>
@@ -817,7 +817,7 @@
         <dt>Promise&lt;void&gt; setServerCertificate()</dt>
         <dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
-          <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a>.</p>
+          <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a> algorithm.</p>
           <p class="note">This method allows an application to proactively provide a server certificate to implementations that support it to avod the additional round trip should the CDM request it.
             It is intended as an optimization, and applications are not required to use it.
           </p>
@@ -873,7 +873,7 @@
 
         <dt>readonly attribute Promise&lt;void&gt; closed</dt>
         <dd>
-          <p>Signals when object becomes closed as a result of the <a def-id="session-close-algorithm"></a> being run.
+          <p>Signals when object becomes closed as a result of the <a def-id="session-close-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd>
 
@@ -957,7 +957,7 @@
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
-                <li><p>Run the <a def-id="queue-message-algorithm"></a> on the <var>session</var>, providing <a def-id="message-type-licenserequest"></a> and <var>message</var>.</p></li>
+                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-licenserequest"></a> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
@@ -1017,13 +1017,13 @@
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
-                <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">key</a>known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
+                <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">key</a>known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
                   <p>Should additional processing be necessary to determine with certainty the status of a key, use the status of the non-<a def-id="status-usable"></a> status that corresponds to the reason for the additional processing.
-                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> again if any of the statuses has changed.
+                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
                   </p>
                 </li>
-                <li><p>Run the <a def-id="update-expiration-algorithm"></a> on the <var>session</var>, providing <var>expiration time</var>.</p></li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
+                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var> with <code>true</code>.</p></li>
               </ol>
             </li>
@@ -1083,12 +1083,12 @@
                       This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                       </p>
                     </li>
-                    <li><p>If the set of keys <a href="#known-key">key</a>known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
+                    <li><p>If the set of keys <a href="#known-key">key</a>known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
                       <p>Should additional processing be necessary to determine with certainty the status of a key, use the status of the non-<a def-id="status-usable"></a> status that corresponds to the reason for the additional processing.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> again if any of the statuses has changed.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
                       </p>
                     </li>
-                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> on the <var>session</var>, providing the new expiration time.</p></li>
+                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>message</var> be that message.</p></li>
@@ -1098,7 +1098,7 @@
                   </ol>
                 </li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
@@ -1113,7 +1113,7 @@
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If the <a def-id="session-close-algorithm"></a> has been run on this object, return a resolved promise.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a resolved promise.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
@@ -1124,7 +1124,7 @@
                       <p>Process the close request.</p>
                       <p>Do not remove stored session data.</p>
                     </li>
-                    <li><p>If the previous step caused the session to be closed, run the <a def-id="session-close-algorithm"></a> on this object.</p></li>
+                    <li><p>If the previous step caused the session to be closed, run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                   </ol>
                 </li>
                 <li><p>Resolve <var>promise</var>.</p></li>
@@ -1141,7 +1141,7 @@
           <ol class="method-algorithm">
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>session type</var> is not <a def-id="persistent-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>If the <a def-id="session-close-algorithm"></a> has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
@@ -1159,7 +1159,7 @@
                 <li><p>Run the following steps asynchronously once the above step has completed:</p>
                   <ol>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Run the <a def-id="session-close-algorithm"></a> on this object.</p></li>
+                    <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                     <li><p>Resolve <var>promise</var>.</p></li>
                   </ol>
                 </li>
@@ -1255,7 +1255,7 @@
       <section id="mediakeysession-algorithms">
         <h3>Algorithms</h3>
 
-        <section id="algorithms-queue-message">
+        <section id="queue-message">
           <h4>Queue a "message" Event</h4>
           <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <a>MediaKeySession</a> object.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object, a <var>message type</var>, and a <var>message</var>.
@@ -1274,7 +1274,7 @@
           </ol>
         </section>
 
-        <section id="algorithms-update-key-statuses">
+        <section id="update-key-statuses">
           <h4>Update Key Statuses</h4>
           <p>The Update Key Statuses algorithm is run when the CDM changes the set of keys <a href="#known-key">key</a>known</a> to the session or the status of one or more of the keys.
           This can happen as the result of a <a def-id="load"></a> or <a def-id="update"></a> call or some other event, such as expiration.
@@ -1300,14 +1300,14 @@
               </p>
             </li>
             <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keyschange"></a> at the <var>session</var>.</p></li>
-            <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
+            <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
               <p>The user agent MAY choose to skip this step if it knows resuming will fail.</p>
               <p class="note">For example, the user agent may skip this step if no additional keys became <a def-id="status-usable"></a>.</p>
             </li>
           </ol>
         </section>
 
-        <section id="algorithms-update-expiration">
+        <section id="update-expiration">
           <h4>Update Expiration</h4>
           <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
           This can happen as the result of an <a def-id="update"></a> call or some other event.
@@ -1322,7 +1322,7 @@
           </ol>
         </section>
 
-        <section id="algorithms-session-close">
+        <section id="session-close">
           <h4>Session Close</h4>
           <p>The Session Close algorithm is run when the CDM closes the session associated with a <a>MediaKeySession</a> object.</p>
           <p>Closing a session means that the license(s) and key(s) associated with it are no longer available to decrypt <a def-id="media-data"></a></p>
@@ -1407,7 +1407,7 @@
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one active unclosed session in any <a def-id="document-concept"></a>.
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
-          A session MAY only be loaded again after the <a def-id="session-close-algorithm"></a> has not been run on the object representing it.
+          A session MAY only be loaded again after the <a def-id="session-close-algorithm"></a> algorithm has not been run on the object representing it.
         </p>
         <p>An application that creates a <a def-id="persistent-session"></a> session SHOULD later remove the stored data using <a def-id="remove"></a>.
           The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
@@ -1479,7 +1479,7 @@
 
         <dt>readonly attribute MediaWaitingFor waitingFor</dt>
         <dd>
-          <p>Indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a def-id="encrypted-block-algorithm"></a>.</p>
+          <p>Indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm.</p>
         </dd>
 
         <dt>attribute EventHandler onencrypted</dt>
@@ -1527,7 +1527,7 @@
                         <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                       </ol>
                     </li>
-                    <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> on the media element.</p>
+                    <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on the media element.</p>
                       <p>The user agent MAY choose to skip this step if it knows resuming will fail.<p>
                       <p class="note">For example, the user agent may skip this step if <var>mediaKeys</var> has no sessions.</p>
                     </li>
@@ -1611,9 +1611,9 @@
       <section id="htmlmediaelement-algorithms">
         <h3>Algorithms</h3>
 
-        <section id="algorithms-initdata-encountered">
+        <section id="initdata-encountered">
           <h4>Initialization Data Encountered</h4>
-          <p>The following steps are run when the media element encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>:</p>
+          <p>The following steps are run when the media element encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a> algorithm:</p>
 
           <ol>
             <li><p>Let <var>initDataType</var> be the empty string.</p></li>
@@ -1639,20 +1639,20 @@
               </p>
             </li>
 
-            <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a>.</p></li>
+            <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a> algorithm.</p></li>
           </ol>
         </section>
 
-        <section id="algorithms-encrypted-block">
+        <section id="encrypted-block-encountered">
           <h4>Encrypted Block Encountered</h4>
-          <p>The following steps are run when the media element encounters a block of encrypted <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>:</p>
+          <p>The following steps are run when the media element encounters a block of encrypted <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a> algorithm:</p>
 
           <ol>
             <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
               <ol>
                 <li><p>Let <var>media keys</var> be the <a>MediaKeys</a> object referenced by that atribute.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by <var>media keys</var>'s <var>cdm instance</var> value.</p></li>
-                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> has not been run, run the following steps:</p>
+                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
                   <ol>
                     <li><p>Let the <var>block key ID</var> be the key ID of the current block.</p>
@@ -1665,14 +1665,14 @@
                         <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>block key</var> be that key.</p>
                           <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
-                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the previous step, run the <a def-id="update-key-statuses-algorithm"></a> on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
+                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the previous step, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
                         <li><p>If <var>block key</var> is not null, run the following steps:
                           <ol>
                             <li><p>Use the <var>cdm</var> to decrypt the block using <var>block key</var>.</p></li>
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
                               <dl class="switch">
                                 <dt>If decryption fails</dt>
-                                <dd>Abort the media element's <a def-id="resource-fetch-algorithm"></a>, run the steps to report a <a def-id="media-element-decode-error"></a> error, and abort these steps.</dd>
+                                <dd>Abort the media element's <a def-id="resource-fetch-algorithm"></a> algorithm, run the steps to report a <a def-id="media-element-decode-error"></a> error, and abort these steps.</dd>
                                 <dt>Otherwise</dt>
                                 <dd>Run the following steps:
                                   <ol>
@@ -1698,14 +1698,14 @@
               <p>Run the following steps:</p>
               <p class="note">These steps are reached when there is no usable key for the block.</p>
               <ol>
-                <li><p>Run the <a def-id="queue-waiting-algorithm"></a> on the media element.</p></li>
+                <li><p>Run the <a def-id="queue-waiting-algorithm"></a> algorithm on the media element.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
               </ol>
             </li>
           </ol>
 
           <div class="note">
-            <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a def-id="resource-fetch-algorithm"></a>:</p>
+            <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a def-id="resource-fetch-algorithm"></a> algorithm:</p>
             <ol>
               <li><p>Let <var>encrypted</var> be false.</p></li>
               <li><p>Detect whether the frame is encrypted.</p>
@@ -1722,7 +1722,7 @@
           </div>
         </section>
 
-        <section id="algorithms-queue-waiting">
+        <section id="queue-waiting">
           <h4>Queue a "waiting" Event</h4>
           <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <a def-id="htmlmediaelement"></a> object.
           Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
@@ -1740,7 +1740,7 @@
           </ol>
         </section>
 
-        <section id="algorithms-resume-playback">
+        <section id="resume-playback">
           <h4>Attempt to Resume Playback If Necessary</h4>
           <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
           If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
@@ -1751,7 +1751,7 @@
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li><p>If the <a def-id="waitingFor"></a> attribute on the <var>media element</var> is not <a def-id="MediaWaitingFor-key"></a>, abort these steps.</p></li>
-            <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> by running the <a def-id="encrypted-block-algorithm"></a>.</p></li>
+            <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> algorithm by running the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm.</p></li>
             <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>, run the following steps:</p>
               <ol>
                 <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="canplay"></a> at the <var>media element</var>.</p></li>

@@ -208,14 +208,14 @@
     'status-usable': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.usable', link_text: '"usable"',  },
     'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
 
-    // TODO: Drop "algorithm" from the link text and rename the fragments (they are no longer in a single Algorithms section).
-    'queue-message-algorithm': { func: term_helper, fragment: 'algorithms-queue-message', link_text: 'queue a "message" event algorithm',  },
-    'session-close-algorithm': { func: term_helper, fragment: 'algorithms-session-close', link_text: 'session close algorithm',  },
-    'encrypted-block-algorithm': { func: term_helper, fragment: 'algorithms-encrypted-block', link_text: 'encrypted block encountered algorithm',  },
-    'update-key-statuses-algorithm': { func: term_helper, fragment: 'algorithms-update-key-statuses', link_text: 'update key statuses algorithm',  },
-    'update-expiration-algorithm': { func: term_helper, fragment: 'algorithms-update-expiration', link_text: 'update expiration algorithm',  },
-    'resume-playback-algorithm': { func: term_helper, fragment: 'algorithms-resume-playback', link_text: 'attempt to resume playback if necessary algorithm',  },
-    'queue-waiting-algorithm': { func: term_helper, fragment: 'algorithms-queue-waiting', link_text: 'queue a "waiting" event algorithm',  },
+    'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'queue a "message" event',  },
+    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'session close',  },
+    'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'encrypted block encountered',  },
+    'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'update key statuses',  },
+    'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'update expiration',  },
+    'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'attempt to resume playback if necessary',  },
+    'queue-waiting-algorithm': { func: term_helper, fragment: 'queue-waiting', link_text: 'queue a "waiting" event',  },
+
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
     'MediaWaitingFor-none': { func: idlref_helper, fragment: 'idl-def-MediaWaitingFor.none', link_text: '"none"',  },
@@ -253,8 +253,8 @@
     'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
     'videoref': { func: videoref_helper, fragment: '', link_text: '', },
-//    'media-element-load-algorithm': { func: videoref_helper, fragment: 'media-element-load-algorithm', link_text: 'media element load algorithm',  },
-    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'concept-media-load-resource', link_text: 'resource fetch algorithm',  },
+//    'media-element-load-algorithm': { func: videoref_helper, fragment: 'media-element-load-algorithm', link_text: 'media element load',  },
+    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'concept-media-load-resource', link_text: 'resource fetch',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
@@ -308,7 +308,7 @@
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession()',  },
-    'initdata-encountered-algorithm': { func: term_helper, fragment: 'algorithms-initdata-encountered', link_text: 'Initialization Data encountered algorithm',  },
+    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data encountered',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
   };
 
