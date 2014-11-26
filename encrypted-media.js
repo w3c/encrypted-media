@@ -196,6 +196,7 @@
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
     'expiration': { func: idlref_helper, fragment: 'widl-MediaKeySession-expiration', link_text: 'expiration',  },
     'closed': { func: idlref_helper, fragment: 'widl-MediaKeySession-closed', link_text: 'closed',  },
+    'keyStatuses': { func: idlref_helper, fragment: 'widl-MediaKeySession-keyStatuses', link_text: 'keyStatuses',  },
     'generateRequest': { func: idlref_helper, fragment: 'widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData', link_text: 'generateRequest()',  },
     'generateRequest-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData', link_text: 'generateRequest',  },
     'load': { func: idlref_helper, fragment: 'widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId', link_text: 'load()',  },
@@ -206,13 +207,15 @@
     'close-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close',  },
     'remove': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove()',  },
     'remove-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove',  },
-    'getUsableKeyIds': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds()',  },
-    'getUsableKeyIds-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-getUsableKeyIds-Promise-sequence-ArrayBuffer', link_text: 'getUsableKeyIds',  },
 
+    'status-usable': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.usable', link_text: '"usable"',  },
+    'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
+
+    // TODO: Drop "algorithm" from the link text and rename the fragments (they are no longer in a single Algorithms section).
     'queue-message-algorithm': { func: term_helper, fragment: 'algorithms-queue-message', link_text: 'queue a "message" event algorithm',  },
     'session-close-algorithm': { func: term_helper, fragment: 'algorithms-session-close', link_text: 'session close algorithm',  },
     'encrypted-block-algorithm': { func: term_helper, fragment: 'algorithms-encrypted-block', link_text: 'encrypted block encountered algorithm',  },
-    'keys-changed-algorithm': { func: term_helper, fragment: 'algorithms-keys-changed', link_text: 'usable keys changed algorithm',  },
+    'update-key-statuses-algorithm': { func: term_helper, fragment: 'algorithms-update-key-statuses', link_text: 'update key statuses algorithm',  },
     'update-expiration-algorithm': { func: term_helper, fragment: 'algorithms-update-expiration', link_text: 'update expiration algorithm',  },
     'resume-playback-algorithm': { func: term_helper, fragment: 'algorithms-resume-playback', link_text: 'attempt to resume playback if necessary algorithm',  },
     'queue-waiting-algorithm': { func: term_helper, fragment: 'algorithms-queue-waiting', link_text: 'queue a "waiting" event algorithm',  },
@@ -288,6 +291,7 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
+    'maplike': { func: code_webidl_helper, fragment: 'idl-maplike', link_text: 'maplike', },
 
     'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },

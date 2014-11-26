@@ -200,6 +200,7 @@
             Other <a def-id="mediakeys"></a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
             Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#algorithms-session-close">session is closed</a>, including when the <a def-id="mediakeysession"></a> object is destroyed.
             </p>
+            <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
           </dd>
     
           <dt id="session-id">Session ID</dt>
@@ -223,7 +224,7 @@
             Such keys MUST only be provided to the <a def-id="cdm"></a> via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
             </p>
             
-            <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable for decryption.</p>
+            <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable to decrypt <a def-id="media-data"></a></p>
             <p class="note">For example, a key is not usable if its license has expired.</p>
           </dd>
     
@@ -237,6 +238,19 @@
             </p>
           </dd>
     
+          <dt id="known-key">Known Key</dt>
+          <dd>
+            <p>A key is considered to be known to a session if the CDM's implementation of the session contains any information - specifically the <a def-id="key-id"></a> - about it, regardless of whether the actual <a href="#decryption-key">key</a> is usable or its value is known.
+              Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
+            </p>
+
+            <p>Keys are considered known even after they become unusable, such as due to expiration.
+              Keys only become unknown when they are explicitly removed from a session.
+            </p>
+
+            <p class="note">For example, a key could become unknown if an <a def-id="update"></a> call provides a new license that does not include the key and includes instructions to replace the license(s) that previously contained the key.</p>
+          </dd>
+
           <dt id="license">License</dt>
           <dd>
             <p>A license is key system-specific state information that includes one or more <a href="#decryption-key">key(s)</a> - each associated with a <a def-id="key-id"></a> - and potentially other information about key usage.</p>
@@ -726,8 +740,8 @@
                     <dd>
                       Let <var>persistent state allowed</var> be <code>false</code>.
                     </dd>
-                    <p class="note">The value of <var>implementation</var> cannot be <a def-id="requirement-optional"></a>.</p>
                   </dl>
+                  <p class="note">The value of <var>implementation</var> cannot be <a def-id="requirement-optional"></a>.</p>
                 </li>
                 <li><p>Let <var>media keys</var> be a new <a def-id="mediakeys"></a> object, and initialize it as follows:</p>
                   <ol>
@@ -788,6 +802,7 @@
                 <li><p>Let the <a def-id="sessionId"></a> attribute be the empty string.</p></li>
                 <li><p>Let the <a def-id="expiration"></a> attribute be <code>NaN</code>.</p></li>
                 <li><p>Let the <a def-id="closed"></a> attribute be a new promise.</p></li>
+                <li><p>Let the <a def-id="keyStatuses"></a> attribute be empty.</p></li>
                 <li><p>Let the <var>session type</var> value be <var>sessionType</var>.</p></li>
                 <li><p>Let the <var>uninitialized</var> value be true.</p></li>
                 <li><p>Let the <var>callable</var> value be false.</p></li>
@@ -853,6 +868,7 @@
         <dt>readonly attribute unrestricted double expiration</dt>
         <dd>
           <p>The time, in milliseconds since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <a def-id="media-data"></a>, or <code>NaN</code> if no such time exists, as determined by the CDM.</p>
+          <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
         </dd>
 
         <dt>readonly attribute Promise&lt;void&gt; closed</dt>
@@ -861,6 +877,18 @@
           This promise can only be fulfilled and is never rejected.</p>
         </dd>
 
+        <dt>readonly attribute MediaKeyStatuses keyStatuses</dt>
+        <dd>
+          <p>A reference to a read-only map of <a def-id="key-id">key IDs</a> <a href="#known-key">key</a>known</a> to the session to the current status of the associated key.
+           Each entry MUST have a unique key ID.
+         </p>
+          <p class="note">The map entries and their values may be updated whenever the event loop spins.
+            The map can never be inconsistent or partially updated, but it may change between accesses if the event loop spins in between accesses.
+            Key IDs may be added as the result of a <a def-id="load"></a> or <a def-id="update"></a> call.
+            Key IDs may be removed as the result of a <a def-id="update"></a> call that removes knowledge of existing keys (or replaces the existing set of keys with a new set).
+            Key IDs MUST NOT be removed because they became unusable, such as due to expiration. Instead, such keys MUST be given an appropriate status, such as <a def-id="status-expired"></a>.</p>
+        </dd>
+    
         <dt>Promise&lt;void&gt; generateRequest()</dt>
         <dd>
           <p>Generates a request based on the <var>initData</var>.</p>
@@ -989,8 +1017,10 @@
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
-                <li><p>If the loaded session contains usable keys, run the <a def-id="keys-changed-algorithm"></a> on the <var>session</var>.</p>
-                  <p>The algorithm MAY also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+                <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">key</a>known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
+                  <p>Should additional processing be necessary to determine with certainty the status of a key, use the status of the non-<a def-id="status-usable"></a> status that corresponds to the reason for the additional processing.
+                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> again if any of the statuses has changed.
+                  </p>
                 </li>
                 <li><p>Run the <a def-id="update-expiration-algorithm"></a> on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                 <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
@@ -1053,8 +1083,10 @@
                       This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                       </p>
                     </li> 
-                    <li><p>If the set of usable keys changed, run the <a def-id="keys-changed-algorithm"></a> on the <var>session</var>.</p>
-                      <p>The algorithm MAY also be run later should additional processing be necessary to determine with certainty whether one or more keys is usable.</p>
+                    <li><p>If the set of keys <a href="#known-key">key</a>known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
+                      <p>Should additional processing be necessary to determine with certainty the status of a key, use the status of the non-<a def-id="status-usable"></a> status that corresponds to the reason for the additional processing.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> again if any of the statuses has changed.
+                      </p>
                     </li>
                     <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
@@ -1137,33 +1169,6 @@
           </ol>
         </dd>
 
-        <dt>Promise&lt;sequence&lt;ArrayBuffer&gt;&gt; getUsableKeyIds()</dt>
-        <dd>
-          <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - getUsableKeyIds() may be replaced.</p>
-          <p>Gets the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>.</p>
-
-          <ol class="method-algorithm">
-            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>Run the following steps asynchronously:</p>
-              <ol>
-                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
-                <li><p>Use the <var>cdm</var> to execute the following steps:</p>
-                  <ol>
-                    <li><p>Let <var>usable key ids</var> be a list of the key IDs for keys in the session that the CDM <em>knows</em> are currently usable to decrypt <a def-id="media-data"></a>. <var>usable key ids</var> MUST NOT contain IDs for keys that <em>may not</em> currently be usable. Each element MUST be unique.</p></li>
-                  </ol>
-                </li>
-                <li>
-                  <p>If the preceding step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p>
-                </li>
-                <li>
-                  <p>Resolve <var>promise</var> with a new sequence object, each element of which contains one element of <var>usable key ids</var>.</p>
-                </li>
-              </ol>
-            </li>
-          </ol>
-        </dd>
-  
       </dl>
   
       <section>
@@ -1236,7 +1241,7 @@
             <tr>
               <td><a def-id="eventdfn">keyschange</a></td>
               <td><a def-id="event"></a></td>
-              <td>There has been a change in usable keys in the session.</td>
+              <td>There has been a change in the keys in the session or their status.</td>
             </tr>
             <tr>
               <td><a def-id="eventdfn">message</a></td>
@@ -1269,19 +1274,35 @@
           </ol>
         </section>
     
-        <section id="algorithms-keys-changed">
-          <h4>Usable Keys Changed</h4>
-          <p>The Usable Keys Changed algorithm is run when the CDM changes the set of keys in the session that may be used for decryption.
-          This can happen as the result of an <a def-id="update"></a> call or some other event.
-          Requests to run this algorithm include a target <a def-id="mediakeysession"></a> object.
+        <section id="algorithms-update-key-statuses">
+          <h4>Update Key Statuses</h4>
+          <p>The Update Key Statuses algorithm is run when the CDM changes the set of keys <a href="#known-key">key</a>known</a> to the session or the status of one or more of the keys.
+          This can happen as the result of a <a def-id="load"></a> or <a def-id="update"></a> call or some other event, such as expiration.
+          Requests to run this algorithm include a target <a def-id="mediakeysession"></a> object and a sequence of <a def-id="key-id"> and associated <a>MediaKeyStatus</a> pairs.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a def-id="mediakeysession"></a> object.</p></li>
+            <li><p>Let the <var>input statuses</var> be the sequence of pairs key ID and associated <a>MediaKeyStatus</a> pairs.</p></li>
+            <li><p>Let the <var>statuses</var> be <var>session</var>'s <a def-id="keyStatuses"></a> attribute.</p></li>
+            <li><p>Run the following steps to replace the contents of <var>statuses</var>:</p>
+              <ol>
+                <li><p>Empty <var>statuses</var>.</p></li>
+                <li><p>For each pair in <var>input statuses</var>.</p>
+                  <ol>
+                    <li><p>Let <var>pair</var> be the pair.</p></li>
+                    <li><p>Insert an entry for <var>pair</var>'s key ID into <var>statuses</var> with the value of <var>pair</var>'s <a>MediaKeyStatus</a> value.</p></li>
+                  </ol>
+                </li>
+              </ol>
+              <p class="note">The effect of this steps is that the contents of <var>session</var>'s <a def-id="keyStatuses"></a> attribute are replaced without invalidating existing references to the attribute.
+                This replacement is atomic from a script perspective. That is, script MUST NOT ever see a partially populated sequence.
+              </p>
+            </li>
             <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keyschange"></a> at the <var>session</var>.</p></li>
             <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
               <p>The user agent MAY choose to skip this step if it knows resuming will fail.</p>
-              <p class="note">For example, the user agent may skip this step if no additional keys became available.</p>
+              <p class="note">For example, the user agent may skip this step if no additional keys became <a def-id="status-usable"></a>.</p>
             </li>
           </ol>
         </section>
@@ -1304,7 +1325,7 @@
         <section id="algorithms-session-close">
           <h4>Session Close</h4>
           <p>The Session Close algorithm is run when the CDM closes the session associated with a <a def-id="mediakeysession"></a> object.</p>
-          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available for decryption.</p>
+          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available to decrypt <a def-id="media-data"></a></p>
           <p class="note">The CDM may close a session at any point, such as in response to a <a def-id="close"></a> call, when the session is no longer needed, or when system resources are lost.
           Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.
           </p>
@@ -1395,6 +1416,38 @@
       </section>
     </section>
 
+
+      <section>
+        <h2><a>MediaKeyStatuses</a> Interface</h2>
+        <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
+        <p class="issue"><a href="https://github.com/w3c/respec/issues/361">ReSpec Issue 361</a> - ReSpec does not support <code>maplike</code>. The WebIDL should be <code>maplike &ltBufferSource, MediaKeyStatus&gt;</code>.</p>
+        
+        <dl title="interface MediaKeyStatuses" class='idl'>
+          <dt>readonly attribute maplike &ltBufferSource,MediaKeyStatus&gt</dt>
+          <dd>This is not really an attribute. See the issue box.</dd>
+        </dl>
+
+        <p class="note">The <a def-id="maplike">readonly maplike</a> declaration adds <code>entries</code>, <code>forEach</code>, <code>get</code>, <code>has</code>, <code>keys</code>, <code>values</code>, <code>@@iterator</code> methods and a <code>size</code> getter.</p>
+
+        <dl title="enum MediaKeyStatus" class="idl">
+          <dt>usable</dt>
+          <dd>
+            The CDM is certain the key is currently usable to decrypt <a def-id="media-data"></a>.<br/>
+            Keys that <em>may not</em> currently be usable MUST NOT have this status.
+          </dd>
+          <dt>expired</dt>
+          <dd>
+            The key is no longer usable to decrypt <a def-id="media-data"></a> because its expiration time has passed.<br/>
+            The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
+            All other keys in the session MUST have this status.
+          </dd>
+          <dt>output-not-allowed</dt>
+          <dd>
+            The key is not currently usable to decrypt <a def-id="media-data"></a> because its output requirements cannot currently be met.
+          </dd>
+        </dl>
+          <p class="issue">Additional <a>MediaKeyStatus</a> values may be added.</p>
+      </section>
 
     <section>
       <h2><a>HTMLMediaElement</a> Extensions</h2>
@@ -1608,14 +1661,14 @@
                     <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
-                        <li><p>Follow the steps for the first matching condition from the following list:</p>
-                          <dl class="switch">
-                          <dt>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable</dt>
-                          <dd>Run the following steps:
+                        <li><p>Let <var>block key</var> be null.</p></li>
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>block key</var> be that key.</p>
+                          <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which key to use is <a def-id="keysystem"></a>-dependent.</p>
+                        </li>
+                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the previous step, run the <a def-id="update-key-statuses-algorithm"></a> on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
+                        <li><p>If <var>block key</var> is not null, run the following steps:
+                          <!-- TODO: Fix indent. -->
                             <ol>
-                              <li><p>Let <var>block key</var> be the matching key.</p>
-                                <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which key to use is <a def-id="keysystem"></a>-dependent.</p>
-                              </li>
                               <li><p>Use the <var>cdm</var> to decrypt the block using <var>block key</var>.</p></li>
                               <li><p>Follow the steps for the first matching condition from the following list:</p>
                                 <dl class="switch">
@@ -1634,12 +1687,6 @@
                                 <p class="note">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
                               </li>
                             </ol>
-                          </dd>
-                          <dt>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is unusable</dt>
-                          <dd>
-                            <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26372">Bug 26372</a> - It is TBD whether anything should happen in this case.</p>
-                          </dd>
-                          </dl>
                           <p class="note">Otherwise, there is no key for the <var>block key ID</var> in any session so continue.</p>
                         </li>
                       </ol>
@@ -1786,7 +1833,7 @@
                 <li><p><var>sanitized response</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.</p></li>
               </ul>
             </li>
-            <li><p>The <a def-id="getUsableKeyIds"></a> method always returns all key IDs that have been provided via <a def-id="update"></a>.</p></li>
+            <li><p>The <a def-id="keyStatuses"></a> attribute method always contains all key IDs that have been provided via <a def-id="update"></a>, and their status is always <a def-id="status-usable"></a>.</p></li>
             <li><p><a def-id="initialization-data"></a>: Implementations MAY support any combination of registered Initialization Data Types [[EME-REGISTRY]].
               Implementations SHOULD support the <code><a href="keyids-format.html">"keyids"</a></code> type and other types appropriate for content types supported by the user agent.
             </p></li>
@@ -1800,7 +1847,7 @@
           <p>The format is a JSON object containing the following members:</p>
           <dl>
             <dt>"kids"</dt>
-            <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+            <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
             <dt>"type"</dt>
             <dd>The requested <a def-id="sessiontype"></a></dd>
           </dl>
@@ -2354,19 +2401,21 @@
   }
 
   function handleKeysChange(event) {
-    event.target.<a def-id="getUsableKeyIds-call"></a>().then(
-      function(keyIdSequence) {
-        // Process keyIdSequence and respond appropriately.
+    // Evaluate the current state using one of the map-like methods exposed by
+    // event.target.<a def-id="keyStatuses"></a>.
+    // For example:
+    event.target.<a def-id="keyStatuses"></a>.forEach(function(status, keyId, map) {
+      switch (value) {
+        case <a def-id="status-usable"></a>:
+          break;
+        case <a def-id="status-expired"></a>:
+          // Report an expired key.
+          break;
+        default:
+          // Do something with |keyId| and |status|.
+        }
       }
-    ).catch(
-      console.error.bind(console, "Failed handling usable keys change")
-    );
-  }
-
-  function handleError(event) {
-    // Report <!-- TODO: Remove or fix when bug 26372 is addressed.
-    event.target.error.name and event.target.error.<a def-id="systemCode"></a>,
-    //  -->and do some bookkeeping with event.target.<a def-id="sessionId"></a> if necessary.
+    }) 
   }
 
   createSupportedKeySystem().then(
@@ -2402,7 +2451,6 @@
   function createSupportedKeySystem() { ... }
   function sendMessage(message, keySession) { ... }
   function handleMessage(event) { ... }
-  function handleError(event) { ... }
 
   // Called if the application does not have a stored sessionId for the media resource.
   function makeNewRequest(mediaKeys, initDataType, initData) {
