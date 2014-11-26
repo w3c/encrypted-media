@@ -186,13 +186,10 @@
     'persistent-session': { func: idlref_helper, fragment: 'idl-def-SessionType.persistent', link_text: '"persistent"',  },
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-SessionType.temporary', link_text: '"temporary"',  },
 
-    // TODO: Replace uses with simple <a>.
-    'mediakeys': { func: idlref_helper, fragment: 'idl-def-MediaKeys', link_text: 'MediaKeys',  },
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-SessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
 
-    'mediakeysession': { func: idlref_helper, fragment: 'idl-def-MediaKeySession', link_text: 'MediaKeySession',  },
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
     'expiration': { func: idlref_helper, fragment: 'widl-MediaKeySession-expiration', link_text: 'expiration',  },
     'closed': { func: idlref_helper, fragment: 'widl-MediaKeySession-closed', link_text: 'closed',  },
@@ -238,11 +235,9 @@
     'message-type-licenserequest': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.licenserequest', link_text: '"licenserequest"',  },
     'message-type-licenserenewal': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.licenserenewal', link_text: '"licenserenewal"',  },
 
-    'MediaKeyMessageType': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType', link_text: 'MediaKeyMessageType',  },
-    'MediaKeyMessageEvent': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageEvent', link_text: 'MediaKeyMessageEvent',  },
     'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-messageType', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-message', link_text: 'message',  },
-    'MediaEncryptedEvent': { func: idlref_helper, fragment: 'idl-def-MediaEncryptedEvent', link_text: 'MediaEncryptedEvent',  },
+
     'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initDataType', link_text: 'initDataType',  },
     'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initData', link_text: 'initData',  },
 
