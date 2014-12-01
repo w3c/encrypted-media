@@ -157,6 +157,7 @@
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
     'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
+    'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
@@ -172,7 +173,7 @@
     'option-audioCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-audioCapabilities', link_text: 'audioCapabilities',  },
     'option-videoCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-videoCapabilities', link_text: 'videoCapabilities',  },
     'option-persistentState': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-persistentState', link_text: 'persistentState',  },
-    'option-persistentUniqueIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-persistentUniqueIdentifier', link_text: 'persistentUniqueIdentifier',  },
+    'option-distinctiveIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-distinctiveIdentifier', link_text: 'distinctiveIdentifier',  },
 
     'capability-contentType' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-contentType', link_text: 'contentType',  },
     'capability-robustness' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-robustness', link_text: 'robustness',  },

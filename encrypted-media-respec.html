@@ -163,7 +163,7 @@
               The same applies to reinitialization, reprovisioning, or reindividualization.
             </p>
             <p>For implementations that support per-origin initialization, such messages MUST be passed to the application via the APIs.
-              Such messages MUST NOT contain non-origin-specific per-client information, such as unique client identifiers.
+              Such messages MUST NOT contain non-origin-specific per-client information, such as a <a def-id="distinctive-identifier"></a>.
               As with all other uses of the APIs, responses passed to the CDM MUST NOT contain executable code.
             </p>
             <p class="note">To preserve the privacy properties of per-origin initialization, applications and key system servers should not defer initialization to a non-origin-specific server.
@@ -501,11 +501,11 @@
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> attribute from the following list:</p>
+              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> attribute from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    If the <var>implementation</var> does not support a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -513,11 +513,11 @@
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    If the <var>implementation</var> requires a unique identifier in combination with <var>accumulated configuration</var>, return <code>null</code>.
+                    If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.
                   </dd>
                 </dl>
               </li>
-              <li><p>Add <a def-id="option-persistentUniqueIdentifier"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
+              <li><p>Add <a def-id="option-distinctiveIdentifier"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
               <li><p>Follow the steps for the value of <a def-id="option-persistentState"></a> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
@@ -550,12 +550,12 @@
                 </ol>
               </li>
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
-              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
+              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <var>implementation</var> requires a unique identifier for any of the combinations in <var>accumulated configuration</var></dt>
-                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-required"></a>.</dd>
+                  <dt>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> for any of the combinations in <var>accumulated configuration</var></dt>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value to <a def-id="requirement-required"></a>.</dd>
                   <dt>Otherwise</dt>
-                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-persistentUniqueIdentifier"></a> value to <a def-id="requirement-not-allowed"></a>.</dd>
+                  <dd>Change <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value to <a def-id="requirement-not-allowed"></a>.</dd>
                 </dl>
               </li>
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
@@ -678,14 +678,14 @@
             The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             When there is a conflict between values, the earlier value will be selected.
           </dd>
-          <dt>MediaKeysRequirement persistentUniqueIdentifier = "optional"</dt>
+          <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
-            Whether a persistent unique identifier is required.
+            Whether a persistent <a def-id="distinctive-identifier"></a> is required.
           </dd>
           <dt>MediaKeysRequirement persistentState = "optional"</dt>
           <dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
-            <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-persistentUniqueIdentifier"></a> independently reflects this requirement.</p>
+            <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.
             <p class="note">Except for <a def-id="persistent-session"></a> sessions, the need and ability to store state is <a def-id="keysystem"></a> implementation-specific and may vary by feature used.</p>
             <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this attribute to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess-call"></a>.</p>
@@ -1836,7 +1836,7 @@
             <li><p><a>MediaKeySystemConfiguration</a>:<p>
               <ol>
                 <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
-                <li><p><a def-id="option-persistentUniqueIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
+                <li><p><a def-id="option-distinctiveIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
               </ol>
             </li>
@@ -2070,7 +2070,7 @@
         <p>While these suggestions prevent trivial use of this feature for user tracking, they do not block it altogether. Within a single domain, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not per-origin, then a profile can still be created.</p>
         <p>It is important to note that identifiers that are non-clearable, non-origin-specific or hardware-bound exceed the tracking impact of existing techniques such as cookies or session identifiers embedded in URLs.</p>
         <p>Thus, in addition to the various mitigations described above, if a browser supports a mode of operation intended to preserve user anonymity, then User Agent implementers should carefully consider whether access to Key Systems should be disabled in this mode.
-          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a <a def-id="option-persistentUniqueIdentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
+          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a <a def-id="option-distinctiveIdentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
         </p>
 
         <section id="privacy-individualization">
