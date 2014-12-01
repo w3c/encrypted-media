@@ -1833,6 +1833,40 @@
     </section>
 
 
+    <section id="implementation-requirements">
+      <h3>Implementation Requirements</h3>
+      <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm">CDM</a> and server - that may not be explicitly addressed in the algorithms.</p>
+
+      <section id="identifier-requirements">
+        <h3>Identifiers</h3>
+        <p>The use of <a def-id="distinctive-identifier">Distinctive Identifiers</a> by implementations presents a privacy concern.
+          This defines requirements for avoiding or at least mitigating such concerns.
+        </p>
+
+        <section>
+          <h3>Encrypt Identifiers</h3>
+          <p>When exposed to the application - either from a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifier">Distinctive Identifiers</a> MUST be encrypted at the message exchange level.
+            The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
+            The CDM MUST verify that the encryption key belongs to a valid license server for its Key System.
+          </p>
+          <p class="issue">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p> 
+          <p>The license server MUST NOT expose a <a def-id="distinctive-identifier"></a> to any entity other than the CDM that sent it.</p>
+          <p class="note">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
+            This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
+          </p>
+          <div class="note">
+            <p>Among other things, this means that:</p>
+            <ul>
+              <li><p>Every signature made with device-specific or user-specific keys MUST be different, even given the same plaintext.</p></li>
+              <li><p>Identifiers, keys, or certificates relating to device-specific or user-specific keys MUST be encrypted for the license server.</p></li>
+              <li><p>Messages from the license server to the CDM MUST NOT expose recipient-unique identifiers, such as the ID of the intended decryption key, on the outside of the encryption envelope.</p></li>
+            </ul>
+          </div>
+        </section>
+      </section>
+
+    </section>
+
     <section id="common-key-systems">
       <h2>Common Key Systems</h2>
       <p>All user agents MUST support the common key systems described in this section.<p>
@@ -2060,8 +2094,8 @@
           <dt>Use of (non-reversible) per-origin identifiers</dt>
           <dd>The user / device identifier exposed by a Key System may be different for each origin, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</dd>
 
-          <dt id="identifier-encryption">Encryption of user identifiers</dt>
-          <dd>User identifiers in Key System messages could be encrypted, together with a timestamp or nonce, such that the Key System messages are always different. This would prevent the use of Key System messages for tracking except by applications fully supporting the Key System.
+          <dt>Encryption of user identifiers</dt>
+          <dd>User identifiers in Key System messages MUST be encrypted, together with a timestamp or nonce, such that the Key System messages are always different. This prevents the use of Key System messages for tracking except by servers fully supporting the Key System.
           This MAY be implemented using a <a href="#server-certificate">server certificate</a>.
           </dd>
 
@@ -2142,7 +2176,7 @@
       <section id="privacy-secureorigin">
         <h3>Use Secure Origin and Transport</h3>
         <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
-        This is especially important if a user agent chooses to support a Key System implementation that exposes identifiers or other such information without effectively anonymizing it in transit (i.e. without <a href="#identifier-encryption">encrypting identifiers</a>).
+        This is especially important if a user agent chooses to support a Key System implementation that expose <a def-id="distinctive-identifier">Distinctive Identifiers</a> or other such information without effectively anonymizing it in transit.
         </p>
         <p>Regardless of user agent limitations, applications should use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
         <p>All user agents should properly handle Mixed Content [[MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
