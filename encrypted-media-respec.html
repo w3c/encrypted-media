@@ -1463,7 +1463,7 @@
         <p>An application that creates a <a def-id="persistent-session"></a> session SHOULD later remove the stored data using <a def-id="remove"></a>.
           The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
         </p>
-        <p class="note">See the <a href="#security">Security Considerations</a> and <a href="#privacy">Privacy Considerations</a> sections for additional considerations when supporting persistent storage.</p>
+        <p class="note">See the <a href="#security">Security</a> and <a href="#privacy">Privacy</a> sections for additional considerations when supporting persistent storage.</p>
       </section>
     </section>
 
@@ -2050,33 +2050,118 @@
 
 
     <section id="security" class="informative">
-      <h2>Security Considerations</h2>
+      <h2>Security</h2>
 
-      <p>User Agent and Key System implementations MUST consider <a def-id="media-data"></a>, <a def-id="initialization-data"></a>, responses (i.e. data passed to <a def-id="update"></a>), licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
-        They MUST use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
-        User Agents SHOULD validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering).
-      </p>
-      <p>Implementations MUST NOT return active content or passive content that affects program control flow to the application.
-        For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the <a def-id="initialization-data"></a> passed to <a def-id="generateRequest"></a>.
-        Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the <a def-id="message"></a> event can be used by the application to select among a set of URLs if applicable.
-      </p>
-      <p>User Agents are responsible for providing users with a secure way to browse the web. Since User Agents may integrate with third party CDM implementations, CDM implementers MUST provide sufficient information and controls to user agent implementers to enable them to properly asses the security implications of integrating with the Key System.</p>
-      <p>Unsandboxed CDMs (or CDMs that use platform features) and UAs that use them MUST be especially careful in all areas of security, including parsing of key and media data, etc. due to the potential for compromises to provide access to OS/platform features, interact with or run as root, access drivers, kernel, firmware, hardware, etc., all of which may not be written to be robust against hostile software or web-based attacks. Additionally, CDMs may not be updated with security fixes as frequently, especially when part of the OS, platform or hardware.</p>
+      <section id="input-data-security">
+        <h4>Input Data Attacks and Vulnerabilities</h4>
+        <p>User Agent and Key System implementations MUST consider <a def-id="media-data"></a>, <a def-id="initialization-data"></a>, responses (i.e. data passed to <a def-id="update"></a>), licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
+          They MUST use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
+          User Agents SHOULD validate data before passing it to the CDM, especially if the CDM does not run in the same (sandboxed) context as the DOM (i.e. rendering).
+        </p>
 
-      <p>User agents MAY choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
-        This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
-        Such user agents MUST also properly handle Mixed Content [[MIXED-CONTENT]] to avoid potential exposure to insecure content.
-        See also <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
-      </p>
+        <p>Implementations MUST NOT return active content or passive content that affects program control flow to the application.
+          For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the <a def-id="initialization-data"></a> passed to <a def-id="generateRequest"></a>.
+          Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the <a def-id="message"></a> event can be used by the application to select among a set of URLs if applicable.
+        </p>
+      </section>
 
-      <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent SHOULD ensure that users are fully informed and/or give explicit consent before loading or invoking it.
-        See also <a href="#privacy-prompts">User Alerts / Prompts</a>.
-      </p>
+      <section id="cdm-security">
+        <h4>CDM Attacks and Vulnerabilities</h4>
+        <p>User Agents are responsible for providing users with a secure way to browse the web. Since User Agents may integrate with third party CDM implementations, CDM implementers MUST provide sufficient information and controls to user agent implementers to enable them to properly asses the security implications of integrating with the Key System.</p>
+        <p>Unsandboxed CDMs (or CDMs that use platform features) and UAs that use them MUST be especially careful in all areas of security, including parsing of <a href="#input-data-security">all data</a> due to the potential for compromises to provide access to OS/platform features, interact with or run as root, access drivers, kernel, firmware, hardware, etc., all of which may not be written to be robust against hostile software or web-based attacks. Additionally, CDMs may not be updated with security fixes as frequently, especially when part of the OS, platform or hardware.</p>
+
+        <!-- TODO: 27165 -->
+        <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent SHOULD ensure that users are fully informed and/or give explicit consent before loading or invoking it.
+          Such implementations SHOULD only be supported on secure origins to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
+          (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.)
+          See also <a href="#privacy-prompts">User Alerts / Prompts</a> and <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
+        </p>
+      </section>
+
+      <!-- TODO: Update for 26332. -->
+      <section id="network-attacks">
+        <h4>Network Attacks</h4>
+        <p>Potential network attacks and their implications include:</p>
+        <ul>
+          <li><p>DNS spoofing attacks: One cannot guarantee that a host claiming to be in a certain domain (origin) really is from that domain.</p></li>
+          <li><p>Passive network attacks: One cannot guarantee that data, including <a def-id="distinctive-identifiers"></a>, transmitted between the client and server is not viewed by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
+          <li>
+            <p>Active network attacks: One cannot guarantee that Additional scripts or iframes are not injected into pages (both those that use these APIs for legitimate purposes and pages that do not use these APIs).
+              The consequences are that:
+            </p>
+              <ul>
+              <li><p>Calls to these APIs can be injected into any page.</p></li>
+              <li><p>Calls to these APIs from pages using them for legitimate reasons can be manipulated, including modifying the requested functionality, modifying or adding calls, and modifying or injecting data. See also <a href="#input-data-security">Input Data Attacks and Vulnerabilities</a></p></li>
+              <li><p>Data, including <a def-id="distinctive-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
+            </ul>
+          </li> 
+        </ul>
+
+        <p>The following techniques may mitigate the risks:</p>
+        <dl>
+          <dt>Use TLS</dt>
+          <dd>
+            <p>Applications using TLS can be sure that only the user, software working on behalf of the user, and other pages using TLS that have certificates identifying them as being from the same domain, can interact with that application.
+              Furthermore, origin-specific permissions in combination with a secure origin, ensure that permissions granted to an application cannot be abused by a network attacker.
+            </p>
+            <p>User agents MAY choose to only support these APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+              This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
+              See also <a href="#privacy-secureorigin">Secure Origin and Transport</a>.
+            </p>
+          </dd>
+
+          <dt>Block Mixed Content</dt>
+          <dd>
+            <p>User agents MUST properly handle Mixed Content [[MIXED-CONTENT]], including blocking "Blockable Content" [[MIXED-CONTENT]] to avoid potential exposure to insecure content.
+              Such exposure could compromise other mitigations, such as use of TLS.
+            </p>
+            <p>User agents MAY choose to block all Mixed Content, including "Optionally-blockable Content" [[MIXED-CONTENT]] to further increase security by preventing <a href="#input-data-security">untrusted media data</a> from being passed to the CDM (see <a href="#cdm-security">CDM Attacks and Vulnerabilities</a>).</p>
+          </dd>
+
+          <dt id="security-prompts">Per-origin user alerts / prompts and permissions</dt>
+          <dd>
+            <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an origin.
+              Such alerts and consent SHOULD be per origin to avoid valid uses enabling subsequent malicious access.
+              (A full origin MUST be used rather than just the domain because the protocol is important for security as described above.)
+              User agents SHOULD only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
+              (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
+              Alerting or prompting the user for consent on insecure origins without persisting the choice provides at least minimum level of security because the user would be alerted to unexpected use (e.g. on a site that does not have protected media).
+            </p>
+          </dd>
+        </dl>
+      </section>
+
+      <section id="iframe-attacks">
+        <h4><code>iframe</code> Attacks</h4>
+        <p>Malicious pages could host legitimate applications in an iframe in an attempt hide an attack or deceive the user as to the source, such as making the use appear to be from a legitimate content provider.
+          This is especially relevent for user agents that support have <a href="#security-prompts">user alerts, prompts, and/or permissions</a>.
+          In addition to <a href="#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses of these APIs by hosting them in an <code>iframe</code>.
+          By having the legitimate application performing the actions, the attacker can reuse existing granted permissions (or whitelisting) and/or appear to be a legitimate request or use.
+        </p>
+        <p>User agents are therefore RECOMMENDED to base the UI and persistence of <a href="#security-prompts">user alerts, prompts, and/or permissions</a> on the combination of top-level origin and the origin using these APIs.
+          This ensures that users are informed of the main document making the request and that persisting a permission for one (legitimate) combination does not inadvertently allow malicious use to go undetected. 
+        </p>
+        <p>Authors are therefore RECOMMENDED to prevent other entities from hosting their applications in <code>iframe</code>s.
+          Applications that must support being hosted for legitimate application-design reasons SHOULD NOT allow hosting documents to provide <a href="#input-data-security">any data to be passed to the CDM</a> - either via these APIs or as media data - and SHOULD NOT allow hosting frames to invoke these APIs.
+        </p>
+      </section>
+
+      <section id="cross-directory-attacks">
+        <h4>Cross-Directory Attacks</h4>
+        <p>Different authors sharing one host name, for example users hosting content on <code>geocities.com</code>, all share one origin.
+          User agents do not provide features to restrict access to APIs by pathname.
+        </p>
+        <p>Authors on shared hosts are therefore RECOMMENDED to avoid using these APIs because doing so compromises origin-based security and privacy mitigations in user agents.
+          For example, per-origin <a def-id="distinctive-identifiers"></a> are shared by all authors on one host name, and peristed data may be accessed and manipulated by any author on the host.
+          The latter is especially important if, for example, modification or deletion of such data could erase a user's right to specific content.
+        </p>
+        <p class="note">Even if a path-restriction feature was made available by user agents, the usual DOM scripting security model would make it trivial to bypass this protection and access the data from any path.</p>
+      </section>
+
     </section>
 
-
     <section id="privacy" class="informative">
-      <h2>Privacy Considerations</h2>
+      <h2>Privacy</h2>
 
       <p>The presence or use of Key Systems on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself, or within messages from Key Systems and (b) user-specific information that may be persistently stored on the users device.</p>
       <p>User Agents MUST take responsibility for providing users with adequate control over their own privacy.
@@ -2150,7 +2235,7 @@
         </p>
         
         <p>The following techniques may mitigate the risks of tracking without user consent.
-          Some are also covered in the normatively<a href="#identifier-requirements">requirements for identifiers</a>.
+          Some are also covered in the normative <a href="#identifier-requirements">requirements for identifiers</a>.
         </p>
 
         <dl>
@@ -2220,11 +2305,11 @@
             </p>
           </dd>
 
-          <dt id="privacy-prompts">User Alerts / Prompts</dt>
+          <dt id="privacy-prompts">Per-origin user alerts / prompts and permissions</dt>
           <dd>
             <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before identifiers are exposed in messages from Key Systems.
               Such alerts and consent SHOULD be per origin to avoid valid uses enabling subsequent malicious access.
-              User agents that consider such alerts or consent appropriate SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
+              User agents that consider such alerts or consent appropriate SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
               (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.)
             </p>
           </dd>
@@ -2310,7 +2395,7 @@
       </section>
 
       <section id="privacy-secureorigin">
-        <h3>Use Secure Origin and Transport</h3>
+        <h3>Secure Origin and Transport</h3>
         <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
         This is especially important if a user agent chooses to support a Key System implementation that expose <a def-id="distinctive-identifiers"></a> or other such information without effectively anonymizing it in transit.
         </p>
