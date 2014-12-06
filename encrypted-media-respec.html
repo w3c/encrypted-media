@@ -1863,13 +1863,14 @@
           </ul>
         </section>
 
-        <section>
+        <section id="encrypt-identifiers">
           <h3>Encrypt Identifiers</h3>
           <p>When exposed to the application - either from a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifiers"></a> MUST be encrypted at the message exchange level.
             The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
             The CDM MUST verify that the encryption key belongs to a valid license server for its Key System.
           </p>
-          <p class="issue">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p> 
+          <p class="issue">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p>
+          <p>This MAY be implemented using a <a href="#server-certificate">server certificate</a>.</p>
           <p>The license server MUST NOT expose a <a def-id="distinctive-identifier"></a> to any entity other than the CDM that sent it.</p>
           <p class="note">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
             This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
@@ -1891,7 +1892,7 @@
           </p>
         </section>
 
-        <section>
+        <section id="allow-identifiers-cleared">
           <h3>Allow Identifiers to be Cleared</h3>
           <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identfiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
             Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
@@ -2186,50 +2187,60 @@
 
     </section>
 
-    <section id="privacy" class="informative">
+    <section id="privacy">
       <h2>Privacy</h2>
 
-      <p>The presence or use of Key Systems on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself, or within messages from Key Systems and (b) user-specific information that may be persistently stored on the users device.</p>
+      <p>The presence or use of Key System(s) on a user's device raises a number of privacy issues, falling into two categories: (a) user-specific information that may be disclosed by the EME interface itself or within Key System messages and (b) user-specific information that may be persistently stored on the user's device.</p>
       <p>User Agents MUST take responsibility for providing users with adequate control over their own privacy.
         Since User Agents may integrate with third party CDM implementations, CDM implementers MUST provide sufficient information and controls to user agent implementers to enable them to implement appropriate techniques to ensure users have control over their privacy, including but not limited to the techniques described below.
       </p>
 
       <section id="privacy-disclosure">
+        <!-- TODO: Make heading numbers consistent here and in Security. h3 is probably correct. --> 
         <h3>Information Disclosed by EME and Key Systems</h3>
-        <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories, concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and user-specific information that may be used directly for <a href="#user-tracking">user tracking</a>.</p>
+        <p>Concerns regarding information disclosed by EME and Key Systems fall into two categories: (a) concerns about non-specific information that may nevertheless contribute to the possibility of fingerprinting a user agent or device and (b) user-specific information that may be used directly for <a href="#user-tracking">user tracking</a>.</p>
       </section>
 
       <section id="privacy-fingerprinting">
         <h4>Fingerprinting</h4>
         <p>Malicious applications may be able to fingerprint users or user agents by detecting or enumerating the list of Key Systems that are supported and related information.
-          If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems MUST not share key or other data between origins.
+          If proper origin protections are not provided this could include detection of sites that have been visited and information stored for those sites. In particular, Key Systems MUST not share key or other data between <a def-id="origin">origins</a>.
         </p>
       </section>
 
       <section id="privacy-leakage">
         <h4>Information Leakage</h4>
+        <section class="informative">
+        <!-- TODO: Fix indentation of these two subsections. -->
+        <h5>Concerns</h5>
         <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
           It is important that steps be taken to avoid information leakage, especially across origins.
           This includes both in-memory and stored data.
-          Failure to do so could lead to information leakage to/from Incognito/Private Browsing sessions, across profiles, and even across different browsers, applications, and operating system user accounts.
+          Failure to do so could lead to information leakage to/from private browsing sessions, across profiles, and even across different browsers, applications, and operating system user accounts.
         </p>
-
+        </section>
+        <section>
+        <h5>Mitigations</h5>
         <p>To avoid such issues, user agent and CDM implementations MUST ensure that:</p>
         <ul>
-          <li><p>CDMs have a concept of a CDM instance that is associated 1:1 with a MediaKeys object.</p></li>
+          <li><p>CDMs have a concept of a CDM instance that is associated one-to-one with a MediaKeys object.</p></li>
           <li><p>Keys, licenses, other session data, and the presence of sessions are restricted to the CDM instance associated with the MediaKeys object that created the session.</p></li>
           <li><p>Session data is not shared between MediaKeys objects or CDM instances.</p></li>
           <li><p>Session data is not shared with media elements not associated with the MediaKeys object that created the session.
             Among other things, this means a session's keys MUST not be used to decrypt content loaded by a media element whose <a def-id="mediaKeys-attribute"></a> attribute is not that MediaKeys object.
           </p></li>
-          <li><p>MediaKeys objects and the underlying implementation do not expose information outside the origin.</p></li>
-          <li><p>Persisted session data, if applicable, is stored on a per-origin basis.</p></li>
-          <li><p>Only data stored by the requesting origin may be loaded.</p></li>
+          <li><p>MediaKeys objects and the underlying implementation do not expose information outside the <a def-id="origin"></a>.</p></li>
+          <li><p>Persisted session data, if applicable, is stored on a per-<a def-id="origin"></a> basis.</p></li>
+          <li><p>Only data stored by the requesting <a def-id="origin"></a> may be loaded.</p></li>
         </ul>
+      </section>
       </section>
 
       <section id="user-tracking">
         <h4>User Tracking</h4>
+        <section class="informative">
+        <!-- TODO: Fix indentation of these two subsections. -->
+        <h5>Concerns</h5>
         <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or data, including keys, stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests.
           Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible. 
           In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
@@ -2248,6 +2259,9 @@
           If these identifiers are present in Key System messages, then devices and/or users may be tracked.
           If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
         </p>
+        
+        <p>It is important to note that such identifiers, especially those that are non-clearable, non-origin-specific or hardware-bound, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
+        
         <p>If not mitigated, such tracking may take three forms depending on the design of the Key System:</p>
         <ul>
           <li><p>In all cases, such identifiers are expected to be available to sites and/or servers that fully support the Key System (and thus can interpret Key System messages) enabling tracking by such sites.</p></li>
@@ -2259,11 +2273,11 @@
         <p>Finally, if any user interface for user control of Key Systems presents data separately from data in HTTP session cookies [[COOKIES]] or persistent storage, then users are likely to modify site authorization or delete data in one and not the others.
           This would allow sites to use the various features as redundant backup for each other, defeating a user's attempts to protect his privacy.
         </p>
-        
-        <p>The following techniques may mitigate the risks of tracking without user consent.
-          Some are also covered in the normative <a href="#identifier-requirements">requirements for identifiers</a>.
-        </p>
 
+        <p>The following section describes techniques that may mitigate the risks of tracking without user consent.</p>
+        </section>
+        <section>
+        <h5>Mitigations</h5>
         <dl>
           <dt>Do not use <a def-id="distinctive-identifiers"></a></dt>
           <dd>
@@ -2272,29 +2286,31 @@
             </p>
           </dd>
 
-          <dt>User deletion of persistent identifiers</dt>
+          <dt>User deletion of <a def-id="distinctive-identifiers"></a></dt>
           <dd>
-            <p>User agents SHOULD provide users with the ability to clear any <a def-id="distinctive-identifiers"></a> maintained by Key Systems.</p>
+            <p>User agents MUST provide users with the ability to clear any <a def-id="distinctive-identifiers"></a> maintained by Key Systems.
+              See <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a>.
+            </p>
           </dd>
 
           <dt>Use of (non-reversible) per-origin identifiers</dt>
           <dd>
             <!-- TODO: Bug 27269 -->
-            <p>Implementations that use <a def-id="distinctive-identifiers"></a> SHOULD use a different value for each origin, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</p>
+            <p>Implementations that use <a def-id="distinctive-identifiers"></a> SHOULD use a different value for each <a def-id="origin"></a>, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</p>
           </dd>
 
-          <dt>Encryption of user identifiers</dt>
+          <dt>Encryption of <a def-id="distinctive-identifiers"></a></dt>
           <dd>
-            <p>User identifiers in Key System messages MUST be encrypted, together with a timestamp or nonce, such that the Key System messages are always different.
+            <p><a def-id="distinctive-identifiers"></a> in Key System messages MUST be encrypted, together with a timestamp or nonce, such that the Key System messages are always different.
               This prevents the use of Key System messages for tracking except by servers fully supporting the Key System.
-              This MAY be implemented using a <a href="#server-certificate">server certificate</a>.
+              See <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
             </p>
           </dd>
 
           <dt>Blocking third-party access</dt>
           <dd>
             <!-- TODO: Bug 27269 -->
-            <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the origin of the top-level document of the browsing context.
+            <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the <a def-id="origin"></a> of the top-level <a def-id="document-concept"></a> of the browsing context.
               For example, <a def-id="requestMediaKeySystemAccess"></a> may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
             </p>
           </dd>
@@ -2302,18 +2318,18 @@
           <dt>Expiring stored data</dt>
           <dd>
             <p>User agents MAY, possibly in a manner configured by the user, automatically delete <a def-id="distinctive-identifiers"></a> and/or other Key System data after a period of time.</p>
-            <p>For example, a user agent could be configured to such data as session-only storage, deleting the data once the user had closed all the browsing contexts that could access it.</p>
-            <p>This can restrict the ability of a site to track a user, as the site would then only be able to track the user across multiple sessions when he authenticates with the site itself (e.g. by making a purchase or logging in to a service).</p>
-            <p>However, this can also put the user's access to content, especially purchased or rented content, at risk if the user does not fully understand the implications of such expiration.</p>
+            <div class="note">
+              <p>For example, a user agent could be configured to such data as session-only storage, deleting the data once the user had closed all the browsing contexts that could access it.</p>
+              <p>This can restrict the ability of a site to track a user, as the site would then only be able to track the user across multiple sessions when he authenticates with the site itself (e.g. by making a purchase or logging in to a service).</p>
+              <p>However, this can also put the user's access to content, especially purchased or rented content, at risk if the user does not fully understand the implications of such expiration.</p>
+            </div>
           </dd>
   
-          <dt>Treating <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
+          <dt id="like-cookies">Treating <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
           <dd>
-            <p>User agents SHOULD present the presence of <a def-id="distinctive-identifiers"></a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [[COOKIES]].
+            <p>User agents SHOULD present the presence of <a def-id="distinctive-identifiers"></a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [[!COOKIES]].
               This might encourage users to view such identifiers with healthy suspicion.
-            </p>
-            <p>If users attempt to protect their privacy by clearing cookies or other persistent storage without also clearing <a def-id="distinctive-identifiers"></a> and data stored by Key Systems, sites can defeat those attempts by using the various features as redundant backup for each other.
-              User agents SHOULD present the interfaces for clearing these in a way that helps users to understand this possibility and enables them to delete data in all persistent identification and storage features simultaneously.
+              User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
 
@@ -2334,43 +2350,37 @@
           <dt id="privacy-prompts">Per-origin user alerts / prompts and permissions</dt>
           <dd>
             <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before identifiers are exposed in messages from Key Systems.
-              Such alerts and consent SHOULD be per origin to avoid valid uses enabling subsequent malicious access.
-              User agents that consider such alerts or consent appropriate SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
-              (Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.)
+              Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
+              User agent implementers that consider such alerts or consent appropriate for a Key System implementation SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
             </p>
+            <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.</p>
           </dd>
 
           <dt>User controls to disable Key Systems or Key System use of identifiers</dt>
           <dd>
-            <p>User Agents could provide users with a global control of whether a Key System is enabled / disabled and/or whether Key System use of user / device identifiers is enabled or disabled (if supported by the Key System).</p>
-            <p>If users attempt to protect their privacy by disabling a key system, especially for a specific origin, without also clearing cookies or other persistent storage, sites can defeat those attempts by using the remaining features.
-              User agents SHOULD present the interfaces for disabling a key system in a way that helps users to understand this possibility and enables them to delete data in all persistent storage features simultaneously.
-            </p>
-            <p>If users attempt to protect their privacy by disabling a key system, then later decide to enable the key system, without also clearing clearing cookies or other persistent storage, <a def-id="distinctive-identifiers"></a>, and data stored by Key Systems, sites may be able to associate data prior to the disabling with data and behavior after the key system is re-enabled.
-              User agents SHOULD present the interfaces for disabling and re-enabling a key system in a way that helps users to understand this possibility and enables them to delete data in all persistent storage features simultaneously.
+            <p>User Agents SHOULD provide users with a global control of whether a Key System is enabled and/or whether Key System use of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is enabled (if supported by the Key System).
+              User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
         </dl>
 
-        <p>While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether.
+        <p class="note">While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether.
           Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site.
           If a third party cooperates with multiple sites to obtain such information, and if identifiers are not <!-- TODO: Bug 27269 -->per-origin, then a profile can still be created.
         </p>
-        <p>It is important to note that identifiers that are non-clearable, non-origin-specific or hardware-bound exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
-        <p>Thus, in addition to the various mitigations described above, if a browser supports a mode of operation intended to preserve user anonymity, then User Agent implementers should carefully consider whether access to Key Systems should be disabled in this mode.
-          For example, such modes SHOULD prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a <a def-id="option-distinctiveIdentifier"></a> (either as part of the CDM implementation or because the application <a def-id="requirement-required"></a> them).
-        </p>
+        </section>
 
+        <!-- TODO: This is out of place as a sub-section here. -->
         <section id="privacy-individualization">
           <h5>Individualization</h5>
-          <p>Identifiers are sometimes obtained via a process called individualization or provisioning.
-            In all cases, implementations SHOULD avoid sending per-origin information to centralized servers since this could create a central record of all origins visited by a user or device.
+          <p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are sometimes obtained via a process called individualization or provisioning.
+            In all cases, implementations SHOULD avoid sending per-<a def-id="origin"></a> information to centralized servers since this could create a central record of all origins visited by a user or device.
           </p>
-          <p>Per-origin individualization (resulting in a per-origin identifier) can - with appropriate precautions - provide better privacy than other individualization models.
+          <p>Per-origin individualization (resulting in a per-origin <a def-id="distinctive-identifier"></a>) can - with appropriate precautions - provide better privacy than other individualization models.
             To preserve the benefits of such a design and to avoid introducing other privacy concerns:
           </p>
           <ul>
-            <li><p>Such implementations SHOULD not use identifiers for a device or user of a device in the individualization process.</p></li>
+            <li><p>Such implementations SHOULD not use distinctive identifier(s) for a device or user of a device in the individualization process.</p></li>
             <li><p>Such implementations and the applications that support them SHOULD also avoid deferring or forwarding the individualization process to a central server or other server not controlled by the application author.</p></li>
           </ul>
         </section>
@@ -2378,29 +2388,43 @@
 
       <section id="privacy-storedinfo">
         <h3>Information Stored on User Devices</h3>
+        <section class="informative">
+        <!-- TODO: Fix indentation of these two subsections. -->
+        <h5>Concerns</h5>
         <p>Key Systems may store information on a user's device, or user agents may store information on behalf of Key Systems.
           Potentially, this could reveal information about a user to another user of the same device, including potentially the origins that have used a particular Key System (i.e. sites visited) or even the content that has been decrypted using a Key System.
         </p>
         <p>If information stored by one origin affects the operation of the Key System for another origin, then potentially the sites visited or content viewed by a user on one site may be revealed to another, potentially malicious, site.</p>
-        <p>There are a number of techniques that can be used to mitigate these privacy risk to users:</p>
+        </section>
+        <section>
+        <h5>Mitigations</h5>
+        <p>In summary, user agent and CDM implementations that allow the CDM to persist data:</p>
+        <ul>
+          <li><p>MUST ensure it is restricted to the <a def-id="origin"></a> for which it was created.</p></li>
+          <li><p>MUST ensure it is restricted to the current profile and does not leak to or from private browsing sessions.</p></li>
+          <li><p>MUST allow the user to clear it, preferably by <a def-id="origin"></a>.</p></li>
+          <li><p>SHOULD treat it like other site data, including presenting it along with cookies [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.</p></li>
+        </ul>
 
         <dl>
           <dt>Origin-specific Key System storage</dt>
           <dd>
-            <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be stored in an origin-specific way.
-              Session data, licenses, and keys that are persistently stored MUST be stored per-origin.
+            <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be stored in an <a def-id="origin"></a>-specific way.
+              Session data, licenses, and keys that are persistently stored MUST be stored per-<a def-id="origin"></a>.
               See <a def-id="session-storage"></a>.
             </p>
           </dd>
 
           <dt>User deletion of Key System storage</dt>
           <dd>
-            <p>User agents SHOULD present the user with a way to delete Key System storage for a specific origin or all origins.</p>
+            <p>User agents SHOULD present the user with a way to delete Key System storage for a specific origin or all origins.
+              User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            </p>
           </dd>
 
           <dt>Treating <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
           <dd>
-            <p>See the identical section above.</p>
+            <p>See the <a href="#like-cookies">identical section above</a>.</p>
           </dd>
 
           <dt>Encryption or obfuscation of Key System stored data</dt>
@@ -2411,22 +2435,49 @@
           </dd>
         </dl>
 
-        <p>User agent and CDM implementations that allow the CDM to persist data:</p>
-        <ul>
-          <li><p>MUST ensure it is restricted to the origin for which it was created.</p></li>
-          <li><p>MUST ensure it is restricted to the current profile and does not leak to or from Incognito/Private Browsing sessions.</p></li>
-          <li><p>MUST allow the user to clear it, preferably by origin.</p></li>
-          <li><p>SHOULD treat it like other site data, including presenting it along with cookies [[COOKIES]], including it in "remove all data", and presenting it in the same UI locations.</p></li>
-        </ul>
+      </section>
+      </section>
+
+      <section id="incomplete-clearing">
+        <h3>Incomplete Clearing of Data</h3>
+        <section class="informative">
+        <!-- TODO: Fix indentation of these two subsections. -->
+        <h5>Concerns</h5>
+          <p>A user's attempts to protect his or her privacy by clearing <a def-id="distinctive-identifiers"></a> and stored data and/or disabling a Key System may be defeated if all such data and functionality as well as cookies [[!COOKIES]] and other site data are not cleared and/or disabled at the same time.
+            For example:
+          </p>
+          <ul>
+            <li><p>If a user clears cookies or other persistent storage without also clearing <a def-id="distinctive-identifiers"></a> and data stored by Key Systems, sites can defeat those attempts by using the various features as redundant backup for each other.</p></li>
+            <li><p>If a user disables a key system, especially for a specific origin, without also clearing cookies or other persistent storage, sites can defeat those attempts by using the remaining features.</p></li>
+            <li><p>If a user disables a key system, then later decide to enable the key system, without also clearing clearing cookies or other persistent storage, <a def-id="distinctive-identifiers"></a>, and data stored by Key Systems, sites may be able to associate data prior to the disabling with data and behavior after the key system is re-enabled.</p></li>
+          </ul>
+        </section>
+        <section>
+        <h5>Mitigations</h5>
+          <p>User agents SHOULD present the interfaces for clearing <a def-id="distinctive-identifiers"></a> and Key System stored data in a way that helps users to understand this possibility and enables them to delete data in all persistent identification and storage features, including HTTP session cookies [[!COOKIES]] and web storage, simultaneously.
+            Likewise, User agents SHOULD present the interfaces for disabling and re-enabling a Key System in a way that helps users to understand this possibility and enables them to delete all such data in all persistent storage features simultaneously.
+          </p>
+        </section>
+      </section>
+
+      <section id="private-browsing">
+        <h3>Private Browsing Modes</h3>
+        <p>User agents may support a mode (e.g. private browsing) of operation intended to preserve user anonymity and/or ensure records of browsing activity are not persisted on the client.
+          The privacy concerns discussed in previous sections may be expecially concerning for users employing such modes.
+        </p>
+        <p>User agent implementers that support such mode(s) SHOULD carefully consider whether access to Key Systems should be disabled in these mode(s).
+          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a <a def-id="option-distinctiveIdentifier"></a> (either as part of the CDM implementation or because the application indicated they were <a def-id="requirement-required"></a>).
+          If implementations do not prohibit such creation, they SHOULD inform the user of the implications and potential consequences for the expected privacy properties of such modes before allowing their use.
+        </p>
       </section>
 
       <section id="privacy-secureorigin">
         <h3>Secure Origin and Transport</h3>
-        <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support the EME APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
+        <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support these APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
         This is especially important if a user agent chooses to support a Key System implementation that expose <a def-id="distinctive-identifiers"></a> or other such information without effectively anonymizing it in transit.
         </p>
         <p>Regardless of user agent limitations, applications SHOULD use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
-        <p>All user agents MUST properly handle Mixed Content [[MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
+        <p>All user agents MUST properly handle Mixed Content [[!MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
       </section>
 
     </section>
