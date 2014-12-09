@@ -716,7 +716,7 @@
         </dl>
 
         <p>Implementations SHOULD NOT add members to the this dictionary.
-          Should member(s) be added, they MUST be of type <a def-id="requirement"></a>, and it is RECOMMENDED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
+          Should member(s) be added, they MUST be of type <a>MediaKeysRequirement</a>, and it is RECOMMENDED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
         </p>
         <p class="note">Dictionary members not recognized by a user agent implementation are ignored per [[WebIDL]] and will not be considered in the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           Should an an application use non-standard dictionary member(s), it MUST NOT rely on user agent implementations rejecting a configuration that includes such dictionary members.
@@ -765,7 +765,7 @@
           <p>The returned object is a non-strict subset of the first statisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
             It does not contain values capabilities not specified in that single configuration and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
             All values in the configuration may be used in any combination.
-            <a def-id="requirement"></a> members reflect whether capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
+            Members of type <a>MediaKeysRequirement</a> reflect whether capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
           </p>
 
           <ol class="method-algorithm">
@@ -839,7 +839,7 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
-      <dl title="enum SessionType" class="idl">
+      <dl title="enum MediaKeySessionType" class="idl">
         <dt>temporary</dt>
         <dd>
            A session for which a record of or data related to the session MUST NOT be persisted.
@@ -859,7 +859,7 @@
           <p>Returns a new <a>MediaKeySession</a> object.</p>
 
           <dl class='parameters'>
-            <dt>optional SessionType sessionType = "temporary"</dt>
+            <dt>optional MediaKeySessionType sessionType = "temporary"</dt>
             <dd>
               The type of session to create. The session type affects the behavior of the returned object.
             </dd>
@@ -1955,7 +1955,7 @@
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
               </ol>
             </li>
-            <li><p>The <a def-id="persistent-session"></a> <a def-id="sessiontype"></a>: Implementations MAY support this type.</p></li>
+            <li><p>The <a def-id="persistent-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
             <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
           </ul>
@@ -1996,7 +1996,7 @@
             <dt>"kids"</dt>
             <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
             <dt>"type"</dt>
-            <dd>The requested <a def-id="sessiontype"></a></dd>
+            <dd>The requested <a>MediaKeySessionType</a></dd>
           </dl>
 
           <p>When contained in the ArrayBuffer <a def-id="message-event-message-attribute"></a> attribute of a <a>MediaKeyMessageEvent</a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [[!ENCODING]].
@@ -2037,7 +2037,7 @@
             <dd>The base64url encoding of the octet sequence containing the <a def-id="key-id"></a> value</dd>
           </dl>
 
-          <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a def-id="sessiontype"></a> values.
+          <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a>MediaKeySessionType</a> values.
             If not specified, the default value of <a def-id="temporary-session"></a> is used.
             The <a def-id="update"></a> algorithm compares this value to the <var>sessionType</var>.
           </p>
