@@ -478,7 +478,7 @@
                   <dd>Prompt the user for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</dd>
                 </dl>
                 <p class="note">A previous consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p> 
-                <p class="note">The "clearable" condition cannot be false in a compliant implementation because implementations MUST <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
+                <p class="note">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
               </li>
               <li><p>Return <code>Supported</code>.</p></li>
             </ol>
@@ -589,7 +589,7 @@
                   <dd>Prompt the user for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</dd>
                 </dl>
                 <p class="note">A previous consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p> 
-                <p class="note">The "clearable" condition cannot be false in a compliant implementation because implementations MUST <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
+                <p class="note">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
               </li>
               <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
@@ -1907,11 +1907,12 @@
           </div>
         </section>
 
-        <section>
+        <section id="per-origin-identifiers">
           <h3>Use Per-Origin Identifiers</h3>
-          <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - Normatively require  <a def-id="distinctive-identifiers"></a> by origin.
-            It has also been suggested that the  <a def-id="distinctive-identifiers"></a> be different for the combination of top-level origin and the origin using these APIs.
+          <p>All <a def-id="distinctive-identifiers"></a> MUST be distinctive per <a def-id="origin"></a>.
+            That is, the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
           </p>
+          <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
         </section>
 
         <section id="allow-identifiers-cleared">
@@ -2315,10 +2316,12 @@
             </p>
           </dd>
 
-          <dt id="per-origin-identifiers">Use of (non-reversible) per-origin identifiers</dt>
+          <dt>Use of (non-reversible) per-origin identifiers</dt>
           <dd>
             <!-- TODO: Bug 27269 -->
-            <p>Implementations that use <a def-id="distinctive-identifiers"></a> SHOULD use a different value for each <a def-id="origin"></a>, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.</p>
+            <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different value for each <a def-id="origin"></a>, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.
+              See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
+            </p>
           </dd>
 
           <dt>Encryption of <a def-id="distinctive-identifiers"></a></dt>
@@ -2375,7 +2378,7 @@
             <p>User agents MUST prompt or otherwise inform the user before allowing use of a <a def-id="distinctive-identifier"></a> that is not <a href="#per-origin-identifiers">unique per-origin</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used.
               User agents SHOULD prompt or otherwise inform the user before allowing use of all other <a def-id="distinctive-identifier"></a>.
             </p>
-            <p class="note">The "not clearable" condition cannot be true in a compliant implementation because implementations MUST <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
+            <p class="note">The "not unique per-origin" and "not clearable" conditions cannot be true in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
             <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
               User agent implementers that consider such alerts or consent appropriate for a Key System implementation SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
             </p>
@@ -2392,7 +2395,7 @@
 
         <p class="note">While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether.
           Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site.
-          If a third party cooperates with multiple sites to obtain such information, and if identifiers are not <!-- TODO: Bug 27269 -->per-origin, then a profile can still be created.
+          If a third party cooperates with multiple sites to obtain such information, and if identifiers are not <!-- TODO: Bug 27269 --><a href="#per-origin-identifiers">unique per-origin</a>, then a profile can still be created.
         </p>
         </section>
 
