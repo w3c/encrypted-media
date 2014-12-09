@@ -183,8 +183,9 @@
 //  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
 
-    'persistent-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent', link_text: '"persistent"',  },
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
+    'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
+    'persistent-release-message-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-release-message', link_text: '"persistent-release-message"',  },
 
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
