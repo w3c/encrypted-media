@@ -444,6 +444,17 @@
       parent.appendChild(this);
     });
 
+    // Add a simple id names for each method.
+    // This is more useful than the long "widl-..." names when referencing
+    // methods from outside this spec.
+    // Because the <dt> already has a generated id, the id is added to the <code>.
+    $("dl.methods > dt > code").each(function() {
+        if (this.id) {
+          console.error("Method " + this.textContent + "'s <code> element already has an 'id'.");
+        }
+        this.id = this.textContent;
+    });
+
     // Validate that all defined def-ids are actually used.
     var excludeList = window.respecConfig.emeUnusedGroupNameExcludeList || [];
     for (var k in definitionInfo) {
@@ -462,6 +473,15 @@
         if (!document.getElementById(id)) {
           console.log("Internal link to an id '" + id + "' which does not exist");
         }
+      }
+    });
+
+    // THIS MUST BE LAST.
+    // Check for duplicate ids.
+    $("[id]").each(function () {
+      var elements = $("[id='" + this.id + "']"); 
+      if (elements.length != 1) {
+        console.error("id '" + this.id + "' is used for " + elements.length + " elements. This instance: ", this);
       }
     });
 
