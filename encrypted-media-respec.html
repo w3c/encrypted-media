@@ -378,7 +378,7 @@
               <dd>
                 The <a def-id="keysystem"></a> for which access is being requested.
               </dd>
-              <dt>optional sequence&lt;<a>MediaKeySystemConfiguration</a>&gt; supportedConfigurations</dt>
+              <dt>sequence&lt;<a>MediaKeySystemConfiguration</a>&gt; supportedConfigurations</dt>
               <dd>
                 A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
                 The first element with a satisfiable configuration will be used.
@@ -388,7 +388,7 @@
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-              <li><p>If <var>supportedConfigurations</var> was provided and is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+              <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
               <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var>document</var> is not <code>Allowed</code>:
                 <ul style="list-style-type:none">
@@ -408,48 +408,27 @@
                 <ol>
                   <li><p>If <var>keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
                   <li><p>Let <var>implementation</var> be the implementation of <var>keySystem</var>.</p></li>
-                  <li><p>Follow the steps for the first matching condition from the following list:</p>
-                    <dl class="switch">
-                      <dt>If <code>supportedConfigurations</code> was not provided</dt>
-                      <dd>
-                        <p>If the result of executing the <a def-id="is-key-system-supported-algorithm"></a> algorithm on <var>implementation</var> and <var>origin</var> is <code>Supported</code>, run the following steps:</p>
+                  <li><p>For each value in <code>supportedConfigurations</code>:</p>
+                    <ol>
+                      <li><p>Let <var>candidate configuration</var> be the value.</p></li>
+                      <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
+                      <li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
                             <ol>
                               <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var>keySystem</var>.</p></li>
-                              <li><p>Let the <var>configuration</var> value be <code>null</code>.</p></li>
+                              <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
+                                <var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.<p>
+                              </li>
+                              <li><p>Let the <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
                               <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
                             </ol>
                           </li>
                           <li><p>Resolve <var>promise</var> with <var>access</var> and abort these steps.</p></li>
                         </ol>
-                      </dd>
-                      <dt>Otherwise</dt>
-                      <dd>
-                        <p>For each value in <code>supportedConfigurations</code>:</p>
-                        <ol>
-                          <li><p>Let <var>candidate configuration</var> be the value.</p></li>
-                          <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
-                          <li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
-                            <ol>
-                              <li>
-                                <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
-                                <ol>
-                                  <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var>keySystem</var>.</p></li>
-                                  <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
-                                    <var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.<p>
-                                  </li>
-                                  <li><p>Let the <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
-                                  <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
-                                </ol>
-                              </li>
-                              <li><p>Resolve <var>promise</var> with <var>access</var> and abort these steps.</p></li>
-                            </ol>
-                          </li>
-                        </ol>
-                      </dd>
-                    </dl>
+                      </li>
+                    </ol>
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
                     <p class="note"><code>keySystem</code> was not supported/allowed or none of the configurations in <code>supportedConfigurations</code> were supported/allowed.</p>
@@ -463,30 +442,6 @@
 
         <section>
           <h3>Algorithms</h3>
-
-          <section>
-            <h2>Is Key System Supported?</h2>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var> and <var>origin</var>, this algorithm returns <code>Supported</code> or <code>Not Supported</code> as appropriate.</p>
-            <ol>
-              <li><p>If <var>implementation</var> is not supported or not allowed in the <var>origin</var>, return <code>Not Supported</code>.</p>
-                <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
-                <p>If <var>implementation</var> may use a <a def-id="distinctive-identifier"></a>, follow the steps for the first matching condition from the following list:</p>
-                <dl class="switch">
-                  <dt>If the <a def-id="distinctive-identifier"></a> is <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a></dt>
-                  <dd>
-                    <p>If there is no persisted consent covering <var>accumulated configuration</var> for the the <var>origin</var>, it is RECOMMENDED that the user be prompted for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                  <dt>Otherwise</dt>
-                  <dd>
-                    <p>Prompt the user for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                </dl>
-                <p class="note">A previous consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p> 
-                <p class="note">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
-              </li>
-              <li><p>Return <code>Supported</code>.</p></li>
-            </ol>
-          </section>
 
           <section>
             <h2>Get Supported Configuration</h2>
@@ -772,11 +727,10 @@
           Identifies the <a def-id="keysystem"></a> being used.
         </dd>
 
-        <dt>MediaKeySystemConfiguration? getConfiguration()</dt>
+        <dt>MediaKeySystemConfiguration getConfiguration()</dt>
         <!-- This is a method instead of an attribute because per http://heycam.github.io/webidl/#idl-dictionaries, "Dictionaries must not be used as the type of an attribute or constant." -->
         <dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
-            Returns <code>null</code> if <code>supportedConfigurations</code> was not provided in the call.
           </p>
           <p>The returned object is a non-strict subset of the first statisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
             It does not contain values capabilities not specified in that single configuration and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
