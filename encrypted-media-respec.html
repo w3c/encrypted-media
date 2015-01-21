@@ -148,28 +148,15 @@
         <dl>
           <dt id="cdm">Content Decryption Module (CDM)</dt>
           <dd>
-            <p>Content Decryption Module (CDM) is a generic term for the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
+            <p>Content Decryption Module (CDM) is the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
             <p class="note">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
             This is transparent to the API and application.</p>
 
             <p>All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
               The CDM MUST NOT make direct out-of band network requests.
-              All messages and communication other than those covered in the following paragraph MUST be passed through the application via the APIs defined in this specification.
-              Specifically, all communication that contains application-, origin-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
+              All messages and communication other than those described in <a href="#origin-independent-individualization">Origin-Independent Individualization</a> MUST be passed through the application via the APIs defined in this specification.
+              Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
               This includes all license exchange messages.
-            </p>
-            <p>Application- and origin-independent messages related to per-client initialization (or reinitialization) that are sent to a fixed non-application-dependent URL MUST be handled by the user agent and MUST NOT be passed to the application via the APIs.
-              The related message exchange and operations MUST be performed by the user agent via the user agent's network stack.
-            </p>
-            <p class="note">For example, an initialization, provisioning, or individualization process for a client device that involves communicating with a server hosted by the user agent or CDM vendor and does not contain application- or origin-specific information MUST be performed by the user agent without involving the application.
-              The same applies to reinitialization, reprovisioning, or reindividualization.
-            </p>
-            <p>For implementations that support per-origin initialization, such messages MUST be passed to the application via the APIs.
-              Such messages MUST NOT contain non-origin-specific per-client information, such as a <a def-id="distinctive-identifier"></a>.
-              As with all other uses of the APIs, responses passed to the CDM MUST NOT contain executable code.
-            </p>
-            <p class="note">To preserve the privacy properties of per-origin initialization, applications and key system servers should not defer initialization to a non-origin-specific server.
-              See <a href="#privacy-individualization">Individualization</a>.
             </p>
           </dd>
 
@@ -1924,6 +1911,12 @@
             That is, the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
           </p>
           <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
+
+          <p id="non-reversible-identifiers">
+            It MUST NOT be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
+            Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, MUST do so in a non-reversible way.
+          </p>
+          <p class="issue">Add more specific text about ensuring the desired non-reversible properties.</p>
         </section>
 
         <section id="allow-identifiers-cleared">
@@ -2297,7 +2290,7 @@
           If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
         </p>
         
-        <p>It is important to note that such identifiers, especially those that are non-clearable, non-origin-specific or hardware-bound, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
+        <p>It is important to note that such identifiers, especially those that are non-clearable, non-<a def-id="origin"></a>-specific or hardware-bound, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
         
         <p>If not mitigated, such tracking may take three forms depending on the design of the Key System:</p>
         <ul>
@@ -2334,7 +2327,7 @@
           <dd>
             <!-- TODO: Bug 27269 -->
             <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different value for each <a def-id="origin"></a>, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.
-              See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
+              See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a> and <a href="#non-reversible-identifiers">non-reversible identifiers</a>.
             </p>
           </dd>
 
@@ -2381,7 +2374,7 @@
 
           <dt>Shared blacklists</dt>
           <dd>
-            <p>User agents MAY allow users to share their Key System origin blacklists.
+            <p>User agents MAY allow users to share their Key System <a def-id="origin"></a> blacklists.
               This would allow communities to act together to protect their privacy.
             </p>
           </dd>
@@ -2416,16 +2409,58 @@
         <!-- TODO: This is out of place as a sub-section here. -->
         <section id="privacy-individualization">
           <h5>Individualization</h5>
-          <p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are sometimes obtained via a process called individualization or provisioning.
-            In all cases, implementations SHOULD avoid sending per-<a def-id="origin"></a> information to centralized servers since this could create a central record of all origins visited by a user or device.
+          <p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are sometimes obtained via a process called individualization or provisioning.</p>
+          <p>Individualization MAY be origin-independent or per-origin.
+            The resulting identifier MUST be origin-independent or per-origin, respectively.
+            In the former case the resulting identifier MUST NOT be provided to the application.
+            The mechanisms and flow are for the two types of individualization are different, as described in the following sections.
           </p>
-          <p>Per-origin individualization (resulting in a per-origin <a def-id="distinctive-identifier"></a>) can - with appropriate precautions - provide better privacy than other individualization models.
-            To preserve the benefits of such a design and to avoid introducing other privacy concerns:
-          </p>
-          <ul>
-            <li><p>Such implementations SHOULD not use distinctive identifier(s) for a device or user of a device in the individualization process.</p></li>
-            <li><p>Such implementations and the applications that support them SHOULD also avoid deferring or forwarding the individualization process to a central server or other server not controlled by the application author.</p></li>
-          </ul>
+          <p>In all cases, implementations SHOULD avoid sending <a def-id="origin">origin(s)</a> or <a def-id="origin"></a>-specific information to centralized servers since this could create a central record of all origins visited by a user or device.</p>
+          <p>Individualizaiton MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
+
+          <section id="origin-independent-individualization">
+            <h6>Origin-Independent Individualization</h6>
+            <p><a def-id="origin">Origin</a>-independent individualization is performed between the <a def-id="cdm"></a> and an origin- and application-independent server.
+              The process MUST be performed by the user agent and MUST NOT use these APIs.
+            </p>
+            <p class="note">For example, such a process may initialize a client device by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly using identifiers from the client device.
+              Such communication would not involve providing application- or origin-specific information.
+            </p>
+            <p>The resulting identifier MUST be origin- and application-independent.
+              Such identifiers MUST NOT be provided to applications (see <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>), even encrypted.
+              Implementations MAY derive <a href="#non-reversible-identifiers">non-reversible</a> per-origin identifiers from such identifiers and provide those to the application (<a href="#encrypt-identifiers">encrypted</a>)
+            </p>
+            <p>For such individualization, all message exchanges:</p>
+            <ul>
+              <li><p>MUST be handled by the user agent and performed by the user agent via the user agent's network stack.</p></li>
+              <li><p>MUST NOT be performed directly by the CDM.</p></li>
+              <li><p>MUST NOT be passed to or through the application via these APIs.</p></li>
+              <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
+            </ul>
+          </section>
+
+          <section id="per-origin-individualization">
+            <h6>Per-Origin Individualization</h6>
+            <p>Per-<a def-id="origin"></a> individualization is performed between the <a def-id="cdm"></a> and an application-selected server and results in a per-origin identifier.
+              The process MUST be performed via these APIs and MUST NOT involve other types of communication.
+              Any <a def-id="distinctive-identifiers"></a> used MUST be origin-specific. 
+            </p>
+            <p>For such individualization, all message exchanges:</p>
+            <ul>
+              <li><p>MUST be passed to or through the application via these APIs.</p></li>
+              <li><p>MUST NOT be performed by the user agent.</p></li>
+              <li><p>MUST NOT be performed directly by the CDM.</p></li>
+              <li><p>MUST NOT contain non-origin-specific per-client information, such as a <a def-id="distinctive-identifier"></a>.</p></li>
+              <li><p>As with all other uses of the APIs, responses passed to the CDM MUST NOT contain executable code.</p></li>
+            </ul>
+            <p>With appropriate precautions, such individualization can provide better privacy than origin-independent individualization, though not as good as models that do not use <a def-id="distinctive-identifiers"></a>.
+              To preserve the benefits of such a design and to avoid introducing other privacy concerns:
+            </p>
+            <ul>
+              <li><p>Such implementations MUST NOT use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for a device or user of a device in the individualization process.</p></li>
+              <li><p>Such implementations and the applications that support them SHOULD also avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.</p></li>
+            </ul>
+          </section>
         </section>
       </section>
 
@@ -2435,7 +2470,7 @@
         <!-- TODO: Fix indentation of these two subsections. -->
         <h5>Concerns</h5>
         <p>Key Systems may store information on a user's device, or user agents may store information on behalf of Key Systems.
-          Potentially, this could reveal information about a user to another user of the same device, including potentially the origins that have used a particular Key System (i.e. sites visited) or even the content that has been decrypted using a Key System.
+          Potentially, this could reveal information about a user to another user of the same device, including potentially the <a def-id="origin">origins</a> that have used a particular Key System (i.e. sites visited) or even the content that has been decrypted using a Key System.
         </p>
         <p>If information stored by one origin affects the operation of the Key System for another origin, then potentially the sites visited or content viewed by a user on one site may be revealed to another, potentially malicious, site.</p>
         <p>If information stored for one browsing profile, browser, or user account on the client device affects the operation of the Key System for other profiles, browsers, or accounts, then potentially the sites visited or content viewed by in one may be revealed by or correlatable with another profile, browser, or account.</p>
@@ -2461,7 +2496,7 @@
 
           <dt>User deletion of Key System storage</dt>
           <dd>
-            <p>User agents SHOULD present the user with a way to delete Key System storage for a specific origin or all origins.
+            <p>User agents SHOULD present the user with a way to delete Key System storage for a specific <a def-id="origin"></a> or all origins.
               User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
@@ -2492,7 +2527,7 @@
           </p>
           <ul>
             <li><p>If a user clears cookies or other persistent storage without also clearing <a def-id="distinctive-identifiers"></a> and data stored by Key Systems, sites can defeat those attempts by using the various features as redundant backup for each other.</p></li>
-            <li><p>If a user disables a key system, especially for a specific origin, without also clearing cookies or other persistent storage, sites can defeat those attempts by using the remaining features.</p></li>
+            <li><p>If a user disables a key system, especially for a specific <a def-id="origin"></a>, without also clearing cookies or other persistent storage, sites can defeat those attempts by using the remaining features.</p></li>
             <li><p>If a user disables a key system, then later decide to enable the key system, without also clearing clearing cookies or other persistent storage, <a def-id="distinctive-identifiers"></a>, and data stored by Key Systems, sites may be able to associate data prior to the disabling with data and behavior after the key system is re-enabled.</p></li>
           </ul>
         </section>
