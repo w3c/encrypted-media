@@ -228,7 +228,7 @@
     'setMediaKeys': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys()',  },
     'setMediaKeys-call': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys',  },
 
-    'keyschange': { func: eventref_helper, fragment: 'keyschange', link_text: 'keyschange',  },
+    'keystatuseschange': { func: eventref_helper, fragment: 'keystatuseschange', link_text: 'keystatuseschange',  },
     'message': { func: eventref_helper, fragment: 'message', link_text: 'message',  },
     'encrypted': { func: eventref_helper, fragment: 'encrypted', link_text: 'encrypted',  },
 

@@ -1757,7 +1757,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
           </thead>
           <tbody>
             <tr>
-              <td><dfn id="dom-evt-keyschange"><code>keyschange</code></dfn></td>
+              <td><dfn id="dom-evt-keystatuseschange"><code>keystatuseschange</code></dfn></td>
               <td><code><a href="https://dom.spec.whatwg.org/#event">Event</a></code></td>
               <td>There has been a change in the keys in the session or their status.</td>
             </tr>
@@ -1818,7 +1818,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
                 This replacement is atomic from a script perspective. That is, script <em class="rfc2119" title="MUST NOT">MUST NOT</em> ever see a partially populated sequence.
               </p></div>
             </li>
-            <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-keyschange">keyschange</a></code> at the <var>session</var>.</p></li>
+            <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-keystatuseschange">keystatuseschange</a></code> at the <var>session</var>.</p></li>
             <li><p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the <a href="#resume-playback">attempt to resume playback if necessary</a> algorithm on each of the media element(s) whose <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute is the MediaKeys object that created the <var>session</var>.</p>
               <p>The user agent <em class="rfc2119" title="MAY">MAY</em> choose to skip this step if it knows resuming will fail.</p>
               <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note52"><span>Note</span></div><p class="">For example, the user agent may skip this step if no additional keys became <code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code>.</p></div>
@@ -3196,7 +3196,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   </span><span class="kwd">function</span><span class="pln"> makeNewRequest</span><span class="pun">(</span><span class="pln">mediaKeys</span><span class="pun">,</span><span class="pln"> initDataType</span><span class="pun">,</span><span class="pln"> initData</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
     </span><span class="kwd">var</span><span class="pln"> keySession </span><span class="pun">=</span><span class="pln"> mediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType">createSession</a></code><span class="pun">();</span><span class="pln">
     keySession</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"</span><code><a href="#dom-evt-message">message</a></code><span class="str">"</span><span class="pun">,</span><span class="pln"> handleMessage</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
-    keySession</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"</span><code><a href="#dom-evt-keyschange">keyschange</a></code><span class="str">"</span><span class="pun">,</span><span class="pln"> handleKeysChange</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+    keySession</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"</span><code><a href="#dom-evt-keystatuseschange">keystatuseschange</a></code><span class="str">"</span><span class="pun">,</span><span class="pln"> handlekeyStatusesChange</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
     keySession</span><span class="pun">.</span><code><a href="#widl-MediaKeySession-closed">closed</a></code><span class="pun">.</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
       console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Session closed"</span><span class="pun">)</span><span class="pln">
     </span><span class="pun">);</span><span class="pln">
@@ -3232,7 +3232,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     sendMessage</span><span class="pun">(</span><span class="pln">event</span><span class="pun">.</span><code><a href="#widl-MediaKeyMessageEvent-messageType">messageType</a></code><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><code><a href="#widl-MediaKeyMessageEvent-message">message</a></code><span class="pun">,</span><span class="pln"> event</span><span class="pun">.</span><span class="pln">target</span><span class="pun">);</span><span class="pln">
   </span><span class="pun">}</span><span class="pln">
 
-  </span><span class="kwd">function</span><span class="pln"> handleKeysChange</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pln"> handlekeyStatusesChange</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
     </span><span class="com">// Evaluate the current state using one of the map-like methods exposed by</span><span class="pln">
     </span><span class="com">// event.target.</span><code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code><span class="com">.</span><span class="pln">
     </span><span class="com">// For example:</span><span class="pln">
