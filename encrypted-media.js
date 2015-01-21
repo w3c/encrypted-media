@@ -234,6 +234,7 @@
 
     'message-type-license-request': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.license-request', link_text: '"license-request"',  },
     'message-type-license-renewal': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.license-renewal', link_text: '"license-renewal"',  },
+    'message-type-individualization-request': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.individualization-request', link_text: '"individualization-request"',  },
 
     'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-messageType', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-message', link_text: 'message',  },
