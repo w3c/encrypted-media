@@ -727,6 +727,7 @@
           <ol class="method-algorithm">
             <li><p>Return this object's <var>configuration</var> value.</p></li>
           </ol>
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/12">Issue 12</a> - The <a def-id="requestMediaKeySystemAccess"></a> algorithms should ensure that all strings in the returned <a>MediaKeySystemConfiguration</a> are the exact strings in the configuration passed to <a def-id="requestMediaKeySystemAccess"></a>.</p>
         </dd>
 
         <dt>Promise&lt;MediaKeys&gt; createMediaKeys()</dt>
@@ -1005,7 +1006,9 @@
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
                 <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li><p>Resolve <var>promise</var>.</p>
+                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p>
+                </li>                
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1048,7 +1051,9 @@
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code>.</p></li><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
+                    <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code>.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
+                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/20">Issue 20</a> - Ensure this object's <var>session type</var> matches the stored session.</p>
+                    </li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
@@ -1071,10 +1076,13 @@
                   <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<a def-id="status-usable"></a> <a>MediaKeyStatus</a> value that corresponds to the reason for the additional processing.
                     Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
                   </p>
+                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a>MediaKeyStatus</a> to indicate that the status is pending when additional processing is necessary.</p>
                 </li>
                 <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                 <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
-                <li><p>Resolve <var>promise</var> with <code>true</code>.</p></li>
+                <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
+                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p>
+                </li>                
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1142,6 +1150,7 @@
                       <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<a def-id="status-usable"></a> <a>MediaKeyStatus</a> value that corresponds to the reason for the additional processing.
                         Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
                       </p>
+                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a>MediaKeyStatus</a> to indicate that the status is pending when additional processing is necessary.</p>
                     </li>
                     <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
@@ -1178,7 +1187,7 @@
                     <li>
                       <p>Process the close request.</p>
                       <p>Do not remove stored session data.</p>
-                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - More specific details are needed for <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions.</p>
+                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions. This may change the behavior of this algorithm.</p>
                     </li>
                     <li><p>If the previous step caused the session to be closed, run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                   </ol>
@@ -1208,7 +1217,7 @@
                       <p>Process the remove request.</p>
                       <p>This MAY involve exchanging message(s) with the application.</p>
                       <p>Unless this step fails, the CDM MUST have cleared all stored session data associated with this object, including the <a def-id="sessionId"></a>, before proceeding to the next step.</p>
-                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - More specific details are needed for <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions.</p>
+                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions. This may change the behavior of this algorithm.</p>
                       <p class="note">A subsequent call to <a def-id="load"></a> with the value <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                     </li>
                   </ol>
@@ -1290,6 +1299,7 @@
         <h3>Event Summary</h3>
 
         <p class="note">In some implementations, <a>MediaKeySession</a> objects may not fire any events until the <a>MediaKeys</a> object is associated with a media element using <a def-id="setMediaKeys"></a>.</p>
+        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/9">Issue 9</a> - The above note should be removed.</p>
 
         <table class="old-table">
           <thead>
@@ -1398,6 +1408,7 @@
             <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/18">Issue 18</a> - Specify changes to the state of the <a def-id="keyStatuses"></a> attribute.</p>
         </section>
       </section>
 
@@ -1432,6 +1443,7 @@
                 The session has already been used.<br/>
                 The session is not yet initialized.<br/>
                 The session is closed.
+                <p class="issue"><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27283">Bug 27283</a> - InvalidAccessError may not be the correct error in many cases. TypeError or other errors may be more appropriate.</p>
               </td>
             </tr>
             <tr>
@@ -1522,7 +1534,7 @@
             This value is not actionable by the application.
           </dd>
         </dl>
-        <p class="issue">Additional values may be added to <a>MediaKeyStatus</a>.</p>
+        <p class="issue">Additional values may be added to <a>MediaKeyStatus</a>. Currently proposed values include <code>"pending"</code> and/or <code>"unknown"</code> (<a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a>).</p>
       </section>
 
     <section>
