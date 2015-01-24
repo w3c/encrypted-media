@@ -1529,33 +1529,15 @@
       <h2><a>HTMLMediaElement</a> Extensions</h2>
       <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported.</p>
 
+      <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value is initialized to <code>false</code>.</p>
+
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
-
-      <dl title="enum MediaWaitingFor" class="idl">
-        <dt>none</dt>
-        <dd>
-          The media element is not waiting for anything.
-        </dd>
-        <dt>data</dt>
-        <dd>
-          The media element is not waiting for data.
-        </dd>
-        <dt>key</dt>
-        <dd>
-          The media element is not waiting for a key.
-        </dd>
-      </dl>
 
       <dl title="partial interface HTMLMediaElement : EventTarget" class='idl'>
         <dt>readonly attribute MediaKeys? mediaKeys</dt>
         <dd>
           <p>The <a>MediaKeys</a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
-        </dd>
-
-        <dt>readonly attribute MediaWaitingFor waitingFor</dt>
-        <dd>
-          <p>Indicates what the media element is waiting for, if anything (indicated by the <a def-id="waiting"></a> and <a def-id="canplay"></a> events). This is described in the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm.</p>
         </dd>
 
         <dt>attribute EventHandler onencrypted</dt>
@@ -1679,10 +1661,14 @@
               <td><a def-id="eventdfn">encrypted</a></td>
               <td><a>MediaEncryptedEvent</a></td>
               <td>The user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a>.</td>
-              <td><a def-id="readystate"></a> is equal to <a def-id="have-metadata"></a> or greater.
+              <td>The element's <a def-id="readystate"></a> is equal to <a def-id="have-metadata"></a> or greater.
               <p class="note">It is possible that the element is playing or has played.</p>
               </td>
             </tr>
+              <td><a def-id="eventdfn">waitingforkey</a></td>
+              <td><a def-id="event"></a></td>
+              <td>Playback is blocked waiting for a key.</td>
+              <td>The element is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.</td>
           </tbody>
         </table>
       </section>
@@ -1751,15 +1737,13 @@
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
                               <dl class="switch">
                                 <dt>If decryption fails</dt>
-                                <dd>Abort the media element's <a def-id="resource-fetch-algorithm"></a> algorithm, run the steps to report a <a def-id="media-element-decode-error"></a> error, and abort these steps.</dd>
+                                <dd>
+                                  <p>Abort the media element's <a def-id="resource-fetch-algorithm"></a> algorithm, run the steps to report a <a def-id="media-element-decode-error"></a> error, and abort these steps.</p>
+                                </dd>
                                 <dt>Otherwise</dt>
-                                <dd>Run the following steps:
-                                  <ol>
-                                    <li><p>If the <a def-id="waitingFor"></a> attribute on the media element is <a def-id="MediaWaitingFor-key"></a>, set the <a def-id="waitingFor"></a> attribute on the media element to <a def-id="MediaWaitingFor-none"></a>.</p></li>
-                                    <li><p>Abort these steps and process the decrypted block as normal.</p>
-                                      <p class="note">In other words, decode the block.</p>
-                                    </li>
-                                  </ol>
+                                <dd>
+                                  <p>Abort these steps and process the decrypted block as normal.</p>
+                                  <p class="note">In other words, decode the block.</p>
                                 </dd>
                               </dl>
                               <p class="note">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
@@ -1777,7 +1761,7 @@
               <p>Run the following steps:</p>
               <p class="note">These steps are reached when there is no usable key for the block.</p>
               <ol>
-                <li><p>Run the <a def-id="queue-waiting-algorithm"></a> algorithm on the media element.</p></li>
+                <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
               </ol>
             </li>
@@ -1801,20 +1785,17 @@
           </div>
         </section>
 
-        <section id="queue-waiting">
-          <h4>Queue a "waiting" Event</h4>
-          <p>The Queue a "waiting" Event algorithm is run when the CDM needs to queue a waiting event to a <a def-id="htmlmediaelement"></a> object.
-          Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
+        <section id="queue-waitingforkey">
+          <h4>Queue a "waitingforkey" Event</h4>
+          <p>The Queue a "waitingforkey" Event algorithm is run when the CDM cannot decrypt the current block.
+            It should only be called when the <a def-id="htmlmediaelement"></a> object is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.  
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
-            <li><p>If the <a def-id="waitingFor"></a> attribute on the <var>media element</var> is not <a def-id="MediaWaitingFor-key"></a>, run the following steps:</p>
-              <ol>
-                <li><p>Set the <a def-id="waitingFor"></a> attribute on the <var>media element</var> to <a def-id="MediaWaitingFor-key"></a>.</p></li>
-                <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waiting"></a> at the <var>media element</var>.</p></li>
-              </ol>
-            </li>
+            <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>false</code>, <a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
+            <li><p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
@@ -1829,25 +1810,10 @@
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
-            <li><p>If the <a def-id="waitingFor"></a> attribute on the <var>media element</var> is not <a def-id="MediaWaitingFor-key"></a>, abort these steps.</p></li>
+            <li><p>If the <var>media element</var>'s <var>waiting for key</var> is <code>false</code>, abort these steps.</p></li>
             <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> algorithm by running the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm.</p></li>
-            <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>, run the following steps:</p>
-              <ol>
-                <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="canplay"></a> at the <var>media element</var>.</p></li>
-                <li><p>If the <a def-id="paused-attribute"></a> attribute on the <var>media element</var> is false, <a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="playing"></a> at the <var>media element</var>.</p></li>
-             </ol>
-              <p>Otherwise, the <a def-id="waitingFor"></a> attribute on the <var>media element</var> MUST NOT be <a def-id="MediaWaitingFor-none"></a>.</p>
-            </li>
+            <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>, set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p></li>
           </ol>
-        </section>
-
-        <section id="htmlmediaelement-playing-the-media-resource">
-          <h4>Playing the Media Resource Algorithm Modifications</h4>
-          <p>The following steps are added to <a def-id="readystate"></a> change algorithms in <a def-id="videoref" name="playing-the-media-resource">Playing the media resource</a>:</p>
-          <ul>
-            <li><p>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="waiting"></a> event, the user agent MUST also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-data"></a>.</p></li>
-            <li><p>If a <a def-id="readystate"></a> change queues a task to fire a <a def-id="canplay"></a> event, the user agent MUST also set the <a def-id="waitingFor"></a> attribute on the Media Element to <a def-id="MediaWaitingFor-none"></a>.</p></li>
-          </ul>
         </section>
       </section>
 
