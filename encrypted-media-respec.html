@@ -538,7 +538,7 @@
                 <dl class="switch">
                   <dt>If the <a def-id="distinctive-identifier"></a> is <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a></dt>
                   <dd>
-                    <p>If there is no persisted consent covering <var>accumulated configuration</var> for the the <var>origin</var>, it is RECOMMENDED that the user be prompted for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p>
+                    <p>If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is RECOMMENDED that the user be prompted for consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p>
                   </dd>
                   <dt>Otherwise</dt>
                   <dd>
@@ -1145,6 +1145,7 @@
                       <p class="note">It is RECOMMENDED that CDM implementations support a standard and reasonably high minimum number of keys per <a>MediaKeySession</a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a>MediaKeySession</a> objects.
                       This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                       </p>
+                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/26">Issue 26</a> - The license may be required to match the <var>sessionType</var> in the conditions above..</p>
                     </li>
                     <li><p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
                       <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<a def-id="status-usable"></a> <a>MediaKeyStatus</a> value that corresponds to the reason for the additional processing.
@@ -1496,6 +1497,9 @@
       <section>
         <h2><a>MediaKeyStatusMap</a> Interface</h2>
         <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
+        <p>A key's status is independent of whether the key is currently being used and of media data.</p>
+        <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-not-allowed"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
+        
         <p class="issue"><a href="https://github.com/w3c/respec/issues/361">ReSpec Issue 361</a> - ReSpec does not support <code><a def-id="maplike">maplike</a></code>. The WebIDL should be <code>readonly maplike &ltBufferSource, <a>MediaKeyStatus</a>&gt;</code>.</p>
 
         <dl title="interface MediaKeyStatusMap" class='idl'>
