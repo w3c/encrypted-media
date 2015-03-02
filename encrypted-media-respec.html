@@ -405,7 +405,7 @@
                             <ol>
                               <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var>keySystem</var>.</p></li>
                               <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
-                                <var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.<p>
+                                <p><var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.</p>
                               </li>
                               <li><p>Let the <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
                               <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
@@ -442,10 +442,10 @@
                     <ol>
                       <li><p>Let <var>initDataType</var> be the value.</p></li>
                       <li><p>If <var>initDataType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
-                      <li><p>If the <var>implementation</var> supports generating requests based on <var>initDataType</var>, add <var>initDataType</var> to <var>supported types</var>.</p></li>
+                      <li><p>If the <var>implementation</var> supports generating requests based on <var>initDataType</var>, add <var>initDataType</var> to <var>supported types</var>. String comparison is case-sensitive.</p></li>
                     </ol>
                   </li>
-                  <li><p>If <var>supported types</var> is empty, return <code>null</code>. String comparison is case-sensitive.</p></li>
+                  <li><p>If <var>supported types</var> is empty, return <code>null</code>.</p></li>
                   <li><p>Add <var>supported types</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
@@ -473,8 +473,8 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add <a def-id="option-distinctiveIdentifier"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
-              <li><p>Follow the steps for the value of <a def-id="option-persistentState"></a> from the following list:</p>
+              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> attribute to <var>accumulated configuration</var>.
+              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
@@ -491,7 +491,7 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add <a def-id="option-persistentState"></a> and the value <var>candidate configuration</var>'s corresponding attribute to <var>accumulated configuration</var>.
+              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> attribute to <var>accumulated configuration</var>.
               <li><p>If <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute is not empty, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute, and <var>accumulated configuration</var>.</p></li>
@@ -580,8 +580,8 @@
                       <li><p>Add all <var>media types</var> to <var>configuration</var>.</p></li>
                     </ol>
                   </li>
-                  <li><p>If <var>contentType</var> is not a <var>media type</var> type, continue to the next iteration.</p>
-                    <p class="note">For example, if <var>media type</var> is Audio and the top-level type is not "audio" or <var>media types</var> contains non-audio codecs.</p>
+                  <li><p>If <var>contentType</var> is not strictly a <var>media type</var> type, continue to the next iteration.</p>
+                    <p class="note">For example, if <var>media type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string, run the following steps:</p>
                     <ol>
@@ -718,10 +718,10 @@
         <dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
-          <p>The returned object is a non-strict subset of the first statisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
+          <p>The returned object is a non-strict subset of the first satisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
             It does not contain values capabilities not specified in that single configuration and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
             All values in the configuration may be used in any combination.
-            Members of type <a>MediaKeysRequirement</a> reflect whether capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
+            Members of type <a>MediaKeysRequirement</a> reflect whether the capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
           </p>
 
           <ol class="method-algorithm">
@@ -2122,7 +2122,7 @@
               <p>Active network attacks: One cannot guarantee that Additional scripts or iframes are not injected into pages (both those that use these APIs for legitimate purposes and pages that do not use these APIs).
                 The consequences are that:
               </p>
-                <ul>
+              <ul>
                 <li><p>Calls to these APIs can be injected into any page.</p></li>
                 <li><p>Calls to these APIs from pages using them for legitimate reasons can be manipulated, including modifying the requested functionality, modifying or adding calls, and modifying or injecting data. See also <a href="#input-data-security">Input Data Attacks and Vulnerabilities</a></p></li>
                 <li><p>Data, including <a def-id="distinctive-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
@@ -2668,11 +2668,11 @@
         // Try the next key system.
         navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey", clearKeyOptions).then(
           function(keySystemAccess) {
-          // Not shown:
-          // 1. Use keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0].<a def-id="capability-contentType"></a>
-          //    and keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-videoCapabilities"></a>[0].<a def-id="capability-contentType"></a>
-          //    to retrieve appropriate stream(s).
-          // 2. Set video.src.
+            // Not shown:
+            // 1. Use keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0].<a def-id="capability-contentType"></a>
+            //    and keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-videoCapabilities"></a>[0].<a def-id="capability-contentType"></a>
+            //    to retrieve appropriate stream(s).
+            // 2. Set video.src.
 
             licenseUrl = "https://license.example.com/clearkey/request";
             return keySystemAccess.<a def-id="createMediaKeys-call"></a>();
