@@ -1082,10 +1082,9 @@
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
                 <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                  <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<a def-id="status-usable"></a> <a>MediaKeyStatus</a> value that corresponds to the reason for the additional processing.
-                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
+                  <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
                   </p>
-                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a>MediaKeyStatus</a> to indicate that the status is pending when additional processing is necessary.</p>
                 </li>
                 <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                 <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
@@ -1157,10 +1156,9 @@
                       <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/26">Issue 26</a> - The license may be required to match the <var>sessionType</var> in the conditions above..</p>
                     </li>
                     <li><p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                      <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<a def-id="status-usable"></a> <a>MediaKeyStatus</a> value that corresponds to the reason for the additional processing.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again if any of the statuses has changed.
+                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
                       </p>
-                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a>MediaKeyStatus</a> to indicate that the status is pending when additional processing is necessary.</p>
                     </li>
                     <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
@@ -1283,13 +1281,17 @@
           <dd>
             The key is not currently usable to decrypt <a def-id="media-data"></a> because its output requirements cannot currently be met.
           </dd>
+          <dt>status-pending</dt>
+          <dd>
+            The status of the key is not yet known and is being determined.
+            The status will be updated with the actual status when it has been determined.
+          </dd>
           <dt>internal-error</dt>
           <dd>
             The key is not currently usable to decrypt <a def-id="media-data"></a> because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
           </dd>
         </dl>
-        <p class="issue">Additional values may be added to <a>MediaKeyStatus</a>. Currently proposed values include <code>"pending"</code> and/or <code>"unknown"</code> (<a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a>).</p>
       </section>
 
       <section>
@@ -2872,6 +2874,9 @@
           break;
         case <a def-id="status-expired"></a>:
           // Report an expired key.
+          break;
+        case <a def-id="status-status-pending"></a>:
+          // The status is not yet known. Consider the key unusable until the status is updated.
           break;
         default:
           // Do something with |keyId| and |status|.

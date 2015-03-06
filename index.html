@@ -1446,7 +1446,7 @@ table.simple {
                     <li>
                       <p>Process the close request.</p>
                       <p>Do not remove stored session data.</p>
-                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue5"><span>Issue 11</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-release-message">"persistent-release-message"</a></code> sessions. This may change the behavior of this algorithm.</p></div>
+                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue5"><span>Issue 9</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-release-message">"persistent-release-message"</a></code> sessions. This may change the behavior of this algorithm.</p></div>
                     </li>
                     <li><p>If the previous step caused the session to be closed, run the <a href="#session-close">session close</a> algorithm on this object.</p></li>
                   </ol>
@@ -1582,15 +1582,14 @@ table.simple {
                 <li><p>Set the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> attribute to <var>sanitized session ID</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> be true.</p></li>
                 <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing each key's <a href="#decryption-key-id">key ID</a> along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a>.</p>
-                  <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code> <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value that corresponds to the reason for the additional processing.
-                    Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">update key statuses</a> algorithm again if any of the statuses has changed.
+                  <p>Should additional processing be necessary to determine with certainty the status of a key, use <code><a href="#idl-def-MediaKeyStatus.status-pending">"status-pending"</a></code>.
+                    Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">update key statuses</a> algorithm again with the actual status(es).
                   </p>
-                  <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue8"><span>Issue 7</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> to indicate that the status is pending when additional processing is necessary.</p></div>
                 </li>
                 <li><p>Run the <a href="#update-expiration">update expiration</a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                 <li><p>If <var>message</var> is not null, run the <a href="#queue-message">queue a "message" event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
-                  <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue9"><span>Issue 8</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p></div>
+                  <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue8"><span>Issue 7</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p></div>
                 </li>                
               </ol>
             </li>
@@ -1613,7 +1612,7 @@ table.simple {
                       <p>Process the remove request.</p>
                       <p>This <em class="rfc2119" title="MAY">MAY</em> involve exchanging message(s) with the application.</p>
                       <p>Unless this step fails, the CDM <em class="rfc2119" title="MUST">MUST</em> have cleared all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code>, before proceeding to the next step.</p>
-                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue10"><span>Issue 12</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-release-message">"persistent-release-message"</a></code> sessions. This may change the behavior of this algorithm.</p></div>
+                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue9"><span>Issue 10</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/16">Issue 16</a> - Define the behavior for <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-release-message">"persistent-release-message"</a></code> sessions. This may change the behavior of this algorithm.</p></div>
                       <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note43"><span>Note</span></div><p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.</p></div>
                     </li>
                   </ol>
@@ -1682,13 +1681,12 @@ table.simple {
                       <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note47"><span>Note</span></div><p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDM implementations support a standard and reasonably high minimum number of keys per <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> objects.
                       This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                       </p></div>
-                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue11"><span>Issue 9</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/26">Issue 26</a> - The license may be required to match the <var>sessionType</var> in the conditions above..</p></div>
+                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue10"><span>Issue 8</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/26">Issue 26</a> - The license may be required to match the <var>sessionType</var> in the conditions above..</p></div>
                     </li>
                     <li><p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing each known key's <a href="#decryption-key-id">key ID</a> along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a>.</p>
-                      <p>Should additional processing be necessary to determine with certainty the status of a key, use the non-<code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code> <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value that corresponds to the reason for the additional processing.
-                        Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">update key statuses</a> algorithm again if any of the statuses has changed.
+                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <code><a href="#idl-def-MediaKeyStatus.status-pending">"status-pending"</a></code>.
+                        Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">update key statuses</a> algorithm again with the actual status(es).
                       </p>
-                      <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue12"><span>Issue 10</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a> - A value may be added to <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> to indicate that the status is pending when additional processing is necessary.</p></div>
                     </li>
                     <li><p>If the expiration time for the session changed, run the <a href="#update-expiration">update expiration</a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
@@ -1724,6 +1722,7 @@ table.simple {
     "<a href="#idl-def-MediaKeyStatus.expired" class="idlEnumItem">expired</a>",
     "<a href="#idl-def-MediaKeyStatus.output-downscaled" class="idlEnumItem">output-downscaled</a>",
     "<a href="#idl-def-MediaKeyStatus.output-not-allowed" class="idlEnumItem">output-not-allowed</a>",
+    "<a href="#idl-def-MediaKeyStatus.status-pending" class="idlEnumItem">status-pending</a>",
     "<a href="#idl-def-MediaKeyStatus.internal-error" class="idlEnumItem">internal-error</a>"
 };</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeyStatus.usable">usable</code></td><td>
             The CDM is certain the key is currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.<br>
@@ -1739,11 +1738,13 @@ table.simple {
             Applications <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-not-allowed">output-not-allowed</code></td><td>
             The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because its output requirements cannot currently be met.
+          </td></tr><tr><td><code id="idl-def-MediaKeyStatus.status-pending">status-pending</code></td><td>
+            The status of the key is not yet known and is being determined.
+            The status will be updated with the actual status when it has been determined.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.internal-error">internal-error</code></td><td>
             The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
           </td></tr></tbody></table>
-        <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue13"><span>Issue 13</span></div><p class="">Additional values may be added to <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a>. Currently proposed values include <code>"pending"</code> and/or <code>"unknown"</code> (<a href="https://github.com/w3c/encrypted-media/issues/21">Issue 21</a>).</p></div>
       </section>
 
       <section id="mediakeymessageevent" typeof="bibo:Chapter" resource="#mediakeymessageevent" property="bibo:hasPart">
@@ -1797,7 +1798,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
         <h3 id="h-mediakeysession-events" resource="#h-mediakeysession-events"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.5 </span>Event Summary</span></h3><p><em>This section is non-normative.</em></p>
 
         <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note51"><span>Note</span></div><p class="">In some implementations, <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> objects may not fire any events until the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object is associated with a media element using <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.</p></div>
-        <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue14"><span>Issue 14</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/9">Issue 9</a> - The above note should be removed.</p></div>
+        <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue11"><span>Issue 11</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/9">Issue 9</a> - The above note should be removed.</p></div>
 
         <table class="old-table">
           <thead>
@@ -1906,7 +1907,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
             <li><p>Let <var>promise</var> be the <code><a href="#widl-MediaKeySession-closed">closed</a></code> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
-          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue15"><span>Issue 15</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/18">Issue 18</a> - Specify changes to the state of the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute.</p></div>
+          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue12"><span>Issue 12</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/18">Issue 18</a> - Specify changes to the state of the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute.</p></div>
         </section>
       </section>
 
@@ -1941,7 +1942,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
                 The session has already been used.<br>
                 The session is not yet initialized.<br>
                 The session is closed.
-                <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue16"><span>Issue 16</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27283">Bug 27283</a> - InvalidAccessError may not be the correct error in many cases. TypeError or other errors may be more appropriate.</p></div>
+                <div class="issue"><div class="issue-title" aria-level="4" role="heading" id="h-issue13"><span>Issue 13</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27283">Bug 27283</a> - InvalidAccessError may not be the correct error in many cases. TypeError or other errors may be more appropriate.</p></div>
               </td>
             </tr>
             <tr>
@@ -2313,7 +2314,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             The encryption <em class="rfc2119" title="MUST">MUST</em> ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
             The CDM <em class="rfc2119" title="MUST">MUST</em> verify that the encryption key belongs to a valid license server for its Key System.
           </p>
-          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue17"><span>Issue 17</span></div><p class="">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p></div>
+          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue14"><span>Issue 14</span></div><p class="">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p></div>
           <p>This <em class="rfc2119" title="MAY">MAY</em> be implemented using a <a href="#server-certificate">server certificate</a>.</p>
           <p>The license server <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose a <a href="#distinctive-identifier">Distinctive Identifier</a> to any entity other than the CDM that sent it.</p>
           <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note74"><span>Note</span></div><p class="">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
@@ -2334,13 +2335,13 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p>All <a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be distinctive per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
             That is, the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs.
           </p>
-          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue18"><span>Issue 18</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a href="#distinctive-identifier">Distinctive Identifiers</a> be distinctive for the combination of top-level origin and the origin using these APIs.</p></div>
+          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue15"><span>Issue 15</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a href="#distinctive-identifier">Distinctive Identifiers</a> be distinctive for the combination of top-level origin and the origin using these APIs.</p></div>
 
           <p id="non-reversible-identifiers">
             It <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
             Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, <em class="rfc2119" title="MUST">MUST</em> do so in a non-reversible way.
           </p>
-          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue19"><span>Issue 19</span></div><p class="">Add more specific text about ensuring the desired non-reversible properties.</p></div>
+          <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue16"><span>Issue 16</span></div><p class="">Add more specific text about ensuring the desired non-reversible properties.</p></div>
         </section>
 
         <section id="allow-identifiers-cleared" typeof="bibo:Chapter" resource="#allow-identifiers-cleared" property="bibo:hasPart">
@@ -2395,7 +2396,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             </li>
             <li><p>The <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> <a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type when the object's <var>persistent state allowed</var> value is <code>true</code>.</p></li>
             <li><p>The <code><a href="#idl-def-MediaKeySessionType.persistent-release-message">"persistent-release-message"</a></code> <a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type when the object's <var>persistent state allowed</var> value is <code>true</code>.</p>
-              <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue20"><span>Issue 20</span></div><p class="">A release message format needs to be defined.</p></div>
+              <div class="issue"><div class="issue-title" aria-level="5" role="heading" id="h-issue17"><span>Issue 17</span></div><p class="">A release message format needs to be defined.</p></div>
             </li>
             <li><p>The <code><a href="#widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate">setServerCertificate()</a></code> method: Not supported.</p></li>
             <li><p>The <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> method: Implementations <em class="rfc2119" title="MAY">MAY</em> support associating the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object with more than one <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code>.</p></li>
@@ -3290,6 +3291,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
         </span><span class="kwd">case</span><span class="pln"> </span><code><a href="#idl-def-MediaKeyStatus.expired">"expired"</a></code><span class="pun">:</span><span class="pln">
           </span><span class="com">// Report an expired key.</span><span class="pln">
+          </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
+        </span><span class="kwd">case</span><span class="pln"> </span><code><a href="#idl-def-MediaKeyStatus.status-pending">"status-pending"</a></code><span class="pun">:</span><span class="pln">
+          </span><span class="com">// The status is not yet known. Consider the key unusable until the status is updated.</span><span class="pln">
           </span><span class="kwd">break</span><span class="pun">;</span><span class="pln">
         </span><span class="kwd">default</span><span class="pun">:</span><span class="pln">
           </span><span class="com">// Do something with |keyId| and |status|.</span><span class="pln">
