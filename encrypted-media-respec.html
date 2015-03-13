@@ -452,6 +452,10 @@
                           String comparison is case-sensitive.
                           The empty string is never supported.
                         </p>
+                        <p class="note">The <var>initDataType</var> MUST be supported independent of content types in order to avoid unexpectedly rejecting the configuration in later steps.
+                          Support for <var>initDataType</var> includes both license generation and, when appropriate, extraction from media data.
+                          See <a href="#initialization-data-type-support-requirements">Initialization Data Type Support requirements</a>.
+                        </p>
                       </li>
                     </ol>
                   </li>
@@ -1938,6 +1942,23 @@
         <p>Implementations MUST support seamless switching between keys during playback.
           This includes both keys in the same <a>MediaKeySession</a> and keys in separate <a>MediaKeySession</a> objects.
         </p>
+      </section>
+      
+      <section id="initialization-data-type-support-requirements">
+        <h3>Initialization Data Type Support</h3>
+        <section>
+          <h4>Licenses Generated are Independent of Content Type</h4>
+          <p>Implementations SHOULD allow licenses generated with any <a def-id="initialization-data-type"></a> they support to be used with any content type.</p>
+          <p class="note">Otherwise, the <a def-id="requestMediaKeySystemAccess"></a> algorithm might, for example, reject a <a>MediaKeySystemConfiguration</a> because one of the <a def-id="option-initDataTypes"></a> is not supported with one of the <a def-id="option-videoCapabilities"></a>.</p>
+        </section>
+
+        <section>
+          <h4>Support Extraction From Media Data</h4>
+          <p>For any supported <a def-id="initialization-data-type"></a> that may appear in a supported container, the user agents MUST support <a href="#initdata-encountered">extracting</a> that type of <a def-id="initialization-data"></a> from each such supported container.</p>
+          <p class="note">In other words, indicating support for an <a def-id="initialization-data-type"></a> implies both CDM support for generating license requests and, for container-specific types, user agent support for extracting it from the container. 
+            This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported <a def-id="initialization-data"></a> from <em>any</em> supported content type.
+          </p>
+        </section>
       </section>
 
     </section>
