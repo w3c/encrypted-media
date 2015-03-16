@@ -281,7 +281,6 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
-    'maplike': { func: code_webidl_helper, fragment: 'idl-maplike', link_text: 'maplike', },
 
     'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
