@@ -214,6 +214,7 @@
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'queue a "message" event',  },
     'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'session close',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'encrypted block encountered',  },
+    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data encountered',  },
     'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'update key statuses',  },
     'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'update expiration',  },
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'attempt to resume playback if necessary',  },
@@ -272,6 +273,7 @@
 //    'loadedmetadata': { func: code_videoref_helper, fragment: 'event-media-loadedmetadata', link_text: 'loadedmetadata',  },
 //    'loadeddata': { func: code_videoref_helper, fragment: 'event-media-loadeddata', link_text: 'loadeddata',  },
     'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
+    'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
 
 //    'invalid-access-err': { func: exception_helper, fragment: 'invalid_access_err', link_text: 'INVALID_ACCESS_ERR',  },
 //    'invalid-state-err': { func: exception_helper, fragment: 'invalid_state_err', link_text: 'INVALID_STATE_ERR',  },
@@ -302,7 +304,6 @@
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession()',  },
-    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data encountered',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
   };
 

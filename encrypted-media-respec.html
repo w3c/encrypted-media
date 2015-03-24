@@ -138,6 +138,10 @@
         This enables content providers to develop a single application solution for all devices.
       </p>
       <p>
+        Supported content is encrypted per container-specific "common encryption" specifications, enabling use across key systems.
+        Supported content has an unencrypted container, enabling metadata to be provided to the application and maintaining compatibility with other <a def-id="htmlmediaelement"></a> features.
+      </p>
+      <p>
         A generic stack implemented using the API is shown below.
         This diagram shows an example flow; other combinations of API calls and events are possible.
       </p>
@@ -1961,6 +1965,44 @@
           <p>For any supported <a def-id="initialization-data-type"></a> that may appear in a supported container, the user agents MUST support <a href="#initdata-encountered">extracting</a> that type of <a def-id="initialization-data"></a> from each such supported container.</p>
           <p class="note">In other words, indicating support for an <a def-id="initialization-data-type"></a> implies both CDM support for generating license requests and, for container-specific types, user agent support for extracting it from the container. 
             This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported <a def-id="initialization-data"></a> from <em>any</em> supported content type.
+          </p>
+        </section>
+      </section>
+
+      <section id="media-requirements">
+        <h3>Supported Media</h3>
+        <p>This section defines properties of content (<a def-id="media-resource">media resources</a>) supported by implementations of this specification.</p>
+
+        <section>
+          <h4>Unencrypted Container</h4>
+          <p>
+            The media container MUST NOT be encrypted.
+            This specification relies on the user agent's ability to parse the media container without having to decrypt any of the media data.
+            This includes the <a def-id="encrypted-block-encountered-algorithm"></a> and <a def-id="initdata-encountered-algorithm"></a> algorithms as well as supporting standard <a def-id="htmlmediaelement"></a> [[!HTML5]] functionality, such as seeking.
+          </p>
+        </section>
+
+        <section>
+          <h4>Interoperably Encrypted</h4>
+          <p>
+            <a def-id="media-resource">Media resources</a>, including all tracks, MUST be encrypted and packaged per a container-specific "common encryption" specification that allows the content to be decrypted in a fully specified and compatible way when a key or keys are provided.
+          </p>
+          <p class="note">
+            The Encrypted Media Extensions Stream Format and Initialization Data Format Registry [[EME-REGISTRY]] provides references to such stream formats.
+          </p>
+        </section>
+
+        <section>
+          <h4>Unencrypted In-band Support Content</h4>
+          <p>
+            In-band support content, such as captions, described audio, and transcripts, SHOULD NOT be encrypted.
+          </p>
+          <p class="note">
+            Decryption of such tracks - especially such that they can be provided back the user agent - is not generally supported by implementations.
+            Thus, encrypting such tracks would prevent them from being widely available for use with accessibility features in user agent implementations.
+          </p>
+          <p>
+            Implementations that choose to support encrypted support content MUST provide the decrypted data to the user agent to be processed in the same way as equivalent unencrypted <a def-id="timed-text-tracks"></a>.
           </p>
         </section>
       </section>
