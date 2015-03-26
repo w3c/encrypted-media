@@ -173,6 +173,7 @@
     'option-videoCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-videoCapabilities', link_text: 'videoCapabilities',  },
     'option-persistentState': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-persistentState', link_text: 'persistentState',  },
     'option-distinctiveIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-distinctiveIdentifier', link_text: 'distinctiveIdentifier',  },
+    'option-sessionTypes': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-sessionTypes', link_text: 'sessionTypes',  },
 
     'capability-contentType' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-contentType', link_text: 'contentType',  },
     'capability-robustness' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-robustness', link_text: 'robustness',  },
@@ -283,6 +284,8 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
+    'present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'present', },
+    'not-present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'not present', },
 
     'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },

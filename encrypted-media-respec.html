@@ -417,7 +417,7 @@
                             <ol>
                               <li><p>Set the <a def-id="keySystem-attribute"></a> attribute to <var>keySystem</var>.</p></li>
                               <li><p>Let <var>supported configuration object</var> be a new <a>MediaKeySystemConfiguration</a> object populated with the values in <var>supported configuration</var>.</p>
-                                <p><var>supported configuration object</var> is a non-strict subset of <var>candidate configuration</var>.</p>
+                                <p><var>supported configuration object</var> is a non-strict subset (plus any implied defaults) of <var>candidate configuration</var>.</p>
                               </li>
                               <li><p>Let the <var>configuration</var> value be <var>supported configuration object</var>.</p></li>
                               <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
@@ -447,10 +447,11 @@
             <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be empty.</p></li>
-              <li><p>If <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> attribute is not empty, run the following steps:</p>
+
+              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>supported types</var> be empty.</p></li>
-                  <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> attribute:</p>
+                  <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> member:</p>
                     <ol>
                       <li><p>Let <var>initDataType</var> be the value.</p></li>
                       <li>
@@ -469,6 +470,7 @@
                   <li><p>Add <var>supported types</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
+
               <!-- Table of results for MediaKeysRequirement members based on implementation capabilities:
                               ||                        Implementation Capabilities                       |
                   Input Value ||     Only Supported     |   Only Not Supported   |          Both          |
@@ -477,7 +479,7 @@
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> attribute from the following list:</p>
+              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
@@ -493,13 +495,13 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> attribute to <var>accumulated configuration</var>.
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> from the following list:</p>
+              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member to <var>accumulated configuration</var>.
+
+              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
                     <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
-                    <p class="note">Otherwise, the <var>implementation</var> MUST support creating <a def-id="persistent-license-session"></a> and/or <a def-id="persistent-release-message-session"></a> sessions.</p>
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
@@ -511,21 +513,48 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> attribute to <var>accumulated configuration</var>.
-              <li><p>If <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute is not empty, run the following steps:</p>
+              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member to <var>accumulated configuration</var>.
+              
+              <li><p>Follow the steps for the first matching condition from the following list:</p>
+                <dl class="switch">
+                  <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var></dt>
+                  <dd>
+                    <p>Let <var>session types</var> be <var>candidate configuration</var>'s <a def-id="option-sessionTypes"></a> member.</p>
+                  </dd>
+                  <dt>Otherwise</dt>
+                  <dd>
+                    <p>Let <var>session types</var> be <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+                  </dd>
+                </dl>
+              </li>        
+              <li><p>For each value in <var>session types</var>:</p>
                 <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> attribute, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>Let <var>session type</var> be the value.</p></li>
+                  <li>
+                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>Unsupported combinations include but are not limited to a <var>session type</var> of <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> when <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a>.</p>
+                  </li>
+                  <li><p>If <var>session type</var> is <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> and <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
+                </ol>
+              </li>
+              <li><p>Add <var>session types</var> to <var>accumulated configuration</var>.
+              
+              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
+                <ol>
+                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
                   <li><p>Add <var>video capabilities</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
-              <li><p>If <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> attribute is not empty, run the following steps:</p>
+
+              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> attribute, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
                   <li><p>Add <var>audio capabilities</var> to <var>accumulated configuration</var>.</p></li>
                 </ol>
               </li>
+
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
@@ -539,12 +568,12 @@
                   </dd>
                 </dl>
               </li>
+
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>
                     <p>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p>
-                    <p class="note">The <var>implementation</var> MUST support creating <a def-id="persistent-license-session"></a> and/or <a def-id="persistent-release-message-session"></a> sessions.</p>
                   </dd>
                   <dt>Otherwise</dt>
                   <dd>
@@ -552,9 +581,11 @@
                   </dd>
                 </dl>
               </li>
+
               <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
                 <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
               </li>
+
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-required"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <a def-id="distinctive-identifier"></a> is <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a></dt>
@@ -570,6 +601,7 @@
                 <p class="note">Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.</p>
                 <p class="note">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
               </li>
+
               <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
           </section>
@@ -689,10 +721,16 @@
           <dt>MediaKeysRequirement persistentState = "optional"</dt>
           <dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
+            <p>The CDM MUST NOT persist any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> when this member is <a def-id="requirement-not-allowed"></a>.</a>
             <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers (<a def-id="distinctive-identifiers"></a>) controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
             <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is <a def-id="keysystem"></a> implementation-specific and may vary by feature used.</p>
-            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this attribute to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess"></a>.</p>
+            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess"></a>.</p>
+          </dd>
+          <dt>sequence&lt;MediaKeySessionType&gt; sessionTypes</dt>
+          <dd>
+            A list of session types that must be supported. All values must be supported.
+            <p>If this member is <a def-id="not-present-dictionary-member"></a> when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
           </dd>
         </dl>
 
@@ -742,8 +780,8 @@
         <dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
-          <p>The returned object is a non-strict subset of the first satisfiable <a>MediaKeySystemConfiguration</a> configurations passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
-            It does not contain values capabilities not specified in that single configuration and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
+          <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable <a>MediaKeySystemConfiguration</a> configuration passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
+            It does not contain values capabilities not specified in that single configuration (other than implied defaults) and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
             All values in the configuration may be used in any combination.
             Members of type <a>MediaKeysRequirement</a> reflect whether the capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
           </p>
@@ -762,9 +800,6 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
               <ol>
-                <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
-                <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
-                <li><p>If either of the previous two steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Let <var>configuration</var> be the value of this object's <var>configuration</var> value.</p></li>
                 <li><p>Let <var>distinctive identifier</var> be the value of <var>configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.</p></li>
                 <li><p>Follow the steps for the value of <var>distinctive identifier</var> from the following list:</p>
@@ -794,10 +829,16 @@
                   </dl>
                   <p class="note">The value of <var>persistent state</var> cannot be <a def-id="requirement-optional"></a>.</p>
                 </li>
+                <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
+                <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
+                <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from using <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p></li>
+                <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
+                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Let <var>media keys</var> be a new <a>MediaKeys</a> object, and initialize it as follows:</p>
                   <ol>
                     <li><p>Let the <var>use distinctive identifier</var> value be <var>use distinctive identifier</var>.</p></li>
                     <li><p>Let the <var>persistent state allowed</var> value be <var>persistent state allowed</var>.</p></li>
+                    <li><p>Let the <var>supported session types</var> value be be the value of <var>configuration</var>'s <a def-id="option-sessionTypes"></a> member.</p></li>
                     <li><p>Let the <var>cdm implementation</var> value be this object's <var>cdm implementation</var> value.</p></li>
                     <li><p>Let the <var>cdm instance</var> value be <var>instance</var>.</p></li>
                   </ol>
@@ -833,6 +874,7 @@
           The session MUST be loadable via its <a def-id="session-id"></a> as long as such data is persisted.
           The application is responsible for managing any such storage that may be generated by the CDM.
           See <a def-id="session-storage"></a>.
+          Can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of <a def-id="requirement-required"></a>.
           Support for this session type is OPTIONAL.
         </dd>
         <dt>persistent-release-message</dt>
@@ -842,6 +884,7 @@
           The session MUST be loadable via its <a def-id="session-id"></a> as long as such data is persisted.
           The application is responsible for managing any such storage that may be generated by the CDM.
           See <a def-id="session-storage"></a>.
+          Can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of <a def-id="requirement-required"></a>.
           Support for this session type is OPTIONAL.
         </dd>
       </dl>
@@ -859,11 +902,8 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If this object's <var>persistent state allowed</var> value is <code>false</code> and <var>sessionType</var> is not <a def-id="temporary-session"></a>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
-            <li>
-              <p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>sessionType</var>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
-              <p class="note">This step cannot fail if <var>sessionType</var> is <a def-id="temporary-session"></a>.</p>
-              <p class="note">If <var>persistent state allowed</var> value is <code>true</code> at this point, the <var>implementation</var> MUST support <a def-id="persistent-license-session"></a> and/or <a def-id="persistent-release-message-session"></a>.</p>
+            <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+              <p class="note"><var>sessionType</var> values of <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
             </li>
             <li><p>Let <var>session</var> be a new <a>MediaKeySession</a> object, and initialize it as follows:</p>
               <ol>
@@ -2045,8 +2085,8 @@
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
               </ol>
             </li>
-            <li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type when the object's <var>persistent state allowed</var> value is <code>true</code>.</p></li>
-            <li><p>The <a def-id="persistent-release-message-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type when the object's <var>persistent state allowed</var> value is <code>true</code>.</p>
+            <li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
+            <li><p>The <a def-id="persistent-release-message-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p>
               <p class="issue">A release message format needs to be defined.</p>
             </li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
