@@ -1131,6 +1131,7 @@
                         <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
                         <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
                       </ol>
+                      <p class="note">There can be no <a href="#known-key">known keys</a> in <var>session data</var>, so this object's <a def-id="keyStatuses"></a> attribute will remain empty.</p> 
                     </li>
                     <li><p>If <var>message</var> is null and the CDM needs to send a message:</p>
                       <ol>
@@ -1307,9 +1308,8 @@
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>Destroy the license and/or keys associated with the session and store a record of this destruction.</p>
-                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/18">Issue 18</a> - Specify changes to the state of the <a def-id="keyStatuses"></a> attribute.</p>
-                    </li>
+                    <li><p>Destroy the license and/or keys associated with the session and store a record of this destruction.</p></li>
+                    <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>                    
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
                     <li><p>Let <var>message</var> be a message containing or reflecting that record.</p></li>
                     <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
@@ -1534,18 +1534,20 @@
         <section id="session-close">
           <h4>Session Close</h4>
           <p>The Session Close algorithm is run when the CDM closes the session associated with a <a>MediaKeySession</a> object.</p>
-          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available to decrypt <a def-id="media-data"></a></p>
+          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available to decrypt <a def-id="media-data"></a>.
+            All <a>MediaKeySession</a> methods will fail for this object.
+          </p>
           <p class="note">The CDM may close a session at any point, such as in response to a <a def-id="close"></a> call, when the session is no longer needed, or when system resources are lost.
           Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
             <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
-          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/18">Issue 18</a> - Specify changes to the state of the <a def-id="keyStatuses"></a> attribute.</p>
         </section>
       </section>
 
