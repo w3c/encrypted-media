@@ -299,6 +299,7 @@
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
     'may-document-use-powerful-features-algorithm': { func: mixedcontent_helper, fragment: 'may-document-use-powerful-features', link_text: 'May Document use powerful features?', },
+    'are-non-privileged-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-privileged-contexts-allowed---deprecated', link_text: 'Are non-privileged contexts allowed?',  },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };

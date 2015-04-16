@@ -388,17 +388,23 @@
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var>document</var> is not <code>Allowed</code>:
-                <ul style="list-style-type:none">
-                  <li>
-                    <p class="issue">
-                      <a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26332">Bug 26332</a> - The availability of this API on unauthenticated origins is an open issue. It has been proposed
-                      that such access not be allowed at all or be allowed only in specific circumstances. It is likely that there will be scenarios where access from an unauthenticated origin
-                      is not allowed. It is also an open issue whether and how the impact of serving audio/video media over secure transport can be mitigated.
+              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var>document</var> is not <code>Allowed</code>, run the following steps:</p>
+                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/49">Issue 49</a> - The above text is out of date; it should reference the Privileged Contexts specification.</p>
+                  <p class="issue">Support for communication from Privileged Contexts to devices on a private network is an open issue. A bug will be filed with the Web Application Security Working Group and referenced here.</p>
+                <ol>
+                  <li><p>If the result of running the <a def-id="are-non-privileged-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
+                    <p class="note">This step is <strong>DEPRECATED</strong>.
+                      It is expected that removal of this step will be evaluated during Candidate Recommendation (CR).
+                      Authors are advised that implementations MAY remove it before then.
                     </p>
                   </li>
-                </ul>
-              </p>
+                  <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+                    <p class="note">
+                      Requiring Privileged Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
+                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an privileged context would be similar.
+                    </p>
+                  </li>
+                </ol>
               </li>
               <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of <var>document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -660,6 +666,13 @@
               <li><p>Return <var>supported media capabilities</var>.</p></li>
             </ol>
           </section>
+          
+          <section>
+            <h5>Are non-privileged contexts allowed? - DEPRECATED</h5>
+            <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
+            <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
+          </section>
+          
         </section>
       </section>
 
