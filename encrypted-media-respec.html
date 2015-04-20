@@ -206,7 +206,7 @@
           <p>A new Session ID is generated each time the user agent and CDM successfully create a new session.</p>
 
           <p>Each Session ID SHALL be unique within the browsing context in which it was created.
-            Session IDs for <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions MUST be unique within the <a def-id="origin"></a> over time, including across browsing sessions.
+            For session types for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code>, Session IDs MUST be unique within the <a def-id="origin"></a> over time, including across browsing sessions.
           </p>
 
           <p class="note">The underlying content protection protocol does not necessarily need to support Session IDs.</p>
@@ -538,9 +538,9 @@
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
                     <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
-                    <p>Unsupported combinations include but are not limited to a <var>session type</var> of <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> when <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a>.</p>
+                    <p>Unsupported combinations include but are not limited to a <var>session type</var> for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> when <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a>.</p>
                   </li>
-                  <li><p>If <var>session type</var> is <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> and <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
+                  <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a> and the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
                 </ol>
               </li>
               <li><p>Add <var>session types</var> to <var>accumulated configuration</var>.
@@ -917,7 +917,7 @@
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
-              <p class="note"><var>sessionType</var> values of <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
+              <p class="note"><var>sessionType</var> values for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
             </li>
             <li><p>Let <var>session</var> be a new <a>MediaKeySession</a> object, and initialize it as follows:</p>
               <ol>
@@ -971,6 +971,29 @@
         </dd>
 
       </dl>
+
+      <section id="">
+        <h3>Algorithms</h3>
+        <section id="is-persistent-session-type">
+          <h4>Is persistent session type?</h4>
+          <p>The Is persistent session type? algorithm is run to determine whether the specified session type supports persistence of any kind.
+            Requests to run this algorithm include a <a>MediaKeySessionType</a> value.
+          </p>
+          <p>The following steps are run:</p>
+          <ol>
+            <li><p>Let the <var>message type</var> be the specified <a>MediaKeySessionType</a> value.</p></li>
+            <li><p>Follow the steps for the first matching condition from the following list:</p>
+              <dl class="switch">
+                <dt>If <var>session type</var> is <a def-id="temporary-session"></a></dt>
+                <dd>Return <code>false</code>.</dd>
+                <dt>If <var>session type</var> is <a def-id="persistent-license-session"></a></dt>
+                <dd>Return <code>true</code>.</dd>
+                <dt>If <var>session type</var> is <a def-id="persistent-release-message-session"></a></dt>
+                <dd>Return <code>true</code>.</dd>
+              </dl>
+            </li>
+          </ol>
+
 
     </section>
 
@@ -1072,7 +1095,7 @@
                     </li>
 
                     <li><p>Let <var>session id</var> be a unique <a def-id="session-id"></a> string.</p>
-                      <p>If <var>session type</var> is <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a>, the ID MUST be unique within the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
+                      <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li><p>Let <var>message</var> be a license request for the <var>requested license type</var> generated based on the <var>init data</var>, which is interpreted per <var>initDataType</var>.</p>
                       <p>The <var>cdm</var> MUST NOT use any stream-specific data, including <a def-id="media-data"></a>, not provided via the <var>init data</var>.</p>
@@ -1108,7 +1131,7 @@
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
-            <li><p>If this object's <var>session type</var> is not <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps asynchronously:</p>
@@ -1133,7 +1156,7 @@
                     </li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is an unclosed <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
+                    <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
                     <li><p>Load the <var>session data</var>.</p></li>
@@ -1314,9 +1337,9 @@
           <ol class="method-algorithm">
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If this object's <var>session type</var> is not <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>Run the following steps asynchronously:</p>
+            <li><p>If this object's <var>session type</var> is <a def-id="persistent-license-session"></a>, run the following steps asynchronously:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
@@ -1621,10 +1644,10 @@
       <section id="session-storage">
         <h3>Session Storage and Persistence</h3>
         <p>This section provides an overview of session stroage and persistence that complements the algorithms.</p>
-        <p>If this object's <var>session type</var> is not <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
+        <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
           This includes license(s), key(s), records or proof of license destruction, and the <a def-id="session-id"></a>.
         </p>
-        <p>The remainder of this section applies to <a def-id="persistent-license-session"></a> and <a def-id="persistent-release-message-session"></a> sessions, which are OPTIONAL for implementations to support.</p>
+        <p>The remainder of this section applies to session types for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code>.</p>
         <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
           In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
           See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
@@ -1637,7 +1660,7 @@
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
           A session MAY only be loaded again after the <a def-id="session-close-algorithm"></a> algorithm has not been run on the object representing it.
         </p>
-        <p>An application that creates a <a def-id="persistent-license-session"></a> or <a def-id="persistent-release-message-session"></a> session SHOULD later remove the stored data using <a def-id="remove"></a>.
+        <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD later remove the stored data using <a def-id="remove"></a>.
           The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
         </p>
         <p>See the <a href="#security">Security</a> and <a href="#privacy">Privacy</a> sections for additional considerations when supporting persistent storage.</p>

@@ -187,6 +187,8 @@
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
     'persistent-release-message-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-release-message', link_text: '"persistent-release-message"',  },
 
+    'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
+
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
