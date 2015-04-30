@@ -185,7 +185,7 @@
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
-    'persistent-release-message-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.xTBD', link_text: '"TBD"',  },
+    'tracked-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.tracked', link_text: '"tracked"',  },
 
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
 
