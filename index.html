@@ -19,7 +19,7 @@ div.example-title {
     color: #b9ab2d;
 }
 div.example-title span {
-    text-transform: uppercase;   
+    text-transform: uppercase;
 }
 aside.example, div.example, div.illegal-example {
     padding: 0.5em;
@@ -34,7 +34,7 @@ aside.example, div.example {
     border-left-width: .5em;
     border-left-style: solid;
     border-color: #e0cb52;
-    background: #fcfaee;    
+    background: #fcfaee;
 }
 
 aside.example div.example {
@@ -46,40 +46,40 @@ aside.example div.example div.example-title {
     color: #999;
 }
 </style><style>/* --- ISSUES/NOTES --- */
-div.issue-title, div.note-title , div.warning-title {
+div.issue-title, div.note-title , div.ednote-title, div.warning-title {
     padding-right:  1em;
     min-width: 7.5em;
     color: #b9ab2d;
 }
 div.issue-title { color: #e05252; }
-div.note-title { color: #2b2; }
+div.note-title, div.ednote-title { color: #2b2; }
 div.warning-title { color: #f22; }
-div.issue-title span, div.note-title span, div.warning-title span {
+div.issue-title span, div.note-title span, div.ednote-title span, div.warning-title span {
     text-transform: uppercase;
 }
-div.note, div.issue, div.warning {
+div.note, div.issue, div.ednote, div.warning {
     margin-top: 1em;
     margin-bottom: 1em;
 }
-.note > p:first-child, .issue > p:first-child, .warning > p:first-child { margin-top: 0 }
-.issue, .note, .warning {
+.note > p:first-child, .ednote > p:first-child, .issue > p:first-child, .warning > p:first-child { margin-top: 0 }
+.issue, .note, .ednote, .warning {
     padding: .5em;
     border-left-width: .5em;
     border-left-style: solid;
 }
-div.issue, div.note , div.warning {
+div.issue, div.note , div.ednote,  div.warning {
     padding: 1em 1.2em 0.5em;
     margin: 1em 0;
     position: relative;
     clear: both;
 }
-span.note, span.issue, span.warning { padding: .1em .5em .15em; }
+span.note, span.ednote, span.issue, span.warning { padding: .1em .5em .15em; }
 
 .issue {
     border-color: #e05252;
     background: #fbe9e9;
 }
-.note {
+.note, .ednote {
     border-color: #52e052;
     background: #e9fbe9;
 }
@@ -469,7 +469,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-30-april-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-04-30">30 April 2015</time></h2>
+  <h2 id="w3c-editor-s-draft-01-june-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-06-01">01 June 2015</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -1106,17 +1106,19 @@ table.simple {
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note18"><span>Note</span></div><p class="">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p></div>
               </li>
 
-              <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>, follow the steps for the first matching condition from the following list:</p>
-                <dl class="switch">
-                  <dt>If the <a href="#distinctive-identifier">Distinctive Identifier</a> is <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a></dt>
-                  <dd>
-                    <p>If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that implementations request user consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                  <dt>Otherwise</dt>
-                  <dd>
-                    <p>Prompt the user for consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                </dl>
+              <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>:</p>
+                <ol>
+                  <li>
+                    <p>
+                      If the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that implementations request user consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.
+                    </p>
+                  </li>
+                </ol>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note19"><span>Note</span></div><p class="">A previous user consent for a prompt that did not include use of a <a href="#distinctive-identifier">Distinctive Identifier</a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p></div>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note20"><span>Note</span></div><p class="">Implementations <em class="rfc2119" title="MAY">MAY</em> require consent for other reasons, such as the security properties of the CDM implementation.</p></div>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note21"><span>Note</span></div><p class="">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p></div>
@@ -3686,7 +3688,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 </dd><dt id="bib-DOM">[DOM]</dt><dd>Anne van Kesteren; Aryeh Gregor; Ms2ger; Alex Russell; Robin Berjon. <a href="http://www.w3.org/TR/dom/" property="dc:requires"><cite>W3C DOM4</cite></a>. 28 April 2015. W3C Last Call Working Draft. URL: <a href="http://www.w3.org/TR/dom/" property="dc:requires">http://www.w3.org/TR/dom/</a>
 </dd><dt id="bib-ENCODING">[ENCODING]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 16 September 2014. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
 </dd><dt id="bib-HTML5">[HTML5]</dt><dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. <a href="http://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/html5/" property="dc:requires">http://www.w3.org/TR/html5/</a>
-</dd><dt id="bib-JWK">[JWK]</dt><dd>Mike Jones. <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires"><cite>JSON Web Key (JWK)</cite></a>. 28 May 2013. Internet Draft. URL: <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires">http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11</a>
+</dd><dt id="bib-JWK">[JWK]</dt><dd>Mike Jones. <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires"><cite>JSON Web Key (JWK)</cite></a>. 28 May 2013. Internet Draft. URL: <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires">https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11</a>
 </dd><dt id="bib-MIXED-CONTENT">[MIXED-CONTENT]</dt><dd>Mike West. <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 17 March 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires">http://www.w3.org/TR/mixed-content/</a>
 </dd><dt id="bib-RFC6381">[RFC6381]</dt><dd>R. Gellens; D. Singer; P. Frojdh. <a href="https://tools.ietf.org/html/rfc6381" property="dc:requires"><cite>The 'Codecs' and 'Profiles' Parameters for "Bucket" Media Types</cite></a>. August 2011. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6381" property="dc:requires">https://tools.ietf.org/html/rfc6381</a>
 </dd><dt id="bib-WebIDL">[WebIDL]</dt><dd>Cameron McCormack. <a href="http://www.w3.org/TR/WebIDL/" property="dc:requires"><cite>Web IDL</cite></a>. 19 April 2012. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/WebIDL/" property="dc:requires">http://www.w3.org/TR/WebIDL/</a>
