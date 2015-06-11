@@ -772,8 +772,9 @@ table.simple {
             Known keys are exposed via the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to expiration.
-            Keys only become unknown when they are explicitly removed from a session.
+          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <var>record of
+          license destruction</var> or a <var>record of key usage</var> is available.
+            Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
           <div class="note"><div class="note-title" aria-level="3" role="heading" id="h-note7"><span>Note</span></div><p class="">For example, a key could become unknown if an <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call provides a new license that does not include the key and includes instructions to replace the license(s) that previously contained the key.</p></div>
@@ -1720,12 +1721,24 @@ table.simple {
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>Destroy the license and/or keys associated with the session</p></li>
-                    <li><p>Run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>                    
+                    <li>
+                        <p>
+                          Run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing all <a href="#decryption-key-id">key ID(s)</a> in the session along with the <code><a href="#idl-def-MediaKeyStatus.released">"released"</a></code> <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value for each.
+                        </p>
+                    </li>
+
                     <li><p>Run the <a href="#update-expiration">update expiration</a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
                     <li>
                       <p>
-                        If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.tracked">"tracked"</a></code>, let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
+                        If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.tracked">"tracked"</a></code>:
                       </p>
+                      <ol>
+                        <li>
+                          <p>
+                            Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
+                          </p>
+                        </li>
+                      </ol>
                     </li>
                     <li>
                       <p>If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>:</p>
@@ -1816,6 +1829,11 @@ table.simple {
                             <li><p>Clear all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> and license destruction record.</p>
                               <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note49"><span>Note</span></div><p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value of this object's <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.</p></div>
                             </li>
+                            <li>
+                              <p>
+                                Run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing an empty sequence.
+                              </p>
+                            </li>
                             <li><p>Run the <a href="#session-close">session close</a> algorithm on this object.</p></li>
                           </ol>
                         </dd>
@@ -1825,6 +1843,11 @@ table.simple {
                           <ol>
                             <li><p>Clear all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> and <var>record of key usage</var>.</p>
                               <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note50"><span>Note</span></div><p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value of this object's <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.</p></div>
+                            </li>
+                            <li>
+                              <p>
+                                Run the <a href="#update-key-statuses">update key statuses</a> algorithm on the <var>session</var>, providing an empty sequence.
+                              </p>
                             </li>
                             <li><p>Run the <a href="#session-close">session close</a> algorithm on this object.</p></li>
                           </ol>
@@ -1872,6 +1895,7 @@ table.simple {
         <pre class="idl"><span class="idlEnum" id="idl-def-MediaKeyStatus">enum <span class="idlEnumID">MediaKeyStatus</span> {
     "<a href="#idl-def-MediaKeyStatus.usable" class="idlEnumItem">usable</a>",
     "<a href="#idl-def-MediaKeyStatus.expired" class="idlEnumItem">expired</a>",
+    "<a href="#idl-def-MediaKeyStatus.released" class="idlEnumItem">released</a>",
     "<a href="#idl-def-MediaKeyStatus.output-downscaled" class="idlEnumItem">output-downscaled</a>",
     "<a href="#idl-def-MediaKeyStatus.output-not-allowed" class="idlEnumItem">output-not-allowed</a>",
     "<a href="#idl-def-MediaKeyStatus.status-pending" class="idlEnumItem">status-pending</a>",
@@ -1883,6 +1907,9 @@ table.simple {
             The key is no longer usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because its expiration time has passed.<br>
             The time represented by the <code><a href="#widl-MediaKeySession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time.
             All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
+          </td></tr><tr><td><code id="idl-def-MediaKeyStatus.released">released</code></td><td>
+            The key itself is no longer available to the CDM, but information about the key such as a
+            <var>record of license destruction</var> or <var>record of key usage</var> is available.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-downscaled">output-downscaled</code></td><td>
             The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> at full quality (e.g. resolution) because its output requirements cannot currently be met.
             Media data decrypted with this key may be presented at a lower quality (e.g. resolution).<br>

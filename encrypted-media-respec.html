@@ -246,8 +246,9 @@
             Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to expiration.
-            Keys only become unknown when they are explicitly removed from a session.
+          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <var>record of
+          license destruction</var> or a <var>record of key usage</var> is available.
+            Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
           <p class="note">For example, a key could become unknown if an <a def-id="update"></a> call provides a new license that does not include the key and includes instructions to replace the license(s) that previously contained the key.</p>
@@ -1270,6 +1271,11 @@
                             <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and license destruction record.</p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
+                            <li>
+                              <p>
+                                Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.
+                              </p>
+                            </li>
                             <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                           </ol>
                         </dd>
@@ -1279,6 +1285,11 @@
                           <ol>
                             <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and <var>record of key usage</var>.</p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
+                            </li>
+                            <li>
+                              <p>
+                                Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.
+                              </p>
                             </li>
                             <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                           </ol>
@@ -1359,12 +1370,24 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>Destroy the license and/or keys associated with the session</p></li>
-                    <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>                    
+                    <li>
+                        <p>
+                          Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the <a def-id="status-released"></a> <a>MediaKeyStatus</a> value for each.
+                        </p>
+                    </li>
+
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
                     <li>
                       <p>
-                        If this object's <var>session type</var> is <a def-id="tracked-session"></a>, let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
+                        If this object's <var>session type</var> is <a def-id="tracked-session"></a>:
                       </p>
+                      <ol>
+                        <li>
+                          <p>
+                            Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
+                          </p>
+                        </li>
+                      </ol>
                     </li>
                     <li>
                       <p>If this object's <var>session type</var> is <a def-id="persistent-license-session"></a>:</p>
@@ -1417,6 +1440,11 @@
             The key is no longer usable to decrypt <a def-id="media-data"></a> because its expiration time has passed.<br/>
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
+          </dd>
+          <dt>released</dt>
+          <dd>
+            The key itself is no longer available to the CDM, but information about the key such as a
+            <var>record of license destruction</var> or <var>record of key usage</var> is available.
           </dd>
           <dt>output-downscaled</dt>
           <dd>

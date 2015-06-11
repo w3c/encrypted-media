@@ -210,6 +210,7 @@
 
     'status-usable': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.usable', link_text: '"usable"',  },
     'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
+    'status-released': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.released', link_text: '"released"',  },
     'status-output-downscaled': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-downscaled', link_text: '"output-downscaled"',  },
     'status-output-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-not-allowed', link_text: '"output-not-allowed"',  },
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
