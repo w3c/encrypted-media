@@ -1113,17 +1113,19 @@ table.simple {
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note18"><span>Note</span></div><p class="">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p></div>
               </li>
 
-              <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>, follow the steps for the first matching condition from the following list:</p>
-                <dl class="switch">
-                  <dt>If the <a href="#distinctive-identifier">Distinctive Identifier</a> is <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a></dt>
-                  <dd>
-                    <p>If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that implementations request user consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                  <dt>Otherwise</dt>
-                  <dd>
-                    <p>Prompt the user for consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.</p>
-                  </dd>
-                </dl>
+              <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>:</p>
+                <ol>
+                  <li>
+                    <p>
+                      If the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that implementations request user consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.
+                    </p>
+                  </li>
+                </ol>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note19"><span>Note</span></div><p class="">A previous user consent for a prompt that did not include use of a <a href="#distinctive-identifier">Distinctive Identifier</a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p></div>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note20"><span>Note</span></div><p class="">Implementations <em class="rfc2119" title="MAY">MAY</em> require consent for other reasons, such as the security properties of the CDM implementation.</p></div>
                 <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note21"><span>Note</span></div><p class="">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p></div>
