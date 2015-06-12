@@ -477,6 +477,15 @@
         }
       }
     });
+ 
+    // FIXME: This ia a horrible hack to insert some IDL which ReSpec doesn't yet support
+    var iterable = document.createElement('span'),
+        newline = document.createTextNode('\n'),
+        ksm = document.getElementById('idl-def-MediaKeyStatusMap');
+    iterable.class="idlMethod";
+    iterable.innerHTML='    <span class="idlMethType">iterable</span> &lt;<span class="idlParamType">BufferSource</span>,<span class="idlParamType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span>&gt;;';
+    ksm.insertBefore(iterable,ksm.children[1]);
+    ksm.insertBefore(newline,ksm.children[2]);
 
     // THIS MUST BE LAST.
     // Check for duplicate ids.
