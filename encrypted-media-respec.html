@@ -452,11 +452,11 @@
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
             <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
             <ol>
-              <li><p>Let <var>accumulated configuration</var> be empty.</p></li>
+              <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
 
               <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>, run the following steps:</p>
                 <ol>
-                  <li><p>Let <var>supported types</var> be empty.</p></li>
+                  <li><p>Let <var>supported types</var> be an empty sequence of <a>DOMString</a>s.</p></li>
                   <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> member:</p>
                     <ol>
                       <li><p>Let <var>initDataType</var> be the value.</p></li>
@@ -473,7 +473,7 @@
                     </ol>
                   </li>
                   <li><p>If <var>supported types</var> is empty, return <code>null</code>.</p></li>
-                  <li><p>Add <var>supported types</var> to <var>accumulated configuration</var>.</p></li>
+                  <li><p>Set the <a def-id="option-initDataTypes"></a> member of <var>accumulated configuration</var> to <var>supported types</var>.</p></li>
                 </ol>
               </li>
 
@@ -501,7 +501,7 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member to <var>accumulated configuration</var>.
+              <li><p>Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
 
               <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member from the following list:</p>
                 <dl class="switch">
@@ -519,7 +519,7 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>Add the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member to <var>accumulated configuration</var>.
+              <li><p>Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
               
               <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
@@ -543,13 +543,13 @@
                   <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a> and the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
                 </ol>
               </li>
-              <li><p>Add <var>session types</var> to <var>accumulated configuration</var>.
+              <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
               
               <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
                   <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
-                  <li><p>Add <var>video capabilities</var> to <var>accumulated configuration</var>.</p></li>
+                  <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
                 </ol>
               </li>
 
@@ -557,7 +557,7 @@
                 <ol>
                   <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
-                  <li><p>Add <var>audio capabilities</var> to <var>accumulated configuration</var>.</p></li>
+                  <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
                 </ol>
               </li>
 
@@ -616,14 +616,14 @@
 
           <section>
             <h5>Get Supported Capabilities for Media Type</h5>
-            <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <var>partial configuration</var>, this algorithm returns a list of supported configurations for this media type or <code>null</code> as appropriate.</p>
+            <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> valuess for this media type or <code>null</code> as appropriate.</p>
             <ol>
               <li><p>Let <var>local accumulated configuration</var> be a local copy of <var>partial configuration</var>.</p></li>
-              <li><p>Let <var>supported media capabilities</var> be empty.</p></li>
-              <li><p>For each value in <var>requested media capabilities</var>:</p>
+              <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
+              <li><p>For each <var>requested media capability</var> in <var>requested media capabilities</var>:</p>
                 <ol>
-                  <li><p>Let <var>contentType</var> be the value's <a def-id="capability-contentType"></a> member.</p></li>
-                  <li><p>Let <var>robustness</var> be the value's <a def-id="capability-robustness"></a> member.</p></li>
+                  <li><p>Let <var>contentType</var> be <var>requested media capability</var>'s <a def-id="capability-contentType"></a> member.</p></li>
+                  <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>contentType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>contentType</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
                   <li><p>Let <var>configuration</var> be empty.</p></li>
@@ -654,9 +654,32 @@
                   <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>local accumulated configuration</var>, continue to the next iteration.</p>
                     <p class="note">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p>
                   </li>
-                  <li><p>Add <var>configuration</var> to <var>supported media capabilities</var>.</p></li>
-                  <li><p>Add <var>configuration</var> to <var>local accumulated configuration</var>.</p>
-                    <p class="note">This step ensures that configurations are always checked with configurations from previous iterations, including from previous calls to this algorithm.
+                  <li>
+                    <p>
+                      Add <var>requested media capability</var> to <var>supported media capabilities</var>.
+                    </p>
+                    <p class="note">
+                      This step ensures that the values of the members of entries in <var>supported media capabilities</var> are exactly the strings supplied in
+                      <var>requested media capability</var> without modification by the User Agent.
+                    </p>
+                  </li>
+                  <li>
+                    <dl class="switch">
+                      <dt>If <var>media type</var> is Video:</dt>
+                      <dd>
+                        <p>
+                          Add <var>requested media capability</var> to the <a def-id="option-videoCapabilities"></a> member of <var>local accumulated configuration</var>.
+                        </p>
+                      </dd>
+                      <dt>If <var>media type</var> is Audio:</dt>
+                      <dd>
+                        <p>
+                          Add <var>requested media capability</var> to the <a def-id="option-audioCapabilities"></a> member of <var>local accumulated configuration</var>.
+                        </p>
+                      </dd>
+                    </dl>
+                    <p class="note">
+                      This step ensures that configurations are always checked with configurations from previous iterations, including from previous calls to this algorithm.
                       Otherwise, only configurations from previous calls to this algorithm would be checked in subsequent calls.
                     </p>
                   </li>
