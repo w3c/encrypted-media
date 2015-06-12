@@ -1418,10 +1418,56 @@
         <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-not-allowed"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/39">Issue 39</a> - This interface should be <code>iterable</code> instead of <code>readonly maplike</code> but have the same methods as <code>maplike</code>.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
-          <dt>readonly maplike &ltBufferSource, MediaKeyStatus&gt</dt>
-          <dd>Maps a <a def-id="key-id"></a> to the status of the key represented by that ID.</dd>
+          
+          <!--
+          <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
+          <dd>Provides <code>keys</code>, <code>values</code>, <code>entries</code> and <code>@@iterator</code> properties.</dd>
+          -->
+          
+          <dt>readonly attribute unsigned long size</dt>
+          <dd>
+            <p>The number of <a href="#known-key">known keys.</a></p>
+          </dd>
+          
+          <dt>boolean has( BufferSource keyId )</dt>
+          <dd>
+            <p>Returns true if the status of the key identified by <var>keyId</var> is known</p>
+            <dl class='parameters'>
+              <dt>BufferSource keyId</dt>
+              <dd>The <a def-id="key-id"></a> of the key.</dd>
+            </dl>
+          </dd>
+          
+          <dt>MediaKeyStatus get()</dt>
+          <dd>
+            <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var>.</p>
+            <dl class='parameters'>
+              <dt>BufferSource keyId</dt>
+              <dd>The <a def-id="key-id"></a> of the key.</dd>
+            </dl>
+          </dd>
+          
+          <dt>void forEach()</dt>
+          <dd>
+            <p>Calls <var>callback</var> once for each key-value pair present in the MediaKeyStatus map.</p>
+            <dl class='parameters'>
+              <dt>ForEachCallback callback</dt>
+              <dd>A callback function</dd>
+            </dl>
+          </dd>
+        </dl>
+        
+        <p>
+          The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+          associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+        </p>
+        
+        <dl title="callback ForEachCallback = void" class="idl">
+          <dt>BufferSource keyId</dt>
+          <dd>The key id</dd>
+          <dt>MediaKeyStatus status</dt>
+          <dd>The key status</dd>
         </dl>
 
         <dl title="enum MediaKeyStatus" class="idl">
