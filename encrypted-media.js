@@ -168,6 +168,7 @@
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.not-allowed', link_text: '"not-allowed"',  },
 
+    'option-label': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-label', link_text: 'label',  },
     'option-initDataTypes': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-initDataTypes', link_text: 'initDataTypes',  },
     'option-audioCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-audioCapabilities', link_text: 'audioCapabilities',  },
     'option-videoCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-videoCapabilities', link_text: 'videoCapabilities',  },

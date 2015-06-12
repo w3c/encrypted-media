@@ -970,6 +970,12 @@ table.simple {
             <div class="note"><div class="note-title" aria-level="6" role="heading" id="h-note16"><span>Note</span></div><p class="">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p></div>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> dictionary.</p></li>
+              
+              <li>
+                <p>
+                  Set the <code><a href="#widl-MediaKeySystemConfiguration-label">label</a></code> member of <var>accumulated configuration</var> to equal the <code><a href="#widl-MediaKeySystemConfiguration-label">label</a></code> member of <var>candidate configuration</var>.
+                </p>
+              </li>
 
               <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> in <var>candidate configuration</var>, run the following steps:</p>
                 <ol>
@@ -1249,6 +1255,7 @@ table.simple {
           </td></tr></tbody></table>
 
         <pre class="idl"><span class="idlDictionary" id="idl-def-MediaKeySystemConfiguration">dictionary <span class="idlDictionaryID">MediaKeySystemConfiguration</span> {
+<span class="idlMember">             <span class="idlMemberType">DOMString</span>                               <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-label">label</a></span> = <span class="idlMemberValue">""</span>;</span>
 <span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></span>;</span>
 <span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></span>;</span>
 <span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></span>;</span>
@@ -1266,6 +1273,8 @@ table.simple {
             A list of supported <a href="#initialization-data-type">Initialization Data Type</a> names.
             The <a href="#initialization-data-type">Initialization Data Type</a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             Values in the sequence <em class="rfc2119" title="MUST">MUST</em> not be the empty string.
+          </dd><dt id="widl-MediaKeySystemConfiguration-label"><code>label</code> of type <span class="idlMemberType">DOMString</span>,         , defaulting to <code>""</code></dt><dd>
+            An optional label which will be preserved in the <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> returned from the <code><a href="#widl-MediaKeySystemAccess-getConfiguration-MediaKeySystemConfiguration">getConfiguration()</a></code> method of <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a>.
           </dd><dt id="widl-MediaKeySystemConfiguration-persistentState"><code>persistentState</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>,         , defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
             <p>The CDM <em class="rfc2119" title="MUST NOT">MUST NOT</em> persist any state related to the application or <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://dom.spec.whatwg.org/#concept-document">Document</a> when this member is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
