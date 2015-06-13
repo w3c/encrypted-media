@@ -164,6 +164,9 @@
             Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
             This includes all license exchange messages.
           </p>
+          <p>
+          
+          </p>
         </dd>
 
         <dt id="key-system">Key System</dt>
@@ -909,6 +912,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
+      <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no Javascript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -1052,6 +1056,18 @@
     <section>
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+      
+      <p>
+        A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
+        not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
+        a MediaKeySession object that is no longer accessible to Javascript SHALL NOT receive further
+        events and MAY be destroyed.
+      </p>
+      <p class="note">
+        The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
+        objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
+      </p>
+      
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
