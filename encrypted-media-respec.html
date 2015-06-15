@@ -164,6 +164,9 @@
             Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
             This includes all license exchange messages.
           </p>
+          <p>
+          
+          </p>
         </dd>
 
         <dt id="key-system">Key System</dt>
@@ -909,6 +912,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
+      <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no Javascript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -1052,6 +1056,18 @@
     <section>
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+      
+      <p>
+        A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
+        not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
+        a MediaKeySession object that is no longer accessible to Javascript SHALL NOT receive further
+        events and MAY be destroyed.
+      </p>
+      <p class="note">
+        The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
+        objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
+      </p>
+      
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
@@ -1418,10 +1434,56 @@
         <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-not-allowed"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/39">Issue 39</a> - This interface should be <code>iterable</code> instead of <code>readonly maplike</code> but have the same methods as <code>maplike</code>.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
-          <dt>readonly maplike &ltBufferSource, MediaKeyStatus&gt</dt>
-          <dd>Maps a <a def-id="key-id"></a> to the status of the key represented by that ID.</dd>
+          
+          <!--
+          <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
+          <dd>Provides <code>keys</code>, <code>values</code>, <code>entries</code> and <code>@@iterator</code> properties.</dd>
+          -->
+          
+          <dt>readonly attribute unsigned long size</dt>
+          <dd>
+            <p>The number of <a href="#known-key">known keys.</a></p>
+          </dd>
+          
+          <dt>boolean has( BufferSource keyId )</dt>
+          <dd>
+            <p>Returns true if the status of the key identified by <var>keyId</var> is known</p>
+            <dl class='parameters'>
+              <dt>BufferSource keyId</dt>
+              <dd>The <a def-id="key-id"></a> of the key.</dd>
+            </dl>
+          </dd>
+          
+          <dt>MediaKeyStatus get()</dt>
+          <dd>
+            <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var>.</p>
+            <dl class='parameters'>
+              <dt>BufferSource keyId</dt>
+              <dd>The <a def-id="key-id"></a> of the key.</dd>
+            </dl>
+          </dd>
+          
+          <dt>void forEach()</dt>
+          <dd>
+            <p>Calls <var>callback</var> once for each key-value pair present in the MediaKeyStatus map.</p>
+            <dl class='parameters'>
+              <dt>ForEachCallback callback</dt>
+              <dd>A callback function</dd>
+            </dl>
+          </dd>
+        </dl>
+        
+        <p>
+          The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+          associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+        </p>
+        
+        <dl title="callback ForEachCallback = void" class="idl">
+          <dt>BufferSource keyId</dt>
+          <dd>The key id</dd>
+          <dt>MediaKeyStatus status</dt>
+          <dd>The key status</dd>
         </dl>
 
         <dl title="enum MediaKeyStatus" class="idl">
