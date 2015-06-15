@@ -2247,12 +2247,12 @@
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
             <pre class="example highlight">
 {
-  "kids":
+  'kids':
     [
-     "LwVHf8JLtPrv2GUXFW2v",
-     "0DdtU9od-Bh5L3xbv0Xf"
+     'LwVHf8JLtPrv2GUXFW2v',
+     '0DdtU9od-Bh5L3xbv0Xf'
     ],
-  "type":<a def-id="temporary-session"></a>
+  'type':<a def-id="temporary-session"></a>
 }
 </pre>
           </section>
@@ -2290,14 +2290,14 @@
             <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
             <pre class="example highlight">
 {
-  "keys":
+  'keys':
     [{
-      "kty":"oct",
-      "alg":"A128KW",
-      "k":"tQ0bJVWb6b0KPL6KtZIy",
-      "kid":"LwVHf8JLtPrv2GUXFW2v"
+      'kty':'oct',
+      'alg':'A128KW',
+      'k':'tQ0bJVWb6b0KPL6KtZIy',
+      'kid':'LwVHf8JLtPrv2GUXFW2v'
     }],
-  "type":<a def-id="temporary-session"></a>
+  'type':<a def-id="temporary-session"></a>
 }</pre>
           </section>
         </section>
@@ -2801,34 +2801,34 @@
         <pre class="example highlight">
 &lt;script&gt;
   function onLoad() {
-    var video = document.getElementById("video");
+    var video = document.getElementById('video');
 
     if (!video.<a def-id="mediaKeys-attribute"></a>) {
-      navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey", [
-        { <a def-id="option-initDataTypes"></a>: ["webm"],
+      navigator.<a def-id="requestMediaKeySystemAccess-call"></a>('org.w3.clearkey', [
+        { <a def-id="option-initDataTypes"></a>: ['webm'],
           <a def-id="option-videoCapabilities"></a>: [{ <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp8"' }] }
       ]).then(
         function(keySystemAccess) {
           var promise =  keySystemAccess.<a def-id="createMediaKeys-call"></a>();
           promise.catch(
-            console.error.bind(console, "Unable to create MediaKeys")
+            console.error.bind(console, 'Unable to create MediaKeys')
           );
           promise.then(
             function(createdMediaKeys) {
               return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
             }
           ).catch(
-            console.error.bind(console, "Unable to set MediaKeys")
+            console.error.bind(console, 'Unable to set MediaKeys')
           );
           promise.then(
             function(createdMediaKeys) {
               var initData = new Uint8Array([ ... ]);
               var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
               keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
-              return keySession.<a def-id="generateRequest-call"></a>("webm", initData);
+              return keySession.<a def-id="generateRequest-call"></a>('webm', initData);
             }
           ).catch(
-            console.error.bind(console, "Unable to create or initialize key session")
+            console.error.bind(console, 'Unable to create or initialize key session')
           );
         }
       );
@@ -2840,13 +2840,13 @@
 
     var license = new Uint8Array([ ... ]);
     keySession.<a def-id="update-call"></a>(license).catch(
-      console.error.bind(console, "update() failed")
+      console.error.bind(console, 'update() failed')
     );
   }
 &lt;/script&gt;
 
-&lt;body onload="onLoad()"&gt;
-  &lt;video src="foo.webm" autoplay id="video"&gt;&lt;/video&gt;
+&lt;body onload='onLoad()'&gt;
+  &lt;video src='foo.webm' autoplay id='video'&gt;&lt;/video&gt;
 &lt;/body&gt;
 </pre>
       </section>
@@ -2866,7 +2866,7 @@
   // Returns a Promise&lt;<a>MediaKeys</a>&gt;.
   function createSupportedKeySystem() {
     someSystemOptions = [
-     { <a def-id="option-initDataTypes"></a>: ["keyids", "webm"],
+     { <a def-id="option-initDataTypes"></a>: ['keyids', 'webm'],
        <a def-id="option-audioCapabilities"></a>: [
          { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="opus"' },
          { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="vorbis"' }
@@ -2878,23 +2878,23 @@
      }
     ];
     clearKeyOptions = [
-     { <a def-id="option-initDataTypes"></a>: ["keyids", "webm"],
+     { <a def-id="option-initDataTypes"></a>: ['keyids', 'webm'],
        <a def-id="option-audioCapabilities"></a>: [
          { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="opus"' },
          { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="vorbis"' }
        ],
        <a def-id="option-videoCapabilities"></a>: [
          { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp9"',
-           <a def-id="capability-robustness"></a>: "foo" },
+           <a def-id="capability-robustness"></a>: 'foo' },
          { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp9"',
-           <a def-id="capability-robustness"></a>: "bar" },
+           <a def-id="capability-robustness"></a>: 'bar' },
          { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp8"',
-           <a def-id="capability-robustness"></a>: "bar" },
+           <a def-id="capability-robustness"></a>: 'bar' },
        ]
      }
     ];
 
-    return navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("com.example.somesystem", someSystemOptions).then(
+    return navigator.<a def-id="requestMediaKeySystemAccess-call"></a>('com.example.somesystem', someSystemOptions).then(
       function(keySystemAccess) {
         // Not shown:
         // 1. Use both attributes of keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0]
@@ -2902,14 +2902,14 @@
         //    to retrieve appropriate stream(s).
         // 2. Set video.src.
 
-        licenseUrl = "https://license.example.com/getkey";
+        licenseUrl = 'https://license.example.com/getkey';
         serverCertificate = new Uint8Array([ ... ]);
         return keySystemAccess.<a def-id="createMediaKeys-call"></a>();
       }
     ).catch(
       function(error) {
         // Try the next key system.
-        navigator.<a def-id="requestMediaKeySystemAccess-call"></a>("org.w3.clearkey", clearKeyOptions).then(
+        navigator.<a def-id="requestMediaKeySystemAccess-call"></a>('org.w3.clearkey', clearKeyOptions).then(
           function(keySystemAccess) {
             // Not shown:
             // 1. Use keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0].<a def-id="capability-contentType"></a>
@@ -2917,13 +2917,13 @@
             //    to retrieve appropriate stream(s).
             // 2. Set video.src.
 
-            licenseUrl = "https://license.example.com/clearkey/request";
+            licenseUrl = 'https://license.example.com/clearkey/request';
             return keySystemAccess.<a def-id="createMediaKeys-call"></a>();
           }
         );
       }
     ).catch(
-      console.error.bind(console, "Unable to instantiate a key system supporting the required combinations")
+      console.error.bind(console, 'Unable to instantiate a key system supporting the required combinations')
     );
   }
 
@@ -2948,7 +2948,7 @@
           return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
         }
       ).catch(
-        console.error.bind(console, "Failed to create and initialize a MediaKeys object")
+        console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
       );
     }
     addSession(video, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
@@ -2966,7 +2966,7 @@
     var keySession = mediaKeys.<a def-id="createSession-call"></a>();
     keySession.addEventListener("<a def-id="message"></a>", licenseRequestReady, false);
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).catch(
-      console.error.bind(console, "Unable to create or initialize key session")
+      console.error.bind(console, 'Unable to create or initialize key session')
     );
   }
 
@@ -2980,7 +2980,7 @@
       if (xmlhttp.readyState == 4) {
         var license = new Uint8Array(xmlhttp.response);
         xmlhttp.keySession.<a def-id="update-call"></a>(license).catch(
-          console.error.bind(console, "update() failed")
+          console.error.bind(console, 'update() failed')
         );
       }
     }
@@ -2988,7 +2988,7 @@
   }
 &lt;/script&gt;
 
-&lt;video autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video autoplay <a def-id="onencrypted"></a>='handleInitData(event)'&gt;&lt;/video&gt;
 </pre>
       </section>
 
@@ -3018,17 +3018,17 @@
     function(createdMediaKeys) {
       mediaKeys = createdMediaKeys;
       var video = document.getElementById("v");
-      video.src = "foo.webm";
+      video.src = 'foo.webm';
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
       return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
+    console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay <a def-id="onencrypted"></a>='handleInitData(event)'&gt;&lt;/video&gt;
 </pre>
       </section>
 
@@ -3051,13 +3051,13 @@
   // This replaces the implementation in the previous example.
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>();
-    keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
-    keySession.addEventListener("<a def-id="keystatuseschange"></a>", handlekeyStatusesChange, false);
+    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
+    keySession.addEventListener('<a def-id="keystatuseschange"></a>', handlekeyStatusesChange, false);
     keySession.<a def-id="closed"></a>.then(
-      console.log.bind(console, "Session closed")
+      console.log.bind(console, 'Session closed')
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).catch(
-      console.error.bind(console, "Unable to create or initialize key session")
+      console.error.bind(console, 'Unable to create or initialize key session')
     );
   }
 
@@ -3065,7 +3065,7 @@
     var license = new Uint8Array(response);
     keySession.<a def-id="update-call"></a>(license).catch(
       function(err) {
-        console.error("update() failed: " + err);
+        console.error('update() failed: ' + err);
       }
     );
   }
@@ -3076,7 +3076,7 @@
       url = renewalUrl;
     xmlhttp = new XMLHttpRequest();
     xmlhttp.keySession = keySession;
-    xmlhttp.open("POST", url);
+    xmlhttp.open('POST', url);
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4)
         handleMessageResponse(xmlhttp.keySession, xmlhttp.response);
@@ -3113,17 +3113,17 @@
     function(createdMediaKeys) {
       mediaKeys = createdMediaKeys;
       var video = document.getElementById("v");
-      video.src = "foo.webm";
+      video.src = 'foo.webm';
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
       return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
+    console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay <a def-id="onencrypted"></a>="handleInitData(event)"&gt;&lt;/video&gt;
+&lt;video id="v" autoplay <a def-id="onencrypted"></a>='handleInitData(event)'&gt;&lt;/video&gt;
 </pre>
       </section>
 
@@ -3146,10 +3146,10 @@
   // Called if the application does not have a stored sessionId for the media resource.
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
-    keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
+    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function() {
-        console.log("Session " + this.<a def-id="sessionId"></a> + " closed");
+        console.log('Session ' + this.<a def-id="sessionId"></a> + ' closed');
       }.bind(keySession)
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).then(
@@ -3157,27 +3157,27 @@
         // Store this.<a def-id="sessionId"></a> in the application.
       }.bind(keySession)
     ).catch(
-      console.error.bind(console, "Unable to request a persistent license")
+      console.error.bind(console, 'Unable to request a persistent license')
     );
   }
 
   // Called if the application has a stored sessionId for the media resource.
   function loadStoredSession(mediaKeys, sessionId) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
-    keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
+    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
-      console.log.bind(console, "Session closed")
+      console.log.bind(console, 'Session closed')
     );
     keySession.<a def-id="load-call"></a>(sessionId).then(
       function(loaded) {
         if (!loaded) {
-          console.error("No stored session with the ID " + sessionId + " was found.");
+          console.error('No stored session with the ID ' + sessionId + ' was found.');
           // The application should remove its record of |sessionId|.
           return;
         }
       }
     ).catch(
-      console.error.bind(console, "Unable to load or initialize the stored session with the ID " + sessionId)
+      console.error.bind(console, 'Unable to load or initialize the stored session with the ID ' + sessionId)
     );
   }
 
@@ -3192,11 +3192,11 @@
   function removeStoredSession(keySession) {
     keySession.<a def-id="remove-call"></a>().then(
       function() {
-        console.log("Session " + this.<a def-id="sessionId"></a> + " removed");
+        console.log('Session ' + this.<a def-id="sessionId"></a> + ' removed');
         // The application should remove its record of this.<a def-id="sessionId"></a>.
       }.bind(keySession)
     ).catch(
-      console.error.bind(console, "Failed to remove the session")
+      console.error.bind(console, 'Failed to remove the session')
     );
   }
 
@@ -3209,7 +3209,7 @@
         // now stored. Update the application state as appropriate.
       }
     ).catch(
-      console.error.bind(console, "update() failed")
+      console.error.bind(console, 'update() failed')
     );
   }
 
@@ -3222,11 +3222,11 @@
       return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
     }
   ).catch(
-    console.error.bind(console, "Failed to create and initialize a MediaKeys object")
+    console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
   );
 &lt;/script&gt;
 
-&lt;video id="v" src="foo.webm" autoplay&gt;&lt;/video&gt;
+&lt;video id='v' src='foo.webm' autoplay&gt;&lt;/video&gt;
 </pre>
       </section>
     </section>
