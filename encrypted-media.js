@@ -162,6 +162,7 @@
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
+    'get-distinctive-identifier-consent-status-algorithm' : { func: term_helper, fragment: 'get-distinctive-identifier-consent-status', link_text: 'Get Distinctive Identifier Consent Status' },
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
     'get-supported-capabilities-for-audio-video-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-audio-video-type', link_text: 'Get Supported Capabilities for Audio/Video Type',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
