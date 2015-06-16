@@ -605,14 +605,48 @@
                     <p>
                       If the <a def-id="distinctive-identifier"></a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
                     </p>
-                    <p class="note">Implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
+                    <p class="note">
+                      The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                    </p>
                   </li>
                   <li>
                     <p>
-                      If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is RECOMMENDED that implementations request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.
+                      Let <var>distinctive identifier state</var> be the result of running the <a def-id="get-distinctive-identifier-state-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the first matching condition from the following list:
                     </p>
-                    <p class="note">A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p>
-                    <p class="note">Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.</p>
+
+                    <dl class="switch">
+                      <dt>If <var>distinctive identifier state</var> is <code>ConsentRequired</code>:</dt>
+                      <dd>
+                        <ol>
+                          <li>
+                            <p>
+                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var>.
+                            </p>
+                          </li>
+                          <li>
+                            <p>
+                              If consent was denied, return <code>null</code>.
+                            </p>
+                          </li>
+                        </ol>
+                      </dd>
+                      <dt>
+                        If <var>distinctive identifier state</var> is <code>InformUser</code>:
+                      </dt>
+                      <dd>
+                        <p>
+                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> and <var>origin</var>.
+                        </p>
+                      </dd>
+                      <dt>
+                        Otherwise:
+                      </dt>
+                      <dd>
+                        <p>
+                          Continue with the following steps.
+                        </p>
+                      </dd>
+                    </dl>
                   </li>
                 </ol>
               </li>
@@ -620,7 +654,7 @@
               <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
           </section>
-
+          
           <section>
             <h5>Get Supported Capabilities for Audio/Video Type</h5>
             <p>Given a <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
@@ -691,6 +725,37 @@
             <h5>Are insecure contexts allowed? - DEPRECATED</h5>
             <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
             <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
+          </section>
+          
+          <section>
+            <h5>Get Distinctive Identifier State</h5>
+            <p>
+              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code> or <code>Allowed</code>.
+            </p>
+            <ol>
+              <li>
+                <p>
+                  If there is persisted state indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed for <var>accumulated configuration</var> and <var>origin</var> return <code>Allowed</code>.
+                </p>
+                <p class="note">
+                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var>, which implies use of such an identifier.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If the any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, or if the user agent requires explicit consent for the user of
+                  <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for other reasons, return <code>ConsentRequired</code>.
+                </p>
+                <p class="note">
+                  Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Return <code>InformUser</code>.
+                </p>
+              </li>
+            </ol>
           </section>
           
         </section>
