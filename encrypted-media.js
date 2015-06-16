@@ -168,6 +168,7 @@
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.not-allowed', link_text: '"not-allowed"',  },
 
+    'option-label': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-label', link_text: 'label',  },
     'option-initDataTypes': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-initDataTypes', link_text: 'initDataTypes',  },
     'option-audioCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-audioCapabilities', link_text: 'audioCapabilities',  },
     'option-videoCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-videoCapabilities', link_text: 'videoCapabilities',  },
@@ -477,6 +478,15 @@
         }
       }
     });
+ 
+    // FIXME: This ia a horrible hack to insert some IDL which ReSpec doesn't yet support
+    var iterable = document.createElement('span'),
+        newline = document.createTextNode('\n'),
+        ksm = document.getElementById('idl-def-MediaKeyStatusMap');
+    iterable.class="idlMethod";
+    iterable.innerHTML='    <span class="idlMethType">iterable</span> &lt;<span class="idlParamType">BufferSource</span>,<span class="idlParamType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span>&gt;;';
+    ksm.insertBefore(iterable,ksm.children[1]);
+    ksm.insertBefore(newline,ksm.children[2]);
 
     // THIS MUST BE LAST.
     // Check for duplicate ids.
