@@ -301,8 +301,7 @@
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
-    'may-document-use-powerful-features-algorithm': { func: mixedcontent_helper, fragment: 'may-document-use-powerful-features', link_text: 'May Document use powerful features?', },
-    'are-non-privileged-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-privileged-contexts-allowed---deprecated', link_text: 'Are non-privileged contexts allowed?',  },
+    'are-non-secure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-secure-contexts-allowed---deprecated', link_text: 'Are non-secure contexts allowed?',  },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
