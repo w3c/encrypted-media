@@ -215,6 +215,11 @@ a.idlEnumItem {
     color: gray;
 }
 
+/*.idlIterable*/
+.idlIterableKeyType, .idlIterableValueType {
+    color:  #005a9c;
+}
+
 /*.idlMaplike*/
 .idlMaplikeKeyType, .idlMaplikeValueType {
     color:  #005a9c;
@@ -478,7 +483,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-16-june-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-06-16">16 June 2015</time></h2>
+  <h2 id="w3c-editor-s-draft-13-july-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-07-13">13 July 2015</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -1899,7 +1904,7 @@ table.simple {
         <h3 id="h-mediakeystatusmap-interface" resource="#h-mediakeystatusmap-interface"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.3 </span><a href="#idl-def-MediaKeyStatusMap" class="idlType"><code>MediaKeyStatusMap</code></a> Interface</span></h3>
         <p>The MediaKeySession object is a read-only map of <a href="#decryption-key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
-        <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note55"><span>Note</span></div><p class="">For example, if a key has output requirements that cannot currently be met, the key's status should be <code><a href="#idl-def-MediaKeyStatus.output-downscaled">"output-downscaled"</a></code> or <code><a href="#idl-def-MediaKeyStatus.output-not-allowed">"output-not-allowed"</a></code>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p></div>
+        <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note55"><span>Note</span></div><p class="">For example, if a key has output requirements that cannot currently be met, the key's status should be <code><a href="#idl-def-MediaKeyStatus.output-downscaled">"output-downscaled"</a></code> or <code><a href="#idl-def-MediaKeyStatus.output-restricted">"output-restricted"</a></code>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p></div>
         <pre class="idl"><span class="idlInterface" id="idl-def-MediaKeyStatusMap">interface <span class="idlInterfaceID">MediaKeyStatusMap</span> {
 <span>    <span class="idlMethType">iterable</span> &lt;<span class="idlParamType">BufferSource</span>,<span class="idlParamType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span>&gt;;</span>
 <span class="idlAttribute">    readonly    attribute <span class="idlAttrType">unsigned long</span> <span class="idlAttrName"><a href="#widl-MediaKeyStatusMap-size">size</a></span>;</span>
@@ -1931,7 +1936,6 @@ table.simple {
     "<a href="#idl-def-MediaKeyStatus.expired" class="idlEnumItem">expired</a>",
     "<a href="#idl-def-MediaKeyStatus.output-restricted" class="idlEnumItem">output-restricted</a>",
     "<a href="#idl-def-MediaKeyStatus.output-downscaled" class="idlEnumItem">output-downscaled</a>",
-    "<a href="#idl-def-MediaKeyStatus.output-not-allowed" class="idlEnumItem">output-not-allowed</a>",
     "<a href="#idl-def-MediaKeyStatus.status-pending" class="idlEnumItem">status-pending</a>",
     "<a href="#idl-def-MediaKeyStatus.internal-error" class="idlEnumItem">internal-error</a>"
 };</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeyStatus.usable">usable</code></td><td>
@@ -1942,14 +1946,14 @@ table.simple {
             The time represented by the <code><a href="#widl-MediaKeySession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time.
             All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-restricted">output-restricted</code></td><td>
-            The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> at full quality (e.g. resolution) because its output requirements cannot currently be met.
+            There are output restrictions associated with the key which cannot currently be met.
+            The application should avoid using streams which will trigger the output restrictions associated
+            with the key.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-downscaled">output-downscaled</code></td><td>
             The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> at full quality (e.g. resolution) because its output requirements cannot currently be met.
             Media data decrypted with this key will be presented at a lower quality (e.g. resolution).<br>
             Support for downscaling is <em class="rfc2119" title="OPTIONAL">OPTIONAL</em>.
             Applications <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
-          </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-not-allowed">output-not-allowed</code></td><td>
-            The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because its output requirements cannot currently be met.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.status-pending">status-pending</code></td><td>
             The status of the key is not yet known and is being determined.
             The status will be updated with the actual status when it has been determined.
@@ -3769,7 +3773,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   
 
 <section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart"><!--OddPage--><h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart"><h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3><dl class="bibliography" resource=""><dt id="bib-COOKIES">[COOKIES]</dt><dd>A. Barth. <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires"><cite>HTTP State Management Mechanism</cite></a>. April 2011. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires">https://tools.ietf.org/html/rfc6265</a>
-</dd><dt id="bib-DOM">[DOM]</dt><dd>Anne van Kesteren; Aryeh Gregor; Ms2ger; Alex Russell; Robin Berjon. <a href="http://www.w3.org/TR/dom/" property="dc:requires"><cite>W3C DOM4</cite></a>. 28 April 2015. W3C Last Call Working Draft. URL: <a href="http://www.w3.org/TR/dom/" property="dc:requires">http://www.w3.org/TR/dom/</a>
+</dd><dt id="bib-DOM">[DOM]</dt><dd>Anne van Kesteren; Aryeh Gregor; Ms2ger; Alex Russell; Robin Berjon. <a href="http://www.w3.org/TR/dom/" property="dc:requires"><cite>W3C DOM4</cite></a>. 18 June 2015. W3C Last Call Working Draft. URL: <a href="http://www.w3.org/TR/dom/" property="dc:requires">http://www.w3.org/TR/dom/</a>
 </dd><dt id="bib-ENCODING">[ENCODING]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 16 September 2014. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
 </dd><dt id="bib-HTML5">[HTML5]</dt><dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. <a href="http://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/html5/" property="dc:requires">http://www.w3.org/TR/html5/</a>
 </dd><dt id="bib-JWK">[JWK]</dt><dd>Mike Jones. <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires"><cite>JSON Web Key (JWK)</cite></a>. 28 May 2013. Internet Draft. URL: <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires">https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11</a>
