@@ -263,6 +263,7 @@
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
+    'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'media-element-decode-error': { func: code_videoref_helper, fragment: 'dom-mediaerror-media_err_decode', link_text: 'MEDIA_ERR_DECODE',  },
@@ -301,8 +302,7 @@
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
-    'may-document-use-powerful-features-algorithm': { func: mixedcontent_helper, fragment: 'may-document-use-powerful-features', link_text: 'May Document use powerful features?', },
-    'are-non-privileged-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-privileged-contexts-allowed---deprecated', link_text: 'Are non-privileged contexts allowed?',  },
+    'are-non-secure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-secure-contexts-allowed---deprecated', link_text: 'Are non-secure contexts allowed?',  },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
@@ -478,15 +478,6 @@
       }
     });
  
-    // FIXME: This ia a horrible hack to insert some IDL which ReSpec doesn't yet support
-    var iterable = document.createElement('span'),
-        newline = document.createTextNode('\n'),
-        ksm = document.getElementById('idl-def-MediaKeyStatusMap');
-    iterable.class="idlMethod";
-    iterable.innerHTML='    <span class="idlMethType">iterable</span> &lt;<span class="idlParamType">BufferSource</span>,<span class="idlParamType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span>&gt;;';
-    ksm.insertBefore(iterable,ksm.children[1]);
-    ksm.insertBefore(newline,ksm.children[2]);
-
     // THIS MUST BE LAST.
     // Check for duplicate ids.
     $("[id]").each(function () {

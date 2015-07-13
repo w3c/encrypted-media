@@ -391,11 +391,11 @@
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var>document</var> is not <code>Allowed</code>, run the following steps:</p>
-                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/49">Issue 49</a> - The above text is out of date; it should reference the Privileged Contexts specification.</p>
-                  <p class="issue">Support for communication from Privileged Contexts to devices on a private network is an open issue. A bug will be filed with the Web Application Security Working Group and referenced here.</p>
+              <li><p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbant settings object</a> is not a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#secure-context">secure context</a>, run the following steps:</p>
+                
+                  <p class="issue">Support for communication from Secure Contexts to devices on a private network is an open issue. A bug will be filed with the Web Application Security Working Group and referenced here.</p>
                 <ol>
-                  <li><p>If the result of running the <a def-id="are-non-privileged-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
+                  <li><p>If the result of running the <a def-id="are-non-secure-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
                     <p class="note">This step is <strong>DEPRECATED</strong>.
                       It is expected that removal of this step will be evaluated during Candidate Recommendation (CR).
                       Authors are advised that implementations MAY remove it before then.
@@ -403,8 +403,8 @@
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
                     <p class="note">
-                      Requiring Privileged Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
-                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an privileged context would be similar.
+                      Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
+                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
                     </p>
                   </li>
                 </ol>
@@ -699,7 +699,7 @@
           </section>
           
           <section>
-            <h5>Are non-privileged contexts allowed? - DEPRECATED</h5>
+            <h5>Are non-secure contexts allowed? - DEPRECATED</h5>
             <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
             <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
           </section>
@@ -798,7 +798,7 @@
           <dt>DOMString contentType = ""</dt>
           <dd>
             The type of the <a def-id="media-resource">media resource</a>.  Allows the user agent to determine if it can play this <a def-id="media-resource">media resource</a> with the requested <a def-id="keysystem"></a> before fetching the content. 
-            If specified, its value must be a valid MIME type</a>. 
+            If specified, its value must be a <a def-id="mime-types">valid MIME type</a>. 
             The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded.  
             Contents MUST not be the empty string.  
             [[!RFC6381]].
@@ -1202,6 +1202,7 @@
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If the object's <var>session type</var> is not a member of <a def-id="option-sessionTypes"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1439,10 +1440,11 @@
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
           
-          <!--
           <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
-          <dd>Provides <code>keys</code>, <code>values</code>, <code>entries</code> and <code>@@iterator</code> properties.</dd>
-          -->
+          <dd>
+            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+            associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+          </dd>
           
           <dt>readonly attribute unsigned long size</dt>
           <dd>
@@ -1476,11 +1478,6 @@
             </dl>
           </dd>
         </dl>
-        
-        <p>
-          The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-          associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
-        </p>
         
         <dl title="callback ForEachCallback = void" class="idl">
           <dt>BufferSource keyId</dt>
@@ -1723,7 +1720,7 @@
               <td>
                 The existing MediaKeys object cannot be removed.<br/>
                 The key system is not supported.<br/>
-                The key system is not supported on insecure origins.<br/>
+                The key system is not supported in an insecure context.<br/>
                 The initialization data type is not supported by the key system.<br/>
                 The session type is not supported by the key system.<br/>
                 The initialization data is not supported by the key system.<br/>
@@ -1963,7 +1960,14 @@
                 Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </li>
-
+            <li>
+              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null, run the following steps:</p>
+              <p class="note">These steps may be reached when applications  create a MediaKeys object and call <a def-id="setMediaKeys"></a> before providing <a def-id="media-data"></a> and there is no usable key for the block.</p>
+              <ol>
+                <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
+                <li><p>Wait for a signal to resume playback.</p></li>
+              </ol>
+            </li>
             <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a> algorithm.</p></li>
           </ol>
         </section>
@@ -2412,7 +2416,7 @@
 
         <!-- TODO: 27165 -->
         <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent SHOULD ensure that users are fully informed and/or give explicit consent before loading or invoking it.
-          Such implementations SHOULD only be supported on secure origins to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
+          Such implementations SHOULD only be supported on secure contexts to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
         </p>
         <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
           See also <a href="#privacy-prompts">User Alerts / Prompts</a> and <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
