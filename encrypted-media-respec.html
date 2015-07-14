@@ -622,7 +622,7 @@
 
           <section>
             <h5>Get Supported Capabilities for Media Type</h5>
-            <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> valuess for this media type or <code>null</code> as appropriate.</p>
+            <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this media type or <code>null</code> as appropriate.</p>
             <ol>
               <li><p>Let <var>local accumulated configuration</var> be a local copy of <var>partial configuration</var>.</p></li>
               <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
@@ -632,33 +632,21 @@
                   <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>contentType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>contentType</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
-                  <li><p>Let <var>configuration</var> be empty.</p></li>
+                  <li><p>If <var>contentType</var> is not strictly a <var>media type</var> type, continue to the next iteration.</p>
+                    <p class="note">For example, if <var>media type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
+                  </li>
                   <li><p>Let <var>container</var> be the container type specified by <var>contentType</var>.</p></li>
                   <li><p>If the user agent does not support <var>container</var>, continue to the next iteration. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
                     <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
                   </li>
-                  <li><p>Add <var>container</var> to <var>configuration</var>.</p></li>
                   <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var>contentType</var>.</p></li>
-                  <li><p>If <var>parameters</var> is not empty, run the following steps:</p>
-                    <ol>
-                      <li><p>If the user agent does not recognize one or more <var>parameters</var>, continue to the next iteration.</p></li>
-                      <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-                        <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
-                      </li>
-                      <li><p>Add all <var>media types</var> to <var>configuration</var>.</p></li>
-                    </ol>
+                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, continue to the next iteration.</p></li>
+                  <li><p>Let <var>media types</var> be the set of codecs, with parameters, specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                    <p class="note">Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
                   </li>
-                  <li><p>If <var>contentType</var> is not strictly a <var>media type</var> type, continue to the next iteration.</p>
-                    <p class="note">For example, if <var>media type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
-                  </li>
-                  <li><p>If <var>robustness</var> is not the empty string, run the following steps:</p>
-                    <ol>
-                      <li><p>If <var>robustness</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                      <li><p>Add <var>robustness</var> to <var>configuration</var>.</p></li>
-                    </ol>
-                  </li>
-                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>local accumulated configuration</var>, continue to the next iteration.</p>
-                    <p class="note">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p>
+                  <li><p>If <var>robustness</var> is non-empty and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
+                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>robustness</var>, <var>media types</var> and <var>local accumulated configuration</var>, continue to the next iteration.</p>
+                    <p class="note">This configuration (content type and robustness) must be supported with all previously added requested media capabilities.</p>
                   </li>
                   <li>
                     <p>
