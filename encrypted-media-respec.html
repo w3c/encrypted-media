@@ -1425,7 +1425,7 @@
         <h2><a>MediaKeyStatusMap</a> Interface</h2>
         <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
-        <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-not-allowed"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
+        <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
           
           <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
@@ -1486,16 +1486,23 @@
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
           </dd>
+          <dt>output-restricted</dt>
+          <dd>
+            There are output restrictions associated with the key that cannot currently be met.
+            Media data decrypted with this key may be blocked from presentation, if necessary according to
+            the output restrictions.
+            The application should avoid using streams that will trigger the output restrictions associated
+            with the key.
+          </dd>
           <dt>output-downscaled</dt>
           <dd>
-            The key is not currently usable to decrypt <a def-id="media-data"></a> at full quality (e.g. resolution) because its output requirements cannot currently be met.
-            Media data decrypted with this key may be presented at a lower quality (e.g. resolution).<br/>
+            There are output restrictions associated with the key that cannot currently be met.
+            Media data decrypted with this key may be presented at a lower quality (e.g. resolution),
+            if necessary according to the output restrictions.
+            The application should avoid using streams that will trigger the output restrictions associated
+            with the key.<br/>
             Support for downscaling is OPTIONAL.
             Applications SHOULD NOT rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
-          </dd>
-          <dt>output-not-allowed</dt>
-          <dd>
-            The key is not currently usable to decrypt <a def-id="media-data"></a> because its output requirements cannot currently be met.
           </dd>
           <dt>status-pending</dt>
           <dd>
