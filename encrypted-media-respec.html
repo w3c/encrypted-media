@@ -392,11 +392,11 @@
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li><p>If the result of running the <a def-id="may-document-use-powerful-features-algorithm"></a> algorithm [[!MIXED-CONTENT]] on <var>document</var> is not <code>Allowed</code>, run the following steps:</p>
-                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/49">Issue 49</a> - The above text is out of date; it should reference the Privileged Contexts specification.</p>
-                  <p class="issue">Support for communication from Privileged Contexts to devices on a private network is an open issue. A bug will be filed with the Web Application Security Working Group and referenced here.</p>
+              <li><p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbant settings object</a> is not a <a href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#secure-context">secure context</a>, run the following steps:</p>
+                
+                  <p class="issue">Support for communication from Secure Contexts to devices on a private network is an open issue. A bug will be filed with the Web Application Security Working Group and referenced here.</p>
                 <ol>
-                  <li><p>If the result of running the <a def-id="are-non-privileged-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
+                  <li><p>If the result of running the <a def-id="are-insecure-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
                     <p class="note">This step is <strong>DEPRECATED</strong>.
                       It is expected that removal of this step will be evaluated during Candidate Recommendation (CR).
                       Authors are advised that implementations MAY remove it before then.
@@ -404,8 +404,8 @@
                   </li>
                   <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
                     <p class="note">
-                      Requiring Privileged Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
-                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an privileged context would be similar.
+                      Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
+                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
                     </p>
                   </li>
                 </ol>
@@ -554,7 +554,7 @@
               
               <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
                 </ol>
@@ -562,7 +562,7 @@
 
               <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-media-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
+                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
                   <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
                 </ol>
@@ -605,16 +605,16 @@
                     <p>
                       If the <a def-id="distinctive-identifier"></a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
                     </p>
+                    <p class="note">Implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
                   </li>
                   <li>
                     <p>
                       If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is RECOMMENDED that implementations request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.
                     </p>
+                    <p class="note">A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p>
+                    <p class="note">Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.</p>
                   </li>
                 </ol>
-                <p class="note">A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p>
-                <p class="note">Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.</p>
-                <p class="note">The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
               </li>
 
               <li><p>Return <var>accumulated configuration</var>.</p></li>
@@ -622,44 +622,32 @@
           </section>
 
           <section>
-            <h5>Get Supported Capabilities for Media Type</h5>
-            <p>Given a <var>media type</var> (Audio or Video), <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> valuess for this media type or <code>null</code> as appropriate.</p>
+            <h5>Get Supported Capabilities for Audio/Video Type</h5>
+            <p>Given a <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
             <ol>
               <li><p>Let <var>local accumulated configuration</var> be a local copy of <var>partial configuration</var>.</p></li>
               <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
               <li><p>For each <var>requested media capability</var> in <var>requested media capabilities</var>:</p>
                 <ol>
-                  <li><p>Let <var>contentType</var> be <var>requested media capability</var>'s <a def-id="capability-contentType"></a> member.</p></li>
+                  <li><p>Let <var>content type</var> be <var>requested media capability</var>'s <a def-id="capability-contentType"></a> member.</p></li>
                   <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
-                  <li><p>If <var>contentType</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
-                  <li><p>If <var>contentType</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
-                  <li><p>Let <var>configuration</var> be empty.</p></li>
-                  <li><p>Let <var>container</var> be the container type specified by <var>contentType</var>.</p></li>
+                  <li><p>If <var>content type</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
+                  <li><p>If <var>content type</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
+                  <li><p>If <var>content type</var> is not strictly a <var>audio/video type</var> type, continue to the next iteration.</p>
+                    <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>audio/video types</var> contains non-video codecs.</p>
+                  </li>
+                  <li><p>Let <var>container</var> be the container type specified by <var>content type</var>.</p></li>
                   <li><p>If the user agent does not support <var>container</var>, continue to the next iteration. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
                     <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
                   </li>
-                  <li><p>Add <var>container</var> to <var>configuration</var>.</p></li>
-                  <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var>contentType</var>.</p></li>
-                  <li><p>If <var>parameters</var> is not empty, run the following steps:</p>
-                    <ol>
-                      <li><p>If the user agent does not recognize one or more <var>parameters</var>, continue to the next iteration.</p></li>
-                      <li><p>Let <var>media types</var> be the set of media types specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
-                        <p class="note">For example, all of the codecs. Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
-                      </li>
-                      <li><p>Add all <var>media types</var> to <var>configuration</var>.</p></li>
-                    </ol>
+                  <li><p>Let <var>parameters</var> be the RFC 6381 [[!RFC6381]] parameters, if any, specified by <var>content type</var>.</p></li>
+                  <li><p>If the user agent does not recognize one or more <var>parameters</var>, continue to the next iteration.</p></li>
+                  <li><p>Let <var>audio/video types</var> be the set of codecs, with parameters, specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
+                    <p class="note">Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
                   </li>
-                  <li><p>If <var>contentType</var> is not strictly a <var>media type</var> type, continue to the next iteration.</p>
-                    <p class="note">For example, if <var>media type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
-                  </li>
-                  <li><p>If <var>robustness</var> is not the empty string, run the following steps:</p>
-                    <ol>
-                      <li><p>If <var>robustness</var> is an unrecognized value or not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                      <li><p>Add <var>robustness</var> to <var>configuration</var>.</p></li>
-                    </ol>
-                  </li>
-                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> as specified by <var>configuration</var>, including all <var>media types</var>, in combination with <var>local accumulated configuration</var>, continue to the next iteration.</p>
-                    <p class="note">This configuration (content type and robustness) must be supported with all previously added supported configurations.</p>
+                  <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
+                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>audio/video types</var>, <var>robustness</var> and <var>local accumulated configuration</var>, continue to the next iteration.</p>
+                    <p class="note"><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p>
                   </li>
                   <li>
                     <p>
@@ -672,13 +660,13 @@
                   </li>
                   <li>
                     <dl class="switch">
-                      <dt>If <var>media type</var> is Video:</dt>
+                      <dt>If <var>audio/video type</var> is Video:</dt>
                       <dd>
                         <p>
                           Add <var>requested media capability</var> to the <a def-id="option-videoCapabilities"></a> member of <var>local accumulated configuration</var>.
                         </p>
                       </dd>
-                      <dt>If <var>media type</var> is Audio:</dt>
+                      <dt>If <var>audio/video type</var> is Audio:</dt>
                       <dd>
                         <p>
                           Add <var>requested media capability</var> to the <a def-id="option-audioCapabilities"></a> member of <var>local accumulated configuration</var>.
@@ -700,7 +688,7 @@
           </section>
           
           <section>
-            <h5>Are non-privileged contexts allowed? - DEPRECATED</h5>
+            <h5>Are insecure contexts allowed? - DEPRECATED</h5>
             <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
             <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
           </section>
@@ -742,7 +730,7 @@
         <dl title="dictionary MediaKeySystemConfiguration" class='idl'>
           <dt>DOMString label = ""</dt>
           <dd>
-            An optional label which will be preserved in the <a>MediaKeySystemConfiguration</a> returned from the <a def-id="getConfiguration"></a> method of <a>MediaKeySystemAccess</a>.
+            An optional label that will be preserved in the <a>MediaKeySystemConfiguration</a> returned from the <a def-id="getConfiguration"></a> method of <a>MediaKeySystemAccess</a>.
           </dd>
           <dt>sequence&lt;DOMString&gt; initDataTypes</dt>
           <dd>
@@ -798,11 +786,9 @@
         <dl title="dictionary MediaKeySystemMediaCapability" class='idl'>
           <dt>DOMString contentType = ""</dt>
           <dd>
-            The type of the <a def-id="media-resource">media resource</a>.  Allows the user agent to determine if it can play this <a def-id="media-resource">media resource</a> with the requested <a def-id="keysystem"></a> before fetching the content. 
-            If specified, its value must be a valid MIME type</a>. 
-            The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded.  
-            Contents MUST not be the empty string.  
-            [[!RFC6381]].
+            The type of the <a def-id="media-resource">media resource</a>.  Allows the user agent to determine if it can play this <a def-id="media-resource">media resource</a> with the requested <a def-id="keysystem"></a> before fetching the content.
+            If specified, its value must be a <a def-id="mime-types">valid MIME type</a>.
+            The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded.
           </dd>
           <dt>DOMString robustness = ""</dt>
           <dd>
@@ -844,7 +830,7 @@
                 Return this object's <var>configuration</var> value.
               </p>
               <p class="note">
-                This results in a new Javascript object being created and initalized from <var>configuration</var> each time this method is called.
+                This results in a new JavaScript object being created and initalized from <var>configuration</var> each time this method is called.
               </p>
             </li>
           </ol>
@@ -916,7 +902,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no Javascript references and no attached media element).</p>
+      <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when resolving or rejecting a promise.</p>
 
@@ -985,7 +971,10 @@
                 <li><p>Let the <a def-id="sessionId"></a> attribute be the empty string.</p></li>
                 <li><p>Let the <a def-id="expiration"></a> attribute be <code>NaN</code>.</p></li>
                 <li><p>Let the <a def-id="closed"></a> attribute be a new promise.</p></li>
-                <li><p>Let the <a def-id="keyStatuses"></a> attribute be empty.</p></li>
+				<li><p>Let <var>key status</var> be a new <a>MediaKeyStatusMap</a> object, and initialize it as follows:</p>
+				  <ol>
+                    <li><p>Let the <a def-id="size"></a> attribute be <code>NaN</code>.</p></li>
+				  </ol>
                 <li><p>Let the <var>session type</var> value be <var>sessionType</var>.</p></li>
                 <li><p>Let the <var>uninitialized</var> value be true.</p></li>
                 <li><p>Let the <var>callable</var> value be false.</p></li>
@@ -1066,7 +1055,7 @@
       <p>
         A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
         not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
-        a MediaKeySession object that is no longer accessible to Javascript SHALL NOT receive further
+        a MediaKeySession object that is no longer accessible to JavaScript SHALL NOT receive further
         events and MAY be destroyed.
       </p>
       <p class="note">
@@ -1139,7 +1128,7 @@
                   <p>The user agent MUST thoroughly validate the <a def-id="initialization-data"></a> before passing it to the CDM.
                     This includes verifying that the length and values of fields are reasonable, verifying that values are within reasonable limits, and stripping irrelevant, unsupported, or unknown data or fields.
                     It is RECOMMENDED that user agents pre-parse, sanitize, and/or generate a fully sanitized version of the <a def-id="initialization-data"></a>.
-                    If the <a def-id="initialization-data"></a> format specified by <var>initDataType</var> support multiple entries, the user agent SHOULD remove entries that are not needed by the CDM.
+                    If the <a def-id="initialization-data"></a> format specified by <var>initDataType</var> supports multiple entries, the user agent SHOULD remove entries that are not needed by the CDM.
                   </p>
                 </li>
                 <li><p>If the previous step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
@@ -1205,6 +1194,7 @@
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If the object's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1479,13 +1469,14 @@
         <h2><a>MediaKeyStatusMap</a> Interface</h2>
         <p>The MediaKeySession object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
-        <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-not-allowed"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
+        <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
           
-          <!--
           <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
-          <dd>Provides <code>keys</code>, <code>values</code>, <code>entries</code> and <code>@@iterator</code> properties.</dd>
-          -->
+          <dd>
+            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+            associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+          </dd>
           
           <dt>readonly attribute unsigned long size</dt>
           <dd>
@@ -1494,7 +1485,7 @@
           
           <dt>boolean has( BufferSource keyId )</dt>
           <dd>
-            <p>Returns true if the status of the key identified by <var>keyId</var> is known</p>
+            <p>Returns <code>true</code> if the status of the key identified by <var>keyId</var> is known.</p>
             <dl class='parameters'>
               <dt>BufferSource keyId</dt>
               <dd>The <a def-id="key-id"></a> of the key.</dd>
@@ -1520,16 +1511,11 @@
           </dd>
         </dl>
         
-        <p>
-          The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-          associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
-        </p>
-        
         <dl title="callback ForEachCallback = void" class="idl">
           <dt>BufferSource keyId</dt>
-          <dd>The key id</dd>
+          <dd>The <a def-id="key-id"></a>.</dd>
           <dt>MediaKeyStatus status</dt>
-          <dd>The key status</dd>
+          <dd>The key status.</dd>
         </dl>
 
         <dl title="enum MediaKeyStatus" class="idl">
@@ -1549,16 +1535,23 @@
             The key itself is no longer available to the CDM, but information about the key such as a
             <var>record of license destruction</var> or <var>record of key usage</var> is available.
           </dd>
+          <dt>output-restricted</dt>
+          <dd>
+            There are output restrictions associated with the key that cannot currently be met.
+            Media data decrypted with this key may be blocked from presentation, if necessary according to
+            the output restrictions.
+            The application should avoid using streams that will trigger the output restrictions associated
+            with the key.
+          </dd>
           <dt>output-downscaled</dt>
           <dd>
-            The key is not currently usable to decrypt <a def-id="media-data"></a> at full quality (e.g. resolution) because its output requirements cannot currently be met.
-            Media data decrypted with this key may be presented at a lower quality (e.g. resolution).<br/>
+            There are output restrictions associated with the key that cannot currently be met.
+            Media data decrypted with this key may be presented at a lower quality (e.g. resolution),
+            if necessary according to the output restrictions.
+            The application should avoid using streams that will trigger the output restrictions associated
+            with the key.<br/>
             Support for downscaling is OPTIONAL.
             Applications SHOULD NOT rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
-          </dd>
-          <dt>output-not-allowed</dt>
-          <dd>
-            The key is not currently usable to decrypt <a def-id="media-data"></a> because its output requirements cannot currently be met.
           </dd>
           <dt>status-pending</dt>
           <dd>
@@ -1769,7 +1762,7 @@
               <td>
                 The existing MediaKeys object cannot be removed.<br/>
                 The key system is not supported.<br/>
-                The key system is not supported on insecure origins.<br/>
+                The key system is not supported in an insecure context.<br/>
                 The initialization data type is not supported by the key system.<br/>
                 The session type is not supported by the key system.<br/>
                 The initialization data is not supported by the key system.<br/>
@@ -2009,7 +2002,14 @@
                 Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </li>
-
+            <li>
+              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null, run the following steps:</p>
+              <p class="note">These steps may be reached when applications  create a MediaKeys object and call <a def-id="setMediaKeys"></a> before providing <a def-id="media-data"></a> and there is no usable key for the block.</p>
+              <ol>
+                <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
+                <li><p>Wait for a signal to resume playback.</p></li>
+              </ol>
+            </li>
             <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a> algorithm.</p></li>
           </ol>
         </section>
@@ -2141,8 +2141,8 @@
 
       <section id="media-element-restictions" class="informative">
         <h3>Media Element Restrictions</h3>
-        <p>Media data processed by a CDM MAY be unavailable through Javascript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
-        This specification does not define conditions for such non-availability of media data, however, if media data is not available to Javascript APIs then these APIs MAY behave as if no media data was present at all.</p>
+        <p>Media data processed by a CDM MAY be unavailable through JavaScript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
+        This specification does not define conditions for such non-availability of media data, however, if media data is not available to JavaScript APIs then these APIs MAY behave as if no media data was present at all.</p>
         <p>Where media rendering is not performed by the UA, for example in the case of a hardware protected media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, MAY be unavailable. One likely restriction is that
         video media MAY be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
       </section>
@@ -2217,7 +2217,7 @@
 
         <section id="allow-identifiers-cleared">
           <h3>Allow Identifiers to be Cleared</h3>
-          <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identfiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
             Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
           </p>
           <p>Implementations SHOULD allow users to clear <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> along with cookies [[!COOKIES]] and other site data.
@@ -2351,7 +2351,7 @@
                 </li>
                 <li>
                   <p>
-                    In the first case, <var>sanitized response</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the media type.
+                    In the first case, <var>sanitized response</var> is considered invalid if it is not a valid JWK Set with at least one valid JWK key of a valid length for the audio/video type.
                     In the second case <var>sanitized response</var> is considered invalid if it is not a valid JSON object.
                   </p>
                 </li>
@@ -2563,7 +2563,7 @@
 
         <!-- TODO: 27165 -->
         <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent SHOULD ensure that users are fully informed and/or give explicit consent before loading or invoking it.
-          Such implementations SHOULD only be supported on secure origins to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
+          Such implementations SHOULD only be supported on secure contexts to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
         </p>
         <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
           See also <a href="#privacy-prompts">User Alerts / Prompts</a> and <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
@@ -2830,7 +2830,7 @@
               <p>User agents MUST prompt or otherwise inform the user before allowing use of a <a def-id="distinctive-identifier"></a> that is not <a href="#per-origin-identifiers">unique per-origin</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used.
                 User agents SHOULD prompt or otherwise inform the user before allowing use of all other <a def-id="distinctive-identifier"></a>.
               </p>
-              <p class="note">The "not unique per-origin" and "not clearable" conditions cannot be true in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.</p>
+              <p class="note">The "not unique per-origin" and "not clearable" conditions cannot be true in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
               <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
                 User agent implementers that consider such alerts or consent appropriate for a Key System implementation SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
               </p>

@@ -163,7 +163,7 @@
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
-    'get-supported-capabilities-for-media-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-media-type', link_text: 'Get Supported Capabilities for Media Type',  },
+    'get-supported-capabilities-for-audio-video-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-audio-video-type', link_text: 'Get Supported Capabilities for Audio/Video Type',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.not-allowed', link_text: '"not-allowed"',  },
@@ -194,6 +194,9 @@
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
 
+	'size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
+
+	
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
     'expiration': { func: idlref_helper, fragment: 'widl-MediaKeySession-expiration', link_text: 'expiration',  },
     'closed': { func: idlref_helper, fragment: 'widl-MediaKeySession-closed', link_text: 'closed',  },
@@ -213,7 +216,7 @@
     'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
     'status-released': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.released', link_text: '"released"',  },
     'status-output-downscaled': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-downscaled', link_text: '"output-downscaled"',  },
-    'status-output-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-not-allowed', link_text: '"output-not-allowed"',  },
+    'status-output-restricted': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-restricted', link_text: '"output-restricted"',  },
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'queue a "message" event',  },
@@ -264,6 +267,7 @@
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
+    'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'media-element-decode-error': { func: code_videoref_helper, fragment: 'dom-mediaerror-media_err_decode', link_text: 'MEDIA_ERR_DECODE',  },
@@ -302,8 +306,7 @@
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
-    'may-document-use-powerful-features-algorithm': { func: mixedcontent_helper, fragment: 'may-document-use-powerful-features', link_text: 'May Document use powerful features?', },
-    'are-non-privileged-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-non-privileged-contexts-allowed---deprecated', link_text: 'Are non-privileged contexts allowed?',  },
+    'are-insecure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-insecure-contexts-allowed---deprecated', link_text: 'Are insecure contexts allowed?',  },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
@@ -479,15 +482,6 @@
       }
     });
  
-    // FIXME: This ia a horrible hack to insert some IDL which ReSpec doesn't yet support
-    var iterable = document.createElement('span'),
-        newline = document.createTextNode('\n'),
-        ksm = document.getElementById('idl-def-MediaKeyStatusMap');
-    iterable.class="idlMethod";
-    iterable.innerHTML='    <span class="idlMethType">iterable</span> &lt;<span class="idlParamType">BufferSource</span>,<span class="idlParamType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span>&gt;;';
-    ksm.insertBefore(iterable,ksm.children[1]);
-    ksm.insertBefore(newline,ksm.children[2]);
-
     // THIS MUST BE LAST.
     // Check for duplicate ids.
     $("[id]").each(function () {
