@@ -186,7 +186,7 @@
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
-    'persistent-release-message-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.xTBD', link_text: '"TBD"',  },
+    'tracked-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.tracked', link_text: '"tracked"',  },
 
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
 
@@ -214,6 +214,7 @@
 
     'status-usable': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.usable', link_text: '"usable"',  },
     'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
+    'status-released': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.released', link_text: '"released"',  },
     'status-output-downscaled': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-downscaled', link_text: '"output-downscaled"',  },
     'status-output-restricted': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-restricted', link_text: '"output-restricted"',  },
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
