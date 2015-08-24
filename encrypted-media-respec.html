@@ -1031,14 +1031,14 @@
           </p>
           <p>The following steps are run:</p>
           <ol>
-            <li><p>Let the <var>message type</var> be the specified <a>MediaKeySessionType</a> value.</p></li>
-            <li><p>Follow the steps for the first matching condition from the following list:</p>
+            <li><p>Let the <var>session type</var> be the specified <a>MediaKeySessionType</a> value.</p></li>
+            <li><p>Follow the steps for the value of <var>session type</var> from the following list:</p>
               <dl class="switch">
-                <dt>If <var>session type</var> is <a def-id="temporary-session"></a></dt>
+                <dt><a def-id="temporary-session"></a></dt>
                 <dd>Return <code>false</code>.</dd>
-                <dt>If <var>session type</var> is <a def-id="tracked-session"></a></dt>
+                <dt><a def-id="tracked-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
-                <dt>If <var>session type</var> is <a def-id="persistent-license-session"></a></dt>
+                <dt><a def-id="persistent-license-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
               </dl>
             </li>
@@ -1138,18 +1138,18 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If the <var>init data</var> is not supported by the <var>cdm</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
-                    <li><p>Follow the steps for the first matching condition from the following list:</p>
+                    <li><p>Follow the steps for the value of <var>session type</var> from the following list:</p>
                       <dl class="switch">
-                        <dt>If <var>session type</var> is <a def-id="temporary-session"></a></dt>
+                        <dt><a def-id="temporary-session"></a></dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a temporary non-persistable license.</p>
                           <p class="note">The returned license must not be persistable or require persisting information related to it.</p>
                         </dd>
-                        <dt>If <var>session type</var> is <a def-id="tracked-session"></a></dt>
+                        <dt><a def-id="tracked-session"></a></dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a non-persistable license that will <i>TODO(mwatson2)</i>.</p>
                         </dd>
-                        <dt>If <var>session type</var> is <a def-id="persistent-license-session"></a></dt>
+                        <dt><a def-id="persistent-license-session"></a></dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a persistable license.<p>
                         </dd>
@@ -1424,21 +1424,19 @@
                     </li>
 
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-                    <li>
-                      <p>
-                        If this object's <var>session type</var> is <a def-id="tracked-session"></a>:
-                      </p>
-                      <ol>
-                        <li>
+                    <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
+                      <dl class="switch">
+                        <dt><a def-id="tracked-session"></a></dt>
+                        <dd>
                           <p>
                             Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
                           </p>
-                        </li>
-                      </ol>
-                    </li>
-                    <li>
-                      <p>If this object's <var>session type</var> is <a def-id="persistent-license-session"></a>:</p>
-                      <ol>
+                        </dd>
+                        <dt><a def-id="persistent-license-session"></a></dt>
+                        <dd>
+                          <p>Run the following steps:</p>
+                     <!-- TODO: Fix indentation. -->                          
+                     <ol>
                         <li>
                           <p>
                             Store a <var>record of the license's destruction</var>.
@@ -1450,6 +1448,8 @@
                           </p>
                         </li>
                       </ol>
+                        </dd>
+                      </dl>
                     </li>
                     <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
