@@ -921,9 +921,14 @@
         <dd>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"tracked"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
-            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <var>record of key usage times</var> SHALL be persisted.
+            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <var>record of key usage times</var> SHALL be persisted when
+            the keys available within the session are destroyed.
             The <var>record of key usage times</var> consists of a record of the key IDs of the keys used in the session, the <var>first decryption time</var> for each key and the <var>latest decryption time</var> for each key.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing a record of key usage will be generated when <a def-id="remove"></a> is called and on every <a def-id="load"></a> call until the record is acknowledged by a response passed to <a def-id="update"></a>. Because the license and keys are not persisted, this record implicitly proves that the keys are no longer available in the session.
+            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing a record of key usage will be generated when <a def-id="remove"></a> is called and on every <a def-id="load"></a> call until the record is acknowledged by a response passed to <a def-id="update"></a>. Because the license and keys are not persisted, this persisted record indicates that the keys are no longer available in the session.
+          </p>
+          <p class="note">
+            User agents MAY implememt this mechanism by means other than persisting data on key destruction - for example by persisting data during playback which is later used
+            to infer the fact of key destruction - provided the API behavior is compliant to this specification.
           </p>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/80">Issue 80</a> - It has been proposed that usage should be recorded by session, not key.</p>
           <p>
@@ -2053,7 +2058,6 @@
                                     </p>
                                   </li>
                                 </ol>
-                                <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/82">Issue 82</a> - Provide more specification regarding persistence of <var>record of key usage</var>.</p>
                               </p>
                             <li><p>Use the <var>cdm</var> to decrypt the block using <var>block key</var>.</p></li>
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
