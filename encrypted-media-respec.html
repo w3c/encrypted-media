@@ -267,30 +267,36 @@
           <p class="note">
           <a def-id="keysystems"></a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
           This block could be a simple key or content ID or a more complex structure containing such information.
-          It should always allow unique identification of the key(s) needed to decrypt the content.
+          It SHOULD always allow unique identification of the <a href="#decryption-key">key(s)</a> needed to decrypt the content.
           This initialization information MAY be obtained in some application-specific way or provided with the <a def-id="media-data"></a>.
           </p>
 
           <p>
           Initialization Data is a generic term for container-specific data that is used by a <a def-id="cdm"></a> to generate a license request.
-          Initialization data found with the <a def-id="media-data"></a> is provided to the application in the <a def-id="encrypted-event-initdata-attribute"></a> attribute of the <a def-id="encrypted"></a> event.
           </p>
 
           <p>
           The format of the initialization data depends upon the type of container, and containers MAY support more than one format
-          of initialization data. The <dfn id="initialization-data-type">Initialization Data Type</dfn> is a string that indicates what
-          format the initialization data is provided in. Initialization Data Type strings are always matched case-sensitively. It is
+          of initialization data. The <dfn id="initialization-data-type">Initialization Data Type</dfn> is a string that indicates the
+          format of the accompanying Initialization Data. Initialization Data Type strings are always matched case-sensitively. It is
           RECOMMENDED that Initialization Data Type strings are lower-case ASCII strings.
           </p>
 
           <p>
           The Encrypted Media Extensions Stream Format and Initialization Data Format Registry [[EME-REGISTRY]]
-          provides the mapping from initialization data type string to the specification for each format.
+          provides the mapping from <a def-id="initialization-data-type"></a> string to the specification for each format.
+          </p>
+
+          <p>
+          When the user agent encounters Initialization Data in the <a def-id="media-data"></a>, it provides that Initialization Data to the application in the <a def-id="encrypted-event-initdata-attribute"></a> attribute of the <a def-id="encrypted"></a> event.
+          The user agent MUST NOT store the Initialization Data or use its <em>content</em> at the time it is encountered.  
+          The application provides Initialization Data to the <a def-id="cdm"></a> via <a def-id="generateRequest"></a>.
+          The user agent MUST NOT provide Initialization Data to the CDM by other means.
           </p>
 
           <p>Initialization Data MUST be a fixed value for a given set of stream(s) or <a def-id="media-data"></a>.
             It MUST only contain information related to the keys required to play a given set of stream(s) or <a def-id="media-data"></a>.
-            It MUST NOT contain application data, client-specific data, user-specific data, <a href="#decryption-key">key(s)</a>, or executable code.
+            It MUST NOT contain application data, client-specific data, user-specific data, or executable code.
           </p>
 
           <p>Initialization Data SHOULD NOT contain Key System-specific data or values.
