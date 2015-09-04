@@ -903,30 +903,36 @@ table.simple {
           <div class="note"><div class="note-title" aria-level="3" role="heading" id="h-note8"><span>Note</span></div><p class="">
           <a href="#key-system">Key Systems</a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
           This block could be a simple key or content ID or a more complex structure containing such information.
-          It should always allow unique identification of the key(s) needed to decrypt the content.
+          It <em class="rfc2119" title="SHOULD">SHOULD</em> always allow unique identification of the <a href="#decryption-key">key(s)</a> needed to decrypt the content.
           This initialization information <em class="rfc2119" title="MAY">MAY</em> be obtained in some application-specific way or provided with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
           </p></div>
 
           <p>
           Initialization Data is a generic term for container-specific data that is used by a <a href="#cdm">CDM</a> to generate a license request.
-          Initialization data found with the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> is provided to the application in the <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> attribute of the <code><a href="#dom-evt-encrypted">encrypted</a></code> event.
           </p>
 
           <p>
           The format of the initialization data depends upon the type of container, and containers <em class="rfc2119" title="MAY">MAY</em> support more than one format
-          of initialization data. The <dfn id="initialization-data-type" data-dfn-type="dfn">Initialization Data Type</dfn> is a string that indicates what
-          format the initialization data is provided in. Initialization Data Type strings are always matched case-sensitively. It is
+          of initialization data. The <dfn id="initialization-data-type" data-dfn-type="dfn">Initialization Data Type</dfn> is a string that indicates the
+          format of the accompanying Initialization Data. Initialization Data Type strings are always matched case-sensitively. It is
           <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that Initialization Data Type strings are lower-case ASCII strings.
           </p>
 
           <p>
           The Encrypted Media Extensions Stream Format and Initialization Data Format Registry [<cite><a class="bibref" href="#bib-EME-REGISTRY">EME-REGISTRY</a></cite>]
-          provides the mapping from initialization data type string to the specification for each format.
+          provides the mapping from <a href="#initialization-data-type">Initialization Data Type</a> string to the specification for each format.
+          </p>
+
+          <p>
+          When the user agent encounters Initialization Data in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, it provides that Initialization Data to the application in the <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> attribute of the <code><a href="#dom-evt-encrypted">encrypted</a></code> event.
+          The user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> store the Initialization Data or use its <em>content</em> at the time it is encountered.  
+          The application provides Initialization Data to the <a href="#cdm">CDM</a> via <code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest()</a></code>.
+          The user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> provide Initialization Data to the CDM by other means.
           </p>
 
           <p>Initialization Data <em class="rfc2119" title="MUST">MUST</em> be a fixed value for a given set of stream(s) or <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
             It <em class="rfc2119" title="MUST">MUST</em> only contain information related to the keys required to play a given set of stream(s) or <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
-            It <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain application data, client-specific data, user-specific data, <a href="#decryption-key">key(s)</a>, or executable code.
+            It <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain application data, client-specific data, user-specific data, or executable code.
           </p>
 
           <p>Initialization Data <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> contain Key System-specific data or values.
