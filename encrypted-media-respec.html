@@ -1013,17 +1013,20 @@
             </li>
             <li>
               <p>
-                <var>first decryption time</var> - The <dfn id="first-decryption-time">first decryption time</dfn>, defined as the time at which the session was first use to decrypt content, and
+                <var>first decryption time</var> - The <dfn id="first-decryption-time">first decryption time</dfn>, defined as the time at which the session was first use to decrypt content, accurate to <var><a def-id="key-usage-accuracy"></a></var> and
               </p>
             </li>
             <li>
               <p>
-                <var>latest decryption time</var> - The <dfn id="latest-decryption-time">latest decryption time</dfn>, defined as the latest time at which the session was used to decrypt content.
+                <var>latest decryption time</var> - The <dfn id="latest-decryption-time">latest decryption time</dfn>, defined as the latest time at which the session was used to decrypt content, accurate to <var><a def-id="key-usage-accuracy"></a></var>.
               </p>
             </li>
           </ul>
           <p>
               A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the <a def-id="record-of-key-usage"></a> will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
+          </p>
+          <p>
+            The <dfn id="key-usage-accuracy"><var>key usage accuracy</var></dfn> is implementation-dependant but SHALL NOT be greater than 60 seconds.
           </p>
           <p class="note">
             Because the license and keys are not persisted, this record implicitly proves that the keys are no longer available in the session.
@@ -2233,15 +2236,19 @@
                                   </li>
                                   <li>
                                     <p>
-                                      If the <var>first decrypt time</var> of <var>usage</var> is <code>null</code>, set the <var>first decrypt time</var> of <var>usage</var> to the current time.
+                                      If the <var>first decrypt time</var> of <var>usage</var> is <code>null</code>, set the <var>first decrypt time</var> of <var>usage</var> to the current time, accurate to within <a def-id="key-usage-accuracy"></a>.
                                     </p>
                                   </li>
                                   <li>
                                     <p>
-                                      Set the <var>latest decrypt time</var> of <var>usage</var> to the current time.
+                                      Set the <var>latest decrypt time</var> of <var>usage</var> to the current time, accurate to within <a def-id="key-usage-accuracy"></a>.
                                     </p>
                                   </li>
                                 </ol>
+                                <p class="note">
+                                  Implementations MAY optimize the times at which this step is executed provided the recorded key usage times remain
+                                  accurate to within <var>key usage accuracy</var>.
+                                </p>
                               </p>
                             <li><p>Use the <var>cdm</var> to decrypt the block using <var>block key</var>.</p></li>
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
