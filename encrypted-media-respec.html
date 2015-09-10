@@ -1434,13 +1434,19 @@
                       <dl class="switch">
                         <dt><a def-id="tracked-session"></a></dt>
                         <dd>
-                          <p>
-                            Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
-                          </p>
+                          <ol>
+                            <li>
+                              Store the session's <var>record of key usage</var>.
+                            </li>
+                            <li>
+                              <p>
+                                Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
+                              </p>
+                            </li>
+                          </ol>
                         </dd>
                         <dt><a def-id="persistent-license-session"></a></dt>
                         <dd>
-                          <p>Run the following steps:</p>
                           <ol>
                             <li>
                               <p>
@@ -1741,8 +1747,18 @@
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li>
+              <p>
+                Destroy any license and/or keys associated with <var>session</var> that have not been explicitly stored.
+              </p>
+            </li>
             <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
+            <li>
+              <p>
+                If the object's <var>session type</var> is <a def-id="tracked-session"></a>, store the <var>record of key usage</var>.
+              </p>
+            </li>
             <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
