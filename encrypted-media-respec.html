@@ -917,9 +917,9 @@
             Support for this session type is REQUIRED.
           </p>
         </dd>
-        <dt>tracked</dt>
+        <dt>persistent-usage-record</dt>
         <dd>
-          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"tracked"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
             A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <var>record of key usage times</var> SHALL be persisted.
             The <var>record of key usage times</var> consists of a record of the key IDs of the keys used in the session, the <var>first decryption time</var> for each key and the <var>latest decryption time</var> for each key.
@@ -1037,7 +1037,7 @@
               <dl class="switch">
                 <dt><a def-id="temporary-session"></a></dt>
                 <dd>Return <code>false</code>.</dd>
-                <dt><a def-id="tracked-session"></a></dt>
+                <dt><a def-id="persistent-usage-record-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
                 <dt><a def-id="persistent-license-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
@@ -1146,7 +1146,7 @@
                           <p>Let <var>requested license type</var> be a temporary non-persistable license.</p>
                           <p class="note">The returned license must not be persistable or require persisting information related to it.</p>
                         </dd>
-                        <dt><a def-id="tracked-session"></a></dt>
+                        <dt><a def-id="persistent-usage-record-session"></a></dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a non-persistable license that will persist a <var>record of key usage</var>.</p>
                         </dd>
@@ -1295,7 +1295,7 @@
                           <dl class="switch">
                             <dt>If <var>sessionType</var> is <a def-id="temporary-session"></a> and <var>sanitized response</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
                             <dd>Process <var>sanitized response</var>, not storing any session data.</dd>
-                            <dt>If <var>sessionType</var> is <a def-id="tracked-session"></a> and <var>sanitized response</var> contains a non-persistable license</dt>
+                            <dt>If <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a> and <var>sanitized response</var> contains a non-persistable license</dt>
                             <dd>Process <var>sanitized response</var>, not storing any session data.
                             </dd><dt>If <var>sessionType</var> is <a def-id="persistent-license-session"></a> and <var>sanitized response</var> contains a persistable license</dt>
                             <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>.
@@ -1327,7 +1327,7 @@
                             <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
                           </ol>
                         </dd>
-                        <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="tracked-session"></a></dt>
+                        <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
@@ -1412,7 +1412,7 @@
             <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>If this object's <var>session type</var> is <a def-id="tracked-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
+            <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
@@ -1427,7 +1427,7 @@
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
                     <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
                       <dl class="switch">
-                        <dt><a def-id="tracked-session"></a></dt>
+                        <dt><a def-id="persistent-usage-record-session"></a></dt>
                         <dd>
                           <p>
                             Let <var>message</var> be a message containing or reflecting the <var>record of key usage</var>.
@@ -2040,7 +2040,7 @@
                         <li><p>If <var>block key</var> is not null, run the following steps:
                           <ol>
                             <li>
-                              <p>If this object's <var>session type</var> is <a def-id="tracked-session"></a>, run the following steps:</p>
+                              <p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, run the following steps:</p>
                                 <ol>
                                   <li>
                                     <p>
@@ -2320,7 +2320,7 @@
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
               </ol>
             </li>
-            <li><p>The <a def-id="tracked-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p>
+            <li><p>The <a def-id="persistent-usage-record-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p>
             <li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
             </li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
@@ -2359,7 +2359,7 @@
             </li>
             <li>
               <p>
-                For sessions of type <a def-id="tracked-session"></a>, in the <a def-id="remove"></a> and <a def-id="load"></a> algorithms, the <var>message</var> reflecting
+                For sessions of type <a def-id="persistent-usage-record-session"></a>, in the <a def-id="remove"></a> and <a def-id="load"></a> algorithms, the <var>message</var> reflecting
                 the <var>record of key usage times</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
               </p>
             </li>
