@@ -611,17 +611,18 @@
                   </li>
                   <li>
                     <p>
-                      Let <var>distinctive identifier state</var> be the result of running the <a def-id="get-distinctive-identifier-state-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the first matching condition from the following list:
+                      Let <var>distinctive identifier consent status</var> be the result of running the <a def-id="get-distinctive-identifier-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the first matching condition from the following list:
                     </p>
 
                     <dl class="switch">
-                      <dt>If <var>distinctive identifier state</var> is <code>ConsentRequired</code>:</dt>
+                      <dt>If <var>distinctive identifier consent status</var> is <code>ConsentRequired</code>:</dt>
                       <dd>
                         <ol>
                           <li>
                             <p>
-                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var>.
+                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var>.
                             </p>
+                            <p class="note">User consent to use Distinctive Identifiers is specific to each particular <var>accumulated configuration</var> and <var>origin</var>.</p>
                           </li>
                           <li>
                             <p>
@@ -631,15 +632,15 @@
                         </ol>
                       </dd>
                       <dt>
-                        If <var>distinctive identifier state</var> is <code>InformUser</code>:
+                        If <var>distinctive identifier consent status</var> is <code>InformUser</code>:
                       </dt>
                       <dd>
                         <p>
-                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> and <var>origin</var>.
+                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> in the <var>origin</var> and continue with the following steps.
                         </p>
                       </dd>
                       <dt>
-                        Otherwise:
+                        If <var>distinctive identifier consent status</var> is <code>Allowed</code>::
                       </dt>
                       <dd>
                         <p>
@@ -654,7 +655,7 @@
               <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
           </section>
-          
+
           <section>
             <h5>Get Supported Capabilities for Audio/Video Type</h5>
             <p>Given a <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
@@ -728,26 +729,31 @@
           </section>
           
           <section>
-            <h5>Get Distinctive Identifier State</h5>
+            <h5>Get Distinctive Identifier Consent Status</h5>
             <p>
-              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code> or <code>Allowed</code>.
+              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code> or <code>Allowed</code>.
             </p>
             <ol>
               <li>
                 <p>
-                  If there is persisted state indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed for <var>accumulated configuration</var> and <var>origin</var> return <code>Allowed</code>.
+                  If there is persisted consent for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed in conjunction with <var>accumulated configuration</var>, return <code>Allowed</code>.
                 </p>
                 <p class="note">
-                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var>, which implies use of such an identifier.
+                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var> that requires use of such an identifier.
                 </p>
               </li>
               <li>
                 <p>
-                  If the any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, or if the user agent requires explicit consent for the user of
+                  If the any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If the user agent requires explicit user consent for the use of
                   <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for other reasons, return <code>ConsentRequired</code>.
                 </p>
                 <p class="note">
-                  Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.
+                  Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
                 </p>
               </li>
               <li>
