@@ -620,9 +620,10 @@
                         <ol>
                           <li>
                             <p>
-                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var>.
+                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                             </p>
                             <p class="note">User consent to use Distinctive Identifiers is specific to each particular <var>accumulated configuration</var> and <var>origin</var>.</p>
+                            <p class="note">The user agent MAY choose to persist the user response</p>
                           </li>
                           <li>
                             <p>
@@ -640,11 +641,19 @@
                         </p>
                       </dd>
                       <dt>
-                        If <var>distinctive identifier consent status</var> is <code>Allowed</code>::
+                        If <var>distinctive identifier consent status</var> is <code>Allowed</code>:
                       </dt>
                       <dd>
                         <p>
                           Continue with the following steps.
+                        </p>
+                      </dd>
+                      <dt>
+                        If <var>distinctive identifier consent status</var> is <code>Denied</code>:
+                      </dt>
+                      <dd>
+                        <p>
+                          Return <code>null</code>.
                         </p>
                       </dd>
                     </dl>
@@ -731,7 +740,7 @@
           <section>
             <h5>Get Distinctive Identifier Consent Status</h5>
             <p>
-              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code> or <code>Allowed</code>.
+              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code>, <code>Allowed</code> or <code>Denied</code>.
             </p>
             <ol>
               <li>
@@ -744,7 +753,12 @@
               </li>
               <li>
                 <p>
-                  If the any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
+                  If there is persisted denial for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are not allowed in conjunction with <var>accumulated configuration</var>, return <code>Denied</code>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
                 </p>
               </li>
               <li>
