@@ -611,14 +611,52 @@
                     <p>
                       If the <a def-id="distinctive-identifier"></a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
                     </p>
-                    <p class="note">Implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
+                    <p class="note">
+                      The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                    </p>
                   </li>
                   <li>
                     <p>
-                      If there is no persisted consent covering <var>accumulated configuration</var> for the <var>origin</var>, it is RECOMMENDED that implementations request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.
+                      Let <var>distinctive identifier consent status</var> be the result of running the <a def-id="get-distinctive-identifier-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the value of <var>distinctive identifier consent status</var> from the following list:":
                     </p>
-                    <p class="note">A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering this <var>accumulated configuration</var>, which implies use of such an identifier.</p>
-                    <p class="note">Implementations MAY require consent for other reasons, such as the security properties of the CDM implementation.</p>
+
+                    <dl class="switch">
+                      <dt><code>ConsentRequired</code>:</dt>
+                      <dd>
+                        <ol>
+                          <li>
+                            <p>
+                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
+                            </p>
+                            <p class="note">User consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p>
+                            <p class="note">The user agent MAY choose to persist the user response.</p>
+                          </li>
+                          <li>
+                            <p>
+                              If consent was denied, return <code>null</code>.
+                            </p>
+                          </li>
+                        </ol>
+                      </dd>
+                      <dt><code>InformUser</code>:</dt>
+                      <dd>
+                        <p>
+                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> in the <var>origin</var> and continue with the following steps.
+                        </p>
+                      </dd>
+                      <dt><code>Allowed</code>:</dt>
+                      <dd>
+                        <p>
+                          Continue with the following steps.
+                        </p>
+                      </dd>
+                      <dt><code>Denied</code>:</dt>
+                      <dd>
+                        <p>
+                          Return <code>null</code>.
+                        </p>
+                      </dd>
+                    </dl>
                   </li>
                 </ol>
               </li>
@@ -697,6 +735,47 @@
             <h5>Are insecure contexts allowed? - DEPRECATED</h5>
             <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
             <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
+          </section>
+          
+          <section>
+            <h5>Get Distinctive Identifier Consent Status</h5>
+            <p>
+              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code>, <code>Allowed</code> or <code>Denied</code>.
+            </p>
+            <ol>
+              <li>
+                <p>
+                  If there is persisted denial for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are not allowed in conjunction with <var>accumulated configuration</var>, return <code>Denied</code>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If there is persisted consent for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed in conjunction with <var>accumulated configuration</var>, return <code>Allowed</code>.
+                </p>
+                <p class="note">
+                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var> that requires use of such an identifier.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If the user agent requires explicit user consent for the use of
+                  <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for other reasons, return <code>ConsentRequired</code>.
+                </p>
+                <p class="note">
+                  Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Return <code>InformUser</code>.
+                </p>
+              </li>
+            </ol>
           </section>
           
         </section>
