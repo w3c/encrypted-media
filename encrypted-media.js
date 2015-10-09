@@ -220,14 +220,14 @@
     'status-output-restricted': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-restricted', link_text: '"output-restricted"',  },
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
 
-    'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'queue a "message" event',  },
-    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'session close',  },
-    'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'encrypted block encountered',  },
-    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data encountered',  },
-    'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'update key statuses',  },
-    'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'update expiration',  },
-    'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'attempt to resume playback if necessary',  },
-    'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'queue a "waitingforkey" event',  },
+    'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
+    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'Session Close',  },
+    'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
+    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
+    'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'Update Key Statuses',  },
+    'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'Update Expiration',  },
+    'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
+    'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
 
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
