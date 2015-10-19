@@ -1844,7 +1844,7 @@ table.simple {
         </dd><dt id="widl-MediaKeySession-sessionId"><code>sessionId</code> of type <span class="idlAttrType">DOMString</span>, readonly   </dt><dd>
           <p>The <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
         </dd></dl></section><section id="methods-3" typeof="bibo:Chapter" resource="#methods-3" property="bibo:hasPart"><h3 id="h-methods-3" resource="#h-methods-3"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.2 </span>Methods</span></h3><dl class="methods"><dt id="widl-MediaKeySession-close-Promise-void"><code id="close">close</code></dt><dd>
-          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it.</p>
+          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it. Persisted data should not be released or cleared.</p>
           <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note45"><span>Note</span></div><p class="">The returned promise is resolved when the request has been processed, and the <code><a href="#widl-MediaKeySession-closed">closed</a></code> attribute promise is resolved when the session is closed.</p></div>
 
           
@@ -2705,8 +2705,10 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
               </p></div>
             </li>
             <li>
-              <p>If the media element's <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a MediaKeys object before decoding potentially-encrypted media data, run the following steps:</p>
-              <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note73"><span>Note</span></div><p class="">These steps may be reached when the application provides media data before calling <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> to provide a <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> object.  Selection of a key system can affect the pipeline and/or decoders used so some implementations may delay playback of media resources that may contain encrypted blocks until a CDM is specified by passing a <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> object to <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.</p></div>
+              <p>If the media element's <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object before decoding potentially-encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, run the following steps:</p>
+              <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note73"><span>Note</span></div><p class="">These steps may be reached when the application provides <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> before calling <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> to provide a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object.
+                Selecting a <a href="#cdm">CDM</a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object to <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.
+              </p></div>
               <ol>
                 <li><p>Run the <a href="#queue-waitingforkey">Queue a "waitingforkey" Event</a> algorithm on the media element.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
@@ -3097,12 +3099,12 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <h5 id="h-clear-key-request-format-example" resource="#h-clear-key-request-format-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.3.1 </span>Example</span></h5><p><em>This section is non-normative.</em></p>
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
             <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example highlight prettyprint prettyprinted"><span class="pun">{</span><span class="pln">
-  </span><span class="str">'kids'</span><span class="pun">:</span><span class="pln">
+  </span><span class="str">"kids"</span><span class="pun">:</span><span class="pln">
     </span><span class="pun">[</span><span class="pln">
-     </span><span class="str">'LwVHf8JLtPrv2GUXFW2v'</span><span class="pun">,</span><span class="pln">
-     </span><span class="str">'0DdtU9od-Bh5L3xbv0Xf'</span><span class="pln">
+     </span><span class="str">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="pun">,</span><span class="pln">
+     </span><span class="str">"0DdtU9od-Bh5L3xbv0Xf_A"</span><span class="pln">
     </span><span class="pun">],</span><span class="pln">
-  </span><span class="str">'type'</span><span class="pun">:</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="pln">
+  </span><span class="str">"type"</span><span class="pun">:</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="pln">
 </span><span class="pun">}</span></pre></div>
           </section>
         </section>
@@ -3138,12 +3140,12 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <h5 id="h-clear-key-license-format-example" resource="#h-clear-key-license-format-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.4.1 </span>Example</span></h5><p><em>This section is non-normative.</em></p>
             <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
             <div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint prettyprinted"><span class="pun">{</span><span class="pln">
-  </span><span class="str">'keys'</span><span class="pun">:</span><span class="pln">
+  </span><span class="str">"keys"</span><span class="pun">:</span><span class="pln">
     </span><span class="pun">[{</span><span class="pln">
-      </span><span class="str">'kty'</span><span class="pun">:</span><span class="str">'oct'</span><span class="pun">,</span><span class="pln">
-      </span><span class="str">'alg'</span><span class="pun">:</span><span class="str">'A128KW'</span><span class="pun">,</span><span class="pln">
-      </span><span class="str">'k'</span><span class="pun">:</span><span class="str">'tQ0bJVWb6b0KPL6KtZIy'</span><span class="pun">,</span><span class="pln">
-      </span><span class="str">'kid'</span><span class="pun">:</span><span class="str">'LwVHf8JLtPrv2GUXFW2v'</span><span class="pln">
+      </span><span class="str">"kty"</span><span class="pun">:</span><span class="str">"oct"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"alg"</span><span class="pun">:</span><span class="str">"A128KW"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"k"</span><span class="pun">:</span><span class="str">"tQ0bJVWb6b0KPL6KtZIy_A"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"kid"</span><span class="pun">:</span><span class="str">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="pln">
     </span><span class="pun">}],</span><span class="pln">
   </span><span class="str">'type'</span><span class="pun">:</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="pln">
 </span><span class="pun">}</span></pre></div>
@@ -3172,7 +3174,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <h5 id="h-clear-key-release-format-example" resource="#h-clear-key-release-format-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example</span></h5><p><em>This section is non-normative.</em></p>
             <p>The following example is a license release for a temporary license for a single key ID. (Line breaks are for readability only.)</p>
             <div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint prettyprinted"><span class="pun">{</span><span class="pln">
-  </span><span class="str">"kids"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="pln"> </span><span class="str">"67ef0gd8pvfd0"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"77ef0gd8pvfd0"</span><span class="pln"> </span><span class="pun">],</span><span class="pln">
+  </span><span class="str">"kids"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="pln"> </span><span class="str">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"0DdtU9od-Bh5L3xbv0Xf_A"</span><span class="pln"> </span><span class="pun">],</span><span class="pln">
   </span><span class="str">"firstTime"</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="lit">1430425323757</span><span class="pun">,</span><span class="pln">
   </span><span class="str">"latestTime"</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="lit">1430425383757</span><span class="pln">
 </span><span class="pun">}</span></pre></div>
@@ -3198,8 +3200,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <div class="example"><div class="example-title"><span>Example 4</span></div><pre class="example highlight prettyprint prettyprinted"><span class="pun">{</span><span class="pln">
   </span><span class="str">"kids"</span><span class="pun">:</span><span class="pln">
     </span><span class="pun">[</span><span class="pln">
-     </span><span class="str">"67ef0gd8pvfd0"</span><span class="pun">,</span><span class="pln">
-     </span><span class="str">"77ef0gd8pvfd0"</span><span class="pln">
+     </span><span class="str">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="pun">,</span><span class="pln">
+     </span><span class="str">"0DdtU9od-Bh5L3xbv0Xf_A"</span><span class="pln">
     </span><span class="pun">]</span><span class="pln">
 </span><span class="pun">}</span></pre></div>
           </section>
@@ -3723,7 +3725,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </span><span class="pun">);</span><span class="pln">
           promise</span><span class="pun">.</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
             </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-              </span><span class="kwd">var</span><span class="pln"> initData </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">]);</span><span class="pln">
+              </span><span class="kwd">var</span><span class="pln"> te </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">TextEncoder</span><span class="pun">();</span><span class="pln">
+              </span><span class="kwd">var</span><span class="pln"> initData </span><span class="pun">=</span><span class="pln"> te</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="pln"> </span><span class="str">'{"kids":["LwVHf8JLtPrv2GUXFW2v_A"]}'</span><span class="pun">);</span><span class="pln">
               </span><span class="kwd">var</span><span class="pln"> keySession </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType">createSession</a></code><span class="pun">();</span><span class="pln">
               keySession</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"</span><code><a href="#dom-evt-message">message</a></code><span class="str">"</span><span class="pun">,</span><span class="pln"> handleMessage</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
               </span><span class="kwd">return</span><span class="pln"> keySession</span><span class="pun">.</span><code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest</a></code><span class="pun">(</span><span class="str">'webm'</span><span class="pun">,</span><span class="pln"> initData</span><span class="pun">);</span><span class="pln">
@@ -3738,8 +3741,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
   </span><span class="kwd">function</span><span class="pln"> handleMessage</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
     </span><span class="kwd">var</span><span class="pln"> keySession </span><span class="pun">=</span><span class="pln"> event</span><span class="pun">.</span><span class="pln">target</span><span class="pun">;</span><span class="pln">
-
-    </span><span class="kwd">var</span><span class="pln"> license </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">]);</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> te </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">TextEncoder</span><span class="pun">();</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> license </span><span class="pun">=</span><span class="pln"> te</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="str">'{"keys":[{"kty":"oct","alg":"A128KW","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}'</span><span class="pun">);</span><span class="pln">
     keySession</span><span class="pun">.</span><code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update</a></code><span class="pun">(</span><span class="pln">license</span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
       console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">'update() failed'</span><span class="pun">)</span><span class="pln">
     </span><span class="pun">);</span><span class="pln">

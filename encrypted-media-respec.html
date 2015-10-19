@@ -1523,7 +1523,7 @@
 
         <dt>Promise&lt;void&gt; close()</dt>
         <dd>
-          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it.</p>
+          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it. Persisted data should not be released or cleared.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
 
           <ol class="method-algorithm">
@@ -2151,8 +2151,10 @@
               </p>
             </li>
             <li>
-              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a MediaKeys object before decoding potentially-encrypted media data, run the following steps:</p>
-              <p class="note">These steps may be reached when the application provides media data before calling <a def-id="setMediaKeys"></a> to provide a <a def-id="mediaKeys-attribute"></a> object.  Selection of a key system can affect the pipeline and/or decoders used so some implementations may delay playback of media resources that may contain encrypted blocks until a CDM is specified by passing a <a def-id="mediaKeys-attribute"></a> object to <a def-id="setMediaKeys"></a>.</p>
+              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted <a def-id="media-data"></a>, run the following steps:</p>
+              <p class="note">These steps may be reached when the application provides <a def-id="media-data"></a> before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
+                Selecting a <a def-id="cdm"></a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
+              </p>
               <ol>
                 <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
@@ -2544,12 +2546,12 @@
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
             <pre class="example highlight">
 {
-  'kids':
+  "kids":
     [
-     'LwVHf8JLtPrv2GUXFW2v',
-     '0DdtU9od-Bh5L3xbv0Xf'
+     "LwVHf8JLtPrv2GUXFW2v_A",
+     "0DdtU9od-Bh5L3xbv0Xf_A"
     ],
-  'type':<a def-id="temporary-session"></a>
+  "type":<a def-id="temporary-session"></a>
 }
 </pre>
           </section>
@@ -2587,12 +2589,12 @@
             <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
             <pre class="example highlight">
 {
-  'keys':
+  "keys":
     [{
-      'kty':'oct',
-      'alg':'A128KW',
-      'k':'tQ0bJVWb6b0KPL6KtZIy',
-      'kid':'LwVHf8JLtPrv2GUXFW2v'
+      "kty":"oct",
+      "alg":"A128KW",
+      "k":"tQ0bJVWb6b0KPL6KtZIy_A",
+      "kid":"LwVHf8JLtPrv2GUXFW2v_A"
     }],
   'type':<a def-id="temporary-session"></a>
 }</pre>
@@ -2622,7 +2624,7 @@
             <p>The following example is a license release for a temporary license for a single key ID. (Line breaks are for readability only.)</p>
             <pre class="example highlight">
 {
-  "kids": [ "67ef0gd8pvfd0", "77ef0gd8pvfd0" ],
+  "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ],
   "firstTime" : 1430425323757,
   "latestTime" : 1430425383757
 }
@@ -2650,8 +2652,8 @@
 {
   "kids":
     [
-     "67ef0gd8pvfd0",
-     "77ef0gd8pvfd0"
+     "LwVHf8JLtPrv2GUXFW2v_A",
+     "0DdtU9od-Bh5L3xbv0Xf_A"
     ]
 }
 </pre>
@@ -3177,7 +3179,8 @@
           );
           promise.then(
             function(createdMediaKeys) {
-              var initData = new Uint8Array([ ... ]);
+              var te = new TextEncoder();
+              var initData = te.encode( '{"kids":["LwVHf8JLtPrv2GUXFW2v_A"]}');
               var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
               keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
               return keySession.<a def-id="generateRequest-call"></a>('webm', initData);
@@ -3192,8 +3195,8 @@
 
   function handleMessage(event) {
     var keySession = event.target;
-
-    var license = new Uint8Array([ ... ]);
+    var te = new TextEncoder();
+    var license = te.encode('{"keys":[{"kty":"oct","alg":"A128KW","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}');
     keySession.<a def-id="update-call"></a>(license).catch(
       console.error.bind(console, 'update() failed')
     );
