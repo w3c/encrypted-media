@@ -3039,7 +3039,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
      </span><span class="str">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="pun">,</span><span class="pln">
      </span><span class="str">"0DdtU9od-Bh5L3xbv0Xf_A"</span><span class="pln">
     </span><span class="pun">],</span><span class="pln">
-  </span><span class="str">'type'</span><span class="pun">:</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="pln">
+  </span><span class="str">"type"</span><span class="pun">:</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="pln">
 </span><span class="pun">}</span></pre></div>
           </section>
         </section>
@@ -3671,7 +3671,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </span><span class="pun">);</span><span class="pln">
           promise</span><span class="pun">.</span><span class="pln">then</span><span class="pun">(</span><span class="pln">
             </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">createdMediaKeys</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-              </span><span class="kwd">var</span><span class="pln"> initData </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">]);</span><span class="pln">
+              </span><span class="kwd">var</span><span class="pln"> te </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">TextEncoder</span><span class="pun">();</span><span class="pln">
+              </span><span class="kwd">var</span><span class="pln"> initData </span><span class="pun">=</span><span class="pln"> te</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="pln"> </span><span class="str">'{"kids":["LwVHf8JLtPrv2GUXFW2v_A"]}'</span><span class="pun">);</span><span class="pln">
               </span><span class="kwd">var</span><span class="pln"> keySession </span><span class="pun">=</span><span class="pln"> createdMediaKeys</span><span class="pun">.</span><code><a href="#widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType">createSession</a></code><span class="pun">();</span><span class="pln">
               keySession</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"</span><code><a href="#dom-evt-message">message</a></code><span class="str">"</span><span class="pun">,</span><span class="pln"> handleMessage</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
               </span><span class="kwd">return</span><span class="pln"> keySession</span><span class="pun">.</span><code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest</a></code><span class="pun">(</span><span class="str">'webm'</span><span class="pun">,</span><span class="pln"> initData</span><span class="pun">);</span><span class="pln">
@@ -3686,8 +3687,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
   </span><span class="kwd">function</span><span class="pln"> handleMessage</span><span class="pun">(</span><span class="pln">event</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
     </span><span class="kwd">var</span><span class="pln"> keySession </span><span class="pun">=</span><span class="pln"> event</span><span class="pun">.</span><span class="pln">target</span><span class="pun">;</span><span class="pln">
-
-    </span><span class="kwd">var</span><span class="pln"> license </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">]);</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> te </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">TextEncoder</span><span class="pun">();</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> license </span><span class="pun">=</span><span class="pln"> te</span><span class="pun">.</span><span class="pln">encode</span><span class="pun">(</span><span class="str">'{"keys":[{"kty":"oct","alg":"A128KW","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}'</span><span class="pun">);</span><span class="pln">
     keySession</span><span class="pun">.</span><code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update</a></code><span class="pun">(</span><span class="pln">license</span><span class="pun">).</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">
       console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">'update() failed'</span><span class="pun">)</span><span class="pln">
     </span><span class="pun">);</span><span class="pln">

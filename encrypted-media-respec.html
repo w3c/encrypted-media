@@ -2495,7 +2495,7 @@
      "LwVHf8JLtPrv2GUXFW2v_A",
      "0DdtU9od-Bh5L3xbv0Xf_A"
     ],
-  'type':<a def-id="temporary-session"></a>
+  "type":<a def-id="temporary-session"></a>
 }
 </pre>
           </section>
@@ -3134,7 +3134,8 @@
           );
           promise.then(
             function(createdMediaKeys) {
-              var initData = new Uint8Array([ ... ]);
+              var te = new TextEncoder();
+              var initData = te.encode( '{"kids":["LwVHf8JLtPrv2GUXFW2v_A"]}');
               var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
               keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
               return keySession.<a def-id="generateRequest-call"></a>('webm', initData);
@@ -3149,8 +3150,8 @@
 
   function handleMessage(event) {
     var keySession = event.target;
-
-    var license = new Uint8Array([ ... ]);
+    var te = new TextEncoder();
+    var license = te.encode('{"keys":[{"kty":"oct","alg":"A128KW","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}');
     keySession.<a def-id="update-call"></a>(license).catch(
       console.error.bind(console, 'update() failed')
     );
