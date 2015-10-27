@@ -603,7 +603,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-19-october-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-10-19">19 October 2015</time></h2>
+  <h2 id="w3c-editor-s-draft-27-october-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-10-27">27 October 2015</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -1923,7 +1923,7 @@ table.simple {
                               <ul>
                                 <li>
                                   <p>
-                                    Set the list of <a href="#decryption-key-id">key IDs</a> <a href="#known-key">known</a> to the session to the empty list.
+                                    Set the list of <a href="#decryption-key-id">key IDs</a> <a href="#known-key">known</a> to the session to an empty list.
                                   </p>
                                 </li>
                                 <li>
@@ -2747,13 +2747,16 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                               <p>If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, run the following steps:</p>
                                 <ol>
                                   <li>
+                                    <p>Let <var>usage</var> be the object's <var>record of key usage</var>.
+                                  </p></li>
+                                  <li>
                                     <p>
-                                      If the <var>first decrypt time</var> of the object's <var>record of key usage</var> is <code>null</code>, set the <var>first decrypt time</var> to the current time.
+                                      If the <var>first decrypt time</var> of <var>usage</var> is <code>null</code>, set the <var>first decrypt time</var> of <var>usage</var> to the current time.
                                     </p>
                                   </li>
                                   <li>
                                     <p>
-                                      Set the <var>latest decrypt time</var> of the object's <var>record of key usage</var> to the current time.
+                                      Set the <var>latest decrypt time</var> of <var>usage</var> to the current time.
                                     </p>
                                   </li>
                                 </ol>
@@ -3070,7 +3073,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <li>
               <p>
                 The <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute method initially contains all key IDs that have been provided via <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>, with status <code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code>.
-                When the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm is executed, the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute will be set to the empty list.
+                When the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm is executed, the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute will be set to an empty list.
               </p>
             </li>
             <li><p><a href="#initialization-data">Initialization Data</a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support any combination of registered Initialization Data Types [<cite><a class="bibref" href="#bib-EME-REGISTRY">EME-REGISTRY</a></cite>].
@@ -3161,9 +3164,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <dt>"kids"</dt>
             <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
             <dt>"firstTime"</dt>
-            <dd>The <a def-id="first-decrypt-time" class="externalDFN"></a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
+            <dd>The <a href="#first-decryption-time">first decryption time</a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
             <dt>"latestTime"</dt>
-            <dd>The <a def-id="latest-decrypt-time" class="externalDFN"></a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
+            <dd>The <a href="#latest-decryption-time">latest decryption time</a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
           </dl>
 
           <p>When contained in the ArrayBuffer <code><a href="#widl-MediaKeyMessageEvent-message">message</a></code> attribute of a <a href="#idl-def-MediaKeyMessageEvent" class="idlType"><code>MediaKeyMessageEvent</code></a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [<cite><a class="bibref" href="#bib-ENCODING">ENCODING</a></cite>].
@@ -4205,7 +4208,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
 <section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart"><!--OddPage--><h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart"><h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3><dl class="bibliography" resource=""><dt id="bib-COOKIES">[COOKIES]</dt><dd>A. Barth. <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires"><cite>HTTP State Management Mechanism</cite></a>. April 2011. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires">https://tools.ietf.org/html/rfc6265</a>
 </dd><dt id="bib-DOM">[DOM]</dt><dd>Anne van Kesteren; Aryeh Gregor; Ms2ger; Alex Russell; Robin Berjon. <a href="http://www.w3.org/TR/dom/" property="dc:requires"><cite>W3C DOM4</cite></a>. 6 October 2015. W3C Proposed Recommendation. URL: <a href="http://www.w3.org/TR/dom/" property="dc:requires">http://www.w3.org/TR/dom/</a>
-</dd><dt id="bib-ENCODING">[ENCODING]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 16 September 2014. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
+</dd><dt id="bib-ENCODING">[ENCODING]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 20 October 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
 </dd><dt id="bib-HTML5">[HTML5]</dt><dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. <a href="http://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/html5/" property="dc:requires">http://www.w3.org/TR/html5/</a>
 </dd><dt id="bib-JWK">[JWK]</dt><dd>Mike Jones. <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires"><cite>JSON Web Key (JWK)</cite></a>. 28 May 2013. Internet Draft. URL: <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11" property="dc:requires">https://tools.ietf.org/html/draft-ietf-jose-json-web-key-11</a>
 </dd><dt id="bib-MIXED-CONTENT">[MIXED-CONTENT]</dt><dd>Mike West. <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 8 October 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires">http://www.w3.org/TR/mixed-content/</a>
