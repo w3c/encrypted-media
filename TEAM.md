@@ -2,6 +2,35 @@
 
 This document contains information used by the editors maintaining the specification.
 
+## Updating `index.html`
+
+>Note: The following references the main spec, but similar steps apply for registry files.
+
+`index.html` is the published version of the specification.
+Unlike some other ReSpec-based specifications, this one does not rely on runtime generation when viewing the specification.
+Thus, a new `index.html` must be generated, committed, and pushed in order for changes to the `-respec.html` file to be reflected.
+We generally do this for every commit, but sometimes we only generate the file once for a series of commits.
+
+Use the following steps to publish the new index.html after modifying the `-respec.html` file:
+
+1. Open an Incognito or private browsing window. (This generally ensures that extensions are not loaded and will not interfere with the output.)
+1. Open the `-respec.html` file in that window.
+1. **Verify that there are no errors** next to the ReSpec bubble in the upper right corner.
+1. **Verify that ReSpec completed and there are no exceptions** by checking the browser's console (i.e. `Ctrl+Shift+i`). You should see exactly three ReSpec logs entries and no other messages:
+  >```
+  >RESPEC PROCESSING STARTED
+  >RESPEC Version: 3.2.76
+  >RESPEC DONE!
+  >```
+
+1. ReSpec button => Save Snapshot => Save as HTML
+1. `mv ~/Downloads/index.html ./`
+1. Review the diff in a tool like `gitk`.
+  * `-respec.html` should contain just your edits.
+  * `index.html` should generally contain diffes related to your edits. However, sometimes, such as when a Note is added or ReSpec has been updated, there will be lots of unrelated changes.
+1. `git commit -a`
+1. `git push`
+
 ## Handling Pull Requests
 
 This spec does not use the green "Merge pull request" button. This ensures that each change is a single commit on the main `gh-pages` branch.
