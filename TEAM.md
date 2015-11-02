@@ -37,10 +37,12 @@ The following subsections contain instructions for merging. They assume the Bash
 comment.
 
 ### Merging Pull Requests from Branches
-For pull requests coming from branches within this repository, use the same steps above except use `mypr`.
+For pull requests coming from branches within this repository, use the same steps above except use `mypr` and there is no reason to use the web interface.
+
+`git push` will _automatically_ close the pull request and mark it as merged, since the commits contained there were updated.
 
 ### Bash Functions
-The following are based on https://github.com/whatwg/html/blob/master/TEAM.md.
+The following is based on https://github.com/whatwg/html/blob/master/TEAM.md.
 
 ```
 pr () {
@@ -50,7 +52,10 @@ pr () {
   git checkout gh-pages
   git merge pr/$1 --ff-only
 }
+```
+Pulls down the PR into a local branch, using [the special refs GitHub provides](https://help.github.com/articles/checking-out-pull-requests-locally/); rebases the PR's commits on top of `gh-pages`; and does a fast-forward only merge into `gh-pages`.
 
+```
 mypr () {
   git checkout $1
   git rebase gh-pages
@@ -59,3 +64,4 @@ mypr () {
   git merge $1 --ff-only
 }
 ```
+Rebases the PR on top of `gh-pages`; force-pushes it to the appropriate branch, thus updating the PR; and does the fast-forward only merge into `gh-pages`.
