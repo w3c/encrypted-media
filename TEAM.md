@@ -43,6 +43,11 @@ The following subsections contain instructions for merging. They assume the Bash
 
 1. `pr <pull request ID>`
 
+1. If the pull request contains multiple commits, squash them as appropriate.
+   * In general, all commits and merges should be squashed into a single commit.
+   * If commits or sets of commits represent multiple distinct actions (i.e. do something then rename a variable), then the branch might be squashed into two or more commits, each representing a distinct action.
+   * Squash commits by running `git rebase -i origin/gh-pages` then using `squash` on the commit(s) to be squashed.
+
 1. If index.html is not part of the pull request and needs to be updated:
   1. Generate index.html.
   1. Run the following:
@@ -52,10 +57,9 @@ The following subsections contain instructions for merging. They assume the Bash
     git commit --amend
     ```
 
-1. If the commit message needs to be updated (i.e. To add "Fix #\<bug ID\>: "), run the following and update the message:
-    ```
-    git commit --amend
-    ```
+1. If the commit message needs to be updated (i.e. To add "Fix #\<bug ID\>: "), do one of the following and update the message:
+    * Run `git rebase -i origin/gh-pages` then use `reword` to select the commit(s) to reword.
+    * Run `git commit --amend` and edit the last commit message.
 
 1. `git push`
 
