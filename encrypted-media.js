@@ -159,6 +159,9 @@
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
+    'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
+    'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
+    'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
