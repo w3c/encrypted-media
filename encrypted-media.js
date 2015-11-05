@@ -257,6 +257,7 @@
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
+    'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
     'InvalidAccessError': { func: local_exception_helper, fragment: '', link_text: 'InvalidAccessError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
