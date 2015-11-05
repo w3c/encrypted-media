@@ -159,9 +159,13 @@
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
+    'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
+    'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
+    'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
+    'get-distinctive-identifier-consent-status-algorithm' : { func: term_helper, fragment: 'get-distinctive-identifier-consent-status', link_text: 'Get Distinctive Identifier Consent Status' },
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
     'get-supported-capabilities-for-audio-video-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-audio-video-type', link_text: 'Get Supported Capabilities for Audio/Video Type',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
@@ -186,9 +190,9 @@
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
-    'tracked-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.tracked', link_text: '"tracked"',  },
  
-    'key-usage-accuracy': { func: var_helper, fragment: 'key-usage-accuracy', link_text: 'key usage accuracy' },
+    'key-usage-accuracy': { func: term_helper, fragment: 'key-usage-accuracy', link_text: 'key usage accuracy' },
+    'persistent-usage-record-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-usage-record', link_text: '"persistent-usage-record"',  },
 
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
 
@@ -221,14 +225,14 @@
     'status-output-restricted': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.output-restricted', link_text: '"output-restricted"',  },
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
 
-    'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'queue a "message" event',  },
-    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'session close',  },
-    'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'encrypted block encountered',  },
-    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data encountered',  },
-    'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'update key statuses',  },
-    'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'update expiration',  },
-    'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'attempt to resume playback if necessary',  },
-    'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'queue a "waitingforkey" event',  },
+    'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
+    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'Session Close',  },
+    'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
+    'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
+    'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'Update Key Statuses',  },
+    'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'Update Expiration',  },
+    'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
+    'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
 
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
@@ -255,6 +259,7 @@
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
+    'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
     'InvalidAccessError': { func: local_exception_helper, fragment: '', link_text: 'InvalidAccessError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
