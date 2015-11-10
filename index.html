@@ -594,7 +594,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-05-november-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-11-05">05 November 2015</time></h2>
+  <h2 id="w3c-editor-s-draft-10-november-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-11-10">10 November 2015</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -1680,7 +1680,7 @@ table.simple {
           </p></div>
           <div class="note"><div class="note-title" aria-level="3" role="heading" id="h-note40"><span>Note</span></div><p class="">
             User agents <em class="rfc2119" title="MAY">MAY</em> implememt this mechanism by means other than persisting data on key destruction - for example by persisting data during playback which is later used
-            to infer the fact of key destruction - provided the API behavior is compliant to this specification.
+            to infer the fact of key destruction - provided the observable behavior is compliant to this specification.
           </p></div>
           <p>
             The session <em class="rfc2119" title="MUST">MUST</em> be loadable via its <a href="#session-id">Session ID</a> once <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> is called successfully.
@@ -2045,47 +2045,58 @@ table.simple {
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>Destroy any license and/or keys associated with the session.</p></li>
                     <li>
-                        <p>
-                          Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing all <a href="#decryption-key-id">key ID(s)</a> in the session along with the <code><a href="#idl-def-MediaKeyStatus.released">"released"</a></code> <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value for each.
-                        </p>
+                      <p>
+                        If any licenses and/or keys are associated with the session:
+                      </p>
+                      <ol>
+                        <li>
+                          <p>
+                            Destroy the licenses and/or keys associated with the session.
+                          </p>
+                        </li>
+                        <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
+                          <dl class="switch">
+                            <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
+                            <dd>
+                              <ol>
+                                <li>
+                                  Store the object's <var>record of key usage</var>.
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the object's <var>record of key usage</var>.
+                                  </p>
+                                </li>
+                              </ol>
+                            </dd>
+                            <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
+                            <dd>
+                              <ol>
+                                <li>
+                                  <p>
+                                    Store a <var>record of the license's destruction</var>.
+                                  </p>
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
+                                  </p>
+                                </li>
+                              </ol>
+                            </dd>
+                          </dl>
+                        </li>
+                      </ol>
+                    </li>
+                    <li>
+                      <p>
+                        Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing all <a href="#decryption-key-id">key ID(s)</a> in the session along with the <code><a href="#idl-def-MediaKeyStatus.released">"released"</a></code> <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value for each.
+                      </p>
                     </li>
 
                     <li><p>Run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-                    <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
-                      <dl class="switch">
-                        <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
-                        <dd>
-                          <ol>
-                            <li>
-                              Store the object's <var>record of key usage</var>.
-                            </li>
-                            <li>
-                              <p>
-                                Let <var>message</var> be a message containing or reflecting the object's <var>record of key usage</var>.
-                              </p>
-                            </li>
-                          </ol>
-                        </dd>
-                        <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
-                        <dd>
-                          <ol>
-                            <li>
-                              <p>
-                                Store a <var>record of the license's destruction</var>.
-                              </p>
-                            </li>
-                            <li>
-                              <p>
-                                Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
-                              </p>
-                            </li>
-                          </ol>
-                        </dd>
-                      </dl>
-                    </li>
-                    <li><p>Let <var>message type</var> be <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code>.</p></li>
+                                        <li><p>Let <var>message type</var> be <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
                     <li><p>Run the <a href="#queue-message">Queue a "message" Event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                   </ol>
@@ -2456,16 +2467,23 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
             <li><p>Let the <var>session</var> be the associated <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.</p></li>
             <li>
               <p>
-                Destroy any license and/or keys associated with <var>session</var> that have not been explicitly stored.
+                 If any licenses and/or keys associated with <var>session</var> exist that have not been expliciting stored:
               </p>
+              <ol>
+                <li>
+                  <p>
+                    Destroy the licenses and/or keys associated with <var>session</var> that have not been explicitly stored.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    If the object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store the <var>record of key usage</var>.
+                  </p>
+                </li>
+              </ol>
             </li>
             <li><p>Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-            <li>
-              <p>
-                If the object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store the <var>record of key usage</var>.
-              </p>
-            </li>
             <li><p>Let <var>promise</var> be the <code><a href="#widl-MediaKeySession-closed">closed</a></code> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>

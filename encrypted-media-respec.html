@@ -1029,7 +1029,7 @@
           </p>
           <p class="note">
             User agents MAY implememt this mechanism by means other than persisting data on key destruction - for example by persisting data during playback which is later used
-            to infer the fact of key destruction - provided the API behavior is compliant to this specification.
+            to infer the fact of key destruction - provided the observable behavior is compliant to this specification.
           </p>
           <p>
             The session MUST be loadable via its <a def-id="session-id"></a> once <a def-id="update"></a> is called successfully.
@@ -1561,47 +1561,58 @@
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>Destroy any license and/or keys associated with the session.</p></li>
                     <li>
-                        <p>
-                          Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the <a def-id="status-released"></a> <a>MediaKeyStatus</a> value for each.
-                        </p>
+                      <p>
+                        If any licenses and/or keys are associated with the session:
+                      </p>
+                      <ol>
+                        <li>
+                          <p>
+                            Destroy the licenses and/or keys associated with the session.
+                          </p>
+                        </li>
+                        <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
+                          <dl class="switch">
+                            <dt><a def-id="persistent-usage-record-session"></a></dt>
+                            <dd>
+                              <ol>
+                                <li>
+                                  Store the object's <var>record of key usage</var>.
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the object's <var>record of key usage</var>.
+                                  </p>
+                                </li>
+                              </ol>
+                            </dd>
+                            <dt><a def-id="persistent-license-session"></a></dt>
+                            <dd>
+                              <ol>
+                                <li>
+                                  <p>
+                                    Store a <var>record of the license's destruction</var>.
+                                  </p>
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
+                                  </p>
+                                </li>
+                              </ol>
+                            </dd>
+                          </dl>
+                        </li>
+                      </ol>
+                    </li>
+                    <li>
+                      <p>
+                        Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the <a def-id="status-released"></a> <a>MediaKeyStatus</a> value for each.
+                      </p>
                     </li>
 
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-                    <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
-                      <dl class="switch">
-                        <dt><a def-id="persistent-usage-record-session"></a></dt>
-                        <dd>
-                          <ol>
-                            <li>
-                              Store the object's <var>record of key usage</var>.
-                            </li>
-                            <li>
-                              <p>
-                                Let <var>message</var> be a message containing or reflecting the object's <var>record of key usage</var>.
-                              </p>
-                            </li>
-                          </ol>
-                        </dd>
-                        <dt><a def-id="persistent-license-session"></a></dt>
-                        <dd>
-                          <ol>
-                            <li>
-                              <p>
-                                Store a <var>record of the license's destruction</var>.
-                              </p>
-                            </li>
-                            <li>
-                              <p>
-                                Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
-                              </p>
-                            </li>
-                          </ol>
-                        </dd>
-                      </dl>
-                    </li>
-                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
+                                        <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                     <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                   </ol>
@@ -1888,16 +1899,23 @@
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li>
               <p>
-                Destroy any license and/or keys associated with <var>session</var> that have not been explicitly stored.
+                 If any licenses and/or keys associated with <var>session</var> exist that have not been expliciting stored:
               </p>
+              <ol>
+                <li>
+                  <p>
+                    Destroy the licenses and/or keys associated with <var>session</var> that have not been explicitly stored.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    If the object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, store the <var>record of key usage</var>.
+                  </p>
+                </li>
+              </ol>
             </li>
             <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-            <li>
-              <p>
-                If the object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, store the <var>record of key usage</var>.
-              </p>
-            </li>
             <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
