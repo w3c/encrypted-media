@@ -2732,17 +2732,18 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
                         <li><p>Let <var>block key</var> be null.</p></li>
-                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>block key</var> be that key.</p>
-                          <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note76"><span>Note</span></div><p class="">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>session</var> be a
+                        <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object containg that key and let <var>block key</var> be that key.</p>
+                          <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note76"><span>Note</span></div><p class="">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which session and key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on each affected <var>session</var>, providing all <a href="#decryption-key-id">key ID(s)</a> in the session along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value(s) for each.
                         </p></li><li><p>If <var>block key</var> is not null, run the following steps:
                           </p><ol>
                             <li>
-                              <p>If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, run the following steps:</p>
+                              <p>If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, run the following steps:</p>
                                 <ol>
                                   <li>
-                                    <p>Let <var>usage</var> be the object's <var>record of key usage</var>.
+                                    <p>Let <var>usage</var> be <var>session</var>'s <var>record of key usage</var>.
                                   </p></li>
                                   <li>
                                     <p>
