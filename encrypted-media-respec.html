@@ -674,9 +674,6 @@
                   <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>content type</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>content type</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p></li>
-                  <li><p>If <var>content type</var> is not strictly a <var>audio/video type</var>, continue to the next iteration.</p>
-                    <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
-                  </li>
                   <li><p>Let <var>container</var> be the container type specified by <var>content type</var>.</p></li>
                   <li><p>If the user agent does not support <var>container</var>, continue to the next iteration. The case-sensitivity of string comparisons is determined by the appropriate RFC.</p>
                     <p class="note">Per RFC 6838 [[RFC6838]], "Both top-level type and subtype names are case-insensitive."</p>
@@ -685,6 +682,9 @@
                   <li><p>If the user agent does not recognize one or more <var>parameters</var>, continue to the next iteration.</p></li>
                   <li><p>Let <var>media types</var> be the set of codecs, with parameters, specified by <var>parameters</var>. It MAY be empty. The case-sensitivity of string comparisons is determined by the appropriate RFC or other specification.</p>
                     <p class="note">Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]] says, "Values are case sensitive" for some formats.</p>
+                  </li>
+                  <li><p>If <var>content type</var> is not strictly a <var>audio/video type</var>, continue to the next iteration.</p>
+                    <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
                   <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var>, continue to the next iteration.</p>
@@ -1446,7 +1446,7 @@
                               Such data MUST be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
                             </dd>
                             <dt>Otherwise</dt>
-                            <dd>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</dd>
+                            <dd>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="RangeError"></a>.</dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
                           <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p>
@@ -1554,7 +1554,7 @@
           <ol class="method-algorithm">
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidAccessError"></a>.</p></li>
+            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="RangeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
               <ol>
@@ -1965,9 +1965,9 @@
               </td>
             </tr>
             <tr>
-              <td><dfn id="dfn-InvalidAccessError"><code>InvalidAccessError</code></dfn></td>
+              <td><dfn id="dfn-RangeError"><code>RangeError</code></dfn></td>
               <td>
-                The operation is not supported on sessions of this type.<br/>
+                Indicates a value that is not in the set or range of allowable values. For example, the operation is not supported on sessions of this type.<br/>
               </td>
             </tr>
             <tr>
@@ -2217,17 +2217,18 @@
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
                         <li><p>Let <var>block key</var> be null.</p></li>
-                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>block key</var> be that key.</p>
-                          <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which key to use is <a def-id="keysystem"></a>-dependent.</p>
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>session</var> be a
+                        <a>MediaKeySession</a> object containg that key and let <var>block key</var> be that key.</p>
+                          <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
                         <li><p>If <var>block key</var> is not null, run the following steps:
                           <ol>
                             <li>
-                              <p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, run the following steps:</p>
+                              <p>If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, run the following steps:</p>
                                 <ol>
                                   <li>
-                                    <p>Let <var>usage</var> be the object's <var>record of key usage</var>.
+                                    <p>Let <var>usage</var> be <var>session</var>'s <var>record of key usage</var>.
                                   </li>
                                   <li>
                                     <p>
@@ -2603,8 +2604,6 @@
           <dl>
             <dt>"kty" (key type)</dt>
             <dd>"oct" (octet sequence)</dd>
-            <dt>"alg" (algorithm)</dt>
-            <dd>"A128KW" (AES key wrap using a 128-bit key)</dd>
             <dt>"k" (key value)</dt>
             <dd>The base64url encoding of the octet sequence containing the symmetric <a href="#decryption-key">key</a> value</dd>
             <dt>"kid" (key ID)</dt>
@@ -2628,7 +2627,6 @@
   "keys":
     [{
       "kty":"oct",
-      "alg":"A128KW",
       "k":"tQ0bJVWb6b0KPL6KtZIy_A",
       "kid":"LwVHf8JLtPrv2GUXFW2v_A"
     }],
@@ -3232,7 +3230,7 @@
   function handleMessage(event) {
     var keySession = event.target;
     var te = new TextEncoder();
-    var license = te.encode('{"keys":[{"kty":"oct","alg":"A128KW","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}');
+    var license = te.encode('{"keys":[{"kty":"oct","k":"tQ0bJVWb6b0KPL6KtZIy_A","kid":"LwVHf8JLtPrv2GUXFW2v_A"}],"type":"temporary"}');
     keySession.<a def-id="update-call"></a>(license).catch(
       console.error.bind(console, 'update() failed')
     );
