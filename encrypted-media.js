@@ -160,6 +160,7 @@
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
     'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
+    'record-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record of license destruction'  },
     'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
     'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
 

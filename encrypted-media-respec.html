@@ -246,8 +246,7 @@
             Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <var>record of
-          license destruction</var> or a <a def-id="record-of-key-usage"></a> is available.
+          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a> is available.
             Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
@@ -1013,7 +1012,7 @@
             </li>
             <li>
               <p>
-                <var>first decryption time</var> - The <dfn id="first-decryption-time">first decryption time</dfn>, defined as the time at which the session was first use to decrypt content, accurate to <var><a def-id="key-usage-accuracy"></a></var> and
+                <var>first decryption time</var> - The <dfn id="first-decryption-time">first decryption time</dfn>, defined as the time at which the session was first used to decrypt content, accurate to <var><a def-id="key-usage-accuracy"></a></var> and
               </p>
             </li>
             <li>
@@ -1047,8 +1046,11 @@
         <dd>
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing a record of the license's destruction will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
-            The persisted data consists either of the license itself or a <var>record of the license's destruction</var>.
+            A <a def-id="record-of-license-destruction"></a> SHALL be persisted when the license and key(s) it contains are destroyed.
+            The <dfn id="record-of-license-destruction">record of license destruction</dfn> is a <a def-id="keysystem"></a>-specific attestation that the license and key(s) it contains are no longer usable by the client.
+          </p>
+          <p>
+            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the <a def-id="record-of-license-destruction"></a> will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
           </p>
           <p>
             The session MUST be loadable via its <a def-id="session-id"></a> once <a def-id="update"></a> is called successfully.
@@ -1595,12 +1597,17 @@
                               <ol>
                                 <li>
                                   <p>
-                                    Store a <var>record of the license's destruction</var>.
+                                    Let <var>record of license destruction</var> be a <a def-id="record-of-license-destruction"></a> for the license represented by this object.
                                   </p>
                                 </li>
                                 <li>
                                   <p>
-                                    Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
+                                    Store the <var>record of license destruction</var>.
+                                  </p>
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the <var>record of license destruction</var>.
                                   </p>
                                 </li>
                               </ol>
@@ -1697,8 +1704,7 @@
           </dd>
           <dt>released</dt>
           <dd>
-            The key itself is no longer available to the CDM, but information about the key such as a
-            <var>record of license destruction</var> or <a def-id="record-of-key-usage"></a> is available.
+            The key itself is no longer available to the CDM, but information about the key, such as a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>, is available.
           </dd>
           <dt>output-restricted</dt>
           <dd>
@@ -1742,7 +1748,7 @@
           <dt>license-renewal</dt>
           <dd>The message contains a request to renew an existing license.</dd>
           <dt>license-release</dt>
-          <dd>The message contains a record of license destruction.</dd>
+          <dd>The message contains a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>.</dd>
           <dt>individualization-request</dt>
           <dd>
             The message contains a request for per-origin individualization (or re-individualization). See <a href="#per-origin-individualization">Per-Origin Individualization</a>.<br/>

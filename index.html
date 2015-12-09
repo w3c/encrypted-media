@@ -553,6 +553,9 @@ table.simple {
     "key usage accuracy": [
       "key-usage-accuracy"
     ],
+    "record of license destruction": [
+      "record-of-license-destruction"
+    ],
     "notsupportederror": [
       "dfn-NotSupportedError"
     ],
@@ -597,7 +600,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-30-november-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-11-30">30 November 2015</time></h2>
+  <h2 id="w3c-editor-s-draft-09-december-2015"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2015-12-09">09 December 2015</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -922,8 +925,7 @@ table.simple {
             Known keys are exposed via the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <var>record of
-          license destruction</var> or a <a href="#record-of-key-usage">record of key usage</a> is available.
+          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <a href="#record-of-license-destruction">record of license destruction</a> or <a href="#record-of-key-usage">record of key usage</a> is available.
             Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
@@ -1667,7 +1669,7 @@ table.simple {
             </li>
             <li>
               <p>
-                <var>first decryption time</var> - The <dfn id="first-decryption-time" data-dfn-type="dfn">first decryption time</dfn>, defined as the time at which the session was first use to decrypt content, accurate to <var><var><a href="#key-usage-accuracy">key usage accuracy</a></var></var> and
+                <var>first decryption time</var> - The <dfn id="first-decryption-time" data-dfn-type="dfn">first decryption time</dfn>, defined as the time at which the session was first used to decrypt content, accurate to <var><var><a href="#key-usage-accuracy">key usage accuracy</a></var></var> and
               </p>
             </li>
             <li>
@@ -1699,8 +1701,11 @@ table.simple {
         </td></tr><tr><td><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></td><td>
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
-            A <code><a href="#dom-evt-message">message</a></code> of type <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code> containing a record of the license's destruction will be generated when <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> is called and on every subsequent <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> call until the record is acknowledged by a response passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>.
-            The persisted data consists either of the license itself or a <var>record of the license's destruction</var>.
+            A <a href="#record-of-license-destruction">record of license destruction</a> <em class="rfc2119" title="SHALL">SHALL</em> be persisted when the license and key(s) it contains are destroyed.
+            The <dfn id="record-of-license-destruction" data-dfn-type="dfn">record of license destruction</dfn> is a <a href="#key-system">Key System</a>-specific attestation that the license and key(s) it contains are no longer usable by the client.
+          </p>
+          <p>
+            A <code><a href="#dom-evt-message">message</a></code> of type <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code> containing the <a href="#record-of-license-destruction">record of license destruction</a> will be generated when <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> is called until the record is acknowledged by a response passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>.
           </p>
           <p>
             The session <em class="rfc2119" title="MUST">MUST</em> be loadable via its <a href="#session-id">Session ID</a> once <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> is called successfully.
@@ -2082,12 +2087,17 @@ table.simple {
                               <ol>
                                 <li>
                                   <p>
-                                    Store a <var>record of the license's destruction</var>.
+                                    Let <var>record of license destruction</var> be a <a href="#record-of-license-destruction">record of license destruction</a> for the license represented by this object.
                                   </p>
                                 </li>
                                 <li>
                                   <p>
-                                    Let <var>message</var> be a message containing or reflecting the <var>record of the license's destruction</var>.
+                                    Store the <var>record of license destruction</var>.
+                                  </p>
+                                </li>
+                                <li>
+                                  <p>
+                                    Let <var>message</var> be a message containing or reflecting the <var>record of license destruction</var>.
                                   </p>
                                 </li>
                               </ol>
@@ -2288,8 +2298,7 @@ table.simple {
             The time represented by the <code><a href="#widl-MediaKeySession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time.
             All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.released">released</code></td><td>
-            The key itself is no longer available to the CDM, but information about the key such as a
-            <var>record of license destruction</var> or <a href="#record-of-key-usage">record of key usage</a> is available.
+            The key itself is no longer available to the CDM, but information about the key, such as a <a href="#record-of-license-destruction">record of license destruction</a> or <a href="#record-of-key-usage">record of key usage</a>, is available.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.output-restricted">output-restricted</code></td><td>
             There are output restrictions associated with the key that cannot currently be met.
             Media data decrypted with this key may be blocked from presentation, if necessary according to
@@ -2323,7 +2332,7 @@ table.simple {
     "<a href="#idl-def-MediaKeyMessageType.license-renewal" class="idlEnumItem">license-renewal</a>",
     "<a href="#idl-def-MediaKeyMessageType.license-release" class="idlEnumItem">license-release</a>",
     "<a href="#idl-def-MediaKeyMessageType.individualization-request" class="idlEnumItem">individualization-request</a>"
-};</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></td><td>The message contains a request for a new license.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></td><td>The message contains a record of license destruction.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></td><td>
+};</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></td><td>The message contains a request for a new license.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></td><td>The message contains a <a href="#record-of-license-destruction">record of license destruction</a> or <a href="#record-of-key-usage">record of key usage</a>.</td></tr><tr><td><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></td><td>
             The message contains a request for per-origin individualization (or re-individualization). See <a href="#per-origin-individualization">Per-Origin Individualization</a>.<br>
             As with all other messages, any identifiers in the message <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">distinctive per-origin</a> and <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain any non-origin-specific <a href="#distinctive-identifier">Distinctive Identifiers</a>.
           </td></tr></tbody></table>
