@@ -276,7 +276,6 @@
     'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
-    'media-element-decode-error': { func: code_videoref_helper, fragment: 'dom-mediaerror-media_err_decode', link_text: 'MEDIA_ERR_DECODE',  },
     'potentially-playing': { func: videoref_helper, fragment: 'potentially-playing', link_text: 'potentially playing',  },
     'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
     'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
