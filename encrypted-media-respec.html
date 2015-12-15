@@ -2024,9 +2024,21 @@
 
     <section>
       <h2><a>HTMLMediaElement</a> Extensions</h2>
+      
+      <!-- Put all the monkey-patching here -->
+      
       <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported.</p>
+      
+      <p>This specification adds two internal values to the <a def-id="htmlmediaelement"></a>: <var>waiting for key</var> which shall have a boolean value and <var>encrypted block queue</var> which shall be a queue of encrypted blocks awaiting decryption.</p>
 
-      <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value is initialized to <code>false</code>.</p>
+      <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value shall initialized to <code>false</code> and its <var>encrypted block queue</var> value shall be empty.</p>
+      
+      <p>In addition to the criteria specified in [[!HTML5]] an <a def-id="htmlmediaelement"></a> shall be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
+      
+      <p>When the media element encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a> the user agent shall run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
+      
+      <p>For each block of encrypted <a def-id="media-data"></a> encountered during the <a def-id="resource-fetch-algorithm"></a> the user agent shall run the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm in the order the encrypted blocks were encountered.</p>
+      <p class="note">The above requirement provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2216,9 +2228,21 @@
 
         <section id="encrypted-block-encountered">
           <h4>Encrypted Block Encountered</h4>
-          <p>The following steps are run when the media element encounters a block of encrypted <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>:</p>
-
+          <p>This algorithm queues a block of encrypted media data, <var>block</var> for decryption and attempts to decrypt if possible. The following steps are run:</p>
           <ol>
+            <li>
+              <p>Add <var>block</var> to the end of the media element's <var>encrypted block queue</var>.</p>
+            </li>
+            <li>
+              <p>If the media element's <var>waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.
+            </li>
+          </ol>
+        </section>
+        <section id="attempt-to-decrypt">
+          <h4>Attempt to Decrypt</h4>
+          <p>This algorithm attempts to decrypt media data that is queued for decryption. The following steps are run:</p>
+          <ol>
+            <li><p>If the media element's <var>encrypted block queue</var> is empty, abort these steps.</p></li>
             <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
               <ol>
                 <li><p>Let <var>media keys</var> be the <a>MediaKeys</a> object referenced by that atribute.</p></li>
@@ -2241,7 +2265,8 @@
                 <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prequisite for a matching key being available.</p>
                   <ol>
-                    <li><p>Let the <var>block key ID</var> be the key ID of the current block.</p>
+                    <li><p>Let <var>block</var> be the first entry in the media element's <var>encrypted block queue</var>.</p></li>
+                    <li><p>Let the <var>block key ID</var> be the key ID of <var>block</var>.</p>
                       <p class="note">The key ID is generally specified by the container.</p>
                     </li>
                     <li><p>Use the <var>cdm</var> to execute the following steps:</p>
@@ -2277,7 +2302,7 @@
                                   accurate to within <var>key usage accuracy</var>.
                                 </p>
                               </p>
-                            <li><p>Use the <var>cdm</var> to decrypt the block using <var>block key</var>.</p></li>
+                            <li><p>Use the <var>cdm</var> to decrypt <var>block</var> using <var>block key</var>.</p></li>
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
                               <dl class="switch">
                                 <dt>If decryption fails</dt>
@@ -2286,8 +2311,14 @@
                                 </dd>
                                 <dt>Otherwise</dt>
                                 <dd>
-                                  <p>Abort these steps and process the decrypted block as normal.</p>
-                                  <p class="note">In other words, decode the block.</p>
+                                  <ol>
+                                    <li><p>Remove <var>block</var> from the front of the media element's <var>encrypted block queue</var>.</p></li>
+                                    <li><p>Process the decrypted block as normal.</p>
+                                        <p class="note">In other words, decode the block.</p>
+                                    </li>
+                                    <li><p>Return to the beginning of this algorithm.</p></li>
+                                  </ol>
+                                  
                                 </dd>
                               </dl>
                               <p class="note">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
@@ -2303,10 +2334,13 @@
             </li>
             <li>
               <p>Run the following steps:</p>
-              <p class="note">These steps are reached when there is no usable key for the block.</p>
+              <p class="note">These steps are reached when there is no usable key for <var>block</var>.</p>
               <ol>
                 <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
-                <li><p>Wait for a signal to resume playback.</p></li>
+                <!-- I propose removing the following step, as it is odd to "wait" inside an algorith. The media element is now a "blocked media element" and will become (not one of those)
+                     when the attempt-to-resume-playback algorithm succeeds.
+                <li><p>Wait for a signal to resume decryption.</p></li>
+                -->
               </ol>
             </li>
           </ol>
@@ -2331,15 +2365,16 @@
 
         <section id="queue-waitingforkey">
           <h4>Queue a "waitingforkey" Event</h4>
-          <p>The Queue a "waitingforkey" Event algorithm is run when the CDM cannot decrypt the current block.
+          <p>The Queue a "waitingforkey" Event algorithm is run when the CDM cannot decrypt an encrypted block.
             It should only be called when the <a def-id="htmlmediaelement"></a> object is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.  
             Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
-            <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>false</code>, <a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
+            <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>true</code>, abort these steps.
             <li><p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p></li>
+            <li><p><a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
@@ -2355,8 +2390,13 @@
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li><p>If the <var>media element</var>'s <var>waiting for key</var> is <code>false</code>, abort these steps.</p></li>
-            <li><p>Attempt to resume the <a def-id="resource-fetch-algorithm"></a> by running the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm.</p></li>
-            <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>, set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p></li>
+            <li><p>Run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm on the <var>media element</var>.</p></li>
+            <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>:</p>
+              <ol>
+                <li><p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p></li>
+                <li><p>Resume playback</p></li>
+              </ol>
+            </li>
           </ol>
         </section>
       </section>
