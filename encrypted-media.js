@@ -265,7 +265,7 @@
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
     'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
-    'RangeError': { func: local_exception_helper, fragment: '', link_text: 'RangeError'  },
+//    'RangeError': { func: local_exception_helper, fragment: '', link_text: 'RangeError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
 
@@ -285,7 +285,7 @@
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'potentially-playing': { func: videoref_helper, fragment: 'potentially-playing', link_text: 'potentially playing',  },
     'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
-    'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
+//    'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
     'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
 //    'have-nothing': { func: code_videoref_helper, fragment: 'dom-media-have_nothing', link_text: 'HAVE_NOTHING',  },
     'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
@@ -310,7 +310,7 @@
     'present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'present', },
     'not-present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'not present', },
 
-    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
+//    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
