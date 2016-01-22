@@ -203,7 +203,7 @@
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
 
-	'size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
+	'statusmap-size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
 
 	
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
