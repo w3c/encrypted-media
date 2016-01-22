@@ -1339,7 +1339,6 @@
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-            <li><p>If this object's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1360,8 +1359,7 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-                      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/20">Issue 20</a> - Ensure this object's <var>session type</var> matches the stored session.</p>
-                    </li>
+					<li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>

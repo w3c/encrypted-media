@@ -2002,7 +2002,6 @@ table.simple {
             <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
             <li><p>If the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
-            <li><p>If this object's <var>session type</var> is not the same as the current <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> <var>session type</var>, return a promise rejected with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
             <li><p>Let <var>origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://dom.spec.whatwg.org/#concept-document">Document</a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -2023,8 +2022,7 @@ table.simple {
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-                      <div class="issue" id="issue-6"><div class="issue-title" aria-level="4" role="heading" id="h-issue6"><span>Issue 6</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/20">Issue 20</a> - Ensure this object's <var>session type</var> matches the stored session.</p></div>
-                    </li>
+					</li><li><p>If the stored session's <var>session type</var> is not the same as the current <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> <var>session type</var>, return a promise rejected with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This <em class="rfc2119" title="MUST NOT">MUST NOT</em> include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed session in any <a href="https://dom.spec.whatwg.org/#concept-document">Document</a> representing the <var>session data</var>, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is <code><a href="#dfn-QuotaExceededError">QuotaExceededError</a></code>.</p>
@@ -2051,7 +2049,7 @@ table.simple {
                 <li><p>Run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                 <li><p>If <var>message</var> is not null, run the <a href="#queue-message">Queue a "message" Event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
-                  <div class="issue" id="issue-7"><div class="issue-title" aria-level="4" role="heading" id="h-issue7"><span>Issue 7</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p></div>
+                  <div class="issue" id="issue-6"><div class="issue-title" aria-level="4" role="heading" id="h-issue6"><span>Issue 6</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p></div>
                 </li>                
               </ol>
             </li>
@@ -2278,7 +2276,7 @@ table.simple {
 <span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a></span> <span class="idlMethName"><a href="#widl-MediaKeyStatusMap-get-MediaKeyStatus-BufferSource-keyId">get</a></span> (<span class="idlParam"><span class="idlParamType">BufferSource</span> <span class="idlParamName">keyId</span></span>);</span>
 <span class="idlMethod">    <span class="idlMethType">void</span>           <span class="idlMethName"><a href="#widl-MediaKeyStatusMap-forEach-void-ForEachCallback-callback">forEach</a></span> (<span class="idlParam"><span class="idlParamType"><a href="#idl-def-ForEachCallback" class="idlType"><code>ForEachCallback</code></a></span> <span class="idlParamName">callback</span></span>);</span>
 };</span></pre><p>This interface has "entries", "keys", "values" and @@iterator methods brought by <code>iterable</code>.</p><p>
-            <div class="issue" id="issue-8"><div class="issue-title" aria-level="4" role="heading" id="h-issue8"><span>Issue 8</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/75">Issue 75</a> - The exact behavior is still being determined and may change in incompatible ways. This includes the definition of the value pairs and the <a href="#idl-def-ForEachCallback">ForEachCallback</a> parameters.</p></div>
+            <div class="issue" id="issue-7"><div class="issue-title" aria-level="4" role="heading" id="h-issue7"><span>Issue 7</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/75">Issue 75</a> - The exact behavior is still being determined and may change in incompatible ways. This includes the definition of the value pairs and the <a href="#idl-def-ForEachCallback">ForEachCallback</a> parameters.</p></div>
             The value pairs to iterate over are a snapshot of the set of pairs formed from the <a href="#decryption-key-id">key ID</a> and
             associated <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value for all <a href="#known-key">known keys</a>, sorted by <a href="#decryption-key-id">key ID</a>.
           </p><section id="attributes-2" typeof="bibo:Chapter" resource="#attributes-2" property="bibo:hasPart"><h4 id="h-attributes-2" resource="#h-attributes-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.3.1 </span>Attributes</span></h4><dl class="attributes"><dt id="widl-MediaKeyStatusMap-size"><code>size</code> of type <span class="idlAttrType">unsigned long</span>, readonly       </dt><dd>
@@ -2387,7 +2385,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
         <h3 id="h-mediakeysession-events" resource="#h-mediakeysession-events"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.5 </span>Event Summary</span></h3><p><em>This section is non-normative.</em></p>
 
         <div class="note"><div class="note-title" aria-level="4" role="heading" id="h-note62"><span>Note</span></div><p class="">In some implementations, <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> objects may not fire any events until the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object is associated with a media element using <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.</p></div>
-        <div class="issue" id="issue-9"><div class="issue-title" aria-level="4" role="heading" id="h-issue9"><span>Issue 9</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/9">Issue 9</a> - The above note should be removed.</p></div>
+        <div class="issue" id="issue-8"><div class="issue-title" aria-level="4" role="heading" id="h-issue8"><span>Issue 8</span></div><p class=""><a href="https://github.com/w3c/encrypted-media/issues/9">Issue 9</a> - The above note should be removed.</p></div>
 
         <table class="old-table">
           <thead>
@@ -2981,7 +2979,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             The encryption <em class="rfc2119" title="MUST">MUST</em> ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
             The CDM <em class="rfc2119" title="MUST">MUST</em> verify that the encryption key belongs to a valid license server for its Key System.
           </p>
-          <div class="issue" id="issue-10"><div class="issue-title" aria-level="5" role="heading" id="h-issue10"><span>Issue 10</span></div><p class="">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p></div>
+          <div class="issue" id="issue-9"><div class="issue-title" aria-level="5" role="heading" id="h-issue9"><span>Issue 9</span></div><p class="">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p></div>
           <p>This <em class="rfc2119" title="MAY">MAY</em> be implemented using a <a href="#server-certificate">server certificate</a>.</p>
           <p>The license server <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose a <a href="#distinctive-identifier">Distinctive Identifier</a> to any entity other than the CDM that sent it.</p>
           <div class="note"><div class="note-title" aria-level="5" role="heading" id="h-note87"><span>Note</span></div><p class="">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
@@ -3002,13 +3000,13 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p>All <a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be distinctive per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
             That is, the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs.
           </p>
-          <div class="issue" id="issue-11"><div class="issue-title" aria-level="5" role="heading" id="h-issue11"><span>Issue 11</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a href="#distinctive-identifier">Distinctive Identifiers</a> be distinctive for the combination of top-level origin and the origin using these APIs.</p></div>
+          <div class="issue" id="issue-10"><div class="issue-title" aria-level="5" role="heading" id="h-issue10"><span>Issue 10</span></div><p class=""><a href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=27269">Bug 27269</a> - It has been suggested that the <a href="#distinctive-identifier">Distinctive Identifiers</a> be distinctive for the combination of top-level origin and the origin using these APIs.</p></div>
 
           <p id="non-reversible-identifiers">
             It <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
             Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, <em class="rfc2119" title="MUST">MUST</em> do so in a non-reversible way.
           </p>
-          <div class="issue" id="issue-12"><div class="issue-title" aria-level="5" role="heading" id="h-issue12"><span>Issue 12</span></div><p class="">Add more specific text about ensuring the desired non-reversible properties.</p></div>
+          <div class="issue" id="issue-11"><div class="issue-title" aria-level="5" role="heading" id="h-issue11"><span>Issue 11</span></div><p class="">Add more specific text about ensuring the desired non-reversible properties.</p></div>
         </section>
 
         <section id="allow-identifiers-cleared" typeof="bibo:Chapter" resource="#allow-identifiers-cleared" property="bibo:hasPart">
