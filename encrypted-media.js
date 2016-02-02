@@ -198,6 +198,7 @@
     'persistent-usage-record-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-usage-record', link_text: '"persistent-usage-record"',  },
     'key-usage-accuracy': { func: var_helper, fragment: 'key-usage-accuracy', link_text: 'key usage accuracy' },
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
+    'close-all-sessions-algorithm': { func: term_helper, fragment: 'close-all-sessions', link_text: 'Close all Sessions',  },
 
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },

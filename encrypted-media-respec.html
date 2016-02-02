@@ -395,8 +395,8 @@
 
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
-              <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-              <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+              <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+              <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
               <li><p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbant settings object</a> is not a <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure context</a> [[!POWERFUL-FEATURES]], run the following steps:</p>
 
@@ -408,7 +408,7 @@
                       Authors are advised that implementations MAY remove it before then.
                     </p>
                   </li>
-                  <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+                  <li><p>Reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p>
                     <p class="note">
                       Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
                       Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
@@ -420,7 +420,7 @@
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps in parallel:</p>
                 <ol>
-                  <li><p>If <var>keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+                  <li><p>If <var>keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
                   <li><p>Let <var>implementation</var> be the implementation of <var>keySystem</var>.</p></li>
                   <li><p>For each value in <code>supportedConfigurations</code>:</p>
                     <ol>
@@ -441,7 +441,7 @@
                       </li>
                     </ol>
                   </li>
-                  <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+                  <li><p>Reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p>
                     <p class="note"><code>keySystem</code> was not supported/allowed or none of the configurations in <code>supportedConfigurations</code> were supported/allowed.</p>
                   </li>
                 </ol>
@@ -987,6 +987,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
+      <p>If the CDM instanced represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1079,7 +1080,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, throw <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p>
+            <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, throw a <a def-id="NotSupportedError"></a>.</p>
               <p class="note"><var>sessionType</var> values for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
             </li>
             <li><p>Let <var>session</var> be a new <a>MediaKeySession</a> object, and initialize it as follows:</p>
@@ -1094,7 +1095,7 @@
                 <li><p>Let the <var>session type</var> value be <var>sessionType</var>.</p></li>
                 <li><p>Let the <var>uninitialized</var> value be true.</p></li>
                 <li><p>Let the <var>callable</var> value be false.</p></li>
-                <li><p>Let the <var>use distinctive identifier</var> value be this object's <var>use distinctive identifier</var>.</p></li>
+                <li><p>Let the <var>use distinctive identifier</var> value be this object's <var>use distinctive identifier</var> value.</p></li>
                 <li><p>Let the <var>cdm implementation</var> value be this object's <var>cdm implementation</var>.</p></li>
                 <li><p>Let the <var>cdm instance</var> value be this object's <var>cdm instance</var>.</p></li>
               </ol>
@@ -1121,8 +1122,8 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+            <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new a newly created <a def-id="TypeError"></a>.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise rejected with a <a def-id="NotSupportedError"></a>.</p></li>
             <li><p>Let <var>certificate</var> be a copy of the contents of the <var>serverCertificate</var> parameter.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1157,6 +1158,18 @@
                 <dt><a def-id="persistent-license-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
               </dl>
+            </li>
+          </ol>
+        </section>
+        
+        <section id="close-all-sesssions">
+          <h4>Close all sessions</h4>
+          <p>The close all sessions algorithm is run to close all sessions associated with a <a>MediaKeys</a> object, <var>media keys</var>.
+          </p>
+          <p>The following step is run:</p>
+          <ol>
+            <li>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -1231,18 +1244,18 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
-            <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-            <li><p>If <var>initData</var> is an empty array, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
+            <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+            <li><p>If <var>initData</var> is an empty array, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
             <li><p>Let <var>init data</var> be a copy of the contents of the <var>initData</var> parameter.</p></li>
             <li><p>Let <var>session type</var> be this object's <var>session type</var>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <li><p>If the <var>init data</var> is not valid for <var>initDataType</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+                <li><p>If the <var>init data</var> is not valid for <var>initDataType</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                 <li><p>Let <var>sanitized init data</var> be a validated and sanitized version of <var>init data</var>.</p>
                   <p>The user agent MUST thoroughly validate the <a def-id="initialization-data"></a> before passing it to the CDM.
                     This includes verifying that the length and values of fields are reasonable, verifying that values are within reasonable limits, and stripping irrelevant, unsupported, or unknown data or fields.
@@ -1250,14 +1263,14 @@
                     If the <a def-id="initialization-data"></a> format specified by <var>initDataType</var> supports multiple entries, the user agent SHOULD remove entries that are not needed by the CDM. The user agent MUST NOT re-order entries within the <a def-id="initialization-data"></a>.
                   </p>
                 </li>
-                <li><p>If the preceding step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-                <li><p>If <var>sanitized init data</var> is empty, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+                <li><p>If the preceding step failed, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
+                <li><p>If <var>sanitized init data</var> is empty, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p></li>
                 <li><p>Let <var>session id</var> be the empty string.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>If the <var>sanitized init data</var> is not supported by the <var>cdm</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
+                    <li><p>If the <var>sanitized init data</var> is not supported by the <var>cdm</var>, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p></li>
                     <li><p>Follow the steps for the value of <var>session type</var> from the following list:</p>
                       <dl class="switch">
                         <dt><a def-id="temporary-session"></a></dt>
@@ -1311,7 +1324,7 @@
                 </li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> be true.</p></li>
+                <li><p>Let this object's <var>callable</var> value be true.</p></li>
                 <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var>.</p>
                   <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p>
@@ -1334,11 +1347,11 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>Let this object's <var>uninitialized</var> be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
-            <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
+            <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1348,8 +1361,8 @@
                     At a minimum, this should include checking that the length and value (e.g. alphanumeric) are reasonable.
                   </p>
                 </li>
-                <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
-                <li><p>If there is an unclosed session in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
+                <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
+                <li><p>If there is an unclosed session in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1359,10 +1372,10 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-					<li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+					<li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p>
+                    <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
                     <li><p>Load the <var>session data</var>.</p></li>
@@ -1375,9 +1388,9 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> be true.</p></li>
+                <li><p>Let this object's <var>callable</var> value be true.</p></li>
                 <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
                   <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
                     Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
@@ -1407,9 +1420,9 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If <var>response</var> is an empty array, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If <var>response</var> is an empty array, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>response copy</var> be a copy of the contents of the <var>response</var> parameter.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1421,13 +1434,13 @@
                     Unknown fields should be rejected or removed.
                   </p>
                 </li>
-                <li><p>If the preceding step failed, or if <var>sanitized response</var> is empty, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+                <li><p>If the preceding step failed, or if <var>sanitized response</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>message type</var> be null.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
-                    <li><p>If the format of <var>sanitized response</var> is invalid in any way, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="TypeError"></a>.</p></li>
+                    <li><p>If the format of <var>sanitized response</var> is invalid in any way, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Process <var>sanitized response</var>, following the stipulation for the first matching condition from the following list:</p>
                       <dl class="switch">
                         <dt>If <var>sanitized response</var> contains a license or key(s)</dt>
@@ -1457,7 +1470,7 @@
                               Such data MUST be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
                             </dd>
                             <dt>Otherwise</dt>
-                            <dd>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="RangeError"></a>.</dd>
+                            <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
                           <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p>
@@ -1535,7 +1548,7 @@
 
           <ol class="method-algorithm">
             <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a resolved promise.</p></li>
-            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
@@ -1563,9 +1576,9 @@
           <p>Removes stored session data associated with this object.</p>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
-            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="RangeError"></a>.</p></li>
+            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
               <ol>
@@ -1672,7 +1685,7 @@
 
           <dt>MediaKeyStatus get()</dt>
           <dd>
-            <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var>.</p>
+            <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var> or <code>undefined</code> if the status of the key identified by <var>keyId</var> is not known.</p>
             <dl class='parameters'>
               <dt>BufferSource keyId</dt>
               <dd>The <a def-id="key-id"></a> of the key.</dd>
@@ -1937,8 +1950,8 @@
 
       <section>
         <h3>Exceptions</h3>
-        <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="domexception"></a>.
-        The following <a def-id="domexception-names">DOMException names from WebIDL</a> [[!WebIDL]] are used in the algorithms.
+        <p id="error-names">The methods report errors by rejecting the returned promise with a <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exception</a> or a <a def-id="domexception"></a>.
+        The following <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names from WebIDL</a> [[!WebIDL]] are used in the algorithms.
         Causes specified specified in the algorithms are listed alongside each name, though these names MAY be used for other reasons as well.
         </p>
 
@@ -1947,6 +1960,15 @@
             <tr>
               <th>Name</th>
               <th>Possible Causes (non-exhaustive)</th>
+            </tr>
+            <tr>
+              <td><dfn id="dfn-TypeError"><code>TypeError</code></dfn></td>
+              <td>
+                The parameter is empty.<br/>
+                Invalid initialization data.<br/>
+                Invalid response format.<br/>
+                A persistent license was provided for a <a def-id="temporary-session"></a> session.
+              </td>
             </tr>
             <tr>
               <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
@@ -1966,21 +1988,6 @@
                 The session has already been used.<br/>
                 The session is not yet initialized.<br/>
                 The session is closed.
-              </td>
-            </tr>
-            <tr>
-              <td><dfn id="dfn-TypeError"><code>TypeError</code></dfn></td>
-              <td>
-                The parameter is empty.<br/>
-                Invalid initialization data.<br/>
-                Invalid response format.<br/>
-                A persistent license was provided for a <a def-id="temporary-session"></a> session.
-              </td>
-            </tr>
-            <tr>
-              <td><dfn id="dfn-RangeError"><code>RangeError</code></dfn></td>
-              <td>
-                Indicates a value that is not in the set or range of allowable values. For example, the operation is not supported on sessions of this type.<br/>
               </td>
             </tr>
             <tr>
@@ -2078,20 +2085,20 @@
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
             <li><p>If <var>mediaKeys</var> and the <a def-id="mediaKeys-attribute"></a> attribute are the same object, return a resolved promise.</p></li>
-            <li><p>If this object's <var>attaching media keys</var> value is true, return a promise rejected with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object's <var>attaching media keys</var> value is true, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>attaching media keys</var> value be true.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <li><p>If <var>mediaKeys</var> is not null, the CDM instance represented by <var>mediaKeys</var> is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="QuotaExceededError"></a>.</p></li>
+                <li><p>If <var>mediaKeys</var> is not null, the CDM instance represented by <var>mediaKeys</var> is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p></li>
                 <li><p>If the <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
                   <ol>
-                    <li><p>If the user agent or CDM do not support removing the association, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="NotSupportedError"></a>.</p></li>
-                    <li><p>If the association cannot currently be removed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="InvalidStateError"></a>.</p>
+                    <li><p>If the user agent or CDM do not support removing the association, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p></li>
+                    <li><p>If the association cannot currently be removed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with an <a def-id="InvalidStateError"></a>.</p>
                       <p class="note">For example, some implementations may not allow removal during playback.</p>
                     </li>
                     <li><p>Stop using the CDM instance represented by the <a def-id="mediaKeys-attribute"></a> attribute to decrypt <a def-id="media-data"></a> and remove the association with the media element.</p></li>
-                    <li><p>If the preceding step failed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>If the preceding step failed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
                   </ol>
                 </li>
                 <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
@@ -2262,7 +2269,7 @@
                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                     </li>
                     <li>
-                      <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
+                      <p>Run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
                     </li>
                     <li>
                       <p>Abort these steps.</p>
@@ -2319,7 +2326,7 @@
                                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                                     </li>
                                     <li>
-                                      <p>If <var>cdm</var> is no longer usable for any reason then for each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
+                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
                                     </li>
                                     <li>
                                       <p>Abort these steps.</p>
