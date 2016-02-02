@@ -987,6 +987,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
+      <p>If the CDM instanced represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1157,6 +1158,18 @@
                 <dt><a def-id="persistent-license-session"></a></dt>
                 <dd>Return <code>true</code>.</dd>
               </dl>
+            </li>
+          </ol>
+        </section>
+        
+        <section id="close-all-sesssions">
+          <h4>Close all sessions</h4>
+          <p>The close all sessions algorithm is run to close all sessions associated with a <a>MediaKeys</a> object, <var>media keys</var>.
+          </p>
+          <p>The following step is run:</p>
+          <ol>
+            <li>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -2227,7 +2240,7 @@
                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                     </li>
                     <li>
-                      <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
+                      <p>Run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
                     </li>
                     <li>
                       <p>Abort these steps.</p>
@@ -2283,7 +2296,7 @@
                                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                                     </li>
                                     <li>
-                                      <p>If <var>cdm</var> is no longer usable for any reason then for each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
+                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
                                     </li>
                                     <li>
                                       <p>Abort these steps.</p>
