@@ -2024,18 +2024,26 @@
       
       <!-- Put all the monkey-patching here -->
       
-      <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported.</p>
+      <p>This section specifies additions to and modifications of the <a def-id="htmlmediaelement"></a> [[!HTML5]] when the Encrypted Media Extensions are supported:</p>
+      <ul>
+        <li>
       
-      <p>This specification adds two internal values to the <a def-id="htmlmediaelement"></a>: <var>waiting for key</var> which shall have a boolean value and <var>encrypted block queue</var> which shall be a queue of encrypted blocks awaiting decryption.</p>
-
-      <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value shall initialized to <code>false</code> and its <var>encrypted block queue</var> value shall be empty.</p>
-      
-      <p>In addition to the criteria specified in [[!HTML5]] an <a def-id="htmlmediaelement"></a> shall be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
-      
-      <p>When the media element encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a> the user agent shall run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
-      
-      <p>For each block of encrypted <a def-id="media-data"></a> encountered during the <a def-id="resource-fetch-algorithm"></a> the user agent shall run the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm in the order the encrypted blocks were encountered.</p>
-      <p class="note">The above requirement provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
+          <p>This specification adds two internal values to the <a def-id="htmlmediaelement"></a>: <var>waiting for key</var>, which shall have a boolean value, and <var>encrypted block queue</var>, which shall be a queue of encrypted blocks awaiting decryption.</p>
+        </li>
+        <li>
+          <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value shall be initialized to <code>false</code> and its <var>encrypted block queue</var> value shall be empty.</p>
+        </li>
+        <li>
+          <p>In addition to the criteria specified in [[!HTML5]], an <a def-id="htmlmediaelement"></a> shall be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
+        </li>
+        <li>
+          <p>When the user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>, the user agent shall run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
+        </li>
+        <li>
+          <p>For each block of encrypted <a def-id="media-data"></a> encountered during the <a def-id="resource-fetch-algorithm"></a>, the user agent shall run the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm in the order the encrypted blocks were encountered.</p>
+          <p class="note">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
+        </li>
+      </ul>
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2224,8 +2232,11 @@
 
         <section id="encrypted-block-encountered">
           <h4>Encrypted Block Encountered</h4>
-          <p>This algorithm queues a block of encrypted media data, <var>block</var> for decryption and attempts to decrypt if possible. The following steps are run:</p>
+          <p>This algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible. The following steps are run:</p>
           <ol>
+            <li>
+              <p>Let <var>block</var> be a the block of encrypted media data.</p>
+            </li>
             <li>
               <p>Add <var>block</var> to the end of the media element's <var>encrypted block queue</var>.</p>
             </li>
@@ -2342,11 +2353,9 @@
               <p>Run the following steps:</p>
               <p class="note">These steps are reached when there is no usable key for <var>block</var>.</p>
               <ol>
-                <li><p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p></li>
-                <!-- I propose removing the following step, as it is odd to "wait" inside an algorith. The media element is now a "blocked media element" and will become (not one of those)
-                     when the attempt-to-resume-playback algorithm succeeds.
-                <li><p>Wait for a signal to resume decryption.</p></li>
-                -->
+                <li>
+                  <p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p>
+                </li>
               </ol>
             </li>
           </ol>
@@ -2379,15 +2388,18 @@
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>true</code>, abort these steps.
-            <li><p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p></li>
-            <li><p><a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
+            <li>
+              <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
+              <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, playback will be stopped.</p>
+            </li>
+            <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
 
         <section id="resume-playback">
           <h4>Attempt to Resume Playback If Necessary</h4>
-          <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys becomes available.
+          <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys may have become available.
           If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
           Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
@@ -2399,8 +2411,10 @@
             <li><p>Run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm on the <var>media element</var>.</p></li>
             <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>:</p>
               <ol>
-                <li><p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p></li>
-                <li><p>Resume playback</p></li>
+                <li>
+                  <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p>
+                  <p class="note">As a result of the above step, the media element may no longer be a <a def-id="blocked-media-element"></a> and thus playback may resume.</p>
+                </li>
               </ol>
             </li>
           </ol>
