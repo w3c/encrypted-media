@@ -110,6 +110,10 @@
     webappapis_helper(doc, df, 'fire-a-simple-event', 'fire a simple event');
     df.appendChild(doc.createTextNode(' named'));
   }
+  
+    function queue_helper(doc, df, id, text) {
+    webappapis_helper(doc, df, 'queue-a-task', text);
+  }
 
   function queue_and_fire_track_event_helper(doc, df, id, text) {
     webappapis_helper(doc, df, 'queue-a-task', 'Queue a task');
@@ -199,7 +203,7 @@
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
 
-	'size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
+	'statusmap-size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
 
 	
     'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
@@ -308,6 +312,7 @@
     'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
+    'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
 
     'constructing-events': { func: dom_helper, fragment: 'constructing-events', link_text: 'Constructing events', },
     'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
