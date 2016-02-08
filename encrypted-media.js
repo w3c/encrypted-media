@@ -1,7 +1,7 @@
 (function() {
   var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
   var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
-  var DOM_spec_url = "https://dom.spec.whatwg.org/";
+  var DOM_spec_url = "https://www.w3.org/TR/dom/";
   var IDL_spec_url = "https://heycam.github.io/webidl/";
 
   function url_helper(doc, url) {
