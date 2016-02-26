@@ -722,7 +722,7 @@ table.simple {
     }
   }
 }</script></head>
-  <body class="h-entry toc-sidebar" role="document" id="respecDocument"><p id="toc-nav"><a id="toc-jump" href="#toc"><span aria-hidden="true">↑</span> <span>Jump to Table of Contents</span></a><a id="toc-toggle" href="#toc"><span aria-hidden="true">←</span> <span>Collapse Sidebar</span></a></p><div class="head" role="contentinfo" id="respecHeader">
+  <body class="h-entry toc-inline" role="document" id="respecDocument"><p id="toc-nav"><a id="toc-jump" href="#toc"><span aria-hidden="true">↑</span> <span>Jump to Table of Contents</span></a><a id="toc-toggle" href="#toc"><span aria-hidden="true">→</span> <span>Pop Out Sidebar</span></a></p><div class="head" role="contentinfo" id="respecHeader">
   <p>
       
         
@@ -734,7 +734,7 @@ table.simple {
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
   
-  <h2 id="w3c-editor-s-draft-25-february-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-02-25">25 February 2016</time></h2>
+  <h2 id="w3c-editor-s-draft-26-february-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-02-26">26 February 2016</time></h2>
   <dl>
     
       <dt>This version:</dt>
@@ -1674,15 +1674,16 @@ table.simple {
 <span class="idlMember">             <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></span> = <span class="idlMemberValue">""</span>;</span>
 <span class="idlMember">             <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></span> = <span class="idlMemberValue">""</span>;</span>
 };</span></pre><section id="dictionary-mediakeysystemmediacapability-members" typeof="bibo:Chapter" resource="#dictionary-mediakeysystemmediacapability-members" property="bibo:hasPart"><h4 id="h-dictionary-mediakeysystemmediacapability-members" resource="#h-dictionary-mediakeysystemmediacapability-members"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.3.1 </span>Dictionary <a class="idlType" href="#idl-def-MediaKeySystemMediaCapability"><code>MediaKeySystemMediaCapability</code></a> Members</span></h4><dl class="dictionary-members"><dt id="widl-MediaKeySystemMediaCapability-contentType"><code>contentType</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
-            The type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a>.  Allows the user agent to determine if it can play this <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a> with the requested <a href="#key-system">Key System</a> before fetching the content.
-            If specified, its value must be a <a href="http://www.w3.org/TR/html5/embedded-content-0.html#mime-types">valid MIME type</a>.
-            The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded.
+            The type of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resource</a>.
+            Its value must be a <a href="http://www.w3.org/TR/html5/embedded-content-0.html#mime-types">valid MIME type</a> [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>].
+            The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded. [<cite><a class="bibref" href="#bib-RFC6381">RFC6381</a></cite>]
+            The empty string is invalid.
           </dd><dt id="widl-MediaKeySystemMediaCapability-robustness"><code>robustness</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt><dd>
             The robustness level associated with the content type.
             The empty string indicates that any ability to decrypt and decode the content type is acceptable.
           </dd></dl></section>
 
-        <p>The entire <code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code>, including all codecs, must be supported with <code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code> in order for the capability represented by this object to be considered supported.</p>
+        <p>In order for the capability represented by this object to be considered supported, <code><a href="#widl-MediaKeySystemMediaCapability-contentType">contentType</a></code> <em class="rfc2119" title="MUST NOT">MUST NOT</em> be the empty string and its entire value, including all codecs, <em class="rfc2119" title="MUST">MUST</em> be supported with <code><a href="#widl-MediaKeySystemMediaCapability-robustness">robustness</a></code>.</p>
         <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note36"><span>Note</span></div><p class="">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p></div>
       </section>
     </section>
@@ -2751,10 +2752,13 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
       <p>The following internal values are added to the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code>:</p>
       <ul>
         <li>
-          <p><var>waiting for key</var>, which shall have a boolean value, and</p>
+          <p><var>attaching media keys</var>, which shall have a boolean value, and</p>
         </li>
         <li>
-            <p><var>encrypted block queue</var>, which shall be a queue of encrypted blocks awaiting decryption.</p>
+            <p><var>encrypted block queue</var>, which shall be a queue of encrypted blocks awaiting decryption, and</p>
+        </li>
+        <li>
+          <p><var>waiting for key</var>, which shall have a boolean value.</p>
         </li>
       </ul>
       <p>The following modifications are made to the behaviour of the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code>:</p>
@@ -2817,7 +2821,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
                       <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note68"><span>Note</span></div><p class="">For example, some implementations may not allow removal during playback.</p></div>
                     </li>
                     <li><p>Stop using the CDM instance represented by the <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> and remove the association with the media element.</p></li>
-                    <li><p>If the preceding step failed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a the appropriate <a href="#error-names">error name</a>.</p></li>
+                    <li><p>If the preceding step failed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with the appropriate <a href="#error-names">error name</a>.</p></li>
                   </ol>
                 </li>
                 <li><p>If <var>mediaKeys</var> is not null, run the following steps:</p>
