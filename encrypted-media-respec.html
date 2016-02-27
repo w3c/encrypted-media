@@ -1361,10 +1361,17 @@
            Each entry MUST have a unique key ID.
          </p>
           <p class="note">The map entries and their values may be updated whenever the event loop spins.
-            The map can never be inconsistent or partially updated, but it may change between accesses if the event loop spins in between accesses.
+            The map MUST NOT ever be inconsistent or partially updated, but it may change between accesses if the event loop spins in between the accesses.
             Key IDs may be added as the result of a <a def-id="load"></a> or <a def-id="update"></a> call.
             Key IDs may be removed as the result of a <a def-id="update"></a> call that removes knowledge of existing keys (or replaces the existing set of keys with a new set).
-            Key IDs MUST NOT be removed because they became unusable, such as due to expiration. Instead, such keys MUST be given an appropriate status, such as <a def-id="status-expired"></a>.</p>
+            Key IDs MUST NOT be removed because they became unusable, such as due to expiration. Instead, such keys MUST be given an appropriate status, such as <a def-id="status-expired"></a>.
+          </p>
+          <p class="note">
+            Some older platforms may contain Key System implementations that do not expose key IDs, making it impossible to provide a compliant user agent implementation. 
+            To maximize interoperability, user agent implementations exposing such CDMs SHOULD implement this member as follows:
+            Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing
+            the one-byte key ID <code>0</code> and the <a>MediaKeyStatus</a> most appropriate for the aggregated status of this object.
+          </p>
         </dd>
 
         <dt>Promise&lt;void&gt; generateRequest()</dt>
