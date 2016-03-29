@@ -167,7 +167,8 @@
     'record-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record of license destruction'  },
     'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
     'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
-
+    'time': { func: term_helper, fragment: 'time', link_text: 'time'  },
+	
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
     'get-distinctive-identifier-consent-status-algorithm' : { func: term_helper, fragment: 'get-distinctive-identifier-consent-status', link_text: 'Get Distinctive Identifier Consent Status' },

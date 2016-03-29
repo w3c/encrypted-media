@@ -1076,6 +1076,18 @@ table.simple {
           In order for the API to provide <a href="#initialization-data">Initialization Data</a> in the <code><a href="#dom-evt-encrypted">encrypted</a></code> event, <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> <em class="rfc2119" title="MUST NOT">MUST NOT</em> be Mixed Content [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>].
           </p>
         </dd>
+		
+		<dt id="time">time</dt>
+        <dd>
+ 		  <p>Time represents an instant in time with millisecond accuracy.  The instants in time it can represent are the same that can be represented with 
+		  <a class="external" href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [<cite><a class="bibref" href="#bib-ECMA-262">ECMA-262</a></cite>]) – 
+		  namely, every millisecond in the 200,000,000 days centered around midnight of 1 January, 1970 UTC, except for any millisecond that is part of an inserted leap second.  Time does not include these added leap milliseconds.
+          </p>    
+          <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate.  It should never have the value <code>Infinity</code>.
+          </p>    
+          <p>Time is intended to be consistent with Unix time.   
+		  </p>
+        </dd> 
       </dl>
     </section>
 
@@ -1906,7 +1918,7 @@ table.simple {
           <p>Signals when object becomes closed as a result of the <a href="#session-close">Session Close</a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt id="widl-MediaKeySession-expiration"><code>expiration</code> of type <span class="idlAttrType">unrestricted double</span>, readonly       </dt><dd>
-          <p>The time, in milliseconds since 01 January, 1970 UTC, after which the key(s) in the session will no longer be usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM. The value of <code>Infinity</code> should never be used.</p>
+          <p>The <a href="#time">time</a> after which the key(s) in the session will no longer be usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note46"><span>Note</span></div><p class="">This value <em class="rfc2119" title="MAY">MAY</em> change during the session lifetime, such as when an action triggers the start of a window.</p></div>
         </dd><dt id="widl-MediaKeySession-keyStatuses"><code>keyStatuses</code> of type <span class="idlAttrType"><a href="#idl-def-MediaKeyStatusMap" class="idlType"><code>MediaKeyStatusMap</code></a></span>, readonly       </dt><dd>
           <p>A reference to a read-only map of <a href="#decryption-key-id">key IDs</a> <a href="#known-key">known</a> to the session to the current status of the associated key.
@@ -4419,6 +4431,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
 <section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart"><!--OddPage--><h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart"><h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3><dl class="bibliography" resource=""><dt id="bib-COOKIES">[COOKIES]</dt><dd>A. Barth. IETF. <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires"><cite>HTTP State Management Mechanism</cite></a>. April 2011. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc6265" property="dc:requires">https://tools.ietf.org/html/rfc6265</a>
 </dd><dt id="bib-DOM">[DOM]</dt><dd>Anne van Kesteren; Aryeh Gregor; Ms2ger; Alex Russell; Robin Berjon. W3C. <a href="http://www.w3.org/TR/dom/" property="dc:requires"><cite>W3C DOM4</cite></a>. 19 November 2015. W3C Recommendation. URL: <a href="http://www.w3.org/TR/dom/" property="dc:requires">http://www.w3.org/TR/dom/</a>
+</dd><dt id="bib-ECMA-262">[ECMA-262]</dt><dd>Ecma International. <a href="https://tc39.github.io/ecma262/" property="dc:requires"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.github.io/ecma262/" property="dc:requires">https://tc39.github.io/ecma262/</a>
 </dd><dt id="bib-ENCODING">[ENCODING]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. W3C. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 20 October 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
 </dd><dt id="bib-HTML5">[HTML5]</dt><dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. W3C. <a href="http://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/html5/" property="dc:requires">http://www.w3.org/TR/html5/</a>
 </dd><dt id="bib-MIXED-CONTENT">[MIXED-CONTENT]</dt><dd>Mike West. W3C. <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 8 October 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/mixed-content/" property="dc:requires">http://www.w3.org/TR/mixed-content/</a>
