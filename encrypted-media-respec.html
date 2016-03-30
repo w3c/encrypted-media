@@ -327,7 +327,7 @@
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
-          Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a def-id="session-close-algorithm">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
+          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> when the <a def-id="session-close-algorithm">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
           </p>
           <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
         </dd>
@@ -353,14 +353,17 @@
           Such keys MUST only be provided to the <a def-id="cdm"></a> via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
           </p>
 
-          <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable to decrypt <a def-id="media-data"></a>.</p>
-          <p class="note">For example, a key is not usable if its license has expired.</p>
-
           <p class="note">Authors SHOULD encrypt each set of stream(s) that requires enforcement of a meaningfully different policy with a distinct key (and key ID).
             For example, if policies may differ between two video resolutions, stream(s) containing one resolution should not be encrypted with the key used to encrypt stream(s) containing the other resolution.
             When encrypted, audio streams SHOULD NOT use the same key as any video stream.
             This is the only way to ensure enforcement and compatibility across clients.
           </p>
+        </dd>
+
+        <dt id="usable-for-decryption">Usable For Decryption</dt>
+        <dd>
+          <p>A key is considered usable for decryption if the CDM is certain the key is currently usable to decrypt one or more blocks of <a def-id="media-data"></a>.</p>
+          <p class="note">For example, a key is not usable for decryption if its license has expired.  Even if its license has not expired, a key is not usable for decryption if other conditions (e.g. output protection) for its use are not currently satisifed.</p>
         </dd>
 
         <dt id="decryption-key-id">Key ID</dt>
@@ -1357,7 +1360,7 @@
 
         <dt>readonly attribute unrestricted double expiration</dt>
         <dd>
-          <p>The <a def-id="time">time</a> after which the key(s) in the session will no longer be usable to decrypt <a def-id="media-data"></a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
+          <p>The <a def-id="time">time</a> after which the key(s) in the session will no longer be <a def-id="usable-for-decryption"></a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
         </dd>
 
@@ -1875,12 +1878,12 @@
         <dl title="enum MediaKeyStatus" class="idl">
           <dt>usable</dt>
           <dd>
-            The CDM is certain the key is currently usable to decrypt <a def-id="media-data"></a>.<br/>
-            Keys that <em>may not</em> currently be usable MUST NOT have this status.
+            The CDM is certain the key is currently <a def-id="usable-for-decryption"></a>.<br/>
+            Keys that <em>may not</em> currently be <a def-id="usable-for-decryption"></a> MUST NOT have this status.
           </dd>
           <dt>expired</dt>
           <dd>
-            The key is no longer usable to decrypt <a def-id="media-data"></a> because its expiration time has passed.<br/>
+            The key is no longer <a def-id="usable-for-decryption"></a> because its expiration time has passed.<br/>
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
           </dd>
@@ -1913,7 +1916,7 @@
           </dd>
           <dt>internal-error</dt>
           <dd>
-            The key is not currently usable to decrypt <a def-id="media-data"></a> because of an error in the CDM unrelated to the other values.
+            The key is not currently <a def-id="usable-for-decryption"></a> because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
           </dd>
         </dl>
@@ -2458,9 +2461,9 @@
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
                         <li><p>Let <var>block key</var> be null.</p></li>
-                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>session</var> be a
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a def-id="usable-for-decryption"></a>, let <var>session</var> be a
                         <a>MediaKeySession</a> object containg that key and let <var>block key</var> be that key.</p>
-                          <p class="note">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
+                          <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
                         <li><p>If <var>block key</var> is not null, run the following steps:
@@ -2529,7 +2532,7 @@
             </li>
             <li>
               <p>Run the following steps:</p>
-              <p class="note">These steps are reached when there is no usable key for <var>block</var>.</p>
+              <p class="note">These steps are reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
               <ol>
                 <li>
                   <p>Run the <a def-id="queue-waitingforkey-algorithm"></a> algorithm on the media element.</p>

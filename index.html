@@ -725,7 +725,7 @@ table.simple {
             <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-  <h2 id="w3c-editor-s-draft-29-march-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-03-29">29 March 2016</time></h2>
+  <h2 id="w3c-editor-s-draft-30-march-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-03-30">30 March 2016</time></h2>
   <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -917,7 +917,7 @@ table.simple {
           </p>
           <p>Each Key Session is associated with a single <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object, and only media element(s) associated with that object may access key(s) associated with the session.
           Other <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> objects, <a href="#cdm">CDM</a> instances, and media elements <em class="rfc2119" title="MUST NOT">MUST NOT</em> access the key session or use its key(s).
-          Key sessions and the keys they contain are no longer usable by the CDM for decryption when the <a href="#session-close">session is closed</a>, including when the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object is destroyed.
+          Key sessions and the keys they contain are no longer <a href="#usable-for-decryption">usable for decryption</a> when the <a href="#session-close">session is closed</a>, including when the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object is destroyed.
           </p>
           <p><a href="#decryption-key-id">Key IDs</a> <em class="rfc2119" title="MUST">MUST</em> be unique within a session.</p>
         </dd>
@@ -943,14 +943,17 @@ table.simple {
           Such keys <em class="rfc2119" title="MUST">MUST</em> only be provided to the <a href="#cdm">CDM</a> via an <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call. (They may later be loaded by <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> as part of the stored session data.)
           </p>
 
-          <p>A key is considered <em>usable</em> if the CDM is certain the key is currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</p>
-          <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note5"><span>Note</span></div><p class="">For example, a key is not usable if its license has expired.</p></div>
-
-          <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note6"><span>Note</span></div><p class="">Authors <em class="rfc2119" title="SHOULD">SHOULD</em> encrypt each set of stream(s) that requires enforcement of a meaningfully different policy with a distinct key (and key ID).
+          <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note5"><span>Note</span></div><p class="">Authors <em class="rfc2119" title="SHOULD">SHOULD</em> encrypt each set of stream(s) that requires enforcement of a meaningfully different policy with a distinct key (and key ID).
             For example, if policies may differ between two video resolutions, stream(s) containing one resolution should not be encrypted with the key used to encrypt stream(s) containing the other resolution.
             When encrypted, audio streams <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> use the same key as any video stream.
             This is the only way to ensure enforcement and compatibility across clients.
           </p></div>
+        </dd>
+
+        <dt id="usable-for-decryption">Usable For Decryption</dt>
+        <dd>
+          <p>A key is considered usable for decryption if the CDM is certain the key is currently usable to decrypt one or more blocks of <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</p>
+          <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note6"><span>Note</span></div><p class="">For example, a key is not usable for decryption if its license has expired.  Even if its license has not expired, a key is not usable for decryption if other conditions (e.g. output protection) for its use are not currently satisifed.</p></div>
         </dd>
 
         <dt id="decryption-key-id">Key ID</dt>
@@ -1918,7 +1921,7 @@ table.simple {
           <p>Signals when object becomes closed as a result of the <a href="#session-close">Session Close</a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt id="widl-MediaKeySession-expiration"><code>expiration</code> of type <span class="idlAttrType">unrestricted double</span>, readonly       </dt><dd>
-          <p>The <a href="#time">time</a> after which the key(s) in the session will no longer be usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
+          <p>The <a href="#time">time</a> after which the key(s) in the session will no longer be <a href="#usable-for-decryption">usable for decryption</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note46"><span>Note</span></div><p class="">This value <em class="rfc2119" title="MAY">MAY</em> change during the session lifetime, such as when an action triggers the start of a window.</p></div>
         </dd><dt id="widl-MediaKeySession-keyStatuses"><code>keyStatuses</code> of type <span class="idlAttrType"><a href="#idl-def-MediaKeyStatusMap" class="idlType"><code>MediaKeyStatusMap</code></a></span>, readonly       </dt><dd>
           <p>A reference to a read-only map of <a href="#decryption-key-id">key IDs</a> <a href="#known-key">known</a> to the session to the current status of the associated key.
@@ -2384,10 +2387,10 @@ table.simple {
     "<a href="#idl-def-MediaKeyStatus.status-pending" class="idlEnumItem">status-pending</a>",
     "<a href="#idl-def-MediaKeyStatus.internal-error" class="idlEnumItem">internal-error</a>"
 };</span></pre><table class="simple"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><code id="idl-def-MediaKeyStatus.usable">usable</code></td><td>
-            The CDM is certain the key is currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.<br>
-            Keys that <em>may not</em> currently be usable <em class="rfc2119" title="MUST NOT">MUST NOT</em> have this status.
+            The CDM is certain the key is currently <a href="#usable-for-decryption">usable for decryption</a>.<br>
+            Keys that <em>may not</em> currently be <a href="#usable-for-decryption">usable for decryption</a> <em class="rfc2119" title="MUST NOT">MUST NOT</em> have this status.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.expired">expired</code></td><td>
-            The key is no longer usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because its expiration time has passed.<br>
+            The key is no longer <a href="#usable-for-decryption">usable for decryption</a> because its expiration time has passed.<br>
             The time represented by the <code><a href="#widl-MediaKeySession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time.
             All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.released">released</code></td><td>
@@ -2410,7 +2413,7 @@ table.simple {
             The status of the key is not yet known and is being determined.
             The status will be updated with the actual status when it has been determined.
           </td></tr><tr><td><code id="idl-def-MediaKeyStatus.internal-error">internal-error</code></td><td>
-            The key is not currently usable to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> because of an error in the CDM unrelated to the other values.
+            The key is not currently <a href="#usable-for-decryption">usable for decryption</a> because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
           </td></tr></tbody></table>
       </section>
@@ -2928,9 +2931,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
                         <li><p>Let <var>block key</var> be null.</p></li>
-                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is usable, let <var>session</var> be a
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a href="#usable-for-decryption">usable for decryption</a>, let <var>session</var> be a
                         <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object containg that key and let <var>block key</var> be that key.</p>
-                          <div class="note"><div class="note-title marker" aria-level="5" role="heading" id="h-note78"><span>Note</span></div><p class="">If multiple sessions contain a <em>usable</em> key for the <var>block key ID</var>, which session and key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
+                          <div class="note"><div class="note-title marker" aria-level="5" role="heading" id="h-note78"><span>Note</span></div><p class="">If multiple sessions contain a key that is <a href="#usable-for-decryption">usable for decryption</a> for the <var>block key ID</var>, which session and key to use is <a href="#key-system">Key System</a>-dependent.</p></div>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on each affected <var>session</var>, providing all <a href="#decryption-key-id">key ID(s)</a> in the session along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value(s) for each.
                         </p></li><li><p>If <var>block key</var> is not null, run the following steps:
@@ -2999,7 +3002,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             </li>
             <li>
               <p>Run the following steps:</p>
-              <div class="note"><div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div><p class="">These steps are reached when there is no usable key for <var>block</var>.</p></div>
+              <div class="note"><div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div><p class="">These steps are reached when there is no key that is <a href="#usable-for-decryption">usable for decryption</a> for <var>block</var>.</p></div>
               <ol>
                 <li>
                   <p>Run the <a href="#queue-waitingforkey">Queue a "waitingforkey" Event</a> algorithm on the media element.</p>

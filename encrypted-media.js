@@ -158,6 +158,7 @@
     'keysystem': { func: term_helper, fragment: 'key-system', link_text: 'Key System'  },
     'keysystems': { func: term_helper, fragment: 'key-system', link_text: 'Key Systems'  },
     'key-id': { func: term_helper, fragment: 'decryption-key-id', link_text: 'key ID'  },
+    'usable-for-decryption': { func: term_helper, fragment: 'usable-for-decryption', link_text: 'usable for decryption'  },
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
     'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
