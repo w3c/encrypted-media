@@ -216,7 +216,7 @@
               authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
               publisher: "W3C"
           }
-      }
+		}
       };
     </script>
     <!-- script to register bugs -->
@@ -1488,10 +1488,10 @@
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> value be true.</p></li>
-                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p>
-                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p>
-                </li>
+                <li><p>Resolve <var>promise</var>.</p></li>
+                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
+				  <p class="note">The <a def-id="generateRequest"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
+				</li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1560,10 +1560,11 @@
                   </p>
                 </li>
                 <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                 <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
-                  <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/19">Issue 19</a> - Ensure promises returned by methods are fulfilled before event handlers are executed.</p>
-                </li>
+				</li>
+                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+                  <p class="note">The <a def-id="load"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
+				</li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
