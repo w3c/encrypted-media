@@ -203,8 +203,8 @@
     'close-all-sessions-algorithm': { func: term_helper, fragment: 'close-all-sessions', link_text: 'Close all Sessions',  },
 
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
-    'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
-    'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
+    'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
+    'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
 
 	'statusmap-size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
 
