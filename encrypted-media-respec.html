@@ -1260,7 +1260,7 @@
           </ol>
         </dd>
 
-        <dt>Promise&lt;void&gt; setServerCertificate()</dt>
+        <dt>Promise&lt;boolean&gt; setServerCertificate()</dt>
         <dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
           <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a> algorithm.</p>
@@ -1278,15 +1278,16 @@
           </dl>
 
           <ol class="method-algorithm">
+            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
             <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new a newly created <a def-id="TypeError"></a>.</p></li>
-            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise rejected with a <a def-id="NotSupportedError"></a>.</p></li>
+
             <li><p>Let <var>certificate</var> be a copy of the contents of the <var>serverCertificate</var> parameter.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Use this object's <var>cdm instance</var> to process <var>certificate</var>.</p></li>
-                <li><p>If the preceding step failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li><p>If the preceding step failed, resolve <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                <li><p>Resolve <var>promise</var> with <code>true</code>.</p></li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>

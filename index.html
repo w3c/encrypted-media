@@ -725,7 +725,7 @@ table.simple {
             <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-  <h2 id="w3c-editor-s-draft-04-april-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-04-04">04 April 2016</time></h2>
+  <h2 id="w3c-editor-s-draft-12-april-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-04-12">12 April 2016</time></h2>
   <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1783,8 +1783,8 @@ table.simple {
         </td></tr></tbody></table>
 
       <pre class="idl"><span class="idlInterface" id="idl-def-MediaKeys">interface <span class="idlInterfaceID">MediaKeys</span> {
-<span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a></span> <span class="idlMethName"><a href="#widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType">createSession</a></span> (<span class="idlParam">optional <span class="idlParamType"><a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a></span> <span class="idlParamName">sessionType</span> = <span class="idlDefaultValue">"temporary"</span></span>);</span>
-<span class="idlMethod">    <span class="idlMethType">Promise&lt;void&gt;</span>   <span class="idlMethName"><a href="#widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate">setServerCertificate</a></span> (<span class="idlParam"><span class="idlParamType">BufferSource</span> <span class="idlParamName">serverCertificate</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a></span>  <span class="idlMethName"><a href="#widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType">createSession</a></span> (<span class="idlParam">optional <span class="idlParamType"><a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a></span> <span class="idlParamName">sessionType</span> = <span class="idlDefaultValue">"temporary"</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType">Promise&lt;boolean&gt;</span> <span class="idlMethName"><a href="#widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate">setServerCertificate</a></span> (<span class="idlParam"><span class="idlParamType">BufferSource</span> <span class="idlParamName">serverCertificate</span></span>);</span>
 };</span></pre><section id="methods-2" typeof="bibo:Chapter" resource="#methods-2" property="bibo:hasPart"><h3 id="h-methods-2" resource="#h-methods-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">5.1 </span>Methods</span></h3><dl class="methods"><dt id="widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType"><code id="createSession">createSession</code></dt><dd>
           <p>Returns a new <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.</p>
 
@@ -1821,7 +1821,7 @@ table.simple {
               </ol>
             </li>
             <li><p>Return <var>session</var>.</p></li>
-          </ol></dd><dt id="widl-MediaKeys-setServerCertificate-Promise-void--BufferSource-serverCertificate"><code id="setServerCertificate">setServerCertificate</code></dt><dd>
+          </ol></dd><dt id="widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate"><code id="setServerCertificate">setServerCertificate</code></dt><dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
           <p>Key Systems that use such certificates <em class="rfc2119" title="MUST">MUST</em> also support requesting the certificate from the server via the <a href="#queue-message">Queue a "message" Event</a> algorithm.</p>
           <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note44"><span>Note</span></div><p class="">This method allows an application to proactively provide a server certificate to implementations that support it to avod the additional round trip should the CDM request it.
@@ -1835,16 +1835,17 @@ table.simple {
               The server certificate.
               The contents are <a href="#key-system">Key System</a>-specific.
               It <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain executable code.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
+            <li><p>If the <a href="#key-system">Key System</a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
             <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
-            <li><p>If the <a href="#key-system">Key System</a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise rejected with a <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p></li>
+
             <li><p>Let <var>certificate</var> be a copy of the contents of the <var>serverCertificate</var> parameter.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Use this object's <var>cdm instance</var> to process <var>certificate</var>.</p></li>
-                <li><p>If the preceding step failed, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li><p>If the preceding step failed, resolve <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
+                <li><p>Resolve <var>promise</var> with <code>true</code>.</p></li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
