@@ -629,12 +629,12 @@
                               <p>
                                 Let <var>supported configuration</var> be the result of executing the
                                 <a def-id="get-supported-configuration-and-consent-algorithm"></a> algorithm
-                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>
+                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
                               </p>
                             </li>
                             <li>
                               <p>
-                                If <var>supported configuration</var> is not <code>null</code>,
+                                If <var>supported configuration</var> is not <code>ConsentDenied</code>,
                                 return <var>supported configuration</var>.
                               </p>
                             </li>
@@ -650,10 +650,21 @@
                   </dd>
                   <dt>Otherwise:</dt>
                   <dd>
-                    <p>
-                      Return the result of executing the <a def-id="get-supported-configuration-and-consent</a>-algorithm"></a>
-                      with <var>implementation</var>, <var>candidate configuration</var> and <var>origin</var>.
-                    </p>
+                    <ol>
+                      <li>
+                        <p>
+                          Let <var>supported configuration</var> be the result of executing the
+                          <a def-id="get-supported-configuration-and-consent-algorithm"></a> algorithm
+                          with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
+                        </p>
+                      </li>
+                      <li>
+                        <p>If <var>supported configuration</var> is <code>ConsentDenied</code> return <code>null</code>.</p>
+                      </li>
+                      <li>
+                        <p>Return <var>supported configuration</var>.</p>
+                      </li>
+                    </ol>
                   </dd>
                 </dl>
               </li>
@@ -661,7 +672,7 @@
           </section>
           <section>
             <h5>Get Supported Configuration and Consent</h5>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration, <code>null</code>, or <code>ConsentDenied</code> as appropriate.
             </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
@@ -842,7 +853,7 @@
                           </li>
                           <li>
                             <p>
-                              If consent was denied, return <code>null</code>.
+                              If consent was denied, return <code>ConsentDenied</code>.
                             </p>
                           </li>
                         </ol>
@@ -862,7 +873,7 @@
                       <dt><code>Denied</code>:</dt>
                       <dd>
                         <p>
-                          Return <code>null</code>.
+                          Return <code>ConsentDenied</code>.
                         </p>
                       </dd>
                     </dl>

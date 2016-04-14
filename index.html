@@ -1236,12 +1236,12 @@ table.simple {
                               <p>
                                 Let <var>supported configuration</var> be the result of executing the
                                 <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
-                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>
+                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
                               </p>
                             </li>
                             <li>
                               <p>
-                                If <var>supported configuration</var> is not <code>null</code>,
+                                If <var>supported configuration</var> is not <code>ConsentDenied</code>,
                                 return <var>supported configuration</var>.
                               </p>
                             </li>
@@ -1257,10 +1257,21 @@ table.simple {
                   </dd>
                   <dt>Otherwise:</dt>
                   <dd>
-                    <p>
-                      Return the result of executing the <a def-id="get-supported-configuration-and-consent</a>-algorithm" class="externalDFN"></a>
-                      with <var>implementation</var>, <var>candidate configuration</var> and <var>origin</var>.
-                    </p>
+                    <ol>
+                      <li>
+                        <p>
+                          Let <var>supported configuration</var> be the result of executing the
+                          <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
+                          with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
+                        </p>
+                      </li>
+                      <li>
+                        <p>If <var>supported configuration</var> is <code>ConsentDenied</code> return <code>null</code>.</p>
+                      </li>
+                      <li>
+                        <p>Return <var>supported configuration</var>.</p>
+                      </li>
+                    </ol>
                   </dd>
                 </dl>
               </li>
@@ -1268,7 +1279,7 @@ table.simple {
           </section>
           <section id="get-supported-configuration-and-consent" typeof="bibo:Chapter" resource="#get-supported-configuration-and-consent" property="bibo:hasPart">
             <h5 id="h-get-supported-configuration-and-consent" resource="#h-get-supported-configuration-and-consent"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.1.2.2 </span>Get Supported Configuration and Consent</span></h5>
-            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.
+            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration, <code>null</code>, or <code>ConsentDenied</code> as appropriate.
             </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> dictionary.</p></li>
@@ -1449,7 +1460,7 @@ table.simple {
                           </li>
                           <li>
                             <p>
-                              If consent was denied, return <code>null</code>.
+                              If consent was denied, return <code>ConsentDenied</code>.
                             </p>
                           </li>
                         </ol>
@@ -1469,7 +1480,7 @@ table.simple {
                       <dt><code>Denied</code>:</dt>
                       <dd>
                         <p>
-                          Return <code>null</code>.
+                          Return <code>ConsentDenied</code>.
                         </p>
                       </dd>
                     </dl>
