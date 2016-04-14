@@ -569,7 +569,7 @@
                     <ol>
                       <li><p>Let <var>candidate configuration</var> be the value.</p></li>
                       <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
-                      <li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
+                      <li><p>If <var>supported configuration</var> is not <code>NotSupported</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -599,8 +599,61 @@
 
           <section>
             <h5>Get Supported Configuration</h5>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
-            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
+            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
+            </p>
+            <div class="note">
+              <p>
+              For certain configurations, it may be required to obtain user consent or inform the user. User Agents have some flexibility to determine
+              whether consent is required for a specific configuration and whether such consent may also apply to other configurations. For example,
+              consent to one configuration may also imply consent for less powerful, more restricted configurations. Equally, a denial of consent for
+              one configuration may imply denial of consent for more powerful, less restricted configurations.
+              </p>
+              <p>
+              Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
+              <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and persistent state. The following algorithm iteratively tries to find a configuration
+              that is both supported and has user consent (or does not need consent).
+              </p>
+              <p>
+              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
+              algorithm in order to avoid repeated requests to the user for similar configurations.
+              </p>
+              <p>
+                The variable <var>restrictions</var> in the steps below represents the configurations for which consent has been denied during the
+                execution of this algorithm or based on persisted consent information for the origin. It is used to determine
+                whether user consent for a candidate configuration or partial configuration has been denied. Consent is denied for a partial configuration
+                if every derived configuration has already been denied. Internal representation of <var>restrictions</var> is implementation-specific.
+              </p>
+            </div>
+            <ol>
+              <li>
+                <p>Let <var>supported configuration</var> be <code>ConsentDenied</code>.</p>
+              </li>
+              <li>
+                <p>Initialize <var>restrictions</var> to indicate that no configurations have had user consent denied.</p>
+              </li>
+              <li>
+                <p>Repeat the following step while <var>supported configuration</var> is <code>ConsentDenied</code>:</p>
+                <ol>
+                  <li>
+                    <p>
+                    Let <var>supported configuration</var> and, if provided, <var>restrictions</var> be the result of executing the
+                    <a def-id="get-supported-configuration-and-consent-algorithm"></a> algorithm
+                    with <var>implementation</var>, <var>candidate configuration</var>, <var>restrictions</var> and <var>origin</var>.
+                    </p>
+                  </li>
+                </ol>
+                <li>
+                  <p>Return <var>supported configuration</var>.</p>
+                </li>
+              </li>
+            </ol>
+          </section>
+          <section>
+            <h5>Get Supported Configuration and Consent</h5>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>,
+              <var>restrictions</var> and <var>origin</var>, this algorithm returns a supported configuration, <code>NotSupported</code>, or <code>ConsentDenied</code> as appropriate and, in the <code>ConsentDenied</code> case, <var>restrictions</var>.
+            </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
 
@@ -628,7 +681,7 @@
                       </li>
                     </ol>
                   </li>
-                  <li><p>If <var>supported types</var> is empty, return <code>null</code>.</p></li>
+                  <li><p>If <var>supported types</var> is empty, return <code>NotSupported</code>.</p></li>
                   <li><p>Set the <a def-id="option-initDataTypes"></a> member of <var>accumulated configuration</var> to <var>supported types</var>.</p></li>
                 </ol>
               </li>
@@ -641,42 +694,86 @@
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Let <var>distinctive identifier requirement</var> be the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>distinctive identifier requirement</var> is <a def-id="requirement-optional"></a> and
+                  <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
+                  to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              <li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <!-- TODO: Find a better descriptive model for this than "combination" -->
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>Continue with the following steps.</p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
+                <div class="note">
+                <p>
+                  The combination of <var>accumulated configuration</var> and <var>restrictions</var> means all the possible configurations that
+                  include everything in <var>accumulated configuration</var> and that are not denied according to <var>restrictions</var>.
+                </p>
+                <p>
+                  A feature is supported by an implementation with this combination if the implementation supports at least one of the configurations
+                  in the combination with the feature.
+                </p>
+                <p>
+                  A feature is required by an implementtion with this combination if all configurations in the combination that are suported by the implementation
+                  include the feature.
+                </p>
               </li>
-              <li><p>Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
-
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>distinctive identifier requirement</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>persistent state requirement</var> is <a def-id="requirement-optional"></a> and persisting state is not allowed according to
+                  <var>restrictions</var>, set <var>persistent state requirement</var> to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              </li>
+              <li><p>Follow the steps for <var>persistent state requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>
+                      Continue with the following steps.
+                    </p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
               </li>
-              <li><p>Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
-
+              <li>
+                <p>
+                  Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
+                </p>
+              </li>
               <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var></dt>
@@ -693,8 +790,12 @@
                 <ol>
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
-                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
-                    <p>Unsupported combinations include but are not limited to a <var>session type</var> for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> when <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a>.</p>
+                    <p>
+                      If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a> and the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var> for other reasons, return <code>NotSupported</code>.</p>
                   </li>
                   <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a> and the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
                 </ol>
@@ -703,16 +804,16 @@
 
               <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
                 </ol>
               </li>
 
               <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
                 </ol>
               </li>
@@ -744,64 +845,59 @@
                 </dl>
               </li>
 
-              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>NotSupported</code>.</p>
                 <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
               </li>
 
-              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-required"></a>:</p>
+              <li>
+                <p>
+                  If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-required"></a> and
+                  the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> associated with <var>accumulated configuration</var> are not <a href="#per-origin-identifiers">unique per-origin</a> and
+                  <a href="#allow-identifiers-cleared">clearable</a>:
+                </p>
                 <ol>
                   <li>
                     <p>
-                      If the <a def-id="distinctive-identifier"></a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
-                    </p>
-                    <p class="note">
-                      The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                      Update <var>restrictions</var> to reflect that all configurations described by <var>accumulated configuration</var>
+                      do not have user consent.
                     </p>
                   </li>
                   <li>
-                    <p>
-                      Let <var>distinctive identifier consent status</var> be the result of running the <a def-id="get-distinctive-identifier-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the value of <var>distinctive identifier consent status</var> from the following list:":
-                    </p>
-
-                    <dl class="switch">
-                      <dt><code>ConsentRequired</code>:</dt>
-                      <dd>
-                        <ol>
-                          <li>
-                            <p>
-                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
-                            </p>
-                            <p class="note">User consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p>
-                            <p class="note">The user agent MAY choose to persist the user response.</p>
-                          </li>
-                          <li>
-                            <p>
-                              If consent was denied, return <code>null</code>.
-                            </p>
-                          </li>
-                        </ol>
-                      </dd>
-                      <dt><code>InformUser</code>:</dt>
-                      <dd>
-                        <p>
-                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> in the <var>origin</var> and continue with the following steps.
-                        </p>
-                      </dd>
-                      <dt><code>Allowed</code>:</dt>
-                      <dd>
-                        <p>
-                          Continue with the following steps.
-                        </p>
-                      </dd>
-                      <dt><code>Denied</code>:</dt>
-                      <dd>
-                        <p>
-                          Return <code>null</code>.
-                        </p>
-                      </dd>
-                    </dl>
+                    <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
                   </li>
                 </ol>
+                <div class="note">
+                  <p>
+                  The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                  Let <var>consent status</var> and <var>updated restrictions</var> be the result of running the <a def-id="get-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var>, <var>restrictions</var> and <var>origin</var> and follow the steps for the value of <var>consent status</var> from the following list:
+                </p>
+
+                <dl class="switch">
+                  <dt><code>ConsentDenied</code>:</dt>
+                  <dd>
+                    <p>
+                      Return <code>ConsentDenied</code> and <var>updated restrictions</var>.
+                    </p>
+                  </dd><dt><code>InformUser</code>:</dt>
+                  <dd>
+                    <p>
+                      Inform the user that <var>accumulated configuration</var> is in use in the <var>origin</var> including, specifically, the information
+                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use if the <a def-id="option-distinctiveIdentifier"></a>
+                      member of <var>accumulated configuration</var> is <a def-id="requirement-required"></a>. Continue to the next step.
+                    </p>
+                  </dd>
+                  <dt><code>Allowed</code>:</dt>
+                  <dd>
+                    <p>
+                      Continue to the next step.
+                    </p>
+                  </dd>
+                </dl>
               </li>
 
               <li><p>Return <var>accumulated configuration</var>.</p></li>
@@ -810,7 +906,7 @@
 
           <section>
             <h5>Get Supported Capabilities for Audio/Video Type</h5>
-            <p>Given an <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
+            <p>Given an <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, and <var>restrictions</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
             <ol>
               <li><p>Let <var>local accumulated configuration</var> be a local copy of <var>partial configuration</var>.</p></li>
               <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
@@ -852,7 +948,7 @@
                     <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var>:</p>
+                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var> in combination with <var>restrictions</var>:</p>
                     <p class="note"><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p>
                     <ol>
                       <li>
@@ -902,46 +998,102 @@
           </section>
 
           <section>
-            <h5>Get Distinctive Identifier Consent Status</h5>
+            <h5>Get Consent Status</h5>
             <p>
-              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code>, <code>Allowed</code> or <code>Denied</code>.
+              Given an <var>accumulated configuration</var>, <var>restrictions</var> and <var>origin</var>, this algorithm returns the consent status for
+              <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentDenied</code>, <code>InformUser</code> or <code>Allowed</code>,
+              together with an updated value for <var>restrictions</var> in the <code>ConsentDenied</code> case.
             </p>
+            <div class="note">
+              <p>
+                Consent status for <var>accumulated configuration</var> depends at least on the value of the <a def-id="option-distinctiveIdentifier"></a> member of
+                <var>accumulated configuration</var>.
+              </p>
+              <p>
+                Previous consent for <var>accumulated configuration</var> with <a def-id="option-distinctiveIdentifier"></a>
+                set to <a def-id="requirement-not-allowed"></a> does not imply consent for the same configuration with <a def-id="option-distinctiveIdentifier"></a>
+                set to <a def-id="requirement-optional"></a> or <a def-id="requirement-required"></a>.
+              </p>
+            </div>
             <ol>
               <li>
                 <p>
-                  If there is persisted denial for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are not allowed in conjunction with <var>accumulated configuration</var>, return <code>Denied</code>.
+                  If there is persisted denial for <var>origin</var> indicating that <var>accumulated configuration</var> is not allowed, run the following steps:
+                </p>
+                <ol>
+                  <li>
+                    <p>Update <var>restrictions</var> to reflect the configurations for which consent has been denied.</p>
+                  </li>
+                  <li>
+                    <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
+                  </li>
+                </ol>
+              </li>
+              <li>
+                <p>
+                  If there is persisted consent for <var>origin</var> indicating <var>accumulated configuration</var> is allowed, return <code>Allowed</code>.
                 </p>
               </li>
               <li>
                 <p>
-                  If there is persisted consent for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed in conjunction with <var>accumulated configuration</var>, return <code>Allowed</code>.
+                  If any of the following are true:
                 </p>
-                <p class="note">
-                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var> that requires use of such an identifier.
-                </p>
+                <ul>
+                  <li>
+                    <p>
+                      The <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
+                      <a def-id="requirement-not-allowed"></a> and any of the recommendations of
+                      <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the combination of the
+                      User Agent, <var>implementation</var> and <var>accumulated configuration</var>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      The user agent requires explicit user consent for the <var>accumulated configuration</var> for other reasons.
+                    </p>
+                    <p class="note">
+                      Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
+                    </p>
+                  </li>
+                </ul>
+                <p>then run the following steps:</p>
+                <ol>
+                  <li>
+                    <p>
+                      Request user consent to use <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
+                    </p>
+                    <p>
+                      The consent MUST include consent to use a <a def-id="distinctive-identifier"></a> if
+                      <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member is <a def-id="requirement-required"></a>.
+                    </p>
+                    <div class="note">
+
+                      <p>User consent to use <var>accumulated configuration</var> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <p>
+                      If consent was denied, run the following steps:
+                    </p>
+                    <ol>
+                      <li><p>Update <var>restrictions</var> to reflect the configurations for which consent was denied.</p></li>
+                      <li><p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p></li>
+                    </ol>
+                    </p>
+                  </li>
+                </ol>
               </li>
               <li>
                 <p>
-                  If any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
+                  If the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
+                  <a def-id="requirement-not-allowed"></a>, </a>return <code>InformUser</code>.
                 </p>
               </li>
               <li>
-                <p>
-                  If the user agent requires explicit user consent for the use of
-                  <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for other reasons, return <code>ConsentRequired</code>.
-                </p>
-                <p class="note">
-                  Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
-                </p>
-              </li>
-              <li>
-                <p>
-                  Return <code>InformUser</code>.
-                </p>
+                <p>Return <code>Allowed</code>.</p>
               </li>
             </ol>
           </section>
-
         </section>
       </section>
 
