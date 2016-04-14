@@ -839,37 +839,42 @@
                     <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                  <li><p>If the user agent and <var>implementation</var> do not support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var>, continue to the next iteration.</p>
+                  <li><p>If the user agent and <var>implementation</var> definately support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var>:</p>
                     <p class="note"><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p>
-                  </li>
-                  <li>
-                    <p>
-                      Add <var>requested media capability</var> to <var>supported media capabilities</var>.
-                    </p>
-                    <p class="note">
-                      This step ensures that the values of the members of entries in <var>supported media capabilities</var> are exactly the strings supplied in
-                      <var>requested media capability</var> without modification by the User Agent.
-                    </p>
-                  </li>
-                  <li>
-                    <dl class="switch">
-                      <dt>If <var>audio/video type</var> is Video:</dt>
-                      <dd>
+                    <p class="note">If <var>media types</var> is empty (i.e. only container is specified) then
+                        definate support implies support of all possible codecs and parameters for <var>container</var>
+                        which is unlikely for most container types.</p>
+                    <ol>
+                      <li>
                         <p>
-                          Add <var>requested media capability</var> to the <a def-id="option-videoCapabilities"></a> member of <var>local accumulated configuration</var>.
+                          Add <var>requested media capability</var> to <var>supported media capabilities</var>.
                         </p>
-                      </dd>
-                      <dt>If <var>audio/video type</var> is Audio:</dt>
-                      <dd>
-                        <p>
-                          Add <var>requested media capability</var> to the <a def-id="option-audioCapabilities"></a> member of <var>local accumulated configuration</var>.
+                        <p class="note">
+                          This step ensures that the values of the members of entries in <var>supported media capabilities</var> are exactly the strings supplied in
+                          <var>requested media capability</var> without modification by the User Agent.
                         </p>
-                      </dd>
-                    </dl>
-                    <p class="note">
-                      This step ensures that configurations are always checked with configurations from previous iterations, including from previous calls to this algorithm.
-                      Otherwise, only configurations from previous calls to this algorithm would be checked in subsequent calls.
-                    </p>
+                      </li>
+                      <li>
+                        <dl class="switch">
+                          <dt>If <var>audio/video type</var> is Video:</dt>
+                          <dd>
+                            <p>
+                              Add <var>requested media capability</var> to the <a def-id="option-videoCapabilities"></a> member of <var>local accumulated configuration</var>.
+                            </p>
+                          </dd>
+                          <dt>If <var>audio/video type</var> is Audio:</dt>
+                          <dd>
+                            <p>
+                              Add <var>requested media capability</var> to the <a def-id="option-audioCapabilities"></a> member of <var>local accumulated configuration</var>.
+                            </p>
+                          </dd>
+                        </dl>
+                        <p class="note">
+                          This step ensures that configurations are always checked with configurations from previous iterations, including from previous calls to this algorithm.
+                          Otherwise, only configurations from previous calls to this algorithm would be checked in subsequent calls.
+                        </p>
+                      </li>
+                    </ol>
                   </li>
                 </ol>
               </li>
