@@ -597,7 +597,72 @@
           <section>
             <h5>Get Supported Configuration</h5>
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
-            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
+            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
+            </p>
+            <ol>
+              <li>
+                <dl class="switch">
+                  <dt>
+                    If the <a def-id="option-distinctiveIdentifier"></a> member of
+                    <var>candidate configuration</var> is <a def-id="requirement-optional"></a>:
+                  </dt>
+                  <dd>
+                    <ol>
+                      <li>
+                        <p>
+                          For each <var>distinctive identifier state</var> in the list
+                          [ <a def-id="requirement-optional"></a>, <a def-id="requirement-not-allowed"></a> ]:
+                          <ol>
+                            <li>
+                              <p>
+                                Let <var>modified candidate configuration</var> be a copy of
+                                <var>candidate configuration</var>.
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                Set the <a def-id="option-distinctiveIdentifier"></a> member of
+                                <var>modified candidate configuration</var> to <var>distinctive identifier state</var>.
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                Let <var>supported configuration</var> be the result of executing the
+                                <a def-id="get-supported-configuration-and-consent-algorithm"></a> algorithm
+                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                If <var>supported configuration</var> is not <code>null</code>,
+                                return <var>supported configuration</var>.
+                              </p>
+                            </li>
+                          </ol>
+                        </p>
+                      </li>
+                      <li>
+                        <p>
+                          Return <code>null</code>.
+                        </p>
+                      </li>
+                    </ol>
+                  </dd>
+                  <dt>Otherwise:</dt>
+                  <dd>
+                    <p>
+                      Return the result of executing the <a def-id="get-supported-configuration-and-consent</a>-algorithm"></a>
+                      with <var>implementation</var>, <var>candidate configuration</var> and <var>origin</var>.
+                    </p>
+                  </dd>
+                </dl>
+              </li>
+            </ol>
+          </section>
+          <section>
+            <h5>Get Supported Configuration and Consent</h5>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.
+            </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
 
@@ -769,7 +834,11 @@
                               Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                             </p>
                             <p class="note">User consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p>
-                            <p class="note">The user agent MAY choose to persist the user response.</p>
+                            <p class="note">
+                              The user agent MAY choose to persist the user response. Because this algorithm is called iteratively in some cases, if the user response is not
+                              persisted at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a> algorithm, users may receive repeated similar consent
+                              requests.
+                            </p>
                           </li>
                           <li>
                             <p>
