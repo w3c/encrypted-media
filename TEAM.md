@@ -16,13 +16,7 @@ Use the following steps to publish the new index.html after modifying the `-resp
 1. Open an Incognito or private browsing window. (This generally ensures that extensions are not loaded and will not interfere with the output.)
 1. Open the `-respec.html` file in that window.
 1. **Verify that there are no errors** next to the ReSpec bubble in the upper right corner.
-1. **Verify that ReSpec completed and there are no exceptions** by checking the browser's console (i.e. `Ctrl+Shift+i`). You should see exactly three ReSpec logs entries and no other messages:
-  >```
-  >RESPEC PROCESSING STARTED
-  >RESPEC Version: 3.2.76
-  >RESPEC DONE!
-  >```
-
+1. **Verify that ReSpec completed and there are no exceptions** by checking the browser's console (i.e. `Ctrl+Shift+i`). You should see no messages.
 1. ReSpec button => Save Snapshot => Save as HTML
 1. `mv ~/Downloads/index.html ./`
 1. Review the diff in a tool like `gitk`.
