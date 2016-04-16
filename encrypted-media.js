@@ -333,6 +333,13 @@
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
+    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cen.html', link_text: '"cenc" Initialization Data Format', },
+    'cenc-common-system': { func: link_helper, fragment: '../initdata/cenc.html#common-system', link_text: 'Common SystemID and PSSH Box Format', },
+    'initdata-registry-keyids': { func: link_helper, fragment: '../initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
+    'initdata-registry-webm': { func: link_helper, fragment: '../initdata/webm.html', link_text: '"webm" Initialization Data Format', },
+    'stream-registry': { func: link_helper, fragment: '../stream/', link_text: 'Encrypted Media Extensions Stream Format Registry', },
+    'stream-registry-webm': { func: link_helper, fragment: '../stream/webm.html', link_text: 'WebM Stream Format', },
+    'stream-registry-mp4': { func: link_helper, fragment: '../stream/mp4.html', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession()',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
