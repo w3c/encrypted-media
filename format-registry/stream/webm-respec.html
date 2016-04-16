@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>WebM EME Stream Format and Initialization Data</title>
+    <title>WebM Stream Format</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
     <script src="../../encrypted-media.js" class="remove"></script>
     <script class="remove">
@@ -94,7 +94,7 @@
   </head>
   <body>
     <section id="abstract">
-      <p>This specification defines the stream format and initialization data for using WebM [[!WebM]] with the <a def-id="eme-spec"></a>.</p>
+      <p>This specification defines the stream format for using WebM [[!WebM]] content with the <a def-id="eme-spec"></a> [[!ENCRYPTED-MEDIA]].</p>
     </section>
 
     <section id="sotd">
@@ -103,9 +103,9 @@
     </section>
 
     <section id="stream-format">
-      <h2>Stream Format </h2>
+      <h2>Stream Format</h2>
       <p>Encrypted WebM streams [[!WebM-Encryption]] are encrypted at the block level with AES-128 CTR encryption.
-      The container shall include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> [[!Matroska]] element.
+      The container SHALL include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> [[!Matroska]] element.
       </p>
       <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
       In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
@@ -113,16 +113,20 @@
       </p>
     </section>
 
-    <section id="detect-encrypt">
-      <h2>Detecting Encryption</h2>
-      <p>When a WebM <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> [[!Matroska]] is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.
+    <section id="detect-format">
+      <h2>Detection</h2>
+      <p>For a stream determined to be in the WebM format [[!WebM]], when a <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> [[!Matroska]] is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.</p>
+    </section>
+
+    <section id="detect-encrypted-blocks">
+      <h2>Detecting Encrypted Blocks</h2>
       <p>For the purposes of the <a def-id="encrypted-block-encountered-algorithm"></a>, encrypted blocks are those marked encrypted by the <a href="http://www.webmproject.org/docs/webm-encryption/#46-signal-byte-format">Signal Byte.</a> [[!WebM-Encryption]]</p>
     </section>
 
     <section id="init-data">
-      <h2>Initialization Data and Events</h2>
-      <p><a def-id="initialization-data"></a> is always a single <a def-id="key-id"></a>, as defined by the <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> [[!Matroska]] element of the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>.</p>
-      <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element is encountered, the <a def-id="initdata-encountered-algorithm"></a> algorithm shall be invoked with <var title="">initDataType</var> = "webm" and <var title="">initData</var> = the value in that element.</p>
+      <h2>Initialization Data Extraction</h2>
+      <p><a def-id="initialization-data"></a> is always a single <a def-id="key-id"></a>, as defined by the <a def-id="initdata-registry-webm"></a>.</p>
+      <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> [[!Matroska]] element is encountered in a <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>, the <a def-id="initdata-encountered-algorithm"></a> algorithm SHALL be invoked with <var title="">initDataType</var> = <code>"<a def-id="initdata-registry-webm">webm</a>"</code> and <var title="">initData</var> = the value in that element.</p>
     </section>
   </body>
 </html>
