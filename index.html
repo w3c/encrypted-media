@@ -1225,59 +1225,49 @@ table.simple {
             </div></div>
             <ol>
               <li>
-                <p>Let <var>requirements</var> be the list [ <code>distinctiveIdentifier</code>, <code>persistentState</code> ].</p>
-              </li>
-              <li>
-                <p>
-                  Let <var>optional requirements</var> be the sublist of <var>requirements</var> where for each element of the sublist,
-                  the value of the corresponding member of <var>candidate configuration</var> is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code>.
-                </p>
-              </li>
-              <li>
                 <dl class="switch">
-                  <dt>If <var>optional requirements</var> is not empty:</dt>
+                  <dt>
+                    If the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of
+                    <var>candidate configuration</var> is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code>:
+                  </dt>
                   <dd>
                     <ol>
                       <li>
                         <p>
-                          Let <var>optional requirement combinations</var> be the list of all sublists of <var>optional requirements</var>
-                          ordered by length (longest first) and then by the position in <var>optional requirements</var> of the first element that differs
-                          between two lists (lowest first). (i.e. [ <code>distinctiveIdentifier</code> ] is before [ <code>persistentState</code> ].)
-                        </p>
-                      </li>
-                      <li>
-                        <p>For each <var>optional requirement combination</var> in <var>optional requirement combinations</var>:</p><p>
-                        </p><ol>
-                          <li>
-                            <p>
-                            Let <var>modified candidate configuration</var> be a copy of
-                            <var>candidate configuration</var>.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
-                              For each element of <var>optional requirements</var> not in <var>optional requirement combination</var>, set the
-                              corresponding member of <var>modified candidate configuration</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
-                            Let <var>supported configuration</var> be the result of executing the
-                            <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
-                            with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
-                            If <var>supported configuration</var> is not <code>ConsentDenied</code>,
-                            return <var>supported configuration</var>.
-                            </p>
-                          </li>
-                        </ol>
+                          For each <var>distinctive identifier state</var> in the list
+                          [ <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code>, <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code> ]:
+                          </p><ol>
+                            <li>
+                              <p>
+                                Let <var>modified candidate configuration</var> be a copy of
+                                <var>candidate configuration</var>.
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                Set the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of
+                                <var>modified candidate configuration</var> to <var>distinctive identifier state</var>.
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                Let <var>supported configuration</var> be the result of executing the
+                                <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
+                                with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                                If <var>supported configuration</var> is not <code>ConsentDenied</code>,
+                                return <var>supported configuration</var>.
+                              </p>
+                            </li>
+                          </ol>
+                        <p></p>
                       </li>
                       <li>
                         <p>
-                        Return <code>NotSupported</code>.
+                          Return <code>NotSupported</code>.
                         </p>
                       </li>
                     </ol>
@@ -1287,14 +1277,14 @@ table.simple {
                     <ol>
                       <li>
                         <p>
-                        Let <var>supported configuration</var> be the result of executing the
-                        <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
-                        with <var>implementation</var>, <var>candidate configuration</var> and <var>origin</var>.
+                          Let <var>supported configuration</var> be the result of executing the
+                          <a href="#get-supported-configuration">Get Supported Configuration and Consent</a> algorithm
+                          with <var>implementation</var>, <var>modified candidate configuration</var> and <var>origin</var>.
                         </p>
                       </li>
                       <li>
                         <p>If <var>supported configuration</var> is <code>ConsentDenied</code>
-                        , return <code>NotSupported</code>.</p>
+                          , return <code>NotSupported</code>.</p>
                       </li>
                       <li>
                         <p>Return <var>supported configuration</var>.</p>
