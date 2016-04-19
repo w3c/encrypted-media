@@ -1206,6 +1206,23 @@ table.simple {
             <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
             <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note17"><span>Note</span></div><p class="">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
             </p></div>
+            <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note18"><span>Note</span></div><div class="">
+              <p>
+              For certain configurations, it may be required to obtain user consent or inform the user. User Agents have some flexibility to determine
+              whether consent is required for a specific configuration and whether such consent may also apply to other configurations. For example,
+              consent to one configuration may also imply consent for less powerful, more restricted configurations. Equally, a denial of consent for
+              one configuration may imply denial of consent for more powerful, less restricted configurations.
+              </p>
+              <p>
+              Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
+              <a href="#distinctive-identifier">Distinctive Identifier</a>s and persistent state. The following algorithm iteratively tries configurations with different
+              requirement values for these optional configuration elements until consent is achieved.
+              </p>
+              <p>
+              User Agents should persist consent responses at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>
+              algorithm in order to avoid repeated requests to the user for similar configurations.
+              </p>
+            </div></div>
             <ol>
               <li>
                 <dl class="switch">
@@ -1302,7 +1319,7 @@ table.simple {
                           String comparison is case-sensitive.
                           The empty string is never supported.
                         </p>
-                        <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note18"><span>Note</span></div><p class="">The <var>initDataType</var> <em class="rfc2119" title="MUST">MUST</em> be supported independent of content types in order to avoid unexpectedly rejecting the configuration in later steps.
+                        <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note19"><span>Note</span></div><p class="">The <var>initDataType</var> <em class="rfc2119" title="MUST">MUST</em> be supported independent of content types in order to avoid unexpectedly rejecting the configuration in later steps.
                           Support for <var>initDataType</var> includes both license generation and, when appropriate, extraction from media data.
                           See <a href="#initialization-data-type-support-requirements">Initialization Data Type Support requirements</a>.
                         </p></div>
@@ -1426,7 +1443,7 @@ table.simple {
               </li>
 
               <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>NotSupported</code>.</p>
-                <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note19"><span>Note</span></div><p class="">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p></div>
+                <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note20"><span>Note</span></div><p class="">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p></div>
               </li>
 
               <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>:</p>
@@ -1435,7 +1452,7 @@ table.simple {
                     <p>
                       If the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>NotSupported</code>.
                     </p>
-                    <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note20"><span>Note</span></div><p class="">
+                    <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note21"><span>Note</span></div><p class="">
                       The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
                     </p></div>
                   </li>
@@ -1452,12 +1469,7 @@ table.simple {
                             <p>
                               Request user consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                             </p>
-                            <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note21"><span>Note</span></div><p class="">User consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p></div>
-                            <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note22"><span>Note</span></div><p class="">
-                              The user agent <em class="rfc2119" title="MAY">MAY</em> choose to persist the user response. Because this algorithm is called iteratively in some cases, if the user response is not
-                              persisted at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code> algorithm, users may receive repeated similar consent
-                              requests.
-                            </p></div>
+                            <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note22"><span>Note</span></div><p class="">User consent to use <a href="#distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p></div>
                           </li>
                           <li>
                             <p>

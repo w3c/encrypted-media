@@ -599,6 +599,23 @@
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
             <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
             </p>
+            <div class="note">
+              <p>
+              For certain configurations, it may be required to obtain user consent or inform the user. User Agents have some flexibility to determine
+              whether consent is required for a specific configuration and whether such consent may also apply to other configurations. For example,
+              consent to one configuration may also imply consent for less powerful, more restricted configurations. Equally, a denial of consent for
+              one configuration may imply denial of consent for more powerful, less restricted configurations.
+              </p>
+              <p>
+              Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
+              <a def-id="distinctive-identifier"></a>s and persistent state. The following algorithm iteratively tries configurations with different
+              requirement values for these optional configuration elements until consent is achieved.
+              </p>
+              <p>
+              User Agents should persist consent responses at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
+              algorithm in order to avoid repeated requests to the user for similar configurations.
+              </p>
+            </div>
             <ol>
               <li>
                 <dl class="switch">
@@ -846,11 +863,6 @@
                               Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                             </p>
                             <p class="note">User consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p>
-                            <p class="note">
-                              The user agent MAY choose to persist the user response. Because this algorithm is called iteratively in some cases, if the user response is not
-                              persisted at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a> algorithm, users may receive repeated similar consent
-                              requests.
-                            </p>
                           </li>
                           <li>
                             <p>
