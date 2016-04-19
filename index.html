@@ -1175,7 +1175,7 @@ table.simple {
                     <ol>
                       <li><p>Let <var>candidate configuration</var> be the value.</p></li>
                       <li><p>Let <var>supported configuration</var> be the result of executing the <a href="#get-supported-configuration">Get Supported Configuration</a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
-                      </p></li><li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
+                      </p></li><li><p>If <var>supported configuration</var> is not <code>NotSupported</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var>access</var> be a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object, and initialize it as follows:</p>
@@ -1203,7 +1203,7 @@ table.simple {
 
           <section id="get-supported-configuration" typeof="bibo:Chapter" resource="#get-supported-configuration" property="bibo:hasPart">
             <h5 id="h-get-supported-configuration" resource="#h-get-supported-configuration"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.1.2.1 </span>Get Supported Configuration</span></h5>
-            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
+            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
             <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note17"><span>Note</span></div><p class="">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
             </p></div>
             <ol>
@@ -1250,7 +1250,7 @@ table.simple {
                       </li>
                       <li>
                         <p>
-                          Return <code>null</code>.
+                          Return <code>NotSupported</code>.
                         </p>
                       </li>
                     </ol>
@@ -1266,7 +1266,8 @@ table.simple {
                         </p>
                       </li>
                       <li>
-                        <p>If <var>supported configuration</var> is <code>ConsentDenied</code> return <code>null</code>.</p>
+                        <p>If <var>supported configuration</var> is <code>ConsentDenied</code>
+                          , return <code>NotSupported</code>.</p>
                       </li>
                       <li>
                         <p>Return <var>supported configuration</var>.</p>
@@ -1279,7 +1280,7 @@ table.simple {
           </section>
           <section id="get-supported-configuration-and-consent" typeof="bibo:Chapter" resource="#get-supported-configuration-and-consent" property="bibo:hasPart">
             <h5 id="h-get-supported-configuration-and-consent" resource="#h-get-supported-configuration-and-consent"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.1.2.2 </span>Get Supported Configuration and Consent</span></h5>
-            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration, <code>null</code>, or <code>ConsentDenied</code> as appropriate.
+            <p>Given a <a href="#key-system">Key Systems</a> implementation <var>implementation</var>, <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration, <code>NotSupported</code>, or <code>ConsentDenied</code> as appropriate.
             </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> dictionary.</p></li>
@@ -1308,7 +1309,7 @@ table.simple {
                       </li>
                     </ol>
                   </li>
-                  <li><p>If <var>supported types</var> is empty, return <code>null</code>.</p></li>
+                  <li><p>If <var>supported types</var> is empty, return <code>NotSupported</code>.</p></li>
                   <li><p>Set the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member of <var>accumulated configuration</var> to <var>supported types</var>.</p></li>
                 </ol>
               </li>
@@ -1325,7 +1326,7 @@ table.simple {
                 <dl class="switch">
                   <dt><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support a persistent <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support a persistent <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var>, return <code>NotSupported</code>.</p>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
@@ -1333,7 +1334,7 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires a <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires a <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
               </li>
@@ -1343,7 +1344,7 @@ table.simple {
                 <dl class="switch">
                   <dt><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>NotSupported</code>.</p>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
@@ -1351,7 +1352,7 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
               </li>
@@ -1373,7 +1374,7 @@ table.simple {
                 <ol>
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
-                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>NotSupported</code>.</p>
                     <p>Unsupported combinations include but are not limited to a <var>session type</var> for which the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm returns <code>true</code> when <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.</p>
                   </li>
                   <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code> and the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.</p></li>
@@ -1384,7 +1385,7 @@ table.simple {
               </p></li><li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> in <var>candidate configuration</var>:</p>
                 <ol>
                   <li><p>Let <var>video capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Video, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
                   <li><p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
                 </ol>
               </li>
@@ -1392,7 +1393,7 @@ table.simple {
               <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> in <var>candidate configuration</var>:</p>
                 <ol>
                   <li><p>Let <var>audio capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Audio, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
                   <li><p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
                 </ol>
               </li>
@@ -1424,7 +1425,7 @@ table.simple {
                 </dl>
               </li>
 
-              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>NotSupported</code>.</p>
                 <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note19"><span>Note</span></div><p class="">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p></div>
               </li>
 
@@ -1432,7 +1433,7 @@ table.simple {
                 <ol>
                   <li>
                     <p>
-                      If the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
+                      If the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>NotSupported</code>.
                     </p>
                     <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note20"><span>Note</span></div><p class="">
                       The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
