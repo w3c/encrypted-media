@@ -370,6 +370,7 @@
 
   function encryptedMediaPreProcessor() {
     var original_EME_spec_url = EME_spec_url; // The loop may change multiple groupBaseURLs.
+    var is_registry_file = window.respecConfig.edDraftURI.includes("/encrypted-media/format-registry/");
     for (var x in groupBaseURLs) {
       // TODO: It is weird that EME_spec_url gets changed (once) in this loop.
       // TODO: This may not work for published registry pages unless we _don't_
@@ -379,11 +380,21 @@
           // Refer to the local file rather than the published path.
           var file = "index.html";
           // Registry files need a relative path.
-          var is_registry_file = window.respecConfig.edDraftURI.includes("/encrypted-media/format-registry/");
           var prefix = is_registry_file ? "../../" : "";
           EME_spec_url = prefix + file;
           groupBaseURLs[x] = EME_spec_url;
       }
+    }
+
+    // Add the registry biblio entries to localBiblio.
+    // If it is not empty, we need to add the entries to the existing object.
+    var registry_base_path = is_registry_file ? "../" : "format-registry/";
+    var registry_biblio_entries = getEncryptedMediaRegistryBibioEntries(registry_base_path);
+    if (window.respecConfig.localBiblio) {
+      for (var property_name in registry_biblio_entries)
+        window.respecConfig.localBiblio[property_name] = registry_biblio_entries[property_name];
+    } else {
+      window.respecConfig.localBiblio = registry_biblio_entries;
     }
 
    $("a[def-id]").each(function () {
@@ -528,6 +539,23 @@
 
     return;
   }
+
+  function getEncryptedMediaRegistryBibioEntries(registry_base_path) {
+    return {
+      "EME-INITDATA-REGISTRY": {
+        title: "Encrypted Media Extensions Initialization Data Format Registry",
+        href: registry_base_path + "initdata/",
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    },
+    "EME-STREAM-REGISTRY": {
+        title: "Encrypted Media Extensions Stream Format Registry",
+        href: registry_base_path + "stream/",
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    }
+  }
+  };
 
   encryptedMediaAddDefinitionInfo("encrypted-media", EME_spec_url, emeDefinitions);
   encryptedMediaAddDefinitionInfo("eme-references-from-registry", EME_spec_url, emeRegistryReferencesDefinitions);
