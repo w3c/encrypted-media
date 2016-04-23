@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
+    <script src="../../encrypted-media.js" class="remove"></script>
+    <script class="remove">
+      var respecConfig = {
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus: "ED",
+
+      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      shortName: "encrypted-media", <!-- The registry does not have its own short name. -->
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI:           "https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html",
+
+      // if this is a LCWD, uncomment and set the end of its review period
+      // lcEnd: "2009-08-05",
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+      { name: "David Dorwin",  url: "",
+      company: "Google Inc.", companyURL: "https://www.google.com/" },
+      { name: "Adrian Bateman", url: "",
+      company: "Microsoft Corporation", companyURL: "https://www.microsoft.com/" },
+      { name: "Mark Watson", url: "",
+      company: "Netflix Inc.", companyURL: "https://www.netflix.com/" },
+      { name: "Jerry Smith", url: "",
+      company: "Microsoft Corporation", companyURL: "https://www.microsoft.com/" },
+      ],
+
+      otherLinks: [
+        { key: "Repository",
+        href: "https://github.com/w3c/encrypted-media/"}
+      ],
+
+      emeDefGroupName: "mp4-stream-format",
+      emeUnusedGroupNameExcludeList: ["encrypted-media",
+                                      "eme-references-from-registry"
+      ],
+
+      // name of the WG
+      wg:           "HTML Working Group",
+
+      // URI of the public WG page
+      wgURI:        "http://www.w3.org/html/wg/",
+
+      // name (without the @w3c.org) of the public mailing to which comments are due
+      wgPublicList: "public-html-media",
+
+      // URI of the patent status for this WG, for Rec-track documents
+      // !!!! IMPORTANT !!!!
+      // This is important for Rec-track documents, do not copy a patent URI from a random
+      // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+      // Team Contact.
+      wgPatentURI: "https://www.w3.org/2004/01/pp-impl/40318/status",
+
+      noIDLIn: true,
+
+      scheme: "https",
+
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+
+      preProcess: [ encryptedMediaPreProcessor ],
+
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+
+      postProcess: [ encryptedMediaPostProcessor ],
+
+      localBiblio: {
+          "CENC": {
+            title: "ISO/IEC 23001-7:2015, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO Base Media File Format files - 2nd Edition",
+            href: "https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1",
+            status: "International Standard",
+            publisher: "ISO/IEC"
+          }
+      }
+      };
+    </script>
+    <!-- script to register bugs -->
+    <!-- Disabled unless/until it supports GitHub issues.
+    <script src="https://w3c.github.io/webcomponents/assets/scripts/bug-assist.js"></script>
+    <meta name="bug.product" content="HTML WG">
+    <meta name="bug.component" content="Encrypted Media Extensions">
+    -->
+
+    <link rel="stylesheet" href="../../eme.css">
+  </head>
+  <body>
+    <!-- TODO: Use styles for ISO boxes like the MSE registry. -->
+    <section id="abstract">
+      <p>This specification defines the stream format for using ISO Base Media File Format [[!ISOBMFF]] content that uses the ISO Common Encryption ('cenc') protection scheme [[!CENC]] with the <a def-id="eme-spec"></a> [[!ENCRYPTED-MEDIA]].</p>
+      <p class="note">Although the ISO Base Media File Format [[ISOBMFF]] associated with this format's MIME type/subtype strings supports multiple protection schemes,
+        when used with Encrypted Media Extensions, these strings refer specifically to content encrypted and packaged using the 'cenc' protection scheme [[CENC]].
+      </p>
+    </section>
+
+    <section id="sotd">
+      <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>.</p>
+      <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
+    </section>
+
+    <section id="stream-format">
+      <h2>Stream Format</h2>
+      <p>ISO Base Media File Format [[!ISOBMFF]] content that is encrypted using the ISO Common Encryption ('cenc') protection scheme [[!CENC]] SHALL be encrypted at the sample level with AES-128 CTR encryption (Section 9 of [[!CENC]]). This protection method enables multiple Key Systems to decrypt the same media content.</p>
+      <p>Each key is identified by a <a def-id="key-id"></a> and each encrypted sample is associated with the key ID of the key needed to decrypt it. This association is signaled either through the specification of a default key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a key ID. Streams may contain a mixture of encrypted and unencrypted samples.</p>
+    </section>
+
+    <section id="detect-format">
+      <h2>Detection</h2>
+      <p>For a stream determined to be in the ISO Base Media File Format [[!ISOBMFF]], this ISO Common Encryption ('cenc') Protection Scheme may be detected as follows.</p>
+      <p>Protection scheme signaling conforms with [[!ISOBMFF]]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of <code>'cenc'</code>. [[!CENC]]</p>
+    </section>
+
+    <section id="detect-encrypted-blocks">
+      <h2>Detecting Encrypted Blocks</h2>
+      <p>For the purposes of the <a def-id="encrypted-block-encountered-algorithm"></a>, encrypted blocks are identified as follows.</p>
+      <p>The encrypted block is a sample. Determining whether a sample is encrypted depends on the corresponding Track Encryption Box ('tenc') and the sample group with grouping type 'seig' (CencSampleEncryption group), if any, associated with the sample.
+      The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the SampleGroupDescriptionBox ('sgpd'), pointed to by an index in the SampleToGroupBox ('sbgp').</p>
+      <p>Samples can be partially encrypted, specified by subsample information referenced by SampleAuxiliaryInformationSizesBox ('saiz') and SampleAuxiliaryInformationOffsetsBox ('saio') boxes.</p>
+      <p>For complete information, see [[!CENC]].</p>
+    </section>
+
+    <section id="init-data">
+      <h2>Initialization Data Extraction</h2>
+      <p>Streams may contain one or more Protection System Specific Header ('pssh') boxes [[!CENC]], each for a unique SystemID, at each location where a 'pssh' box is necessary.
+        Content using this stream format SHOULD include a box containing the <a def-id="cenc-common-system"></a>.
+      </p>
+      <p><a def-id="initialization-data"></a> is always one or more concatenated 'pssh' boxes as defined by the <a def-id="initdata-registry-cenc"></a> [[!EME-INITDATA-REGISTRY]].
+      </p>
+      <p>Each time one or more 'pssh' boxes are encountered, the <a def-id="initdata-encountered-algorithm"></a> algorithm SHALL be invoked with <var title="">initDataType</var> = <code>"<a def-id="initdata-registry-cenc">cenc</a>"</code> [[!EME-INITDATA-REGISTRY]] and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes MUST be provided together if and only if they appear directly next to each other in the stream.</p>
+    </section>
+  </body>
+</html>

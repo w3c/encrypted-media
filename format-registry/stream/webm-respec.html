@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Key IDs Initialization Data</title>
+    <title>WebM Stream Format</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
-    <script src="encrypted-media.js" class="remove"></script>
+    <script src="../../encrypted-media.js" class="remove"></script>
     <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
@@ -14,7 +14,7 @@
       shortName: "encrypted-media", <!-- The registry does not have its own short name. -->
 
       // if there a publicly available Editor's Draft, this is the link
-      edDraftURI:           "https://w3c.github.io/encrypted-media/keyids-format.html",
+      edDraftURI:           "https://w3c.github.io/encrypted-media/format-registry/stream/webm.html",
 
       // if this is a LCWD, uncomment and set the end of its review period
       // lcEnd: "2009-08-05",
@@ -35,7 +35,7 @@
         href: "https://github.com/w3c/encrypted-media/"}
       ],
 
-      emeDefGroupName: "keyids-format",
+      emeDefGroupName: "webm-stream-format",
       emeUnusedGroupNameExcludeList: ["encrypted-media",
                                       "eme-references-from-registry"
       ],
@@ -60,6 +60,10 @@
 
       scheme: "https",
 
+      // Empty definitions for objects declared in the document are here to
+      // prevent error messages from being displayed for references to these objects.
+      definitionMap: {},
+
       preProcess: [ encryptedMediaPreProcessor ],
 
       // Empty definitions for objects declared in the document are here to
@@ -67,6 +71,16 @@
       definitionMap: {},
 
       postProcess: [ encryptedMediaPostProcessor ],
+
+      localBiblio: {
+          "WebM-Encryption": {
+            title: "WebM Encryption",
+            href: "http://www.webmproject.org/docs/webm-encryption/",
+            authors: ["Frank Galligan"],
+            publisher: "The WebM Project",
+            date: "4 March 2015"
+          }
+      }
       };
     </script>
     <!-- script to register bugs -->
@@ -76,14 +90,11 @@
     <meta name="bug.component" content="Encrypted Media Extensions">
     -->
 
-    <link rel="stylesheet" href="eme.css">
+    <link rel="stylesheet" href="../../eme.css">
   </head>
   <body>
     <section id="abstract">
-      <p>This specification defines a container-independent initialization data format for specifying a list of <a def-id="key-id"></a>(s) with the <a def-id="eme-spec"></a>.
-      This type can be used by applications to directly provide information necessary to generate a license request without using media data or constructing container-specific formats.
-      </p>
-      <p>Unlike other similar specifications, this one does not document a stream format or behavior related to processing media data. This type and format are not used in the <a def-id="initdata-encountered-algorithm"></a>.</p>
+      <p>This specification defines the stream format for using WebM [[!WebM]] content with the <a def-id="eme-spec"></a> [[!ENCRYPTED-MEDIA]].</p>
     </section>
 
     <section id="sotd">
@@ -91,30 +102,31 @@
       <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
     </section>
 
+    <section id="stream-format">
+      <h2>Stream Format</h2>
+      <p>Encrypted WebM streams [[!WebM-Encryption]] are encrypted at the block level with AES-128 CTR encryption.
+      The container SHALL include appropriate values within the <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> [[!Matroska]] element.
+      </p>
+      <p>WebM streams may be partially encrypted, both at the <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> level and the block level.
+      In the former case, a subset of Tracks in the stream have a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element.
+      In the latter case, a subset of the blocks within a Track containing a <a href="http://matroska.org/technical/specs/index.html#ContentEncryption">ContentEncryption</a> element are marked as encrypted.
+      </p>
+    </section>
+
+    <section id="detect-format">
+      <h2>Detection</h2>
+      <p>For a stream determined to be in the WebM format [[!WebM]], when a <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a> [[!Matroska]] is parsed, the presence of a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> element indicates that blocks in the track may be encrypted.</p>
+    </section>
+
+    <section id="detect-encrypted-blocks">
+      <h2>Detecting Encrypted Blocks</h2>
+      <p>For the purposes of the <a def-id="encrypted-block-encountered-algorithm"></a>, encrypted blocks are those marked encrypted by the <a href="http://www.webmproject.org/docs/webm-encryption/#46-signal-byte-format">Signal Byte.</a> [[!WebM-Encryption]]</p>
+    </section>
+
     <section id="init-data">
-      <h2>Initialization Data Format</h2>
-      <p>The format is a JSON object, encoded in UTF-8 as specified in the Encoding specification [[!encoding]], containing the following member:</p>
-      <dl>
-        <dt>"kids"</dt>
-        <dd>An array of <a def-id="key-id"></a>(s). Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
-      </dl>
-
-      <p class="note">See <a def-id="using-base64url"></a>.</p>
-      <p class="note">Applications may encode the JSON string using the <a def-id="interface-textencoder"></a> [[!encoding]]</p>
-
-      <section class="informative">
-        <h2>Example</h2>
-        <p>The following example will generate a license request for two <a def-id="key-id"></a>(s). (Line breaks are for readability only.)</p>
-          <pre class="example">
-{
-  "kids":
-    [
-     "LwVHf8JLtPrv2GUXFW2v_A",
-     "0DdtU9od-Bh5L3xbv0Xf_A"
-    ],
-}</pre>
-      </section>
-
+      <h2>Initialization Data Extraction</h2>
+      <p><a def-id="initialization-data"></a> is always a single <a def-id="key-id"></a>, as defined by the <a def-id="initdata-registry-webm"></a> [[!EME-INITDATA-REGISTRY]].</p>
+      <p>Each time a <a href="http://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> [[!Matroska]] element is encountered in a <a href="http://matroska.org/technical/specs/index.html#LevelTrack">Track</a>, the <a def-id="initdata-encountered-algorithm"></a> algorithm SHALL be invoked with <var title="">initDataType</var> = <code>"<a def-id="initdata-registry-webm">webm</a>"</code> [[!EME-INITDATA-REGISTRY]] and <var title="">initData</var> = the value in that element.</p>
     </section>
   </body>
 </html>
