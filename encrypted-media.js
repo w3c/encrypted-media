@@ -233,6 +233,7 @@
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
     'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'Session Close',  },
+    'destroy-keys-and-licenses-algorithm' : { func: term_helper, fragment: 'destroy-keys', link_text: 'Destroy Keys and Licenses', },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
     'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },

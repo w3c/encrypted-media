@@ -1158,7 +1158,7 @@
         <dt>temporary</dt>
         <dd>
           <p>
-            A session for which the license and record of or data related to the session MUST NOT be persisted.
+            A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
           <p>
             The application need not worry about managing such storage.
@@ -1169,7 +1169,7 @@
         <dd>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
-            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <a def-id="record-of-key-usage"></a> SHALL be persisted when
+            A session for which the license and key(s) are not persisted and for which a <a def-id="record-of-key-usage"></a> is persisted when
             the keys available within the session are destroyed.
             The <dfn id="record-of-key-usage">record of key usage</dfn> consists of:
           </p>
@@ -2101,6 +2101,30 @@
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Run the <a def-id="destroy-keys-and-licenses-algorithm"></a> algorithm.</p></li>
+            <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
+            <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
+            <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
+            <li><p>Resolve <var>promise</var>.</p></li>
+          </ol>
+        </section>
+        <section id="destroy-keys">
+          <h4>Destroy Keys and Licenses</h4>
+          <p>
+            The Destroy Keys and Licenses algorithm is run when the CDM needs to destroy all the keys and licenses associated with a session that
+            have not been explicitly stored.
+          </p>
+          <p>
+            For sessions of type <a def-id="temporary-session"></a> and <a def-id="persistent-usage-record-session"></a>, this algorithm MUST be
+            executed when the <a>MediaKeySession</a> object becomes inaccessible to the page, if the <a def-id="session-close-algorithm"></a> has
+            not already been run.
+          </p>
+          <p class="note">
+            This is necessary to ensure that the keys and licenses associated with the session are correctly destroyed when the session ends.
+          </p>
+          <p>The following steps are run:</p>
+          <ol>
+            <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li>
               <p>
                  If any license(s) and/or key(s) associated with <var>session</var> exist that have not been explicitly stored:
@@ -2118,10 +2142,6 @@
                 </li>
               </ol>
             </li>
-            <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
-            <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-            <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
-            <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
         </section>
       </section>
