@@ -1215,11 +1215,11 @@ table.simple {
               </p>
               <p>
               Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
-              <a href="#distinctive-identifier">Distinctive Identifier</a>s and persistent state. The following algorithm iteratively tries to find a configuration
-              that is both supported and has user consent, each iteration considering a stronger set of restrictions derived from user consent prompts.
+              <a href="#distinctive-identifier">Distinctive Identifier(s)</a> and persistent state. The following algorithm iteratively tries to find a configuration
+              that is both supported and has user consent, each iteration considering a smaller set of possible configurations.
               </p>
               <p>
-              User Agents should persist consent responses at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>
+              User Agents should reuse earlier consent responses at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>
               algorithm in order to avoid repeated requests to the user for similar configurations.
               </p>
             </div></div>
@@ -1301,7 +1301,15 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>If <a href="#distinctive-identifier">Distinctive Identifiers</a> are not allowed according to <var>restrictions</var>:</p>
+                    <ol>
+                      <li>
+                        <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></p>
+                      </li>
+                      <li>
+                        <p>If the <var>implementation</var> requires a <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                      </li>
+                    </ol>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
@@ -1309,7 +1317,7 @@ table.simple {
                   </dd>
                 </dl>
               </li>
-              <li><p>Set the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> to equal <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member.
+              <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> has not been set, set it to equal <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member.
 
               </p></li><li><p>Follow the steps for the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member from the following list:</p>
                 <dl class="switch">
@@ -1319,7 +1327,15 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>If persisting state is not allowed according to <var>restrictions</var>:</p>
+                    <ol>
+                      <li>
+                        <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.</p>
+                      </li>
+                      <li>
+                        <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                      </li>
+                    </ol>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
@@ -1327,7 +1343,7 @@ table.simple {
                   </dd>
                 </dl>
               </li>
-              <li><p>Set the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> to equal the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member.
+              <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> has not been set, set it to equal the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member.
 
               </p></li><li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
@@ -1345,8 +1361,12 @@ table.simple {
                 <ol>
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
-                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
-                    <p>Unsupported combinations include but are not limited to a <var>session type</var> for which the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm returns <code>true</code> when <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code> or <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code> but persistent state is disallowed by <var>restrictions</var>.</p>
+                    <p>
+                      If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code> and the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var> for other reasons, return <code>NotSupported</code>.</p>
                   </li>
                   <li><p>If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code> and the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> value to <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.</p></li>
                 </ol>
@@ -1403,7 +1423,7 @@ table.simple {
               <li>
                 <p>
                   If <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code> and if
-                  the <a href="#distinctive-identifier">Distinctive Identifier</a> is not <a href="#per-origin-identifiers">unique per-origin</a> and
+                  the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> associated with <var>accumulated configuration</var> are not <a href="#per-origin-identifiers">unique per-origin</a> and
                   <a href="#allow-identifiers-cleared">clearable</a>:
                 </p>
                 <ol>
@@ -1434,13 +1454,13 @@ table.simple {
                     <p>
                       Inform the user that <var>accumulated configuration</var> is in use in the <var>origin</var> including, specifically, the information
                       that <a href="#distinctive-identifier">Distinctive Identifier(s)</a> are in use if the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code>
-                      member of <var>accumulated configuration</var> is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>. Continue with the following steps.
+                      member of <var>accumulated configuration</var> is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>. Continue to the next step.
                     </p>
                   </dd>
                   <dt><code>Allowed</code>:</dt>
                   <dd>
                     <p>
-                      Continue with the following steps.
+                      Continue to the next step.
                     </p>
                   </dd>
                 </dl>
@@ -1494,7 +1514,7 @@ table.simple {
                     <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note25"><span>Note</span></div><p class="">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p></div>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var>, <var>local accumulated configuration</var> and <var>restrictions</var>:</p>
+                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var> with <var>restrictions</var>:</p>
                     <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note26"><span>Note</span></div><p class=""><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p></div>
                     <ol>
                       <li>
@@ -1546,7 +1566,7 @@ table.simple {
           <section id="get-consent-status" typeof="bibo:Chapter" resource="#get-consent-status" property="bibo:hasPart">
             <h5 id="h-get-consent-status" resource="#h-get-consent-status"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.1.2.5 </span>Get Consent Status</span></h5>
             <p>
-              Given an <var>accumulated configuration</var>, <var>restrictions</var> and an <var>origin</var>, this algorithm returns the consent status for
+              Given an <var>accumulated configuration</var>, <var>restrictions</var> and <var>origin</var>, this algorithm returns the consent status for
               <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentDenied</code>, <code>InformUser</code> or <code>Allowed</code>,
               together with an updated value for <var>restrictions</var> in the <code>ConsentDenied</code> case.
             </p>
@@ -1582,15 +1602,15 @@ table.simple {
                 <ul>
                   <li>
                     <p>
-                      the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> is not
+                      The <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> is not
                       <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code> and any of the recommendations of
-                      <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the
-                      User Agent.
+                      <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the combination of the
+                      User Agent and <var>implementation</var>.
                     </p>
                   </li>
                   <li>
                     <p>
-                      the user agent requires explicit user consent for the <var>accumulated configuration</var> for other reasons.
+                      The user agent requires explicit user consent for the <var>accumulated configuration</var> for other reasons.
                     </p>
                     <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note31"><span>Note</span></div><p class="">
                       Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
