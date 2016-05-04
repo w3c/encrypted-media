@@ -612,7 +612,7 @@
               that is both supported and has user consent, each iteration considering a smaller set of possible configurations.
               </p>
               <p>
-              User Agents should reuse earlier consent responses at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
+              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
               algorithm in order to avoid repeated requests to the user for similar configurations.
               </p>
             </div>
@@ -686,7 +686,18 @@
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Let <var>distinctive identifier requirement</var> be the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>distinctive identifier requirement</var> is <a def-id="requirement-optional"></a> and
+                  <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
+                  to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              <li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
@@ -694,15 +705,7 @@
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>If <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>:</p>
-                    <ol>
-                      <li>
-                        <p>Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to <a def-id="requirement-not-allowed"></a></p>
-                      </li>
-                      <li>
-                        <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
-                      </li>
-                    </ol>
+                    <p>Continue with the following steps.</p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
@@ -710,9 +713,23 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>If the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> has not been set, set it to equal <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
-
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>distinctive identifier requirement</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>persistent state requirement</var> is <a def-id="requirement-optional"></a> and persisting state is not allowed according to
+                  <var>restrictions</var>, set <var>persistent state requirement</var> to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              </li>
+              <li><p>Follow the steps for <var>persistent state requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
@@ -720,15 +737,9 @@
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>If persisting state is not allowed according to <var>restrictions</var>:</p>
-                    <ol>
-                      <li>
-                        <p>Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to <a def-id="requirement-not-allowed"></a>.</p>
-                      </li>
-                      <li>
-                        <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
-                      </li>
-                    </ol>
+                    <p>
+                      Continue with the following steps.
+                    </p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
@@ -736,8 +747,11 @@
                   </dd>
                 </dl>
               </li>
-              <li><p>If the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> has not been set, set it to equal the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
-
+              <li>
+                <p>
+                  Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
+                </p>
+              </li>
               <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var></dt>

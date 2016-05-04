@@ -739,7 +739,7 @@ table.simple {
             <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-  <h2 id="w3c-editor-s-draft-02-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-02">02 May 2016</time></h2>
+  <h2 id="w3c-editor-s-draft-03-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-03">03 May 2016</time></h2>
   <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1219,7 +1219,7 @@ table.simple {
               that is both supported and has user consent, each iteration considering a smaller set of possible configurations.
               </p>
               <p>
-              User Agents should reuse earlier consent responses at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>
+              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>
               algorithm in order to avoid repeated requests to the user for similar configurations.
               </p>
             </div></div>
@@ -1293,7 +1293,18 @@ table.simple {
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member from the following list:</p>
+              <li>
+                <p>
+                  Let <var>distinctive identifier requirement</var> be the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>distinctive identifier requirement</var> is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code> and
+                  <a href="#distinctive-identifier">Distinctive Identifiers</a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
+                  to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
+                </p>
+              </li><li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code></dt>
                   <dd>
@@ -1301,15 +1312,7 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
-                    <p>If <a href="#distinctive-identifier">Distinctive Identifiers</a> are not allowed according to <var>restrictions</var>:</p>
-                    <ol>
-                      <li>
-                        <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></p>
-                      </li>
-                      <li>
-                        <p>If the <var>implementation</var> requires a <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
-                      </li>
-                    </ol>
+                    <p>Continue with the following steps.</p>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
@@ -1317,9 +1320,23 @@ table.simple {
                   </dd>
                 </dl>
               </li>
-              <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> has not been set, set it to equal <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member.
-
-              </p></li><li><p>Follow the steps for the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member from the following list:</p>
+              <li>
+                <p>
+                  Set the <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member of <var>accumulated configuration</var> to equal <var>distinctive identifier requirement</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>persistent state requirement</var> is <code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code> and persisting state is not allowed according to
+                  <var>restrictions</var>, set <var>persistent state requirement</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
+                </p>
+              </li>
+              <li><p>Follow the steps for <var>persistent state requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code></dt>
                   <dd>
@@ -1327,15 +1344,9 @@ table.simple {
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
-                    <p>If persisting state is not allowed according to <var>restrictions</var>:</p>
-                    <ol>
-                      <li>
-                        <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> to <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.</p>
-                      </li>
-                      <li>
-                        <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
-                      </li>
-                    </ol>
+                    <p>
+                      Continue with the following steps.
+                    </p>
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code></dt>
                   <dd>
@@ -1343,9 +1354,12 @@ table.simple {
                   </dd>
                 </dl>
               </li>
-              <li><p>If the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> has not been set, set it to equal the value of <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member.
-
-              </p></li><li><p>Follow the steps for the first matching condition from the following list:</p>
+              <li>
+                <p>
+                  Set the <code><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></code> member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
+                </p>
+              </li>
+              <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <code><a href="#widl-MediaKeySystemConfiguration-sessionTypes">sessionTypes</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> in <var>candidate configuration</var></dt>
                   <dd>
@@ -4582,7 +4596,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 </dd><dt id="bib-WebIDL">[WebIDL]</dt><dd>Cameron McCormack; Boris Zbarsky. W3C. <a href="http://www.w3.org/TR/WebIDL-1/" property="dc:requires"><cite>WebIDL Level 1</cite></a>. 8 March 2016. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/WebIDL-1/" property="dc:requires">http://www.w3.org/TR/WebIDL-1/</a>
 </dd></dl></section><section id="informative-references" typeof="bibo:Chapter" resource="#informative-references" property="bibo:hasPart"><h3 id="h-informative-references" resource="#h-informative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.2 </span>Informative references</span></h3><dl class="bibliography" resource=""><dt id="bib-EME-INITDATA-REGISTRY">[EME-INITDATA-REGISTRY]</dt><dd>David Dorwin; Adrian Bateman; Mark Watson. W3C. <a href="format-registry/initdata/" property="dc:references"><cite>Encrypted Media Extensions Initialization Data Format Registry</cite></a>. URL: <a href="format-registry/initdata/" property="dc:references">format-registry/initdata/</a>
 </dd><dt id="bib-EME-STREAM-REGISTRY">[EME-STREAM-REGISTRY]</dt><dd>David Dorwin; Adrian Bateman; Mark Watson. W3C. <a href="format-registry/stream/" property="dc:references"><cite>Encrypted Media Extensions Stream Format Registry</cite></a>. URL: <a href="format-registry/stream/" property="dc:references">format-registry/stream/</a>
-</dd><dt id="bib-MEDIA-SOURCE">[MEDIA-SOURCE]</dt><dd>Matthew Wolenetz; Jerry Smith; Mark Watson; Aaron Colwell; Adrian Bateman. W3C. <a href="http://www.w3.org/TR/media-source/" property="dc:references"><cite>Media Source Extensions</cite></a>. 12 November 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/media-source/" property="dc:references">http://www.w3.org/TR/media-source/</a>
+</dd><dt id="bib-MEDIA-SOURCE">[MEDIA-SOURCE]</dt><dd>Matthew Wolenetz; Jerry Smith; Mark Watson; Aaron Colwell; Adrian Bateman. W3C. <a href="http://www.w3.org/TR/media-source/" property="dc:references"><cite>Media Source Extensions</cite></a>. 3 May 2016. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/media-source/" property="dc:references">http://www.w3.org/TR/media-source/</a>
 </dd><dt id="bib-PROMISES-GUIDE">[PROMISES-GUIDE]</dt><dd>Domenic Denicola. W3C. <a href="https://www.w3.org/2001/tag/doc/promises-guide" property="dc:references"><cite>Writing Promise-Using Specifications</cite></a>. 16 February 2016. Finding of the W3C TAG. URL: <a href="https://www.w3.org/2001/tag/doc/promises-guide" property="dc:references">https://www.w3.org/2001/tag/doc/promises-guide</a>
 </dd><dt id="bib-RFC6838">[RFC6838]</dt><dd>N. Freed; J. Klensin; T. Hansen. IETF. <a href="https://tools.ietf.org/html/rfc6838" property="dc:references"><cite>Media Type Specifications and Registration Procedures</cite></a>. January 2013. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc6838" property="dc:references">https://tools.ietf.org/html/rfc6838</a>
 </dd><dt id="bib-RFC7515">[RFC7515]</dt><dd>M. Jones; J. Bradley; N. Sakimura. IETF. <a href="https://tools.ietf.org/html/rfc7515" property="dc:references"><cite>JSON Web Signature (JWS)</cite></a>. May 2015. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc7515" property="dc:references">https://tools.ietf.org/html/rfc7515</a>
