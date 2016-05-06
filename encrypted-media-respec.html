@@ -609,11 +609,16 @@
               <p>
               Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
               <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and persistent state. The following algorithm iteratively tries to find a configuration
-              that is both supported and has user consent, each iteration considering a smaller set of possible configurations.
+              that is both supported and has user consent (or does not need consent).
               </p>
               <p>
               User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
               algorithm in order to avoid repeated requests to the user for similar configurations.
+              </p>
+              <p>
+                The variable <var>restrictions</var> in the steps below represents the configurations for which consent has been denied. It is used to determine
+                whether user consent for a candidate configuration or partial configuration has been denied. Consent is denied for a partial configuration if every derived
+                configuration has already been denied. Internal representation of <var>restrictions</var> is implementation-specific.
               </p>
             </div>
             <ol>
@@ -621,7 +626,7 @@
                 <p>Let <var>supported configuration</var> be <code>ConsentDenied</code>.</p>
               </li>
               <li>
-                <p>Let <var>restrictions</var> be the empty set.</p>
+                <p>Initialize <var>restrictions</var> to represent existing consent information for <var>origin</var> if any.</p>
               </li>
               <li>
                 <p>Repeat the following step while <var>supported configuration</var> is <code>ConsentDenied</code>:</p>
@@ -645,9 +650,6 @@
             <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>,
               <var>restrictions</var> and <var>origin</var>, this algorithm returns a supported configuration, <code>NotSupported</code>, or <code>ConsentDenied</code> as appropriate and, in the <code>ConsentDenied</code> case, <var>restrictions</var>.
             </p>
-            <p class="note"><var>restrictions</var> consists, logically, of the set of specific configurations for which consent has been denied by the user.  Implementations may choose to obtain and persist consent on the basis of large groups of specific configurations (for example, 'all configurations
-                that require <a def-id="distinctive-identifiers"></a>') and thus <var>restrictions</var> need not be implemented as an exhaustive list of the
-                configurations in the set.
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
 
@@ -699,9 +701,6 @@
                   <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
                   to <a def-id="requirement-not-allowed"></a>.
                 </p>
-                <p class="note">
-                  <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var> if and only if <var>restrictions</var> includes every supported configuration with <a def-id="option-distinctiveIdentifier"></a> set to <a def-id="requirement-required"></a>.
-                </p>
               <li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
@@ -719,13 +718,14 @@
                 </dl>
                 <div class="note">
                 <p>
-                  The combination of <var>accumulated configuration</var> and <var>restrictions</var> means all the possible complete configurations that include everything in <var>accumluated configuration</var> and that are not included in <var>restrictions</var>.
+                  The combination of <var>accumulated configuration</var> and <var>restrictions</var> means all the possible configurations that
+                  include everything in <var>accumulated configuration</var> and that are not denied according to <var>restrictions</var>.
                 </p>
                 <p>
                   A feature is supported with this combination if at least one of the configurations in the combination supports the feature.
                 </p>
                 <p>
-                  A feature is required by this combination if all configurations in the combination support the feature.
+                  A feature is required by this combination if all configurations in the combination include the feature.
                 </p>
               </li>
               <li>
@@ -850,7 +850,10 @@
                 </p>
                 <ol>
                   <li>
-                    <p>Add the configurations described by <var>accumulated configuration</var> to <var>restrictions</var>.</p>
+                    <p>
+                      Update <var>restrictions</var> to reflect that all configurations described by <var>accumulated configuration</var>
+                      do not have user consent.
+                    </p>
                   </li>
                   <li>
                     <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
@@ -859,10 +862,6 @@
                 <div class="note">
                   <p>
                   The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
-                  </p>
-                  <p>
-                    The configurations described by <var>acumulated configuration</var> consist of all complete configurations that include everything
-                    included in <var>accumulated configuration</var>.
                   </p>
                 </div>
               </li>
@@ -1016,7 +1015,7 @@
                 </p>
                 <ol>
                   <li>
-                    <p>Add all the configurations for which consent has been denied to <var>restrictions</var>.</p>
+                    <p>Update <var>restrictions</var> to reflect the configurations for which consent has been denied.</p>
                   </li>
                   <li>
                     <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
@@ -1063,7 +1062,7 @@
                   </li>
                   <li>
                     <p>
-                      If consent was denied, add the specific configurations for which consent was denied to <var>restrictions</var>
+                      If consent was denied, update <var>restrictions</var> to reflect the configurations for which consent was denied
                       and return <code>ConsentDenied</code> and <var>restrictions</var>.
                     </p>
                   </li>
