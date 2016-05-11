@@ -232,7 +232,8 @@
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
-    'session-close-algorithm': { func: term_helper, fragment: 'session-close', link_text: 'Session Close',  },
+    'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
+    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
     'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
