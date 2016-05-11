@@ -318,7 +318,7 @@
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
-          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> when the <a def-id="session-closed-algorithm">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
+          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> once the session has been closed, including when the <a>MediaKeySession</a> object is destroyed.
           </p>
           <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
         </dd>
@@ -1149,7 +1149,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1331,14 +1331,16 @@
           </ol>
         </section>
         
-        <section id="close-all-sessions">
-          <h4>Close all sessions</h4>
-          <p>The close all sessions algorithm is run to close all sessions associated with a <a>MediaKeys</a> object, <var>media keys</var>.
+        <section id="cdm-unavailable">
+          <h4>CDM Unavailable</h4>
+          <p>
+            The CDM unavailable algorithm is run to close all <a>MediaKeySession</a> objects associated with a <a>MediaKeys</a> object, <var>media keys</var>
+            when the CDM becomes unavailable.
           </p>
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the <a def-id="close-session-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -1661,7 +1663,11 @@
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
-                            <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and license destruction record.</p>
+                            <li>
+                              <p>
+                                Use <var>cdm</var> to clear all stored session data associated with this object, including the <a def-id="sessionId"></a>
+                                and license destruction record.
+                              </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
                             <li><p>Run the <a def-id="close-session-algorithm"></a> algorithm on this object.</p></li>
@@ -1671,7 +1677,11 @@
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
-                            <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and the <a def-id="record-of-key-usage"></a>.</p>
+                            <li>
+                              <p>
+                                Use <var>cdm</var> to clear all stored session data associated with this object,
+                                including the <a def-id="sessionId"></a> and the <a def-id="record-of-key-usage"></a>.
+                              </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
                             <li><p>Run the <a def-id="close-session-algorithm"></a> algorithm on this object.</p></li>
@@ -1719,19 +1729,7 @@
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <!--- Consider whether to replace the following with a call to Close Session -->
-                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
-                <li><p>Use the <var>cdm</var> to execute the following steps:</p>
-                  <ol>
-                    <li>
-                      <p>Process the close request.</p>
-                      <p>Do not remove stored session data.
-                        Do not generate or send key or license release messages.
-                      </p>
-                    </li>
-                    <li><p>If the preceding step caused the session to be closed, run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
-                  </ol>
-                </li>
+                <li><p>Run the <a def-id="close-session-algorithm"></a> algorithm on <var>session</var></p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
@@ -2088,54 +2086,47 @@
           </p>
           <p>The following steps are run:</p>
           <ol>
-            <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
             <li>
-              <p>
-                 If any license(s) and/or key(s) associated with <var>session</var> exist that have not been explicitly stored:
-              </p>
-              <ol>
-                <li>
-                  <p>
-                    Destroy these license(s) and/or key(s).
-                  </p>
-                </li>
-              </ol>
+              <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+              <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
             </li>
             <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
           </ol>
         </section>
-      </section>
       
-      <section id="session-closed">
-        <h4>Session Closed</h4>
-        <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a session has been closed.</p>
-        </p>
-        <div class="note">
-          <p>
-            The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
-            In that case, this algorithm MUST be run.
+        <section id="session-closed">
+          <h4>Session Closed</h4>
+          <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">session</a> has been closed.</p>
           </p>
-          <p>Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.</p>
-        </div>
-        </p>
-        <p>The following steps are run:</p>
-        <ol>
-          <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
-          <li>
+          <div class="note">
             <p>
-              If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
-              store the <var>record of key usage</var>, if it exists.
+              The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
+              In that case, this algorithm MUST be run.
             </p>
-            <p class="note">
-              The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
-              a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
-            </p>
-          </li>
-          <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
-          <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-          <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
-          <li><p>Resolve <var>promise</var>.</p></li>
-        </ol>
+            <p>Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.</p>
+          </div>
+          </p>
+          <p>The following steps are run:</p>
+          <ol>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li>
+              <p>
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                store the <var>record of key usage</var>, if it exists.
+              </p>
+              <p class="note">
+                The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
+                a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
+              </p>
+            </li>
+            <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
+            <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
+            <li><p>Let <var>promise</var> be the <a def-id="closed"></a> attribute of the <var>session</var>.</p></li>
+            <li><p>Resolve <var>promise</var>.</p></li>
+          </ol>
+        </section>
       </section>
 
       <section>
@@ -2469,7 +2460,7 @@
                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                     </li>
                     <li>
-                      <p>Run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+                      <p>Run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
                     </li>
                     <li>
                       <p>Abort these steps.</p>
@@ -2526,7 +2517,7 @@
                                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                                     </li>
                                     <li>
-                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
                                     </li>
                                     <li>
                                       <p>Abort these steps.</p>
