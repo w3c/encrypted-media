@@ -2068,7 +2068,7 @@
 
         <section id="queue-message">
           <h4>Queue a "message" Event</h4>
-          <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <a>MediaKeySession</a> object.
+          <p>The Queue a "message" Event algorithm queues a message event to a <a>MediaKeySession</a> object.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object, a <var>message type</var>, and a <var>message</var>.
           </p>
           <p><var>message</var> MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form, if the <a>MediaKeySession</a> object's <var>use distinctive identifier</var> value is false.</p>
@@ -2088,8 +2088,7 @@
 
         <section id="update-key-statuses">
           <h4>Update Key Statuses</h4>
-          <p>The Update Key Statuses algorithm is run when the CDM changes the set of keys <a href="#known-key">known</a> to the session or the status of one or more of the keys.
-          This can happen as the result of a <a def-id="load"></a> or <a def-id="update"></a> call or some other event, such as expiration.
+          <p>The Update Key Statuses algorithm updates the set of keys <a href="#known-key">known</a> to a <a>MediaKeySession</a> or the status of one or more of the keys.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of <a def-id="key-id"></a> and associated <a>MediaKeyStatus</a> pairs.
           </p>
           <p>The following steps are run:</p>
@@ -2119,8 +2118,7 @@
 
         <section id="update-expiration">
           <h4>Update Expiration</h4>
-          <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
-          This can happen as the result of an <a def-id="update"></a> call or some other event.
+          <p>The Update Expiration algorithm updates the expiration time of a <a>MediaKeySession</a>.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and the new expiration time, which may be <code>NaN</code>.
           </p>
           <p>The following steps are run:</p>
@@ -2143,7 +2141,7 @@
           <div class="note">
             <p>
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
-              In that case, this algorithm MUST be run.
+              In that case, the <a def-id="monitor-cdm-algorithm"></a> algorithm detects the change and runs this algorithm.
             </p>
             <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
             <p>
@@ -2171,9 +2169,85 @@
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
         </section>
-      </section>
 
-      <section>
+        <section id="monitor-cdm">
+          <h4>Monitor for CDM Changes</h4>
+          <p>
+            The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It SHALL be run continuously
+            for each <a>MediaKeySession</a> object on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+          </p>
+          <p>
+            The following steps are run:
+          </p>
+
+          <ol>
+            <li>
+              <p>
+                Let <var>session</var> be the <a>MediaKeySession</a> object.
+              </p>
+            </li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+            <li>
+              <p>
+                If <var>cdm</var> has an outgoing message which has not yet been sent:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>message type</var> and <var>message</var> be the message type and message respectively.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="queue-message-algorithm"></a> algorithm, passing <var>session</var>, <var>message type</var> and <var>message</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>statuses</var> be a list of Key ID and <a>MediaKeyStatus</a> value pairs containing one pair for each key
+                    <a href="#known-key">known</a> to <var>session</var>.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="update-key-statuses-algorithm"></a> algorithm, passing <var>session</var> and <var>statuses</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has changed the expiration time of <var>session</var>:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>expiration</var> be the new expiration time of <var>session</var>.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has closed <var>session</var>, run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+              </p>
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section id="exceptions">
         <h3>Exceptions</h3>
         <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="simple-exception">simple exception</a> [[!WebIDL]] or a <a def-id="domexception"></a>.
         The following <a def-id="simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names</a> from [[!WebIDL]] are used in the algorithms.
