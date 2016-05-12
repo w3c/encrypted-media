@@ -2,7 +2,7 @@
   var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
   var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
   var DOM_spec_url = "https://www.w3.org/TR/dom/";
-  var IDL_spec_url = "https://heycam.github.io/webidl/";
+  var IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
 
   function url_helper(doc, url) {
     if (url[0] == "#" && doc.emeDefGroupName != window.respecConfig.emeDefGroupName) {
@@ -312,6 +312,7 @@
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
     'present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'present', },
     'not-present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'not present', },
+    'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
 
 //    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
@@ -384,6 +385,8 @@
           var prefix = is_registry_file ? "../../" : "";
           EME_spec_url = prefix + file;
           groupBaseURLs[x] = EME_spec_url;
+          // Refer to the Web IDL Editor’s Draft from Editor’s Drafts of this spec.
+          IDL_spec_url = "https://heycam.github.io/webidl/";
       }
     }
 
