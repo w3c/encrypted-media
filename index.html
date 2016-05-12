@@ -2613,7 +2613,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <h2 id="h-mediakeys-interface" resource="#h-mediakeys-interface"><span property="xhv:role" resource="xhv:heading"><span class="secno">5. </span><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> Interface</span></h2>
     <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during playback. It also represents a CDM instance.
     </p>
-    <p>If the CDM instance represented by a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a href="#cdm-unavailable">CDM Unavailable</a> algorithm on <var>media keys</var>.</p>
     <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -4239,6 +4238,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <li>
             <p>
               If <var>cdm</var> has closed <var>session</var>, run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
+            </p>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> had become unavailable, run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
             </p>
           </li>
         </ol>

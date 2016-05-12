@@ -1197,7 +1197,6 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2242,6 +2241,11 @@
             <li>
               <p>
                 If <var>cdm</var> has closed <var>session</var>, run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> had become unavailable, run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
           </ol>
