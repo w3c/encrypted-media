@@ -2092,7 +2092,8 @@
           <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">session</a> has been closed.</p>
           <p>
             Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to
-            decrypt <a def-id="media-data"></a>. All <a>MediaKeySession</a> methods will fail for this object after this algorithm is run.
+            decrypt <a def-id="media-data"></a>. All <a>MediaKeySession</a> methods will fail and no further events will be queued for this object
+            after this algorithm is run.
           </p>
           <div class="note">
             <p>
@@ -2100,6 +2101,10 @@
               In that case, this algorithm MUST be run.
             </p>
             <p>Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.</p>
+            <p>
+              After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
+              can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
+            </p>
           </div>
           </p>
           <p>The following steps are run:</p>

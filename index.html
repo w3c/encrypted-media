@@ -2600,7 +2600,8 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
           <p>The Session Closed algorithm updates the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> state after a <a href="#key-session">session</a> has been closed.</p>
           <p>
             Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to
-            decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. All <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> methods will fail for this object after this algorithm is run.
+            decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. All <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> methods will fail and no further events will be queued for this object
+            after this algorithm is run.
           </p>
           <div class="note"><div class="note-title marker" aria-level="5" role="heading" id="h-note68"><span>Note</span></div><div class="">
             <p>
@@ -2608,6 +2609,10 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
               In that case, this algorithm <em class="rfc2119" title="MUST">MUST</em> be run.
             </p>
             <p>Keys in other sessions <em class="rfc2119" title="SHOULD">SHOULD</em> be unaffected, even if they have overlapping key IDs.</p>
+            <p>
+              After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
+              can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
+            </p>
           </div></div>
           <p></p>
           <p>The following steps are run:</p>
