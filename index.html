@@ -739,7 +739,7 @@ table.simple {
             <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
   </p>
   <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-  <h2 id="w3c-editor-s-draft-11-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-11">11 May 2016</time></h2>
+  <h2 id="w3c-editor-s-draft-12-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-12">12 May 2016</time></h2>
   <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1234,7 +1234,7 @@ table.simple {
                 <p>Let <var>supported configuration</var> be <code>ConsentDenied</code>.</p>
               </li>
               <li>
-                <p>Initialize <var>restrictions</var> to represent existing consent information for <var>origin</var> if any.</p>
+                <p>Initialize <var>restrictions</var> to indicate that no configurations have had user consent denied.</p>
               </li>
               <li>
                 <p>Repeat the following step while <var>supported configuration</var> is <code>ConsentDenied</code>:</p>
@@ -1314,6 +1314,7 @@ table.simple {
                   <dt><code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code></dt>
                   <dd>
                     <p>If the <var>implementation</var> does not support a persistent <a href="#distinctive-identifier">Distinctive Identifier</a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <!-- TODO: Find a better descriptive model for this than "combination" -->
                   </dd>
                   <dt><code><a href="#idl-def-MediaKeysRequirement.optional">"optional"</a></code></dt>
                   <dd>
@@ -1330,10 +1331,12 @@ table.simple {
                   include everything in <var>accumulated configuration</var> and that are not denied according to <var>restrictions</var>.
                 </p>
                 <p>
-                  A feature is supported with this combination if at least one of the configurations in the combination supports the feature.
+                  A feature is supported by an implementation with this combination if the implementation supports at least one of the configurations
+                  in the combination with the feature.
                 </p>
                 <p>
-                  A feature is required by this combination if all configurations in the combination include the feature.
+                  A feature is required by an implementtion with this combination if all configurations in the combination that are suported by the implementation
+                  include the feature.
                 </p>
               </div></div></li>
               <li>
@@ -1501,7 +1504,7 @@ table.simple {
                 </dl>
               </li>
 
-              <li><p>Return <var>accumulated configuration</var></p></li>
+              <li><p>Return <var>accumulated configuration</var>.</p></li>
             </ol>
           </section>
 
@@ -1619,7 +1622,7 @@ table.simple {
             <ol>
               <li>
                 <p>
-                  If there is persisted denial for <var>origin</var> indicating that <var>accumulated configuration</var> is not allowed:
+                  If there is persisted denial for <var>origin</var> indicating that <var>accumulated configuration</var> is not allowed, run the following steps:
                 </p>
                 <ol>
                   <li>
@@ -1663,16 +1666,24 @@ table.simple {
                     <p>
                       Request user consent to use <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                     </p>
+                    <p>
+                      The consent <em class="rfc2119" title="MUST">MUST</em> include consent to use a <a href="#distinctive-identifier">Distinctive Identifier</a> if
+                      <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.
+                    </p>
                     <div class="note"><div class="note-title marker" aria-level="6" role="heading" id="h-note32"><span>Note</span></div><div class="">
-                      <p>The consent must include consent to use a <a href="#distinctive-identifier">Distinctive Identifier</a> if <var>accumulated configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> member is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.</p>
+
                       <p>User consent to use <var>accumulated configuration</var> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>.</p>
                     </div></div>
                   </li>
                   <li>
                     <p>
-                      If consent was denied, update <var>restrictions</var> to reflect the configurations for which consent was denied
-                      and return <code>ConsentDenied</code> and <var>restrictions</var>.
+                      If consent was denied, run the following steps:
                     </p>
+                    <ol>
+                      <li><p>Update <var>restrictions</var> to reflect the configurations for which consent was denied.</p></li>
+                      <li><p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p></li>
+                    </ol>
+                    <p></p>
                   </li>
                 </ol>
               </li>
