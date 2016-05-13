@@ -1410,7 +1410,7 @@
         <dt>Promise&lt;void&gt; generateRequest()</dt>
         <dd>
           <p>Generates a license request based on the <var>initData</var>.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-request"></a> will always be queued if the algorithm succeeds and the promise is resolved.
+            A <a def-id="message"></a> of type <a def-id="message-type-license-request"></a> or <a def-id="message-type-individualization-request"></a> will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
 
           <dl class='parameters'>
@@ -1497,9 +1497,14 @@
                     <li><p>Let <var>session id</var> be a unique <a def-id="session-id"></a> string.</p>
                       <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
                     </li>
-                    <li><p>Let <var>message</var> be a license request for the <var>requested license type</var> generated based on the <var>sanitized init data</var>, which is interpreted per <var>initDataType</var>.</p>
+                    <li><p>Let <var>message</var> be a license request for the <var>requested license type</var> generated based on the <var>sanitized init data</var>, which is interpreted per <var>initDataType</var> or an individualization request.</p>
                       <p>The <var>cdm</var> MUST NOT use any stream-specific data, including <a def-id="media-data"></a>, not provided via the <var>sanitized init data</var>.</p>
                       <p>The <var>cdm</var> SHOULD NOT store session data, including the session ID, at this point. See <a def-id="session-storage"></a>.</p>
+                    </li>
+                    <li>
+                      <p>
+                        Let <var>message type</var> reflect the type of <var>message</var>, either <a def-id="message-type-license-request"></a> or <a def-id="message-type-individualization-request"></a>.
+                      </p>
                     </li>
                   </ol>
                 </li>
@@ -1507,7 +1512,7 @@
                 <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
                 <li><p>Let this object's <var>callable</var> value be true.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
-                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
+                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
 				  <p class="note">The <a def-id="generateRequest"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
 				</li>
               </ol>
