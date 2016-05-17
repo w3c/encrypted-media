@@ -1500,6 +1500,27 @@
           </ol>
         </section>
       </section>
+      <section id="media-keys-storage">
+        <h3>Storage and persistence</h3>
+        <p>This section describes general requirements related to storage and persistence.</p>
+        
+        <p>
+          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>false</code> then the object's <var>cdm instance</var>
+          SHALL NOT persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
+        </p>
+        <p>
+          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>true</code> then the object's <var>cdm instance</var>
+          MAY persist state or access previously persisted state as a resolt of operations on this object or any sessions that it creates.
+        </p>
+        
+        <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
+          In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
+          See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
+        </p>
+        
+        <p>See the <a href="#security">Security</a> and <a href="#privacy">Privacy</a> sections for additional considerations when supporting persistent storage.</p>
+
+      </section>
     </section>
 
 
@@ -2335,14 +2356,11 @@
       <section id="session-storage">
         <h3>Session Storage and Persistence</h3>
         <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
+        <p>The following requirements apply in addition to those in <a def-id="media-keys-storage"></a>.</p>
         <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
           This includes license(s), key(s), records of key usage or proof of license destruction, and the <a def-id="session-id"></a>.
         </p>
         <p>The remainder of this section applies to session types for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code>.</p>
-        <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
-          In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
-          See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
-        </p>
         <p>The CDM SHOULD NOT store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
           Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
