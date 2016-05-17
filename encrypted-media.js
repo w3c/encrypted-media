@@ -172,8 +172,9 @@
 	
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
-    'get-distinctive-identifier-consent-status-algorithm' : { func: term_helper, fragment: 'get-distinctive-identifier-consent-status', link_text: 'Get Distinctive Identifier Consent Status' },
+    'get-consent-status-algorithm' : { func: term_helper, fragment: 'get-consent-status', link_text: 'Get Consent Status' },
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
+    'get-supported-configuration-and-consent-algorithm': { func: term_helper, fragment: 'get-supported-configuration-and-consent', link_text: 'Get Supported Configuration and Consent',  },
     'get-supported-capabilities-for-audio-video-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-audio-video-type', link_text: 'Get Supported Capabilities for Audio/Video Type',  },
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
@@ -200,7 +201,7 @@
     'persistent-usage-record-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-usage-record', link_text: '"persistent-usage-record"',  },
     'key-usage-accuracy': { func: var_helper, fragment: 'key-usage-accuracy', link_text: 'key usage accuracy' },
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
-    'close-all-sessions-algorithm': { func: term_helper, fragment: 'close-all-sessions', link_text: 'Close all Sessions',  },
+    'cdm-unavailable-algorithm': { func: term_helper, fragment: 'cdm-unavailable', link_text: 'CDM Unavailable',  },
 
     'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
     'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
@@ -232,9 +233,9 @@
     'status-status-pending': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.status-pending', link_text: '"status-pending"',  },
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
-    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
-    'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
     'destroy-session-algorithm' : { func: term_helper, fragment: 'destroy-session', link_text: 'Destroy Session', },
+    'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
+    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
     'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
