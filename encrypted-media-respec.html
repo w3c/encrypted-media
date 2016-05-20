@@ -6,6 +6,30 @@
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
     <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
+      // The W3C diff service does not fix up relative URLs.
+      // To enable diffs that look better, use the files from the latest version of the spec trunk.
+      // Changes to the affected JS, CSS, and image files will NOT be reflected!
+      var diffServiceHostName = "services.w3.org";
+      var diffServicePathName = "/htmldiff";
+      var replacementOriginAndPath = "https://w3c.github.io/encrypted-media/"
+      var isDiffService = window.location.hostname == diffServiceHostName && window.location.pathname == diffServicePathName;
+
+      // The JS replacement file must be loaded here.
+      // Other resources will be replaced at the end of the file.
+      if (isDiffService) {
+        var source = replacementOriginAndPath + "encrypted-media.js"
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", source, false);
+        xhr.send();
+        var replacement = document.createElement("script");
+        replacement.type = "text/javascript";
+        replacement.className = "remove";
+        replacement.text = xhr.responseText;
+        $("head").append(replacement);
+        console.log("Rewrote URL as " + source);
+      };
+    </script>
+    <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
       specStatus: "ED",
@@ -4010,5 +4034,31 @@
       </table>
     </section>
 
+    <script class="remove">
+      /* Rewrite the URLs for the remaining resources. */
+      /* The diff service separates each word into a separate line, so use multiline comments strings without spaces.
+       * The diff service cannot handle script in <body>, so it is not possible to use the service across changes in this section.
+       * Because of this, you can only compare to encrypted-media-respec.html and not to index.html.
+       */
+      if (isDiffService) {
+        Array.from(document.getElementsByTagName("img")).forEach(function (element, index, array) {
+          var urlComponents = element.src.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.src = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.src);
+        });
+
+        Array.from(document.getElementsByTagName("link")).forEach(function (element, index, array) {
+          var urlComponents = element.href.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.href = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.href);
+        });
+      }
+    </script>
   </body>
 </html>
