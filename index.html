@@ -2342,9 +2342,9 @@ table.simple {
                             <dd>Reject <var>promise</var> with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</dd>
                           </dl>
                           <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
-                          <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div><p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p></div>
+                          <p>State information, including keys, for each session <em class="rfc2119" title="MUST">MUST</em> be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
+                          <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div><p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p></div>
                           <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div><p class="">The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p></div>
-                          <p>Keys from different sessions <em class="rfc2119" title="SHOULD">SHOULD</em> be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
                           <div class="note"><div class="note-title marker" aria-level="4" role="heading" id="h-note62"><span>Note</span></div><p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDM implementations support a standard and reasonably high minimum number of keys per <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> objects.
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                           </p></div>
@@ -2635,7 +2635,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
               In that case, this algorithm <em class="rfc2119" title="MUST">MUST</em> be run.
             </p>
-            <p>Keys in other sessions <em class="rfc2119" title="SHOULD">SHOULD</em> be unaffected, even if they have overlapping key IDs.</p>
+            <p>Keys in other sessions <em class="rfc2119" title="MUST">MUST</em> be unaffected, even if they have overlapping key IDs.</p>
             <p>
               After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
               can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.

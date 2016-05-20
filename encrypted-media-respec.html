@@ -1676,9 +1676,9 @@
                             <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
-                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p>
+                          <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
+                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
                           <p class="note">The replacement algorithm within a session is <a def-id="keysystem"></a>-dependent.</p>
-                          <p>Keys from different sessions SHOULD be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
                           <p class="note">It is RECOMMENDED that CDM implementations support a standard and reasonably high minimum number of keys per <a>MediaKeySession</a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a>MediaKeySession</a> objects.
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                           </p>
@@ -2121,7 +2121,7 @@
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
               In that case, this algorithm MUST be run.
             </p>
-            <p>Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.</p>
+            <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
             <p>
               After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
               can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
