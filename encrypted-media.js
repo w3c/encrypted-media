@@ -220,7 +220,7 @@
     'load-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId', link_text: 'load',  },
     'update': { func: idlref_helper, fragment: 'widl-MediaKeySession-update-Promise-void--BufferSource-response', link_text: 'update()',  },
     'update-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-update-Promise-void--BufferSource-response', link_text: 'update',  },
-    'close': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close()',  },
+//  'close': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close()',  },
     'close-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close',  },
     'remove': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove()',  },
     'remove-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove',  },
@@ -234,7 +234,6 @@
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
     'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
-    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
     'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
