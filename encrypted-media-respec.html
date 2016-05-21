@@ -6,6 +6,30 @@
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
     <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
+      // The W3C diff service does not fix up relative URLs.
+      // To enable diffs that look better, use the files from the latest version of the spec trunk.
+      // Changes to the affected JS, CSS, and image files will NOT be reflected!
+      var diffServiceHostName = "services.w3.org";
+      var diffServicePathName = "/htmldiff";
+      var replacementOriginAndPath = "https://w3c.github.io/encrypted-media/"
+      var isDiffService = window.location.hostname == diffServiceHostName && window.location.pathname == diffServicePathName;
+
+      // The JS replacement file must be loaded here.
+      // Other resources will be replaced at the end of the file.
+      if (isDiffService) {
+        var source = replacementOriginAndPath + "encrypted-media.js"
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", source, false);
+        xhr.send();
+        var replacement = document.createElement("script");
+        replacement.type = "text/javascript";
+        replacement.className = "remove";
+        replacement.text = xhr.responseText;
+        $("head").append(replacement);
+        console.log("Rewrote URL as " + source);
+      };
+    </script>
+    <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
       specStatus: "ED",
@@ -47,138 +71,7 @@
          }]
       }],
 
-      emeDefGroupName: "encrypted-media",      
-	  emeContributors: [
-		"Glenn Adams",
-		"Stig Andersen",
-		"Fred Andrews",
-		"Daniel Appelquist",
-		"Brendan Aragorn",
-		"Árni Arent",
-		"B. Ross Ashley",
-		"Joseph Ashwood",
-		"Tab Atkins Jr.",
-		"Michael Aubertin",
-		"Arthur Barstow",
-		"János Barta",
-		"Robin Berjon",
-		"Robin Boast",
-		"Hugo Bodewig",
-		"Wayne Borean",
-		"Florian Bösch",
-		"Romain Bouqueau",
-		"Marcos Caceres",
-		"Casey Callaghan",
-		"Eric Carlson",
-		"Michael Chen",
-		"Rich Chernock",
-		"Aaron Colwell",
-		"Cyril Concolato",
-		"Pascual Conesa",
-		"Alex M. Coyo",
-		"James Craig",
-		"Dan Dart",
-		"Domenic Denicola",
-		"Brian Evans",
-		"Steve Faulkner",
-		"Joe Feely",
-		"Zak Fenton",
-		"Matt Field",
-		"John Foliot",
-		"Gilles Boccon Gibod",
-		"Alex Giladi",
-		"Adam Goldberg",
-		"James Graham",
-		"Matthew Gregan",
-		"Weiss Hadar",
-		"Joseph Lorenzo Hall",
-		"Michael Hausenblas",
-		"Steve Heffernan",
-		"Ian Hickson",
-		"Brad Hill",
-		"Bjoern Hoehrmann",
-		"Bin Hu",
-		"Gary Hughes",
-		"Tatsuya Igarashi",
-		"Philip Jägenstedt",
-		"John Kemp",
-		"Kevin Kershaw",
-		"Andreas Kuckartz",
-		"Deivi Kuhn",
-		"Tobie Langel",
-		"David LaPalomento",
-		"Philippe Le Hegaret",
-		"Stefan Lederer",
-		"Pierre Anthony Lemieux",
-		"Kornel Lesiński",
-		"Jason Lewis",
-		"Jim Ley",
-		"Andrew Livingston",
-		"Bob Lund",
-		"Antoine Maillard",
-		"Rob Manson",
-		"Shinya Maruyama",
-		"Matt Matrisciano",
-		"David Mays",
-		"Jay Munro",
-		"Charles McCathie Nevile",
-		"Jer Noble",
-		"Mark Nottingham",
-		"Danny O'Brien",
-		"Robert O'Callahan",
-		"Joey Parrish",
-		"Giuseppe Pascale",
-		"Guy Paskar",
-		"Chris Pearce",
-		"Gaël Pegliasco",
-		"Petr Peterka",
-		"Silvia Pfeiffer",
-		"Muñiz Piniella",
-		"Laurent Piron",
-		"Emmanuel Poitier",
-		"Benjamin Rainer",
-		"François Remy",
-		"Emmanuel Revah",
-		"Steven Robertson",
-		"Duncan Rowden",
-		"Catherine Roy",
-		"Sam Ruby",
-		"Christine Runnegar",
-		"Greg Rutz",
-		"Janina Sajka",
-		"Doug Schepers",
-		"Hans Schmucker",
-		"Wendy Seltzer",
-		"Julio Serrano",
-		"Leif Halvard Silli",
-		"John Simmons",
-		"David Singer",
-		"Henri Sivonen",
-		"Ryan Sleevi",
-		"Brian Smith",
-		"Michael Smith",
-		"Martin Soukup",
-		"Maciej Stachowiak",
-		"Joe Steele",
-		"Kevin Streeter",
-		"John Sullivan",
-		"Yang Sun",
-		"Eric Sunyang",
-		"Michael Thornburgh",
-		"Niels Thorwirth",
-		"Raphaël Troncy",
-		"Anne van Kesteren",
-		"Pete Van Peenen",
-		"John C. Vernaleo",
-		"Mark Vickers",
-		"Aymeric Vitte",
-		"Simon Warner",
-		"Matt Womer",
-		"Takeshi Yoshino",
-		"Boris Zbarsky",
-		"Zhouhaojun"
-      ],
-
+      emeDefGroupName: "encrypted-media",
       emeUnusedGroupNameExcludeList: ["eme-references-from-registry"],
 
       // name of the WG
@@ -318,7 +211,10 @@
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
-          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> when the <a def-id="session-close-algorithm">session is closed</a>, including when the <a>MediaKeySession</a> object is destroyed.
+          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> once the session has been closed, including when the <a>MediaKeySession</a> object is destroyed.
+          </p>
+          <p>
+            All license(s) and key(s) associated with a Key Session which have not been explicitly stored MUST be destroyed when the Key Session is closed.
           </p>
           <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
         </dd>
@@ -566,7 +462,7 @@
                     <ol>
                       <li><p>Let <var>candidate configuration</var> be the value.</p></li>
                       <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
-                      <li><p>If <var>supported configuration</var> is not <code>null</code>, run the following steps:</p>
+                      <li><p>If <var>supported configuration</var> is not <code>NotSupported</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -596,8 +492,61 @@
 
           <section>
             <h5>Get Supported Configuration</h5>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>null</code> as appropriate.</p>
-            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.</p>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
+            <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WebIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
+            </p>
+            <div class="note">
+              <p>
+              For certain configurations, it may be required to obtain user consent or inform the user. User Agents have some flexibility to determine
+              whether consent is required for a specific configuration and whether such consent may also apply to other configurations. For example,
+              consent to one configuration may also imply consent for less powerful, more restricted configurations. Equally, a denial of consent for
+              one configuration may imply denial of consent for more powerful, less restricted configurations.
+              </p>
+              <p>
+              Supported configurations, including supported audio and video codecs, may depend on availability of optional capabilities such as
+              <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and persistent state. The following algorithm iteratively tries to find a configuration
+              that is both supported and has user consent (or does not need consent).
+              </p>
+              <p>
+              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
+              algorithm in order to avoid repeated requests to the user for similar configurations.
+              </p>
+              <p>
+                The variable <var>restrictions</var> in the steps below represents the configurations for which consent has been denied during the
+                execution of this algorithm or based on persisted consent information for the origin. It is used to determine
+                whether user consent for a candidate configuration or partial configuration has been denied. Consent is denied for a partial configuration
+                if every derived configuration has already been denied. Internal representation of <var>restrictions</var> is implementation-specific.
+              </p>
+            </div>
+            <ol>
+              <li>
+                <p>Let <var>supported configuration</var> be <code>ConsentDenied</code>.</p>
+              </li>
+              <li>
+                <p>Initialize <var>restrictions</var> to indicate that no configurations have had user consent denied.</p>
+              </li>
+              <li>
+                <p>Repeat the following step while <var>supported configuration</var> is <code>ConsentDenied</code>:</p>
+                <ol>
+                  <li>
+                    <p>
+                    Let <var>supported configuration</var> and, if provided, <var>restrictions</var> be the result of executing the
+                    <a def-id="get-supported-configuration-and-consent-algorithm"></a> algorithm
+                    with <var>implementation</var>, <var>candidate configuration</var>, <var>restrictions</var> and <var>origin</var>.
+                    </p>
+                  </li>
+                </ol>
+                <li>
+                  <p>Return <var>supported configuration</var>.</p>
+                </li>
+              </li>
+            </ol>
+          </section>
+          <section>
+            <h5>Get Supported Configuration and Consent</h5>
+            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>,
+              <var>restrictions</var> and <var>origin</var>, this algorithm returns a supported configuration, <code>NotSupported</code>, or <code>ConsentDenied</code> as appropriate and, in the <code>ConsentDenied</code> case, <var>restrictions</var>.
+            </p>
             <ol>
               <li><p>Let <var>accumulated configuration</var> be a new <a>MediaKeySystemConfiguration</a> dictionary.</p></li>
 
@@ -607,7 +556,7 @@
                 </p>
               </li>
 
-              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>, run the following steps:</p>
+              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>supported types</var> be an empty sequence of DOMStrings.</p></li>
                   <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> member:</p>
@@ -625,7 +574,7 @@
                       </li>
                     </ol>
                   </li>
-                  <li><p>If <var>supported types</var> is empty, return <code>null</code>.</p></li>
+                  <li><p>If <var>supported types</var> is empty, return <code>NotSupported</code>.</p></li>
                   <li><p>Set the <a def-id="option-initDataTypes"></a> member of <var>accumulated configuration</var> to <var>supported types</var>.</p></li>
                 </ol>
               </li>
@@ -638,45 +587,89 @@
                 "optional"    ||       "required"       |      "not-allowed"     | Depends on combination |
                 "not-allowed" ||       Return null      |      "not-allowed"     |      "not-allowed"     |
                -->
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Let <var>distinctive identifier requirement</var> be the value of <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>distinctive identifier requirement</var> is <a def-id="requirement-optional"></a> and
+                  <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
+                  to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              <li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <!-- TODO: Find a better descriptive model for this than "combination" -->
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>Continue with the following steps.</p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
+                <div class="note">
+                <p>
+                  The combination of <var>accumulated configuration</var> and <var>restrictions</var> means all the possible configurations that
+                  include everything in <var>accumulated configuration</var> and that are not denied according to <var>restrictions</var>.
+                </p>
+                <p>
+                  A feature is supported by an implementation with this combination if the implementation supports at least one of the configurations
+                  in the combination with the feature.
+                </p>
+                <p>
+                  A feature is required by an implementtion with this combination if all configurations in the combination that are suported by the implementation
+                  include the feature.
+                </p>
               </li>
-              <li><p>Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>candidate configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.
-
-              <li><p>Follow the steps for the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member from the following list:</p>
+              <li>
+                <p>
+                  Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>distinctive identifier requirement</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If <var>persistent state requirement</var> is <a def-id="requirement-optional"></a> and persisting state is not allowed according to
+                  <var>restrictions</var>, set <var>persistent state requirement</var> to <a def-id="requirement-not-allowed"></a>.
+                </p>
+              </li>
+              <li><p>Follow the steps for <var>persistent state requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> does not support persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
                   <dd>
-                    <p>Continue.<!-- Will be updated below. --></p>
+                    <p>
+                      Continue with the following steps.
+                    </p>
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
+                    <p>If the <var>implementation</var> requires persisting state in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
               </li>
-              <li><p>Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
-
+              <li>
+                <p>
+                  Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
+                </p>
+              </li>
               <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var></dt>
+                  <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var></dt>
                   <dd>
                     <p>Let <var>session types</var> be <var>candidate configuration</var>'s <a def-id="option-sessionTypes"></a> member.</p>
                   </dd>
@@ -690,26 +683,30 @@
                 <ol>
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
-                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var>, return <code>null</code>.</p>
-                    <p>Unsupported combinations include but are not limited to a <var>session type</var> for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> when <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a>.</p>
+                    <p>
+                      If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-not-allowed"></a> and the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var> for other reasons, return <code>NotSupported</code>.</p>
                   </li>
                   <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is <a def-id="requirement-optional"></a> and the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to <a def-id="requirement-required"></a>.</p></li>
                 </ol>
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
 
-              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
+              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
                 </ol>
               </li>
 
-              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
+              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
                 <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, and <var>accumulated configuration</var>.</p></li>
-                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>null</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
                   <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
                 </ol>
               </li>
@@ -741,64 +738,59 @@
                 </dl>
               </li>
 
-              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>null</code>.</p>
+              <li><p>If <var>implementation</var> in the configuration specified by the combination of the values in <var>accumulated configuration</var> is not supported or not allowed in the <var>origin</var>, return <code>NotSupported</code>.</p>
                 <p class="note">In this step, "supported" includes the implementation being available for use when this algorithm returns, not just user agent support for such an implementation.</p>
               </li>
 
-              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-required"></a>:</p>
+              <li>
+                <p>
+                  If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-required"></a> and
+                  the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> associated with <var>accumulated configuration</var> are not <a href="#per-origin-identifiers">unique per-origin</a> and
+                  <a href="#allow-identifiers-cleared">clearable</a>:
+                </p>
                 <ol>
                   <li>
                     <p>
-                      If the <a def-id="distinctive-identifier"></a> is not <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>, return <code>null</code>.
-                    </p>
-                    <p class="note">
-                      The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                      Update <var>restrictions</var> to reflect that all configurations described by <var>accumulated configuration</var>
+                      do not have user consent.
                     </p>
                   </li>
                   <li>
-                    <p>
-                      Let <var>distinctive identifier consent status</var> be the result of running the <a def-id="get-distinctive-identifier-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var> and <var>origin</var> and follow the steps for the value of <var>distinctive identifier consent status</var> from the following list:":
-                    </p>
-
-                    <dl class="switch">
-                      <dt><code>ConsentRequired</code>:</dt>
-                      <dd>
-                        <ol>
-                          <li>
-                            <p>
-                              Request user consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> in conjunction with <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
-                            </p>
-                            <p class="note">User consent to use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>..</p>
-                            <p class="note">The user agent MAY choose to persist the user response.</p>
-                          </li>
-                          <li>
-                            <p>
-                              If consent was denied, return <code>null</code>.
-                            </p>
-                          </li>
-                        </ol>
-                      </dd>
-                      <dt><code>InformUser</code>:</dt>
-                      <dd>
-                        <p>
-                          Inform the user that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use for <var>accumulated configuration</var> in the <var>origin</var> and continue with the following steps.
-                        </p>
-                      </dd>
-                      <dt><code>Allowed</code>:</dt>
-                      <dd>
-                        <p>
-                          Continue with the following steps.
-                        </p>
-                      </dd>
-                      <dt><code>Denied</code>:</dt>
-                      <dd>
-                        <p>
-                          Return <code>null</code>.
-                        </p>
-                      </dd>
-                    </dl>
+                    <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
                   </li>
                 </ol>
+                <div class="note">
+                  <p>
+                  The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                  Let <var>consent status</var> and <var>updated restrictions</var> be the result of running the <a def-id="get-consent-status-algorithm"></a> algorithm on <var>accumulated configuration</var>, <var>restrictions</var> and <var>origin</var> and follow the steps for the value of <var>consent status</var> from the following list:
+                </p>
+
+                <dl class="switch">
+                  <dt><code>ConsentDenied</code>:</dt>
+                  <dd>
+                    <p>
+                      Return <code>ConsentDenied</code> and <var>updated restrictions</var>.
+                    </p>
+                  </dd><dt><code>InformUser</code>:</dt>
+                  <dd>
+                    <p>
+                      Inform the user that <var>accumulated configuration</var> is in use in the <var>origin</var> including, specifically, the information
+                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use if the <a def-id="option-distinctiveIdentifier"></a>
+                      member of <var>accumulated configuration</var> is <a def-id="requirement-required"></a>. Continue to the next step.
+                    </p>
+                  </dd>
+                  <dt><code>Allowed</code>:</dt>
+                  <dd>
+                    <p>
+                      Continue to the next step.
+                    </p>
+                  </dd>
+                </dl>
               </li>
 
               <li><p>Return <var>accumulated configuration</var>.</p></li>
@@ -807,7 +799,7 @@
 
           <section>
             <h5>Get Supported Capabilities for Audio/Video Type</h5>
-            <p>Given an <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, and <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
+            <p>Given an <var>audio/video type</var>, <a>MediaKeySystemMediaCapability</a> sequence <var>requested media capabilities</var>, <a>MediaKeySystemConfiguration</a> <var>partial configuration</var>, and <var>restrictions</var>, this algorithm returns a sequence of supported <a>MediaKeySystemMediaCapability</a> values for this audio/video type or <code>null</code> as appropriate.</p>
             <ol>
               <li><p>Let <var>local accumulated configuration</var> be a local copy of <var>partial configuration</var>.</p></li>
               <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
@@ -849,7 +841,7 @@
                     <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var>:</p>
+                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var> in combination with <var>restrictions</var>:</p>
                     <p class="note"><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p>
                     <ol>
                       <li>
@@ -899,46 +891,102 @@
           </section>
 
           <section>
-            <h5>Get Distinctive Identifier Consent Status</h5>
+            <h5>Get Consent Status</h5>
             <p>
-              Given an <var>accumulated configuration</var> and an <var>origin</var>, this algorithm returns the consent status of <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentRequired</code>, <code>InformUser</code>, <code>Allowed</code> or <code>Denied</code>.
+              Given an <var>accumulated configuration</var>, <var>restrictions</var> and <var>origin</var>, this algorithm returns the consent status for
+              <var>accumulated configuration</var> and <var>origin</var> as one of <code>ConsentDenied</code>, <code>InformUser</code> or <code>Allowed</code>,
+              together with an updated value for <var>restrictions</var> in the <code>ConsentDenied</code> case.
             </p>
+            <div class="note">
+              <p>
+                Consent status for <var>accumulated configuration</var> depends at least on the value of the <a def-id="option-distinctiveIdentifier"></a> member of
+                <var>accumulated configuration</var>.
+              </p>
+              <p>
+                Previous consent for <var>accumulated configuration</var> with <a def-id="option-distinctiveIdentifier"></a>
+                set to <a def-id="requirement-not-allowed"></a> does not imply consent for the same configuration with <a def-id="option-distinctiveIdentifier"></a>
+                set to <a def-id="requirement-optional"></a> or <a def-id="requirement-required"></a>.
+              </p>
+            </div>
             <ol>
               <li>
                 <p>
-                  If there is persisted denial for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are not allowed in conjunction with <var>accumulated configuration</var>, return <code>Denied</code>.
+                  If there is persisted denial for <var>origin</var> indicating that <var>accumulated configuration</var> is not allowed, run the following steps:
+                </p>
+                <ol>
+                  <li>
+                    <p>Update <var>restrictions</var> to reflect the configurations for which consent has been denied.</p>
+                  </li>
+                  <li>
+                    <p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p>
+                  </li>
+                </ol>
+              </li>
+              <li>
+                <p>
+                  If there is persisted consent for <var>origin</var> indicating <var>accumulated configuration</var> is allowed, return <code>Allowed</code>.
                 </p>
               </li>
               <li>
                 <p>
-                  If there is persisted consent for <var>origin</var> indicating that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are allowed in conjunction with <var>accumulated configuration</var>, return <code>Allowed</code>.
+                  If any of the following are true:
                 </p>
-                <p class="note">
-                  A previous user consent for a prompt that did not include use of a <a def-id="distinctive-identifier"></a> (with similar properties) would not be considered as covering an <var>accumulated configuration</var> that requires use of such an identifier.
-                </p>
+                <ul>
+                  <li>
+                    <p>
+                      The <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
+                      <a def-id="requirement-not-allowed"></a> and any of the recommendations of
+                      <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the combination of the
+                      User Agent, <var>implementation</var> and <var>accumulated configuration</var>.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      The user agent requires explicit user consent for the <var>accumulated configuration</var> for other reasons.
+                    </p>
+                    <p class="note">
+                      Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
+                    </p>
+                  </li>
+                </ul>
+                <p>then run the following steps:</p>
+                <ol>
+                  <li>
+                    <p>
+                      Request user consent to use <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
+                    </p>
+                    <p>
+                      The consent MUST include consent to use a <a def-id="distinctive-identifier"></a> if
+                      <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member is <a def-id="requirement-required"></a>.
+                    </p>
+                    <div class="note">
+
+                      <p>User consent to use <var>accumulated configuration</var> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <p>
+                      If consent was denied, run the following steps:
+                    </p>
+                    <ol>
+                      <li><p>Update <var>restrictions</var> to reflect the configurations for which consent was denied.</p></li>
+                      <li><p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p></li>
+                    </ol>
+                    </p>
+                  </li>
+                </ol>
               </li>
               <li>
                 <p>
-                  If any of the recommendations of <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the User Agent, return <code>ConsentRequired</code>.
+                  If the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
+                  <a def-id="requirement-not-allowed"></a>, </a>return <code>InformUser</code>.
                 </p>
               </li>
               <li>
-                <p>
-                  If the user agent requires explicit user consent for the use of
-                  <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> for other reasons, return <code>ConsentRequired</code>.
-                </p>
-                <p class="note">
-                  Another reason for requiring explicit user consent may be due to the security properties of the CDM implementation.
-                </p>
-              </li>
-              <li>
-                <p>
-                  Return <code>InformUser</code>.
-                </p>
+                <p>Return <code>Allowed</code>.</p>
               </li>
             </ol>
           </section>
-
         </section>
       </section>
 
@@ -1013,7 +1061,7 @@
           <dt>sequence&lt;DOMString&gt; sessionTypes</dt>
           <dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
-            <p>If this member is <a def-id="not-present-dictionary-member"></a> when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[!WebIDL]] when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
           </dd>
         </dl>
 
@@ -1061,7 +1109,7 @@
         </dd>
 
         <dt>MediaKeySystemConfiguration getConfiguration()</dt>
-        <!-- This is a method instead of an attribute because per http://heycam.github.io/webidl/#idl-dictionaries, "Dictionaries must not be used as the type of an attribute or constant." -->
+        <!-- This is a method instead of an attribute because per https://www.w3.org/TR/WebIDL-1/#idl-dictionaries, "Dictionaries MUST NOT be used as the type of an attribute or constant." -->
         <dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
@@ -1149,7 +1197,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1331,14 +1379,16 @@
           </ol>
         </section>
         
-        <section id="close-all-sessions">
-          <h4>Close all sessions</h4>
-          <p>The close all sessions algorithm is run to close all sessions associated with a <a>MediaKeys</a> object, <var>media keys</var>.
+        <section id="cdm-unavailable">
+          <h4>CDM Unavailable</h4>
+          <p>
+            The CDM unavailable algorithm is run to close all <a>MediaKeySession</a> objects associated with a <a>MediaKeys</a> object, <var>media keys</var>
+            when the CDM instance becomes unavailable.
           </p>
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the <a def-id="session-close-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -1379,7 +1429,7 @@
 
         <dt>readonly attribute Promise&lt;void&gt; closed</dt>
         <dd>
-          <p>Signals when object becomes closed as a result of the <a def-id="session-close-algorithm"></a> algorithm being run.
+          <p>Signals when object becomes closed as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd>
 
@@ -1420,7 +1470,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
@@ -1533,7 +1583,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
@@ -1607,7 +1657,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If <var>response</var> is an empty array, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>response copy</var> be a copy of the contents of the <var>response</var> parameter.</p></li>
@@ -1660,9 +1710,9 @@
                             <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
-                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p>
+                          <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
+                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
                           <p class="note">The replacement algorithm within a session is <a def-id="keysystem"></a>-dependent.</p>
-                          <p>Keys from different sessions SHOULD be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
                           <p class="note">It is RECOMMENDED that CDM implementations support a standard and reasonably high minimum number of keys per <a>MediaKeySession</a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a>MediaKeySession</a> objects.
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                           </p>
@@ -1671,30 +1721,28 @@
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
-                            <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and license destruction record.</p>
-                              <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
-                            </li>
                             <li>
                               <p>
-                                Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.
+                                Close the <a href="#key-session">session</a> and clear all stored session data associated with this object,
+                                including the <a def-id="sessionId"></a> and license destruction record.
                               </p>
+                              <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
                           </ol>
                         </dd>
                         <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
-                            <li><p>Clear all stored session data associated with this object, including the <a def-id="sessionId"></a> and the <a def-id="record-of-key-usage"></a>.</p>
-                              <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
-                            </li>
                             <li>
                               <p>
-                                Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.
+                                Close the <a href="#key-session">session</a> and clear all stored session data associated with this object,
+                                including the <a def-id="sessionId"></a> and the <a def-id="record-of-key-usage"></a>.
                               </p>
+                              <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
                           </ol>
                         </dd>
                         <dt>Otherwise</dt>
@@ -1730,27 +1778,22 @@
 
         <dt>Promise&lt;void&gt; close()</dt>
         <dd>
-          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with this object and close it. Persisted data should not be released or cleared.</p>
+          <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a resolved promise.</p></li>
-            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on <var>session</var>, return a resolved promise.</p></li>
+            <li><p>If <var>session</var>'s <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
-                <li><p>Use the <var>cdm</var> to execute the following steps:</p>
-                  <ol>
-                    <li>
-                      <p>Process the close request.</p>
-                      <p>Do not remove stored session data.
-                        Do not generate or send key or license release messages.
-                      </p>
-                    </li>
-                    <li><p>If the preceding step caused the session to be closed, run the <a def-id="session-close-algorithm"></a> algorithm on this object.</p></li>
-                  </ol>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+                <li>
+                  <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+                  <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
+                <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
@@ -1763,7 +1806,7 @@
           <p>Removes stored session data associated with this object.</p>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-close-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -2098,35 +2141,39 @@
             <li><p>Set the <var>session</var>'s <a def-id="expiration"></a> attribute to <var>expiration time</var>.</p></li>
           </ol>
         </section>
-
-        <section id="session-close">
-          <h4>Session Close</h4>
-          <p>The Session Close algorithm is run when the CDM closes the session associated with a <a>MediaKeySession</a> object.</p>
-          <p>Closing a session means that the license(s) and key(s) associated with it are no longer available to decrypt <a def-id="media-data"></a>.
-            All <a>MediaKeySession</a> methods will fail for this object.
+      
+        <section id="session-closed">
+          <h4>Session Closed</h4>
+          <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">session</a> has been closed.</p>
+          <p>
+            Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to
+            decrypt <a def-id="media-data"></a>. All <a>MediaKeySession</a> methods will fail and no further events will be queued for this object
+            after this algorithm is run.
           </p>
-          <p class="note">The CDM may close a session at any point, such as in response to a <a def-id="close"></a> call, when the session is no longer needed, or when system resources are lost.
-          Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.
+          <div class="note">
+            <p>
+              The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
+              In that case, this algorithm MUST be run.
+            </p>
+            <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
+            <p>
+              After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
+              can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
+            </p>
+          </div>
           </p>
           <p>The following steps are run:</p>
           <ol>
-            <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li>
               <p>
-                 If any license(s) and/or key(s) associated with <var>session</var> exist that have not been explicitly stored:
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                store the <var>record of key usage</var>, if it exists.
               </p>
-              <ol>
-                <li>
-                  <p>
-                    Destroy these license(s) and/or key(s).
-                  </p>
-                </li>
-                <li>
-                  <p>
-                    If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, store the <var>record of key usage</var>.
-                  </p>
-                </li>
-              </ol>
+              <p class="note">
+                The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
+                a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
+              </p>
             </li>
             <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
@@ -2138,8 +2185,8 @@
 
       <section>
         <h3>Exceptions</h3>
-        <p id="error-names">The methods report errors by rejecting the returned promise with a <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exception</a> or a <a def-id="domexception"></a>.
-        The following <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names from WebIDL</a> [[!WebIDL]] are used in the algorithms.
+        <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="simple-exception">simple exception</a> [[!WebIDL]] or a <a def-id="domexception"></a>.
+        The following <a def-id="simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names</a> from [[!WebIDL]] are used in the algorithms.
         Causes specified specified in the algorithms are listed alongside each name, though these names MAY be used for other reasons as well.
         </p>
 
@@ -2205,7 +2252,7 @@
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one active unclosed session in any <a def-id="document-concept"></a>.
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
-          A session MAY only be loaded again after the <a def-id="session-close-algorithm"></a> algorithm has not been run on the object representing it.
+          A session MAY only be loaded again after the <a def-id="session-closed-algorithm"></a> algorithm has not been run on the object representing it.
         </p>
         <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD later remove the stored data using <a def-id="remove"></a>.
           The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
@@ -2467,14 +2514,14 @@
                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                     </li>
                     <li>
-                      <p>Run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+                      <p>Run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
                     </li>
                     <li>
                       <p>Abort these steps.</p>
                     </li>
                   </ol>
                 </li>
-                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-close-algorithm"></a> algorithm has not been run, run the following steps:</p>
+                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                   <ol>
                     <li><p>Let <var>block</var> be the first entry in the media element's <var>encrypted block queue</var>.</p></li>
@@ -2524,7 +2571,7 @@
                                       <p>Run the <a def-id="media-data-is-corrupted"></a> steps of the <a def-id="resource-fetch-algorithm"></a>.</p>
                                     </li>
                                     <li>
-                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="close-all-sessions-algorithm"></a> algorithm on <var>media keys</var>.</p>
+                                      <p>If <var>cdm</var> is no longer usable for any reason then run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
                                     </li>
                                     <li>
                                       <p>Abort these steps.</p>
@@ -3331,10 +3378,10 @@
           <p>Individualization MAY be origin-independent or per-origin.
             The resulting identifier MUST be origin-independent or per-origin, respectively.
             In the former case the resulting identifier MUST NOT be provided to the application.
-            The mechanisms and flow are for the two types of individualization are different, as described in the following sections.
+            The mechanisms and flow for the two types of individualization are different, as described in the following sections.
           </p>
           <p>In all cases, implementations SHOULD avoid sending <a def-id="origin">origin(s)</a> or <a def-id="origin"></a>-specific information to centralized servers since this could create a central record of all origins visited by a user or device.</p>
-          <p>Individualizaiton MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
+          <p>Individualization MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
 
           <section id="origin-independent-individualization">
             <h5>Origin-Independent Individualization</h5>
@@ -3923,11 +3970,6 @@
       </section>
     </section>
 
-    <section id="acknowledgements">
-      <h2>Acknowledgments</h2>
-      The editors would like to thank <a def-id="contributors"></a> for their contributions to this specification.
-    </section>
-
     <section id="revision-history">
       <h2>Revision History</h2>
       <table class="old-table">
@@ -4002,5 +4044,31 @@
       </table>
     </section>
 
+    <script class="remove">
+      /* Rewrite the URLs for the remaining resources. */
+      /* The diff service separates each word into a separate line, so use multiline comments strings without spaces.
+       * The diff service cannot handle script in <body>, so it is not possible to use the service across changes in this section.
+       * Because of this, you can only compare to encrypted-media-respec.html and not to index.html.
+       */
+      if (isDiffService) {
+        Array.from(document.getElementsByTagName("img")).forEach(function (element, index, array) {
+          var urlComponents = element.src.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.src = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.src);
+        });
+
+        Array.from(document.getElementsByTagName("link")).forEach(function (element, index, array) {
+          var urlComponents = element.href.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.href = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.href);
+        });
+      }
+    </script>
   </body>
 </html>
