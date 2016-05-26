@@ -1413,7 +1413,7 @@
 
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
-      <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
+      <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
       <dl title="interface MediaKeySession : EventTarget" class='idl'>
         <dt>readonly attribute DOMString sessionId</dt>
@@ -1548,13 +1548,19 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> value be true.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
-                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
-				  <p class="note">The <a def-id="generateRequest"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
-				</li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
+                    <li><p>Let this object's <var>callable</var> value be true.</p></li>
+                    <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1614,20 +1620,29 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> value be true.</p></li>
-                <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                  <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
-                  </p>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
+                    <li><p>Let this object's <var>callable</var> value be true.</p></li>
+                    <li>
+                      <p>
+                        If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                      </p>
+                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                      </p>
+                    </li>
+                    <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
+                    <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+
+                    <li>
+                      <p>Resolve <var>promise</var> with <code>true</code>.
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </p>
+                  </ol>
                 </li>
-                <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
-                <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
-				</li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
-                  <p class="note">The <a def-id="load"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
-				</li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1743,12 +1758,6 @@
                         </dd>
                       </dl>
                     </li>
-                    <li><p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
-                      </p>
-                    </li>
-                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>message</var> be that message.</p></li>
@@ -1757,9 +1766,26 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li>
+                      <p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                      </p>
+                      <p>
+                        Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                      </p>
+                    </li>
+                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
+                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1783,8 +1809,16 @@
                   <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
                   <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
-                <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1803,6 +1837,7 @@
             <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
+                <li><p>Let <var>message</var> be <code>null</code>.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li>
@@ -1854,19 +1889,26 @@
                         </li>
                       </ol>
                     </li>
+                  </ol>
+                </li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
                     <li>
                       <p>
                         Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the <a def-id="status-released"></a> <a>MediaKeyStatus</a> value for each.
                       </p>
                     </li>
-
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
+                    <li><p>If <var>message</var> is not <code>null</code>, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
                   </ol>
                 </li>
-                <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
