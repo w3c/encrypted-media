@@ -694,21 +694,42 @@
                 </ol>
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
-
-              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
-                <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
-                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
-                  <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
-                </ol>
+              
+              <li>
+                <p>
+                  If the <a def-id="option-videoCapabilities"></a> and <a def-id="option-audioCapabilities"></a> members in <var>candidate configuration</var>
+                  are empty, return <code>NotSupported</code>.
+                </p>
               </li>
 
-              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
-                <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
-                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
-                  <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
-                </ol>
+              <li>
+                <dl class="switch">
+                  <dt>If the <a def-id="option-videoCapabilities"></a> member in <var>candidate configuration</var> is non-empty:</dt>
+                  <dd>
+                    <ol>
+                      <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                      <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                      <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
+                    </ol>
+                  </dd>
+                  <dt>Otherwise:</dt>
+                  <dd><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to an empty sequence.</p></dd>
+                </dl>
+              </li>
+
+              <li>
+                <dl class="switch">
+                  <dt>If the <a def-id="option-audioCapabilities"></a> member in <var>candidate configuration</var> is non-empty:</dt>
+                  <dd>
+                    <ol>
+                      <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                      <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                      <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
+                    </ol>
+                  </dd>
+                  <dt>Otherwise:</dt>
+                  <dd><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to an empty sequence.</p></dd>
+                </dl>
               </li>
 
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
@@ -1032,17 +1053,19 @@
             The <a def-id="initialization-data-type"></a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             Values in the sequence MUST not be the empty string.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities</dt>
+          <dt>required sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities</dt>
           <dd>
             A list of supported audio type and capability pairs.
             The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
-            When there is a conflict between values, the earlier value will be selected.
+            When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported.
+            In this case, the <a def-id="option-videoCapabilities"></a> element must not be empty.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities</dt>
+          <dt>required sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities</dt>
           <dd>
             A list of supported video type and capability pairs.
             The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
-            When there is a conflict between values, the earlier value will be selected.
+            When there is a conflict between values, the earlier value will be selected. An empty list indicates that no video capabilities are supported.
+            In this case, the <a def-id="option-audioCapabilities"></a> element must not be empty.
           </dd>
           <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
