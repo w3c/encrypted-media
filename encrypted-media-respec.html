@@ -6,6 +6,30 @@
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
     <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
+      // The W3C diff service does not fix up relative URLs.
+      // To enable diffs that look better, use the files from the latest version of the spec trunk.
+      // Changes to the affected JS, CSS, and image files will NOT be reflected!
+      var diffServiceHostName = "services.w3.org";
+      var diffServicePathName = "/htmldiff";
+      var replacementOriginAndPath = "https://w3c.github.io/encrypted-media/"
+      var isDiffService = window.location.hostname == diffServiceHostName && window.location.pathname == diffServicePathName;
+
+      // The JS replacement file must be loaded here.
+      // Other resources will be replaced at the end of the file.
+      if (isDiffService) {
+        var source = replacementOriginAndPath + "encrypted-media.js"
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", source, false);
+        xhr.send();
+        var replacement = document.createElement("script");
+        replacement.type = "text/javascript";
+        replacement.className = "remove";
+        replacement.text = xhr.responseText;
+        $("head").append(replacement);
+        console.log("Rewrote URL as " + source);
+      };
+    </script>
+    <script class="remove">
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
       specStatus: "ED",
@@ -47,138 +71,7 @@
          }]
       }],
 
-      emeDefGroupName: "encrypted-media",      
-	  emeContributors: [
-		"Glenn Adams",
-		"Stig Andersen",
-		"Fred Andrews",
-		"Daniel Appelquist",
-		"Brendan Aragorn",
-		"Árni Arent",
-		"B. Ross Ashley",
-		"Joseph Ashwood",
-		"Tab Atkins Jr.",
-		"Michael Aubertin",
-		"Arthur Barstow",
-		"János Barta",
-		"Robin Berjon",
-		"Robin Boast",
-		"Hugo Bodewig",
-		"Wayne Borean",
-		"Florian Bösch",
-		"Romain Bouqueau",
-		"Marcos Caceres",
-		"Casey Callaghan",
-		"Eric Carlson",
-		"Michael Chen",
-		"Rich Chernock",
-		"Aaron Colwell",
-		"Cyril Concolato",
-		"Pascual Conesa",
-		"Alex M. Coyo",
-		"James Craig",
-		"Dan Dart",
-		"Domenic Denicola",
-		"Brian Evans",
-		"Steve Faulkner",
-		"Joe Feely",
-		"Zak Fenton",
-		"Matt Field",
-		"John Foliot",
-		"Gilles Boccon Gibod",
-		"Alex Giladi",
-		"Adam Goldberg",
-		"James Graham",
-		"Matthew Gregan",
-		"Weiss Hadar",
-		"Joseph Lorenzo Hall",
-		"Michael Hausenblas",
-		"Steve Heffernan",
-		"Ian Hickson",
-		"Brad Hill",
-		"Bjoern Hoehrmann",
-		"Bin Hu",
-		"Gary Hughes",
-		"Tatsuya Igarashi",
-		"Philip Jägenstedt",
-		"John Kemp",
-		"Kevin Kershaw",
-		"Andreas Kuckartz",
-		"Deivi Kuhn",
-		"Tobie Langel",
-		"David LaPalomento",
-		"Philippe Le Hegaret",
-		"Stefan Lederer",
-		"Pierre Anthony Lemieux",
-		"Kornel Lesiński",
-		"Jason Lewis",
-		"Jim Ley",
-		"Andrew Livingston",
-		"Bob Lund",
-		"Antoine Maillard",
-		"Rob Manson",
-		"Shinya Maruyama",
-		"Matt Matrisciano",
-		"David Mays",
-		"Jay Munro",
-		"Charles McCathie Nevile",
-		"Jer Noble",
-		"Mark Nottingham",
-		"Danny O'Brien",
-		"Robert O'Callahan",
-		"Joey Parrish",
-		"Giuseppe Pascale",
-		"Guy Paskar",
-		"Chris Pearce",
-		"Gaël Pegliasco",
-		"Petr Peterka",
-		"Silvia Pfeiffer",
-		"Muñiz Piniella",
-		"Laurent Piron",
-		"Emmanuel Poitier",
-		"Benjamin Rainer",
-		"François Remy",
-		"Emmanuel Revah",
-		"Steven Robertson",
-		"Duncan Rowden",
-		"Catherine Roy",
-		"Sam Ruby",
-		"Christine Runnegar",
-		"Greg Rutz",
-		"Janina Sajka",
-		"Doug Schepers",
-		"Hans Schmucker",
-		"Wendy Seltzer",
-		"Julio Serrano",
-		"Leif Halvard Silli",
-		"John Simmons",
-		"David Singer",
-		"Henri Sivonen",
-		"Ryan Sleevi",
-		"Brian Smith",
-		"Michael Smith",
-		"Martin Soukup",
-		"Maciej Stachowiak",
-		"Joe Steele",
-		"Kevin Streeter",
-		"John Sullivan",
-		"Yang Sun",
-		"Eric Sunyang",
-		"Michael Thornburgh",
-		"Niels Thorwirth",
-		"Raphaël Troncy",
-		"Anne van Kesteren",
-		"Pete Van Peenen",
-		"John C. Vernaleo",
-		"Mark Vickers",
-		"Aymeric Vitte",
-		"Simon Warner",
-		"Matt Womer",
-		"Takeshi Yoshino",
-		"Boris Zbarsky",
-		"Zhouhaojun"
-      ],
-
+      emeDefGroupName: "encrypted-media",
       emeUnusedGroupNameExcludeList: ["eme-references-from-registry"],
 
       // name of the WG
@@ -663,7 +556,7 @@
                 </p>
               </li>
 
-              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>, run the following steps:</p>
+              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>supported types</var> be an empty sequence of DOMStrings.</p></li>
                   <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> member:</p>
@@ -776,7 +669,7 @@
               </li>
               <li><p>Follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var></dt>
+                  <dt>If the <a def-id="option-sessionTypes"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var></dt>
                   <dd>
                     <p>Let <var>session types</var> be <var>candidate configuration</var>'s <a def-id="option-sessionTypes"></a> member.</p>
                   </dd>
@@ -802,7 +695,7 @@
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
 
-              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
+              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
                 <ol>
                   <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
                   <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
@@ -810,7 +703,7 @@
                 </ol>
               </li>
 
-              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> in <var>candidate configuration</var>:</p>
+              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
                 <ol>
                   <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
                   <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
@@ -1168,7 +1061,7 @@
           <dt>sequence&lt;DOMString&gt; sessionTypes</dt>
           <dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
-            <p>If this member is <a def-id="not-present-dictionary-member"></a> when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[!WebIDL]] when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
           </dd>
         </dl>
 
@@ -1216,7 +1109,7 @@
         </dd>
 
         <dt>MediaKeySystemConfiguration getConfiguration()</dt>
-        <!-- This is a method instead of an attribute because per http://heycam.github.io/webidl/#idl-dictionaries, "Dictionaries must not be used as the type of an attribute or constant." -->
+        <!-- This is a method instead of an attribute because per https://www.w3.org/TR/WebIDL-1/#idl-dictionaries, "Dictionaries MUST NOT be used as the type of an attribute or constant." -->
         <dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
@@ -1828,9 +1721,9 @@
                             <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
-                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely cache the key and related data indexed by key ID.</p>
+                          <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
+                          <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
                           <p class="note">The replacement algorithm within a session is <a def-id="keysystem"></a>-dependent.</p>
-                          <p>Keys from different sessions SHOULD be cached independently such that closing one session does not affect keys in other sessions, even if they have overlapping key IDs.</p>
                           <p class="note">It is RECOMMENDED that CDM implementations support a standard and reasonably high minimum number of keys per <a>MediaKeySession</a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a>MediaKeySession</a> objects.
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                           </p>
@@ -2273,7 +2166,7 @@
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
               In that case, this algorithm MUST be run.
             </p>
-            <p>Keys in other sessions SHOULD be unaffected, even if they have overlapping key IDs.</p>
+            <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
             <p>
               After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
               can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
@@ -2303,8 +2196,8 @@
 
       <section>
         <h3>Exceptions</h3>
-        <p id="error-names">The methods report errors by rejecting the returned promise with a <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exception</a> or a <a def-id="domexception"></a>.
-        The following <a href="https://heycam.github.io/webidl/#dfn-simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names from WebIDL</a> [[!WebIDL]] are used in the algorithms.
+        <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="simple-exception">simple exception</a> [[!WebIDL]] or a <a def-id="domexception"></a>.
+        The following <a def-id="simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names</a> from [[!WebIDL]] are used in the algorithms.
         Causes specified specified in the algorithms are listed alongside each name, though these names MAY be used for other reasons as well.
         </p>
 
@@ -3493,10 +3386,10 @@
           <p>Individualization MAY be origin-independent or per-origin.
             The resulting identifier MUST be origin-independent or per-origin, respectively.
             In the former case the resulting identifier MUST NOT be provided to the application.
-            The mechanisms and flow are for the two types of individualization are different, as described in the following sections.
+            The mechanisms and flow for the two types of individualization are different, as described in the following sections.
           </p>
           <p>In all cases, implementations SHOULD avoid sending <a def-id="origin">origin(s)</a> or <a def-id="origin"></a>-specific information to centralized servers since this could create a central record of all origins visited by a user or device.</p>
-          <p>Individualizaiton MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
+          <p>Individualization MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
 
           <section id="origin-independent-individualization">
             <h5>Origin-Independent Individualization</h5>
@@ -4085,11 +3978,6 @@
       </section>
     </section>
 
-    <section id="acknowledgements">
-      <h2>Acknowledgments</h2>
-      The editors would like to thank <a def-id="contributors"></a> for their contributions to this specification.
-    </section>
-
     <section id="revision-history">
       <h2>Revision History</h2>
       <table class="old-table">
@@ -4164,5 +4052,31 @@
       </table>
     </section>
 
+    <script class="remove">
+      /* Rewrite the URLs for the remaining resources. */
+      /* The diff service separates each word into a separate line, so use multiline comments strings without spaces.
+       * The diff service cannot handle script in <body>, so it is not possible to use the service across changes in this section.
+       * Because of this, you can only compare to encrypted-media-respec.html and not to index.html.
+       */
+      if (isDiffService) {
+        Array.from(document.getElementsByTagName("img")).forEach(function (element, index, array) {
+          var urlComponents = element.src.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.src = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.src);
+        });
+
+        Array.from(document.getElementsByTagName("link")).forEach(function (element, index, array) {
+          var urlComponents = element.href.split('/');
+          if (urlComponents[2] != diffServiceHostName)
+            return; /* The URL is for another server, so we do not need to fix it. */
+          var file = urlComponents[urlComponents.length - 1];
+          element.href = replacementOriginAndPath + file;
+          console.log("Rewrote-URL-as-" + element.href);
+        });
+      }
+    </script>
   </body>
 </html>
