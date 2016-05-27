@@ -953,8 +953,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <p class="copyright">
       <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2016
 
-      <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (
-      <a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+      <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
       <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
       <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>).
       <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
@@ -1000,8 +999,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
     <p>
       This document was published by the <a href="http://www.w3.org/html/wg/">HTML Working Group</a> as an Editor's Draft. If you wish to make comments regarding this document, please send them to
-      <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a> (
-      <a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
+      <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a> (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
       <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>). All comments are welcome.
     </p>
     <p>
@@ -3325,7 +3323,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                       <!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
                     </li>
                     <li>
-                      <p>If the stored session's <var>session type</var> is not the same as the current <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> <var>session type</var>, return a promise rejected with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p>
+                      <p>If the stored session's <var>session type</var> is not the same as the current <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> <var>session type</var>, reject <var>promise</var> with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p>
                     </li>
                     <li>
                       <p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>. This <em class="rfc2119" title="MUST NOT">MUST NOT</em> include data from other origin(s) or that is not associated with an origin.</p>
@@ -3585,6 +3583,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                   <p>Let <var>message type</var> be null.</p>
                 </li>
                 <li>
+                  <p>Let <var>session closed</var> be false.</p>
+                </li>
+                <li>
                   <p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p>
                 </li>
                 <li>
@@ -3625,7 +3626,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                             <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>. Such data <em class="rfc2119" title="MUST">MUST</em> be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> can access it.
                             </dd>
                             <dt>Otherwise</dt>
-                            <dd>Reject <var>promise</var> with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</dd>
+                            <dd>
+                              <p>Reject <var>promise</var> with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p>
+                            </dd>
                           </dl>
                           <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
                           <p>State information, including keys, for each session <em class="rfc2119" title="MUST">MUST</em> be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
@@ -3657,7 +3660,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                               </div>
                             </li>
                             <li>
-                              <p>Run the <a href="#session-closed">Session Closed</a> algorithm on this object.</p>
+                              <p>Set <var>session closed</var> to true.</p>
                             </li>
                           </ol>
                         </dd>
@@ -3675,7 +3678,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                               </div>
                             </li>
                             <li>
-                              <p>Run the <a href="#session-closed">Session Closed</a> algorithm on this object.</p>
+                              <p>Set <var>session closed</var> to true.</p>
                             </li>
                           </ol>
                         </dd>
@@ -3706,20 +3709,35 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                   <p><a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to run the following steps:</p>
                   <ol>
                     <li>
-                      <p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing each known key's <a href="#decryption-key-id">key ID</a> along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a>.
-                      </p>
-                      <p>
-                        Should additional processing be necessary to determine with certainty the status of a key, use <code><a href="#idl-def-MediaKeyStatus.status-pending">"status-pending"</a></code>. Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm again with the actual status(es).
-                      </p>
-                    </li>
-                    <li>
-                      <p>If the expiration time for the session changed, run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing the new expiration time.</p>
-                    </li>
-                    <li>
-                      <p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p>
-                    </li>
-                    <li>
-                      <p>If <var>message</var> is not null, run the <a href="#queue-message">Queue a "message" Event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+                      <dl class="switch">
+                        <dt>If <var>session closed</var> is true:</dt>
+                        <dd>
+                          <p>Run the <a href="#session-closed">Session Closed</a> algorithm on this object.</p>
+                        </dd>
+                        <dt>Otherwise:</dt>
+                        <dd>
+                          <p>Run the following steps:</p>
+                          <ol>
+                            <li>
+                              <p>
+                                If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing each known key's <a href="#decryption-key-id">key ID</a> along with the appropriate <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a>.
+                              </p>
+                              <p>
+                                Should additional processing be necessary to determine with certainty the status of a key, use <code><a href="#idl-def-MediaKeyStatus.status-pending">"status-pending"</a></code>. Once the additional processing for one or more keys has completed, run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm again with the actual status(es).
+                              </p>
+                            </li>
+                            <li>
+                              <p>If the expiration time for the session changed, run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing the new expiration time.</p>
+                            </li>
+                            <li>
+                              <p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p>
+                            </li>
+                            <li>
+                              <p>If <var>message</var> is not null, run the <a href="#queue-message">Queue a "message" Event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+                            </li>
+                          </ol>
+                        </dd>
+                      </dl>
                     </li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>

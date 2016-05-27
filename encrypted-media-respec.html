@@ -1604,7 +1604,7 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-                    <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+                    <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
@@ -1679,6 +1679,7 @@
                 <li><p>If the preceding step failed, or if <var>sanitized response</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>message type</var> be null.</p></li>
+                <li><p>Let <var>session closed</var> be false.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
@@ -1712,7 +1713,7 @@
                               Such data MUST be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
                             </dd>
                             <dt>Otherwise</dt>
-                            <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
+                            <dd><p>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
                           <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
@@ -1733,7 +1734,7 @@
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
                         </dd>
                         <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
@@ -1747,7 +1748,7 @@
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
                         </dd>
                         <dt>Otherwise</dt>
@@ -1770,16 +1771,37 @@
                   <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
                   <ol>
                     <li>
-                      <p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
-                      </p>
-                      <p>
-                        Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
-                      </p>
+                      <dl class="switch">
+                        <dt>If <var>session closed</var> is true:</dt>
+                        <dd>
+                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p>
+                        </dd>
+                        <dt>Otherwise:</dt>
+                        <dd>
+                          <p>Run the following steps:</p>
+                          <ol>
+                            <li>
+                              <p>
+                                If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                              </p>
+                              <p>
+                                Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                                Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                              </p>
+                            </li>
+                            <li>
+                              <p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p>
+                            </li>
+                            <li>
+                              <p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p>
+                            </li>
+                            <li>
+                              <p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+                            </li>
+                          </ol>
+                        </dd>
+                      </dl>
                     </li>
-                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
-                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
