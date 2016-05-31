@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" typeof="bibo:Document " prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta lang="" property="dc:language" content="en">
   <style>
     /*
@@ -269,7 +271,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       }
     }
   </style>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Encrypted Media Extensions</title>
 
 
@@ -774,7 +775,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     }
   </style>
   <link rel="stylesheet" href="eme.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED">
   <!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]-->
   <script id="initialUserConfig" type="application/json">
@@ -911,7 +911,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-26-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-26">26 May 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-31-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-31">31 May 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1068,6 +1068,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li class="tocline"><a href="#cdm-unavailable" class="tocxref"><span class="secno">5.2.2 </span>CDM Unavailable</a></li>
             </ul>
           </li>
+          <li class="tocline"><a href="#media-keys-storage" class="tocxref"><span class="secno">5.3 </span>Storage and persistence</a></li>
         </ul>
       </li>
       <li class="tocline"><a href="#mediakeysession-interface" class="tocxref"><span class="secno">6. </span><span class="formerLink"><code>MediaKeySession</code></span> Interface</a>
@@ -2912,6 +2913,26 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         </ol>
       </section>
     </section>
+
+    <section id="media-keys-storage" typeof="bibo:Chapter" resource="#media-keys-storage" property="bibo:hasPart">
+      <h3 id="h-media-keys-storage" resource="#h-media-keys-storage"><span property="xhv:role" resource="xhv:heading"><span class="secno">5.3 </span>Storage and persistence</span></h3>
+      <p>This section describes general requirements related to storage and persistence.</p>
+
+      <p>
+        If a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object's <var>persistent state allowed</var> value is <code>false</code> then the object's <var>cdm instance</var>
+        <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
+      </p>
+      <p>
+        If a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object's <var>persistent state allowed</var> value is <code>true</code> then the object's <var>cdm instance</var>
+        <em class="rfc2119" title="MAY">MAY</em> persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
+      </p>
+
+      <p>Persisted data <em class="rfc2119" title="MUST">MUST</em> always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> can access it. In addition, the data <em class="rfc2119" title="MUST">MUST</em> only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications <em class="rfc2119" title="MUST NOT">MUST NOT</em> be able to access the stored data. See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
+      </p>
+
+      <p>See the <a href="#security">Security</a> and <a href="#privacy">Privacy</a> sections for additional considerations when supporting persistent storage.</p>
+
+    </section>
   </section>
 
 
@@ -4272,11 +4293,10 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <section id="session-storage" typeof="bibo:Chapter" resource="#session-storage" property="bibo:hasPart">
       <h3 id="h-session-storage" resource="#h-session-storage"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.8 </span>Session Storage and Persistence</span></h3>
       <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
+      <p>The following requirements apply in addition to those in <a href="#media-keys-storage">Storage and Persistence</a>.</p>
       <p>If the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM <em class="rfc2119" title="MUST NOT">MUST NOT</em> persist a record of or data related to the session at any point. This includes license(s), key(s), records of key usage or proof of license destruction, and the <a href="#session-id">Session ID</a>.
       </p>
       <p>The remainder of this section applies to session types for which the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm returns <code>true</code>.</p>
-      <p>Persisted data <em class="rfc2119" title="MUST">MUST</em> always be stored such that only the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> can access it. In addition, the data <em class="rfc2119" title="MUST">MUST</em> only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications <em class="rfc2119" title="MUST NOT">MUST NOT</em> be able to access the stored data. See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
-      </p>
       <p>The CDM <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> store session data, including the Session ID, until <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> is called the first time. Specifically, the CDM <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> store session data during the <code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest()</a></code> algorithm. This ensures that the application is aware of the session and knows it needs to eventually remove it.
       </p>
       <p>The CDM <em class="rfc2119" title="MUST">MUST</em> ensure that data for a given session is only present in one active unclosed session in any <a href="https://www.w3.org/TR/dom/#concept-document">Document</a>. In other words, <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> <em class="rfc2119" title="MUST">MUST</em> fail when there is already a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest()</a></code> is still active or it has been loaded into another object via <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code>. A session <em class="rfc2119" title="MAY">MAY</em> only be loaded again after the <a href="#session-closed">Session Closed</a> algorithm has not been run on the object representing it.
