@@ -2010,16 +2010,20 @@
         <p>The MediaKeyStatusMap object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/75">Issue 75</a> - The exact behavior of the iterable declaration is still being determined and may change in incompatible ways. This includes the definition of the value pairs and the <a href="#idl-def-ForEachCallback">ForEachCallback</a> parameters.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
 
           <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
           <dd>
-            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-            associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
-            where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
-            define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
-            order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+            <p>
+              This interface also has the "forEach" method brought by <code>iterable</code>.
+            </p>
+            <p>
+              The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
+              where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
+              define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
+              order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+            </p>
           </dd>
 
           <dt>readonly attribute unsigned long size</dt>
@@ -2044,22 +2048,6 @@
               <dd>The <a def-id="key-id"></a> of the key.</dd>
             </dl>
           </dd>
-
-          <dt>void forEach()</dt>
-          <dd>
-            <p>Calls <var>callback</var> once for each key-value pair present in the MediaKeyStatus map.</p>
-            <dl class='parameters'>
-              <dt>ForEachCallback callback</dt>
-              <dd>A callback function</dd>
-            </dl>
-          </dd>
-        </dl>
-
-        <dl title="callback ForEachCallback = void" class="idl">
-          <dt>BufferSource keyId</dt>
-          <dd>The <a def-id="key-id"></a>.</dd>
-          <dt>MediaKeyStatus status</dt>
-          <dd>The key status.</dd>
         </dl>
 
         <dl title="enum MediaKeyStatus" class="idl">
