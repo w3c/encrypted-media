@@ -2940,7 +2940,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <!--OddPage-->
     <h2 id="h-mediakeysession-interface" resource="#h-mediakeysession-interface"><span property="xhv:role" resource="xhv:heading"><span class="secno">6. </span><a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> Interface</span></h2>
     <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
-
+    <p>
+      The User Agent <em class="rfc2119" title="SHALL">SHALL</em> execute the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm continuously for each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object until the sooner of the <a href="#session-closed">Session Closed</a> algorithm being run or the destruction of the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a>. The <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm <em class="rfc2119" title="MUST">MUST</em> be run in parallel to the main event loop, but not in parallel to other procedures defined in this specification that are also defined to be run in parallel.
+    </p>
     <p>
       A MediaKeySession object <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> be destroyed and <em class="rfc2119" title="SHALL">SHALL</em> continue to receive events if it has not been closed and the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object that created it remains accessible. Otherwise, a MediaKeySession object that is no longer accessible to JavaScript <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> receive further events and <em class="rfc2119" title="MAY">MAY</em> be destroyed.
     </p>
@@ -4298,7 +4300,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <section id="monitor-cdm" typeof="bibo:Chapter" resource="#monitor-cdm" property="bibo:hasPart">
         <h4 id="h-monitor-cdm" resource="#h-monitor-cdm"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.5 </span>Monitor for CDM Changes</span></h4>
         <p>
-          The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It <em class="rfc2119" title="SHALL">SHALL</em> be run continuously for each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object on which the <a href="#session-closed">Session Closed</a> algorithm has not been run.
+          The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
+          <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object in parallel to the main event loop but not in parallel to other procedures defined in this specification that are run in parallel to the main event loop.
         </p>
         <p>
           The following steps are run:
@@ -4315,7 +4318,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </li>
           <li>
             <p>
-              If <var>cdm</var> has an outgoing message which has not yet been sent:
+              If <var>cdm</var> has an outgoing message which has not yet been sent, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
             </p>
             <ol>
               <li>
@@ -4332,7 +4335,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </li>
           <li>
             <p>
-              If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys:
+              If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
             </p>
             <ol>
               <li>
@@ -4350,7 +4353,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </li>
           <li>
             <p>
-              If <var>cdm</var> has changed the expiration time of <var>session</var>:
+              If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
             </p>
             <ol>
               <li>
@@ -4367,12 +4370,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </li>
           <li>
             <p>
-              If <var>cdm</var> has closed <var>session</var>, run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
+              If <var>cdm</var> has closed <var>session</var>, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
             </p>
           </li>
           <li>
             <p>
-              If <var>cdm</var> had become unavailable, run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
+              If <var>cdm</var> had become unavailable, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
             </p>
           </li>
         </ol>

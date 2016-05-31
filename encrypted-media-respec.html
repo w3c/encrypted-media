@@ -1419,7 +1419,12 @@
     <section>
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
-
+      <p>
+        The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object until the sooner of
+        the <a def-id="session-closed-algorithm"></a> algorithm being run or the destruction of the <a>MediaKeySession</a>.
+        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
+        in this specification that are also defined to be run in parallel.
+      </p>
       <p>
         A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
         not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
@@ -2302,8 +2307,9 @@
         <section id="monitor-cdm">
           <h4>Monitor for CDM Changes</h4>
           <p>
-            The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It SHALL be run continuously
-            for each <a>MediaKeySession</a> object on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+            The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
+            <a>MediaKeySession</a> object in parallel to the main event loop but not in parallel to other procedures defined in this
+            specification that are run in parallel to the main event loop.
           </p>
           <p>
             The following steps are run:
@@ -2318,7 +2324,7 @@
             <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
             <li>
               <p>
-                If <var>cdm</var> has an outgoing message which has not yet been sent:
+                If <var>cdm</var> has an outgoing message which has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2335,7 +2341,8 @@
             </li>
             <li>
               <p>
-                If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys:
+                If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys,
+                then <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2353,7 +2360,7 @@
             </li>
             <li>
               <p>
-                If <var>cdm</var> has changed the expiration time of <var>session</var>:
+                If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2370,12 +2377,12 @@
             </li>
             <li>
               <p>
-                If <var>cdm</var> has closed <var>session</var>, run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> has closed <var>session</var>, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
             <li>
               <p>
-                If <var>cdm</var> had become unavailable, run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> had become unavailable, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
           </ol>
