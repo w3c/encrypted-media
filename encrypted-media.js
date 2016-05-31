@@ -242,6 +242,7 @@
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
 
+    'media-keys-storage': { func: term_helper, fragment: 'media-keys-storage', link_text: 'Storage and Persistence',  },
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
     'mediaKeys-attribute': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-mediaKeys', link_text: 'mediaKeys',  },
