@@ -1393,6 +1393,27 @@
           </ol>
         </section>
       </section>
+      <section id="media-keys-storage">
+        <h3>Storage and persistence</h3>
+        <p>This section describes general requirements related to storage and persistence.</p>
+        
+        <p>
+          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>false</code> then the object's <var>cdm instance</var>
+          SHALL NOT persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
+        </p>
+        <p>
+          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>true</code> then the object's <var>cdm instance</var>
+          MAY persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
+        </p>
+        
+        <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
+          In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
+          See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
+        </p>
+        
+        <p>See the <a href="#security">Security</a> and <a href="#privacy">Privacy</a> sections for additional considerations when supporting persistent storage.</p>
+
+      </section>
     </section>
 
 
@@ -1413,7 +1434,7 @@
 
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
-      <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
+      <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
       <dl title="interface MediaKeySession : EventTarget" class='idl'>
         <dt>readonly attribute DOMString sessionId</dt>
@@ -1548,13 +1569,19 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> value be true.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
-                <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
-				  <p class="note">The <a def-id="generateRequest"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
-				</li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
+                    <li><p>Let this object's <var>callable</var> value be true.</p></li>
+                    <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1598,7 +1625,7 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-                    <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+                    <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
@@ -1614,20 +1641,29 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
-                <li><p>Let this object's <var>callable</var> value be true.</p></li>
-                <li><p>If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                  <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                    Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
-                  </p>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
+                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
+                    <li><p>Let this object's <var>callable</var> value be true.</p></li>
+                    <li>
+                      <p>
+                        If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                      </p>
+                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                      </p>
+                    </li>
+                    <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
+                    <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+
+                    <li>
+                      <p>Resolve <var>promise</var> with <code>true</code>.
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </p>
+                  </ol>
                 </li>
-                <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
-                <li><p>Resolve <var>promise</var> with <code>true</code>.</p>
-				</li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
-                  <p class="note">The <a def-id="load"></a> promise resolution MUST be queued in the event loop and processed prior to the subsequently queued message event per "Manipulating Promises" guidelines [[PROMISES-GUIDE]].</p>
-				</li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1664,6 +1700,7 @@
                 <li><p>If the preceding step failed, or if <var>sanitized response</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
                 <li><p>Let <var>message type</var> be null.</p></li>
+                <li><p>Let <var>session closed</var> be false.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
@@ -1697,7 +1734,7 @@
                               Such data MUST be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
                             </dd>
                             <dt>Otherwise</dt>
-                            <dd>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</dd>
+                            <dd><p>Reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></dd>
                           </dl>
                           <p>See also <a def-id="session-storage"></a>.</p>
                           <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
@@ -1718,7 +1755,7 @@
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
                         </dd>
                         <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
@@ -1732,7 +1769,7 @@
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
-                            <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
+                            <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
                         </dd>
                         <dt>Otherwise</dt>
@@ -1743,12 +1780,6 @@
                         </dd>
                       </dl>
                     </li>
-                    <li><p>If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.</p>
-                      <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
-                      </p>
-                    </li>
-                    <li><p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p></li>
                     <li><p>If a message needs to be sent to the server, execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>message</var> be that message.</p></li>
@@ -1757,9 +1788,47 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li>
+                      <dl class="switch">
+                        <dt>If <var>session closed</var> is true:</dt>
+                        <dd>
+                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p>
+                        </dd>
+                        <dt>Otherwise:</dt>
+                        <dd>
+                          <p>Run the following steps:</p>
+                          <ol>
+                            <li>
+                              <p>
+                                If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                              </p>
+                              <p>
+                                Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
+                                Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                              </p>
+                            </li>
+                            <li>
+                              <p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p>
+                            </li>
+                            <li>
+                              <p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p>
+                            </li>
+                            <li>
+                              <p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
+                            </li>
+                          </ol>
+                        </dd>
+                      </dl>
+                    </li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1783,8 +1852,16 @@
                   <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
                   <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
-                <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
-                <li><p>Resolve <var>promise</var>.</p></li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
+                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
+                  </ol>
+                </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -1803,6 +1880,7 @@
             <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
+                <li><p>Let <var>message</var> be <code>null</code>.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li>
@@ -1854,19 +1932,26 @@
                         </li>
                       </ol>
                     </li>
+                  </ol>
+                </li>
+                <li>
+                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <ol>
                     <li>
                       <p>
                         Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the <a def-id="status-released"></a> <a>MediaKeyStatus</a> value for each.
                       </p>
                     </li>
-
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
+                    <li><p>If <var>message</var> is not <code>null</code>, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
+                    <li>
+                      <p>Resolve <var>promise</var>.</p>
+                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    </li>
                   </ol>
                 </li>
-                <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
@@ -2228,14 +2313,11 @@
       <section id="session-storage">
         <h3>Session Storage and Persistence</h3>
         <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
+        <p>The following requirements apply in addition to those in <a def-id="media-keys-storage"></a>.</p>
         <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
           This includes license(s), key(s), records of key usage or proof of license destruction, and the <a def-id="session-id"></a>.
         </p>
         <p>The remainder of this section applies to session types for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code>.</p>
-        <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
-          In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
-          See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
-        </p>
         <p>The CDM SHOULD NOT store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
           Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
@@ -3229,6 +3311,24 @@
             <li><p>MediaKeys objects and the underlying implementation do not expose information outside the <a def-id="origin"></a>.</p></li>
             <li><p>Persisted session data, if applicable, is stored on a per-<a def-id="origin"></a> basis.</p></li>
             <li><p>Only data stored by the requesting <a def-id="origin"></a> may be loaded.</p></li>
+            <li>
+              <p>
+                It is not possible to extract, derive or infer information from the CDM that is not either explicitly described in this specification
+                or available to the page through other web platform APIs without user permission. This applies to any information that is exposed outside
+                the client device or to the application, including, for example, in CDM messages.
+              </p>
+              <div class="note">
+                <p>The type of information covered by this requirement includes but is not limited to:</p>
+                <ul>
+                  <li><p>Location, including geolocation</p></li>
+                  <li><p>Credentials or identifiers other than Distinctive Identifiers</p></li>
+                  <li><p>OS account name and other potential PII</p></li>
+                  <li><p>Local directory paths, which may contain similar information.</p></li>
+                  <li><p>Local network details (for example, the device's local IP address)</p></li>
+                  <li><p>Local devices, including but not limited to Bluetooth, USB, and user media.</p></li>
+                  <li><p>User state not associated with or stored as a result of these APIs.</p></li>
+                </ul>
+              </div>
           </ul>
         </section>
       </section>
