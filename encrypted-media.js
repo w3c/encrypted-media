@@ -242,6 +242,7 @@
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
 
+    'media-keys-storage': { func: term_helper, fragment: 'media-keys-storage', link_text: 'Storage and Persistence',  },
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
     'mediaKeys-attribute': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-mediaKeys', link_text: 'mediaKeys',  },
@@ -290,14 +291,16 @@
     'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
 //    'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
     'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
+    'ready-states': { func: code_videoref_helper, fragment: 'ready-states', link_text: 'Ready States',  },
 //    'have-nothing': { func: code_videoref_helper, fragment: 'dom-media-have_nothing', link_text: 'HAVE_NOTHING',  },
     'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
-//    'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
+    'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
     'have-future-data': { func: code_videoref_helper, fragment: 'dom-media-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
-//    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-media-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
+    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-media-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
 //    'loadedmetadata': { func: code_videoref_helper, fragment: 'event-media-loadedmetadata', link_text: 'loadedmetadata',  },
 //    'loadeddata': { func: code_videoref_helper, fragment: 'event-media-loadeddata', link_text: 'loadeddata',  },
     'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
+    'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
     'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
  
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
