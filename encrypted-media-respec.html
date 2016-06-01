@@ -2821,12 +2821,12 @@
       <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm">CDM</a> and server - that may not be explicitly addressed in the algorithms.</p>
 
       <section id="persistent-state-requirements">
-        <h3>Persistent data</h3>
+        <h3>Persistent Data</h3>
         <p>
           Persistent data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
         </p>
         <section id="allow-persistent-data-cleared">
-          <h3>Allow persistent data to be cleared</h3>
+          <h3>Allow Persistent Data to Be Cleared</h3>
           <p>
             Implementations that use persistent data MUST allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
@@ -2838,77 +2838,77 @@
             It is RECOMMENDED that users be able to request that persistent data be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [[!COOKIES]], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
           </p>
         </section>
+      </section>
         
-        <section id="identifier-requirements">
-          <h3>Identifiers</h3>
-          <p>The use of <a def-id="distinctive-identifiers"></a> by implementations presents a privacy concern.
-            This defines requirements for avoiding or at least mitigating such concerns.
+      <section id="identifier-requirements">
+        <h3>Identifiers</h3>
+        <p>The use of <a def-id="distinctive-identifiers"></a> by implementations presents a privacy concern.
+          This defines requirements for avoiding or at least mitigating such concerns.
+        </p>
+
+        <section>
+          <h3>Limit or Avoid use of Distinctive Identifiers</h3>
+          <ul>
+            <li>
+              <p>Implementations SHOULD avoid use of <a def-id="distinctive-identifiers"></a>.</p>
+              <p class="note">For example, use keys or identifiers that apply to a group of clients or devices rather than individual clients.</p>
+            </li>
+            <li>
+              <p>Implementations SHOULD only use <a def-id="distinctive-identifiers"></a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
+              <p class="note">For example, <a def-id="temporary-session"></a> and <a def-id="persistent-license-session"></a> sessions may have different requirements.</p>
+            </li>
+            <li>
+              <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> SHOULD support the option to not use it.
+                When supported, applications can select for this mode using <a def-id="option-distinctiveIdentifier"></a> = <a def-id="requirement-not-allowed"></a>.
+                Selecting such an option MAY affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section id="encrypt-identifiers">
+          <h3>Encrypt Identifiers</h3>
+          <p>When exposed to the application - either from a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifiers"></a> MUST be encrypted at the message exchange level.
+            The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
+            The CDM MUST verify that the encryption key belongs to a valid license server for its Key System.
           </p>
-
-          <section>
-            <h3>Limit or Avoid use of Distinctive Identifiers</h3>
+          <p class="issue">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p>
+          <p>This MAY be implemented using a <a href="#server-certificate">server certificate</a>.</p>
+          <p>The license server MUST NOT expose a <a def-id="distinctive-identifier"></a> to any entity other than the CDM that sent it.</p>
+          <p class="note">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
+            This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
+          </p>
+          <div class="note">
+            <p>Among other things, this means that:</p>
             <ul>
-              <li>
-                <p>Implementations SHOULD avoid use of <a def-id="distinctive-identifiers"></a>.</p>
-                <p class="note">For example, use keys or identifiers that apply to a group of clients or devices rather than individual clients.</p>
-              </li>
-              <li>
-                <p>Implementations SHOULD only use <a def-id="distinctive-identifiers"></a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
-                <p class="note">For example, <a def-id="temporary-session"></a> and <a def-id="persistent-license-session"></a> sessions may have different requirements.</p>
-              </li>
-              <li>
-                <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> SHOULD support the option to not use it.
-                  When supported, applications can select for this mode using <a def-id="option-distinctiveIdentifier"></a> = <a def-id="requirement-not-allowed"></a>.
-                  Selecting such an option MAY affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
-                </p>
-              </li>
+              <li><p>Every signature made with device-specific or user-specific keys MUST be different, even given the same plaintext.</p></li>
+              <li><p>Identifiers, keys, or certificates relating to device-specific or user-specific keys MUST be encrypted for the license server.</p></li>
+              <li><p>Messages from the license server to the CDM MUST NOT expose recipient-unique identifiers, such as the ID of the intended decryption key, on the outside of the encryption envelope.</p></li>
             </ul>
-          </section>
+          </div>
+        </section>
 
-          <section id="encrypt-identifiers">
-            <h3>Encrypt Identifiers</h3>
-            <p>When exposed to the application - either from a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifiers"></a> MUST be encrypted at the message exchange level.
-              The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
-              The CDM MUST verify that the encryption key belongs to a valid license server for its Key System.
-            </p>
-            <p class="issue">Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p>
-            <p>This MAY be implemented using a <a href="#server-certificate">server certificate</a>.</p>
-            <p>The license server MUST NOT expose a <a def-id="distinctive-identifier"></a> to any entity other than the CDM that sent it.</p>
-            <p class="note">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
-              This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
-            </p>
-            <div class="note">
-              <p>Among other things, this means that:</p>
-              <ul>
-                <li><p>Every signature made with device-specific or user-specific keys MUST be different, even given the same plaintext.</p></li>
-                <li><p>Identifiers, keys, or certificates relating to device-specific or user-specific keys MUST be encrypted for the license server.</p></li>
-                <li><p>Messages from the license server to the CDM MUST NOT expose recipient-unique identifiers, such as the ID of the intended decryption key, on the outside of the encryption envelope.</p></li>
-              </ul>
-            </div>
-          </section>
+        <section id="per-origin-identifiers">
+          <h3>Use Per-Origin Identifiers</h3>
+          <p>All <a def-id="distinctive-identifiers"></a> MUST be distinctive per <a def-id="origin"></a>.
+            That is, the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
+          </p>
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
 
-          <section id="per-origin-identifiers">
-            <h3>Use Per-Origin Identifiers</h3>
-            <p>All <a def-id="distinctive-identifiers"></a> MUST be distinctive per <a def-id="origin"></a>.
-              That is, the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
-            </p>
-            <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
+          <p id="non-reversible-identifiers">
+            It MUST NOT be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
+            Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, MUST do so in a non-reversible way.
+          </p>
+          <p class="issue">Add more specific text about ensuring the desired non-reversible properties.</p>
+        </section>
 
-            <p id="non-reversible-identifiers">
-              It MUST NOT be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
-              Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, MUST do so in a non-reversible way.
-            </p>
-            <p class="issue">Add more specific text about ensuring the desired non-reversible properties.</p>
-          </section>
-
-          <section id="allow-identifiers-cleared">
-            <h3>Allow Identifiers to be Cleared</h3>
-            <p>As a consequence of the requirements in <a href="allow-persistent-state-cleared">Allow persistent data to be cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
-            </p>
-            <p>
-              Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
-            </p>
-          </section>
+        <section id="allow-identifiers-cleared">
+          <h3>Allow Identifiers to Be Cleared</h3>
+          <p>As a consequence of the requirements in <a href="allow-persistent-state-cleared">Allow persistent data to be cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          </p>
+          <p>
+            Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
+          </p>
         </section>
       </section>
 
@@ -3417,7 +3417,7 @@
           </ul>
           <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and its profile storage), often in the CDM.</p>
           
-          <p>Since the content of licenses are key-system specific and since key IDs are arbitrary, these data items could be abused to store user-identifying information.</p>
+          <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
           <p>Key Systems may access or create persistent or semi-persistent identifier(s), <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>, for a device or user of a device.
             In some cases these identifiers may be bound to a specific device in a secure manner.
@@ -3453,7 +3453,7 @@
 
             <dt>User deletion of persistent data, including <a def-id="distinctive-identifiers"></a></dt>
             <dd>
-              <p>User agents MUST provide users with the ability to clear any persistent data, including <a def-id="distinctive-identifiers"></a> maintained by Key Systems.
+              <p>User agents MUST provide users with the ability to clear any persistent data, including <a def-id="distinctive-identifiers"></a>, maintained by Key Systems.
                 See <a href="#allow-persistent-data-cleared">Allow Persistent Data to be Cleared</a>.
               </p>
             </dd>
