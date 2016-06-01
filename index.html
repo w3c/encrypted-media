@@ -905,7 +905,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     }
   </script>
 </head>
-<body class="h-entry" role="document" id="respecDocument">
+<body class="h-entry toc-inline" role="document" id="respecDocument">
   <div class="head" role="contentinfo" id="respecHeader">
     <p>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
@@ -1773,7 +1773,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             </li>
 
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>, run the following steps:</p>
+              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member of <var>candidate configuration</var> is non-empty, run the following steps:</p>
               <ol>
                 <li>
                   <p>Let <var>supported types</var> be an empty sequence of DOMStrings.</p>
@@ -1933,35 +1933,57 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </p>
             </li>
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>:</p>
-              <ol>
-                <li>
-                  <p>Let <var>video capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Video, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
-                </li>
-                <li>
-                  <p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
-                </li>
-                <!-- Video capabilities were specified, but none were supported. -->
-                <li>
-                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p>
-                </li>
-              </ol>
+              <p>
+                If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> and <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> members in <var>candidate configuration</var> are both empty, return <code>NotSupported</code>.
+              </p>
             </li>
 
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>:</p>
-              <ol>
-                <li>
-                  <p>Let <var>audio capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Audio, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
-                </li>
-                <li>
-                  <p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
-                </li>
-                <!-- Audio capabilities were specified, but none were supported. -->
-                <li>
-                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p>
-                </li>
-              </ol>
+              <dl class="switch">
+                <dt>If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member in <var>candidate configuration</var> is non-empty:</dt>
+                <dd>
+                  <ol>
+                    <li>
+                      <p>Let <var>video capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Video, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
+                    </li>
+                    <li>
+                      <p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
+                    </li>
+                    <!-- Video capabilities were specified, but none were supported. -->
+                    <li>
+                      <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p>
+                    </li>
+                  </ol>
+                </dd>
+                <dt>Otherwise:</dt>
+                <dd>
+                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to an empty sequence.</p>
+                </dd>
+              </dl>
+            </li>
+
+            <li>
+              <dl class="switch">
+                <dt>If the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member in <var>candidate configuration</var> is non-empty:</dt>
+                <dd>
+                  <ol>
+                    <li>
+                      <p>Let <var>audio capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Audio, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
+                    </li>
+                    <li>
+                      <p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
+                    </li>
+                    <!-- Audio capabilities were specified, but none were supported. -->
+                    <li>
+                      <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p>
+                    </li>
+                  </ol>
+                </dd>
+                <dt>Otherwise:</dt>
+                <dd>
+                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to an empty sequence.</p>
+                </dd>
+              </dl>
             </li>
 
             <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
@@ -2360,9 +2382,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <pre class="idl hljs dns"><span class="idlDictionary" id="idl-def-MediaKeySystemConfiguration">dictionary <span class="idlDictionaryID">MediaKeySystemConfiguration</span> {
 <span class="idlMember">             <span class="idlMemberType">DOMString</span>                               <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-label">label</a></span> = <span class="idlMemberValue">""</span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>                    <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></span> = <span class="idlMemberValue">"optional"</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>                    <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></span> = <span class="idlMemberValue">"optional"</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-sessionTypes">sessionTypes</a></span><span class="hljs-comment">;</span></span>
@@ -2370,15 +2392,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <section id="dictionary-mediakeysystemconfiguration-members" typeof="bibo:Chapter" resource="#dictionary-mediakeysystemconfiguration-members" property="bibo:hasPart">
         <h4 id="h-dictionary-mediakeysystemconfiguration-members" resource="#h-dictionary-mediakeysystemconfiguration-members"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.2.1 </span>Dictionary <a class="idlType" href="#idl-def-MediaKeySystemConfiguration"><code>MediaKeySystemConfiguration</code></a> Members</span></h4>
-        <dl class="dictionary-members"><dt id="widl-MediaKeySystemConfiguration-audioCapabilities"><code>audioCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span></dt>
+        <dl class="dictionary-members"><dt id="widl-MediaKeySystemConfiguration-audioCapabilities"><code>audioCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
-            A list of supported audio type and capability pairs. The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected.
+            A list of supported audio type and capability pairs. The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported. In this case, the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> element must not be empty.
           </dd><dt id="widl-MediaKeySystemConfiguration-distinctiveIdentifier"><code>distinctiveIdentifier</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>, defaulting to <code>"optional"</code></dt>
           <dd>
             Whether a persistent <a href="#distinctive-identifier">Distinctive Identifier</a> is required.
             <p>Messages from the CDM, such as <code><a href="#dom-evt-message">message</a></code> events, <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain a <a href="#distinctive-identifier">Distinctive Identifier</a>, even in an encrypted form, when this member is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
             </p>
-          </dd><dt id="widl-MediaKeySystemConfiguration-initDataTypes"><code>initDataTypes</code> of type <span class="idlMemberType">sequence&lt;DOMString&gt;</span></dt>
+          </dd><dt id="widl-MediaKeySystemConfiguration-initDataTypes"><code>initDataTypes</code> of type <span class="idlMemberType">sequence&lt;DOMString&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
             A list of supported <a href="#initialization-data-type">Initialization Data Type</a> names. The <a href="#initialization-data-type">Initialization Data Type</a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). Values in the sequence <em class="rfc2119" title="MUST">MUST</em> not be the empty string.
           </dd><dt id="widl-MediaKeySystemConfiguration-label"><code>label</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt>
@@ -2406,9 +2428,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <dd>
             A list of <a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a>s that must be supported. All values must be supported.
             <p>If this member is <a href="https://heycam.github.io/webidl/#dfn-present">not present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] when the dictionary is passed to <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>, the dictionary will be treated as if this member is set to <code>[ <code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code> ]</code>.</p>
-          </dd><dt id="widl-MediaKeySystemConfiguration-videoCapabilities"><code>videoCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span></dt>
+          </dd><dt id="widl-MediaKeySystemConfiguration-videoCapabilities"><code>videoCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
-            A list of supported video type and capability pairs. The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected.
+            A list of supported video type and capability pairs. The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected. An empty list indicates that no video capabilities are supported. In this case, the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> element must not be empty.
           </dd>
         </dl>
       </section>
