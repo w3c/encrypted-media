@@ -2222,7 +2222,7 @@
 
         <section id="update-key-statuses">
           <h4>Update Key Statuses</h4>
-          <p>The Update Key Statuses algorithm updates the set of keys <a href="#known-key">known</a> to a <a>MediaKeySession</a> or the status of one or more of the keys.
+          <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a>MediaKeySession</a> or the status of one or more of the keys.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of <a def-id="key-id"></a> and associated <a>MediaKeyStatus</a> pairs.
           </p>
           <p>The following steps are run:</p>
@@ -2305,11 +2305,12 @@
         </section>
 
         <section id="monitor-cdm">
-          <h4>Monitor for CDM Changes</h4>
+          <h4>Monitor for CDM State Changes</h4>
           <p>
-            The Monitor for CDM Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
+            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
             <a>MediaKeySession</a> object in parallel to the main event loop but not in parallel to other procedures defined in this
             specification that are run in parallel to the main event loop.
+            <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, <a def-id="update"></a> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
           </p>
           <p>
             The following steps are run:
@@ -2324,12 +2325,12 @@
             <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
             <li>
               <p>
-                If <var>cdm</var> has an outgoing message which has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has an outgoing message that has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
                   <p>
-                    Let <var>message type</var> and <var>message</var> be the message type and message respectively.
+                    Let <var>message type</var> and <var>message</var> be the message type and message, respectively.
                   </p>
                 </li>
                 <li>
