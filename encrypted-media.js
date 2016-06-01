@@ -340,7 +340,7 @@
 
     'are-insecure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-insecure-contexts-allowed---deprecated', link_text: 'Are insecure contexts allowed?',  },
 
-//    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
+    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
     'keyids-initdatatype': { func: link_helper, fragment: 'format-registry/initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
 
   };
