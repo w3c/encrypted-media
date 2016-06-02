@@ -1137,26 +1137,31 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </li>
       <li class="tocline"><a href="#implementation-requirements" class="tocxref"><span class="secno">8. </span>Implementation Requirements</a>
         <ul class="toc">
-          <li class="tocline"><a href="#identifier-requirements" class="tocxref"><span class="secno">8.1 </span>Identifiers</a>
+          <li class="tocline"><a href="#persistent-state-requirements" class="tocxref"><span class="secno">8.1 </span>Persistent Data</a>
             <ul class="toc">
-              <li class="tocline"><a href="#limit-or-avoid-use-of-distinctive-identifiers" class="tocxref"><span class="secno">8.1.1 </span>Limit or Avoid use of Distinctive Identifiers</a></li>
-              <li class="tocline"><a href="#encrypt-identifiers" class="tocxref"><span class="secno">8.1.2 </span>Encrypt Identifiers</a></li>
-              <li class="tocline"><a href="#per-origin-identifiers" class="tocxref"><span class="secno">8.1.3 </span>Use Per-Origin Identifiers</a></li>
-              <li class="tocline"><a href="#allow-identifiers-cleared" class="tocxref"><span class="secno">8.1.4 </span>Allow Identifiers to be Cleared</a></li>
+              <li class="tocline"><a href="#allow-persistent-data-cleared" class="tocxref"><span class="secno">8.1.1 </span>Allow Persistent Data to Be Cleared</a></li>
             </ul>
           </li>
-          <li class="tocline"><a href="#support-multiple-keys" class="tocxref"><span class="secno">8.2 </span>Support Multiple Keys</a></li>
-          <li class="tocline"><a href="#initialization-data-type-support-requirements" class="tocxref"><span class="secno">8.3 </span>Initialization Data Type Support</a>
+          <li class="tocline"><a href="#identifier-requirements" class="tocxref"><span class="secno">8.2 </span>Identifiers</a>
             <ul class="toc">
-              <li class="tocline"><a href="#licenses-generated-are-independent-of-content-type" class="tocxref"><span class="secno">8.3.1 </span>Licenses Generated are Independent of Content Type</a></li>
-              <li class="tocline"><a href="#support-extraction-from-media-data" class="tocxref"><span class="secno">8.3.2 </span>Support Extraction From Media Data</a></li>
+              <li class="tocline"><a href="#limit-or-avoid-use-of-distinctive-identifiers" class="tocxref"><span class="secno">8.2.1 </span>Limit or Avoid use of Distinctive Identifiers</a></li>
+              <li class="tocline"><a href="#encrypt-identifiers" class="tocxref"><span class="secno">8.2.2 </span>Encrypt Identifiers</a></li>
+              <li class="tocline"><a href="#per-origin-identifiers" class="tocxref"><span class="secno">8.2.3 </span>Use Per-Origin Identifiers</a></li>
+              <li class="tocline"><a href="#allow-identifiers-cleared" class="tocxref"><span class="secno">8.2.4 </span>Allow Identifiers to Be Cleared</a></li>
             </ul>
           </li>
-          <li class="tocline"><a href="#media-requirements" class="tocxref"><span class="secno">8.4 </span>Supported Media</a>
+          <li class="tocline"><a href="#support-multiple-keys" class="tocxref"><span class="secno">8.3 </span>Support Multiple Keys</a></li>
+          <li class="tocline"><a href="#initialization-data-type-support-requirements" class="tocxref"><span class="secno">8.4 </span>Initialization Data Type Support</a>
             <ul class="toc">
-              <li class="tocline"><a href="#unencrypted-container" class="tocxref"><span class="secno">8.4.1 </span>Unencrypted Container</a></li>
-              <li class="tocline"><a href="#interoperably-encrypted" class="tocxref"><span class="secno">8.4.2 </span>Interoperably Encrypted</a></li>
-              <li class="tocline"><a href="#unencrypted-in-band-support-content" class="tocxref"><span class="secno">8.4.3 </span>Unencrypted In-band Support Content</a></li>
+              <li class="tocline"><a href="#licenses-generated-are-independent-of-content-type" class="tocxref"><span class="secno">8.4.1 </span>Licenses Generated are Independent of Content Type</a></li>
+              <li class="tocline"><a href="#support-extraction-from-media-data" class="tocxref"><span class="secno">8.4.2 </span>Support Extraction From Media Data</a></li>
+            </ul>
+          </li>
+          <li class="tocline"><a href="#media-requirements" class="tocxref"><span class="secno">8.5 </span>Supported Media</a>
+            <ul class="toc">
+              <li class="tocline"><a href="#unencrypted-container" class="tocxref"><span class="secno">8.5.1 </span>Unencrypted Container</a></li>
+              <li class="tocline"><a href="#interoperably-encrypted" class="tocxref"><span class="secno">8.5.2 </span>Interoperably Encrypted</a></li>
+              <li class="tocline"><a href="#unencrypted-in-band-support-content" class="tocxref"><span class="secno">8.5.3 </span>Unencrypted In-band Support Content</a></li>
             </ul>
           </li>
         </ul>
@@ -5169,13 +5174,33 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <h2 id="h-implementation-requirements" resource="#h-implementation-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8. </span>Implementation Requirements</span></h2>
     <p>This section defines implementation requirements - for both user agents and <a href="#key-system">Key Systems</a>, including the <a href="#cdm">CDM</a> and server - that may not be explicitly addressed in the algorithms.</p>
 
+    <section id="persistent-state-requirements" typeof="bibo:Chapter" resource="#persistent-state-requirements" property="bibo:hasPart">
+      <h3 id="h-persistent-state-requirements" resource="#h-persistent-state-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1 </span>Persistent Data</span></h3>
+      <p>
+        Persistent data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+      </p>
+
+      <section id="allow-persistent-data-cleared" typeof="bibo:Chapter" resource="#allow-persistent-data-cleared" property="bibo:hasPart">
+        <h4 id="h-allow-persistent-data-cleared" resource="#h-allow-persistent-data-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.1 </span>Allow Persistent Data to Be Cleared</span></h4>
+        <p>
+          Implementations that use persistent data <em class="rfc2119" title="MUST">MUST</em> allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+        </p>
+        <p>
+          Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow users to clear persistent data along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data. It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be offered the option to clear persistent data as part of user agent features to clear browsing history.
+        </p>
+        <p>
+          It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be able to request that persistent data be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+        </p>
+      </section>
+    </section>
+
     <section id="identifier-requirements" typeof="bibo:Chapter" resource="#identifier-requirements" property="bibo:hasPart">
-      <h3 id="h-identifier-requirements" resource="#h-identifier-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1 </span>Identifiers</span></h3>
+      <h3 id="h-identifier-requirements" resource="#h-identifier-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2 </span>Identifiers</span></h3>
       <p>The use of <a href="#distinctive-identifier">Distinctive Identifiers</a> by implementations presents a privacy concern. This defines requirements for avoiding or at least mitigating such concerns.
       </p>
 
       <section id="limit-or-avoid-use-of-distinctive-identifiers" typeof="bibo:Chapter" resource="#limit-or-avoid-use-of-distinctive-identifiers" property="bibo:hasPart">
-        <h4 id="h-limit-or-avoid-use-of-distinctive-identifiers" resource="#h-limit-or-avoid-use-of-distinctive-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.1 </span>Limit or Avoid use of Distinctive Identifiers</span></h4>
+        <h4 id="h-limit-or-avoid-use-of-distinctive-identifiers" resource="#h-limit-or-avoid-use-of-distinctive-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.1 </span>Limit or Avoid use of Distinctive Identifiers</span></h4>
         <ul>
           <li>
             <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> avoid use of <a href="#distinctive-identifier">Distinctive Identifiers</a>.</p>
@@ -5199,7 +5224,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </section>
 
       <section id="encrypt-identifiers" typeof="bibo:Chapter" resource="#encrypt-identifiers" property="bibo:hasPart">
-        <h4 id="h-encrypt-identifiers" resource="#h-encrypt-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.2 </span>Encrypt Identifiers</span></h4>
+        <h4 id="h-encrypt-identifiers" resource="#h-encrypt-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.2 </span>Encrypt Identifiers</span></h4>
         <p>When exposed to the application - either from a <code><a href="#dom-evt-message">message</a></code> event or a message from the server, such as one that is passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> - <a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be encrypted at the message exchange level. The encryption <em class="rfc2119" title="MUST">MUST</em> ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext. The CDM <em class="rfc2119" title="MUST">MUST</em> verify that the encryption key belongs to a valid license server for its Key System.
         </p>
         <div class="issue" id="issue-8">
@@ -5233,7 +5258,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </section>
 
       <section id="per-origin-identifiers" typeof="bibo:Chapter" resource="#per-origin-identifiers" property="bibo:hasPart">
-        <h4 id="h-per-origin-identifiers" resource="#h-per-origin-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.3 </span>Use Per-Origin Identifiers</span></h4>
+        <h4 id="h-per-origin-identifiers" resource="#h-per-origin-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.3 </span>Use Per-Origin Identifiers</span></h4>
         <p>All <a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be distinctive per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. That is, the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs.
         </p>
         <div class="issue" id="issue-9">
@@ -5251,18 +5276,17 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </section>
 
       <section id="allow-identifiers-cleared" typeof="bibo:Chapter" resource="#allow-identifiers-cleared" property="bibo:hasPart">
-        <h4 id="h-allow-identifiers-cleared" resource="#h-allow-identifiers-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.4 </span>Allow Identifiers to be Cleared</span></h4>
-        <p>Implementations that use <a href="#distinctive-identifier">Distinctive Identifier(s)</a> <em class="rfc2119" title="MUST">MUST</em> allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device. Once cleared, new different values <em class="rfc2119" title="MUST">MUST</em> be generated when <a href="#distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
+        <h4 id="h-allow-identifiers-cleared" resource="#h-allow-identifiers-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.4 </span>Allow Identifiers to Be Cleared</span></h4>
+        <p>As a consequence of the requirements in <a href="allow-persistent-state-cleared">Allow Persistent Data to Be Cleared</a>, implementations that use <a href="#distinctive-identifier">Distinctive Identifier(s)</a> <em class="rfc2119" title="MUST">MUST</em> allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
         </p>
-        <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow users to clear <a href="#distinctive-identifier">Distinctive Identifier(s)</a> along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data. It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be offered the option to clear <a href="#distinctive-identifier">Distinctive Identifier(s)</a> as part of user agent features to clear browsing history.
+        <p>
+          Once cleared, new different values <em class="rfc2119" title="MUST">MUST</em> be generated when <a href="#distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
         </p>
-        <p>It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be able to request that <a href="#distinctive-identifier">Distinctive Identifiers</a> be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.</p>
       </section>
-
     </section>
 
     <section id="support-multiple-keys" typeof="bibo:Chapter" resource="#support-multiple-keys" property="bibo:hasPart">
-      <h3 id="h-support-multiple-keys" resource="#h-support-multiple-keys"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2 </span>Support Multiple Keys</span></h3>
+      <h3 id="h-support-multiple-keys" resource="#h-support-multiple-keys"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.3 </span>Support Multiple Keys</span></h3>
       <p>Implementations <em class="rfc2119" title="MUST">MUST</em> support multiple keys in each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.</p>
       <div class="note">
         <div class="note-title marker" aria-level="4" role="heading" id="h-note101"><span>Note</span></div>
@@ -5274,10 +5298,10 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     </section>
 
     <section id="initialization-data-type-support-requirements" typeof="bibo:Chapter" resource="#initialization-data-type-support-requirements" property="bibo:hasPart">
-      <h3 id="h-initialization-data-type-support-requirements" resource="#h-initialization-data-type-support-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.3 </span>Initialization Data Type Support</span></h3>
+      <h3 id="h-initialization-data-type-support-requirements" resource="#h-initialization-data-type-support-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4 </span>Initialization Data Type Support</span></h3>
 
       <section id="licenses-generated-are-independent-of-content-type" typeof="bibo:Chapter" resource="#licenses-generated-are-independent-of-content-type" property="bibo:hasPart">
-        <h4 id="h-licenses-generated-are-independent-of-content-type" resource="#h-licenses-generated-are-independent-of-content-type"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.3.1 </span>Licenses Generated are Independent of Content Type</span></h4>
+        <h4 id="h-licenses-generated-are-independent-of-content-type" resource="#h-licenses-generated-are-independent-of-content-type"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.1 </span>Licenses Generated are Independent of Content Type</span></h4>
         <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow licenses generated with any <a href="#initialization-data-type">Initialization Data Type</a> they support to be used with any content type.</p>
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note102"><span>Note</span></div>
@@ -5286,7 +5310,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </section>
 
       <section id="support-extraction-from-media-data" typeof="bibo:Chapter" resource="#support-extraction-from-media-data" property="bibo:hasPart">
-        <h4 id="h-support-extraction-from-media-data" resource="#h-support-extraction-from-media-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.3.2 </span>Support Extraction From Media Data</span></h4>
+        <h4 id="h-support-extraction-from-media-data" resource="#h-support-extraction-from-media-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.2 </span>Support Extraction From Media Data</span></h4>
         <p>For any supported <a href="#initialization-data-type">Initialization Data Type</a> that may appear in a supported container, the user agents <em class="rfc2119" title="MUST">MUST</em> support <a href="#initdata-encountered">extracting</a> that type of <a href="#initialization-data">Initialization Data</a> from each such supported container.</p>
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note103"><span>Note</span></div>
@@ -5297,18 +5321,18 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     </section>
 
     <section id="media-requirements" typeof="bibo:Chapter" resource="#media-requirements" property="bibo:hasPart">
-      <h3 id="h-media-requirements" resource="#h-media-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4 </span>Supported Media</span></h3>
+      <h3 id="h-media-requirements" resource="#h-media-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.5 </span>Supported Media</span></h3>
       <p>This section defines properties of content (<a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">media resources</a>) supported by implementations of this specification.</p>
 
       <section id="unencrypted-container" typeof="bibo:Chapter" resource="#unencrypted-container" property="bibo:hasPart">
-        <h4 id="h-unencrypted-container" resource="#h-unencrypted-container"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.1 </span>Unencrypted Container</span></h4>
+        <h4 id="h-unencrypted-container" resource="#h-unencrypted-container"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.5.1 </span>Unencrypted Container</span></h4>
         <p>
           The media container <em class="rfc2119" title="MUST NOT">MUST NOT</em> be encrypted. This specification relies on the user agent's ability to parse the media container without having to decrypt any of the media data. This includes the <a href="#encrypted-block-encountered">Encrypted Block Encountered</a> and <a href="#initdata-encountered">Initialization Data Encountered</a> algorithms as well as supporting standard <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] functionality, such as seeking.
         </p>
       </section>
 
       <section id="interoperably-encrypted" typeof="bibo:Chapter" resource="#interoperably-encrypted" property="bibo:hasPart">
-        <h4 id="h-interoperably-encrypted" resource="#h-interoperably-encrypted"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.2 </span>Interoperably Encrypted</span></h4>
+        <h4 id="h-interoperably-encrypted" resource="#h-interoperably-encrypted"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.5.2 </span>Interoperably Encrypted</span></h4>
         <p>
           <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">Media resources</a>, including all tracks, <em class="rfc2119" title="MUST">MUST</em> be encrypted and packaged per a container-specific "common encryption" specification that allows the content to be decrypted in a fully specified and compatible way when a key or keys are provided.
         </p>
@@ -5321,7 +5345,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       </section>
 
       <section id="unencrypted-in-band-support-content" typeof="bibo:Chapter" resource="#unencrypted-in-band-support-content" property="bibo:hasPart">
-        <h4 id="h-unencrypted-in-band-support-content" resource="#h-unencrypted-in-band-support-content"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.3 </span>Unencrypted In-band Support Content</span></h4>
+        <h4 id="h-unencrypted-in-band-support-content" resource="#h-unencrypted-in-band-support-content"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.5.3 </span>Unencrypted In-band Support Content</span></h4>
         <p>
           In-band support content, such as captions, described audio, and transcripts, <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> be encrypted.
         </p>
@@ -5829,7 +5853,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <section class="informative" id="concerns-1" typeof="bibo:Chapter" resource="#concerns-1" property="bibo:hasPart">
         <h4 id="h-concerns-1" resource="#h-concerns-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.1 </span>Concerns</span></h4>
         <p><em>This section is non-normative.</em></p>
-        <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a href="#distinctive-identifier">Distinctive Identifier</a> or data, including keys, stored in the <a href="#cdm">CDM</a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests. Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible. In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
+        <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a href="#distinctive-identifier">Distinctive Identifier</a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a href="#cdm">CDM</a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests. Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible. In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
         </p>
 
         <p>User- or client-specific information that could be obtained via the APIs in this specification includes:</p>
@@ -5841,10 +5865,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p>Origins visisted (via stored or in-memory data, permissions, etc.)</p>
           </li>
           <li>
-            <p>Content viewed (via stored or in-memory keys, key IDs, data, etc.)</p>
+            <p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p>
           </li>
         </ul>
         <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and its profile storage), often in the CDM.</p>
+
+        <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
         <p>Key Systems may access or create persistent or semi-persistent identifier(s), <a href="#distinctive-identifier">Distinctive Identifier(s)</a>, for a device or user of a device. In some cases these identifiers may be bound to a specific device in a secure manner. If these identifiers are present in Key System messages, then devices and/or users may be tracked. If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
         </p>
@@ -5880,9 +5906,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             </p>
           </dd>
 
-          <dt>User deletion of <a href="#distinctive-identifier">Distinctive Identifiers</a></dt>
+          <dt>User deletion of persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a></dt>
           <dd>
-            <p>User agents <em class="rfc2119" title="MUST">MUST</em> provide users with the ability to clear any <a href="#distinctive-identifier">Distinctive Identifiers</a> maintained by Key Systems. See <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a>.
+            <p>User agents <em class="rfc2119" title="MUST">MUST</em> provide users with the ability to clear any persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a>, maintained by Key Systems. See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
             </p>
           </dd>
 
