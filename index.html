@@ -911,7 +911,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-01-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-01">01 June 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-02-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-02">02 June 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -3490,7 +3490,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </ol>
         </dd><dt id="widl-MediaKeySession-remove-Promise-void"><code id="remove">remove</code></dt>
         <dd>
-          <p>Removes stored session data associated with this object.</p>
+          <p>
+            For <a href="#is-persistent-session-type">persistent session types</a>, removes all license(s) and key(s) associated with the session. Other session data will be cleared as defined for each session type once a release message acknowledgment is processed by <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>.
+          </p>
 
 
           <div><em>No parameters.</em></div>
@@ -3510,7 +3512,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <p>Let <var>promise</var> be a new promise.</p>
             </li>
             <li>
-              <p>If this object's <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> or <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, run the following steps in parallel:</p>
+              <p>Run the following steps in parallel:</p>
               <ol>
                 <li>
                   <p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p>
@@ -3530,10 +3532,20 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                           <p>
                             Destroy the license(s) and/or key(s) associated with the session.
                           </p>
+                          <div class="note">
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note59"><span>Note</span></div>
+                            <p class="">
+                              This implies destruction of the license(s) and/or keys(s) whether they are in memory, persistent store or both.
+                            </p>
+                          </div>
                         </li>
                         <li>
                           <p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
                           <dl class="switch">
+                            <dt><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code></dt>
+                            <dd>
+                              <p>Continue with the following steps.</p>
+                            </dd>
                             <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
                             <dd>
                               <ol>
@@ -3596,7 +3608,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <div class="note">
-                        <div class="note-title marker" aria-level="4" role="heading" id="h-note59"><span>Note</span></div>
+                        <div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div>
                         <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                       </div>
                     </li>
@@ -3659,7 +3671,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                 <li>
                   <p>Let <var>sanitized response</var> be a validated and/or sanitized version of <var>response copy</var>.</p>
                   <div class="note">
-                    <div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div>
+                    <div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div>
                     <p class="">The user agent should thoroughly validate the response before passing it to the CDM. This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version. The user agent should check that the length and values of fields are reasonable. Unknown fields should be rejected or removed.
                     </p>
                   </div>
@@ -3691,7 +3703,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                         <dt>If <var>sanitized response</var> contains a license or key(s)</dt>
                         <dd>
                           <div class="note">
-                            <div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div>
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note62"><span>Note</span></div>
                             <p class="">This includes an initial license, an updated license, and a license renewal message.</p>
                           </div>
                           <p>Process <var>sanitized response</var>, following the stipulation for the first matching condition from the following list:</p>
@@ -3724,15 +3736,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                           <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
                           <p>State information, including keys, for each session <em class="rfc2119" title="MUST">MUST</em> be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
                           <div class="note">
-                            <div class="note-title marker" aria-level="4" role="heading" id="h-note62"><span>Note</span></div>
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note63"><span>Note</span></div>
                             <p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
                           </div>
                           <div class="note">
-                            <div class="note-title marker" aria-level="4" role="heading" id="h-note63"><span>Note</span></div>
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note64"><span>Note</span></div>
                             <p class="">The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
                           </div>
                           <div class="note">
-                            <div class="note-title marker" aria-level="4" role="heading" id="h-note64"><span>Note</span></div>
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note65"><span>Note</span></div>
                             <p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDM implementations support a standard and reasonably high minimum number of keys per <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> objects. This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                             </p>
                           </div>
@@ -3746,7 +3758,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                                 Close the <a href="#key-session">session</a> and clear all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> and license destruction record.
                               </p>
                               <div class="note">
-                                <div class="note-title marker" aria-level="4" role="heading" id="h-note65"><span>Note</span></div>
+                                <div class="note-title marker" aria-level="4" role="heading" id="h-note66"><span>Note</span></div>
                                 <p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value of this object's <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.</p>
                               </div>
                             </li>
@@ -3764,7 +3776,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                                 Close the <a href="#key-session">session</a> and clear all stored session data associated with this object, including the <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> and the <a href="#record-of-key-usage">record of key usage</a>.
                               </p>
                               <div class="note">
-                                <div class="note-title marker" aria-level="4" role="heading" id="h-note66"><span>Note</span></div>
+                                <div class="note-title marker" aria-level="4" role="heading" id="h-note67"><span>Note</span></div>
                                 <p class="">A subsequent call to <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> with the value of this object's <code><a href="#widl-MediaKeySession-sessionId">sessionId</a></code> would fail because there is no data stored for that session ID.</p>
                               </div>
                             </li>
@@ -3776,7 +3788,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                         <dt>Otherwise</dt>
                         <dd>Process <var>sanitized response</var>, not storing any session data.
                           <div class="note">
-                            <div class="note-title marker" aria-level="4" role="heading" id="h-note67"><span>Note</span></div>
+                            <div class="note-title marker" aria-level="4" role="heading" id="h-note68"><span>Note</span></div>
                             <p class="">For example, <var>sanitized response</var> may contain information that will be used to generate another <code><a href="#dom-evt-message">message</a></code> event. In this case, there is no need to verify the contents against the <var>sessionType</var>.
                             </p>
                           </div>
@@ -3833,7 +3845,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <div class="note">
-                        <div class="note-title marker" aria-level="4" role="heading" id="h-note68"><span>Note</span></div>
+                        <div class="note-title marker" aria-level="4" role="heading" id="h-note69"><span>Note</span></div>
                         <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                       </div>
                     </li>
@@ -3854,7 +3866,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <p>The MediaKeyStatusMap object is a read-only map of <a href="#decryption-key-id">key IDs</a> to the current status of the associated key.</p>
       <p>A key's status is independent of whether the key is currently being used and of media data.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note69"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note70"><span>Note</span></div>
         <p class="">For example, if a key has output requirements that cannot currently be met, the key's status should be <code><a href="#idl-def-MediaKeyStatus.output-downscaled">"output-downscaled"</a></code> or <code><a href="#idl-def-MediaKeyStatus.output-restricted">"output-restricted"</a></code>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
       </div>
       <div class="issue" id="issue-7">
@@ -4121,7 +4133,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p>Implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> require applications to handle message types. Implementations <em class="rfc2119" title="MUST">MUST</em> support applications that do not differentiate messages and <em class="rfc2119" title="MUST NOT">MUST NOT</em> require that applications handle message types. Specifically, Key Systems <em class="rfc2119" title="MUST">MUST</em> support passing all types of messages to a single URL.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note70"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note71"><span>Note</span></div>
               <p class="">This attribute allows an application to differentiate messages without parsing the message. It is intended to enable optional application and/or server optimizations, but applications are not required to use it.
               </p>
             </div>
@@ -4237,7 +4249,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
             </ol>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note71"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note72"><span>Note</span></div>
               <p class="">The effect of this steps is that the contents of <var>session</var>'s <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute are replaced without invalidating existing references to the attribute. This replacement is atomic from a script perspective. That is, script <em class="rfc2119" title="MUST NOT">MUST NOT</em> ever see a partially populated sequence.
               </p>
             </div>
@@ -4279,7 +4291,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to decrypt <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. All <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> methods will fail and no further events will be queued for this object after this algorithm is run.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note72"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note73"><span>Note</span></div>
           <div class="">
             <p>
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost. In that case, the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm detects the change and runs this algorithm.
@@ -4301,7 +4313,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store the <var>record of key usage</var>, if it exists.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note73"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note74"><span>Note</span></div>
               <p class="">
                 The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as a result of the <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> method processing an acknowledgement of the record of key usage.
               </p>

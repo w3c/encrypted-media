@@ -1943,14 +1943,17 @@
 
         <dt>Promise&lt;void&gt; remove()</dt>
         <dd>
-          <p>Removes stored session data associated with this object.</p>
+          <p>
+            For <a href="#is-persistent-session-type">persistent session types</a>, removes all license(s) and key(s) associated with the session.
+            Other session data will be cleared as defined for each session type once a release message acknowledgment is processed by <a def-id="update"></a>.
+          </p>
 
           <ol class="method-algorithm">
             <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
+            <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Let <var>message</var> be <code>null</code>.</p></li>
@@ -1965,9 +1968,16 @@
                           <p>
                             Destroy the license(s) and/or key(s) associated with the session.
                           </p>
+                          <p class="note">
+                            This implies destruction of the license(s) and/or keys(s) whether they are in memory, persistent store or both.
+                          </p>
                         </li>
                         <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
                           <dl class="switch">
+                            <dt><a def-id="temporary-session"></a></dt>
+                            <dd>
+                              <p>Continue with the following steps.</p>
+                            </dd>
                             <dt><a def-id="persistent-usage-record-session"></a></dt>
                             <dd>
                               <ol>
