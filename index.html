@@ -905,7 +905,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     }
   </script>
 </head>
-<body class="h-entry" role="document" id="respecDocument">
+<body class="h-entry toc-inline" role="document" id="respecDocument">
   <div class="head" role="contentinfo" id="respecHeader">
     <p>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
@@ -1100,6 +1100,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li class="tocline"><a href="#update-key-statuses" class="tocxref"><span class="secno">6.6.2 </span>Update Key Statuses</a></li>
               <li class="tocline"><a href="#update-expiration" class="tocxref"><span class="secno">6.6.3 </span>Update Expiration</a></li>
               <li class="tocline"><a href="#session-closed" class="tocxref"><span class="secno">6.6.4 </span>Session Closed</a></li>
+              <li class="tocline"><a href="#monitor-cdm" class="tocxref"><span class="secno">6.6.5 </span>Monitor for CDM State Changes</a></li>
             </ul>
           </li>
           <li class="tocline"><a href="#exceptions" class="tocxref"><span class="secno">6.7 </span>Exceptions</a></li>
@@ -1772,7 +1773,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             </li>
 
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>, run the following steps:</p>
+              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> member of <var>candidate configuration</var> is non-empty, run the following steps:</p>
               <ol>
                 <li>
                   <p>Let <var>supported types</var> be an empty sequence of DOMStrings.</p>
@@ -1932,35 +1933,57 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </p>
             </li>
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>:</p>
-              <ol>
-                <li>
-                  <p>Let <var>video capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Video, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
-                </li>
-                <li>
-                  <p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
-                </li>
-                <!-- Video capabilities were specified, but none were supported. -->
-                <li>
-                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p>
-                </li>
-              </ol>
+              <p>
+                If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> and <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> members in <var>candidate configuration</var> are both empty, return <code>NotSupported</code>.
+              </p>
             </li>
 
             <li>
-              <p>If the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member is <a href="https://heycam.github.io/webidl/#dfn-present">present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] in <var>candidate configuration</var>:</p>
-              <ol>
-                <li>
-                  <p>Let <var>audio capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Audio, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
-                </li>
-                <li>
-                  <p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
-                </li>
-                <!-- Audio capabilities were specified, but none were supported. -->
-                <li>
-                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p>
-                </li>
-              </ol>
+              <dl class="switch">
+                <dt>If the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member in <var>candidate configuration</var> is non-empty:</dt>
+                <dd>
+                  <ol>
+                    <li>
+                      <p>Let <var>video capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Video, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
+                    </li>
+                    <li>
+                      <p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
+                    </li>
+                    <!-- Video capabilities were specified, but none were supported. -->
+                    <li>
+                      <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p>
+                    </li>
+                  </ol>
+                </dd>
+                <dt>Otherwise:</dt>
+                <dd>
+                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> member of <var>accumulated configuration</var> to an empty sequence.</p>
+                </dd>
+              </dl>
+            </li>
+
+            <li>
+              <dl class="switch">
+                <dt>If the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member in <var>candidate configuration</var> is non-empty:</dt>
+                <dd>
+                  <ol>
+                    <li>
+                      <p>Let <var>audio capabilities</var> be the result of executing the <a href="#get-supported-capabilities-for-audio-video-type">Get Supported Capabilities for Audio/Video Type</a> algorithm on Audio, <var>candidate configuration</var>'s <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p>
+                    </li>
+                    <li>
+                      <p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p>
+                    </li>
+                    <!-- Audio capabilities were specified, but none were supported. -->
+                    <li>
+                      <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p>
+                    </li>
+                  </ol>
+                </dd>
+                <dt>Otherwise:</dt>
+                <dd>
+                  <p>Set the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> member of <var>accumulated configuration</var> to an empty sequence.</p>
+                </dd>
+              </dl>
             </li>
 
             <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
@@ -2359,9 +2382,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <pre class="idl hljs dns"><span class="idlDictionary" id="idl-def-MediaKeySystemConfiguration">dictionary <span class="idlDictionaryID">MediaKeySystemConfiguration</span> {
 <span class="idlMember">             <span class="idlMemberType">DOMString</span>                               <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-label">label</a></span> = <span class="idlMemberValue">""</span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></span><span class="hljs-comment">;</span></span>
-<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
+<span class="idlMember">             <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span> <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></span> = <span class="idlMemberValue">[ ]</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>                    <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></span> = <span class="idlMemberValue">"optional"</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>                    <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-persistentState">persistentState</a></span> = <span class="idlMemberValue">"optional"</span><span class="hljs-comment">;</span></span>
 <span class="idlMember">             <span class="idlMemberType">sequence&lt;DOMString&gt;</span>                     <span class="idlMemberName"><a href="#widl-MediaKeySystemConfiguration-sessionTypes">sessionTypes</a></span><span class="hljs-comment">;</span></span>
@@ -2369,15 +2392,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <section id="dictionary-mediakeysystemconfiguration-members" typeof="bibo:Chapter" resource="#dictionary-mediakeysystemconfiguration-members" property="bibo:hasPart">
         <h4 id="h-dictionary-mediakeysystemconfiguration-members" resource="#h-dictionary-mediakeysystemconfiguration-members"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.2.1 </span>Dictionary <a class="idlType" href="#idl-def-MediaKeySystemConfiguration"><code>MediaKeySystemConfiguration</code></a> Members</span></h4>
-        <dl class="dictionary-members"><dt id="widl-MediaKeySystemConfiguration-audioCapabilities"><code>audioCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span></dt>
+        <dl class="dictionary-members"><dt id="widl-MediaKeySystemConfiguration-audioCapabilities"><code>audioCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
-            A list of supported audio type and capability pairs. The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected.
+            A list of supported audio type and capability pairs. The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported. In this case, the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code> element must not be empty.
           </dd><dt id="widl-MediaKeySystemConfiguration-distinctiveIdentifier"><code>distinctiveIdentifier</code> of type <span class="idlMemberType"><a href="#idl-def-MediaKeysRequirement" class="idlType"><code>MediaKeysRequirement</code></a></span>, defaulting to <code>"optional"</code></dt>
           <dd>
             Whether a persistent <a href="#distinctive-identifier">Distinctive Identifier</a> is required.
             <p>Messages from the CDM, such as <code><a href="#dom-evt-message">message</a></code> events, <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain a <a href="#distinctive-identifier">Distinctive Identifier</a>, even in an encrypted form, when this member is <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>.
             </p>
-          </dd><dt id="widl-MediaKeySystemConfiguration-initDataTypes"><code>initDataTypes</code> of type <span class="idlMemberType">sequence&lt;DOMString&gt;</span></dt>
+          </dd><dt id="widl-MediaKeySystemConfiguration-initDataTypes"><code>initDataTypes</code> of type <span class="idlMemberType">sequence&lt;DOMString&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
             A list of supported <a href="#initialization-data-type">Initialization Data Type</a> names. The <a href="#initialization-data-type">Initialization Data Type</a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). Values in the sequence <em class="rfc2119" title="MUST">MUST</em> not be the empty string.
           </dd><dt id="widl-MediaKeySystemConfiguration-label"><code>label</code> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt>
@@ -2405,9 +2428,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <dd>
             A list of <a href="#idl-def-MediaKeySessionType" class="idlType"><code>MediaKeySessionType</code></a>s that must be supported. All values must be supported.
             <p>If this member is <a href="https://heycam.github.io/webidl/#dfn-present">not present</a> [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] when the dictionary is passed to <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>, the dictionary will be treated as if this member is set to <code>[ <code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code> ]</code>.</p>
-          </dd><dt id="widl-MediaKeySystemConfiguration-videoCapabilities"><code>videoCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span></dt>
+          </dd><dt id="widl-MediaKeySystemConfiguration-videoCapabilities"><code>videoCapabilities</code> of type <span class="idlMemberType">sequence&lt;<a href="#idl-def-MediaKeySystemMediaCapability" class="idlType"><code>MediaKeySystemMediaCapability</code></a>&gt;</span>, defaulting to <code>[ ]</code></dt>
           <dd>
-            A list of supported video type and capability pairs. The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected.
+            A list of supported video type and capability pairs. The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm). When there is a conflict between values, the earlier value will be selected. An empty list indicates that no video capabilities are supported. In this case, the <code><a href="#widl-MediaKeySystemConfiguration-audioCapabilities">audioCapabilities</a></code> element must not be empty.
           </dd>
         </dl>
       </section>
@@ -2539,6 +2562,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                   <p>Let <var>instance</var> be a new instance of the <a href="#key-system">Key System</a> implementation represented by this object's <var>cdm implementation</var> value.</p>
                 </li>
                 <li>
+                  <p>Initialize <var>instance</var> to enable, disable and/or select <a href="#key-system">Key System</a> features using <var>configuration</var>.</p>
+                </li>
+                <li>
                   <p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from using <a href="#distinctive-identifier">Distinctive Identifier(s)</a>.</p>
                 </li>
                 <li>
@@ -2613,7 +2639,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <h2 id="h-mediakeys-interface" resource="#h-mediakeys-interface"><span property="xhv:role" resource="xhv:heading"><span class="secno">5. </span><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> Interface</span></h2>
     <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during playback. It also represents a CDM instance.
     </p>
-    <p>If the CDM instance represented by a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a href="#cdm-unavailable">CDM Unavailable</a> algorithm on <var>media keys</var>.</p>
     <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] type mapping errors.</p>
     <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2940,7 +2965,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <!--OddPage-->
     <h2 id="h-mediakeysession-interface" resource="#h-mediakeysession-interface"><span property="xhv:role" resource="xhv:heading"><span class="secno">6. </span><a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> Interface</span></h2>
     <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
-
+    <p>
+      The User Agent <em class="rfc2119" title="SHALL">SHALL</em> execute the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm continuously for each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object until the sooner of the <a href="#session-closed">Session Closed</a> algorithm being run or the destruction of the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a>. The <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm <em class="rfc2119" title="MUST">MUST</em> be run in parallel to the main event loop, but not in parallel to other procedures defined in this specification that are also defined to be run in parallel.
+    </p>
     <p>
       A MediaKeySession object <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> be destroyed and <em class="rfc2119" title="SHALL">SHALL</em> continue to receive events if it has not been closed and the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object that created it remains accessible. Otherwise, a MediaKeySession object that is no longer accessible to JavaScript <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> receive further events and <em class="rfc2119" title="MAY">MAY</em> be destroyed.
     </p>
@@ -4167,7 +4194,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <section id="queue-message" typeof="bibo:Chapter" resource="#queue-message" property="bibo:hasPart">
         <h4 id="h-queue-message" resource="#h-queue-message"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.1 </span>Queue a "message" Event</span></h4>
-        <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object, a <var>message type</var>, and a <var>message</var>.
+        <p>The Queue a "message" Event algorithm queues a message event to a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object, a <var>message type</var>, and a <var>message</var>.
         </p>
         <p><var>message</var> <em class="rfc2119" title="MUST NOT">MUST NOT</em> contain a <a href="#distinctive-identifier">Distinctive Identifier</a>, even in an encrypted form, if the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object's <var>use distinctive identifier</var> value is false.</p>
         <p>The following steps are run:</p>
@@ -4190,7 +4217,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <section id="update-key-statuses" typeof="bibo:Chapter" resource="#update-key-statuses" property="bibo:hasPart">
         <h4 id="h-update-key-statuses" resource="#h-update-key-statuses"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.2 </span>Update Key Statuses</span></h4>
-        <p>The Update Key Statuses algorithm is run when the CDM changes the set of keys <a href="#known-key">known</a> to the session or the status of one or more of the keys. This can happen as the result of a <code><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load()</a></code> or <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call or some other event, such as expiration. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object and a sequence of <a href="#decryption-key-id">key ID</a> and associated <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> pairs.
+        <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> or the status of one or more of the keys. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object and a sequence of <a href="#decryption-key-id">key ID</a> and associated <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> pairs.
         </p>
         <p>The following steps are run:</p>
         <ol>
@@ -4238,7 +4265,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <section id="update-expiration" typeof="bibo:Chapter" resource="#update-expiration" property="bibo:hasPart">
         <h4 id="h-update-expiration" resource="#h-update-expiration"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.3 </span>Update Expiration</span></h4>
-        <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session. This can happen as the result of an <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call or some other event. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
+        <p>The Update Expiration algorithm updates the expiration time of a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a>. Requests to run this algorithm include a target <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
         </p>
         <p>The following steps are run:</p>
         <ol>
@@ -4267,7 +4294,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <div class="note-title marker" aria-level="5" role="heading" id="h-note73"><span>Note</span></div>
           <div class="">
             <p>
-              The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost. In that case, this algorithm <em class="rfc2119" title="MUST">MUST</em> be run.
+              The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost. In that case, the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm detects the change and runs this algorithm.
             </p>
             <p>Keys in other sessions <em class="rfc2119" title="MUST">MUST</em> be unaffected, even if they have overlapping key IDs.</p>
             <p>
@@ -4303,6 +4330,95 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </li>
           <li>
             <p>Resolve <var>promise</var>.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="monitor-cdm" typeof="bibo:Chapter" resource="#monitor-cdm" property="bibo:hasPart">
+        <h4 id="h-monitor-cdm" resource="#h-monitor-cdm"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.5 </span>Monitor for CDM State Changes</span></h4>
+        <p>
+          The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
+          <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object in parallel to the main event loop but not in parallel to other procedures defined in this specification that are run in parallel to the main event loop.
+        </p>
+        <div class="note">
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note74"><span>Note</span></div>
+          <p class="">This algorithm only applies to CDM state changes that are not covered by other algorithms. For example, <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
+        </div>
+        <p></p>
+        <p>
+          The following steps are run:
+        </p>
+
+        <ol>
+          <li>
+            <p>
+              Let <var>session</var> be the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.
+            </p>
+          </li>
+          <li>
+            <p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> has an outgoing message that has not yet been sent, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Let <var>message type</var> and <var>message</var> be the message type and message, respectively.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Run the <a href="#queue-message">Queue a "message" Event</a> algorithm, passing <var>session</var>, <var>message type</var> and <var>message</var>.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Let <var>statuses</var> be a list of Key ID and <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> value pairs containing one pair for each key
+                  <a href="#known-key">known</a> to <var>session</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm, passing <var>session</var> and <var>statuses</var>.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to execute the following steps:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Let <var>expiration</var> be the new expiration time of <var>session</var>.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Run the <a href="#update-expiration">Update Expiration</a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                </p>
+              </li>
+            </ol>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> has closed <var>session</var>, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
+            </p>
+          </li>
+          <li>
+            <p>
+              If <var>cdm</var> had become unavailable, then <a href="http://www.w3.org/TR/html5/webappapis.html#queue-a-task">queue a task</a> to run the <a href="#session-closed">Session Closed</a> algorithm on <var>session</var>.
+            </p>
           </li>
         </ol>
       </section>
@@ -5950,7 +6066,10 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p><em class="rfc2119" title="MUST">MUST</em> ensure it is restricted to the current profile and does not leak to or from private browsing sessions.</p>
           </li>
           <li>
-            <p><em class="rfc2119" title="MUST">MUST</em> allow the user to clear it, preferably by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.</p>
+            <p><em class="rfc2119" title="MUST">MUST</em> allow the user to clear it.</p>
+          </li>
+          <li>
+            <p><em class="rfc2119" title="SHOULD">SHOULD</em> allow the user to clear it by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.</p>
           </li>
           <li>
             <p><em class="rfc2119" title="SHOULD">SHOULD</em> treat it like other site data, including presenting it along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations.</p>
@@ -5966,7 +6085,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
           <dt>User deletion of Key System storage</dt>
           <dd>
-            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the user with a way to delete Key System storage for a specific <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> or all origins. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the user with a way to specifically delete Key System storage, by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
 
