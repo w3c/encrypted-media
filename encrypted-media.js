@@ -333,21 +333,20 @@
 
     'are-insecure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-insecure-contexts-allowed---deprecated', link_text: 'Are insecure contexts allowed?',  },
 
-//    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
-    'keyids-initdatatype': { func: link_helper, fragment: 'format-registry/initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
+    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
 
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cen.html', link_text: '"cenc" Initialization Data Format', },
-    'cenc-common-system': { func: link_helper, fragment: '../initdata/cenc.html#common-system', link_text: 'Common SystemID and PSSH Box Format', },
-    'initdata-registry-keyids': { func: link_helper, fragment: '../initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
-    'initdata-registry-webm': { func: link_helper, fragment: '../initdata/webm.html', link_text: '"webm" Initialization Data Format', },
-    'stream-registry': { func: link_helper, fragment: '../stream/', link_text: 'Encrypted Media Extensions Stream Format Registry', },
-    'stream-registry-webm': { func: link_helper, fragment: '../stream/webm.html', link_text: 'WebM Stream Format', },
-    'stream-registry-mp4': { func: link_helper, fragment: '../stream/mp4.html', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
+    'initdata-registry-cenc': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-cenc/', link_text: '"cenc" Initialization Data Format', },
+    'cenc-common-system': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-cenc/#common-system', link_text: 'Common SystemID and PSSH Box Format', },
+    'initdata-registry-keyids': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-keyids/', link_text: '"keyids" Initialization Data Format', },
+    'initdata-registry-webm': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-webm/', link_text: '"webm" Initialization Data Format', },
+    'stream-registry': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-registry/', link_text: 'Encrypted Media Extensions Stream Format Registry', },
+    'stream-registry-webm': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-webm/', link_text: 'WebM Stream Format', },
+    'stream-registry-mp4': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-mp4/', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession()',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
@@ -399,7 +398,9 @@
     // Add the registry biblio entries to localBiblio.
     // If it is not empty, we need to add the entries to the existing object.
     var registry_base_path = is_registry_file ? "../" : "format-registry/";
-    var registry_biblio_entries = getEncryptedMediaRegistryBibioEntries(registry_base_path);
+    var registry_biblio_entries =
+     getEncryptedMediaRegistryBibioEntries(registry_base_path,
+                                           window.respecConfig.specStatus);
     if (window.respecConfig.localBiblio) {
       for (var property_name in registry_biblio_entries)
         window.respecConfig.localBiblio[property_name] = registry_biblio_entries[property_name];
@@ -550,17 +551,45 @@
     return;
   }
 
-  function getEncryptedMediaRegistryBibioEntries(registry_base_path) {
+  function getEncryptedMediaRegistryBibioEntries(registry_base_path, status) {
+    var registry_path = registry_base_path + "initdata/";
+    var stream_path = registry_base_path + "stream/";
+    var postfix = ".html";
+    var separator = "";
+    if (status !== "ED") {
+      registry_path = "https://wwww.w3.org/TR/eme-initdata";
+      stream_path = "https://wwww.w3.org/TR/eme-stream";
+      postfix = "/";
+      separator = "-";
+    }
     return {
       "EME-INITDATA-REGISTRY": {
         title: "Encrypted Media Extensions Initialization Data Format Registry",
-        href: registry_base_path + "initdata/",
+        href: registry_path + ((postfix !== "/")? "index.html" : "-registry/"),
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-CENC": {
+        title: "\"cenc\" Initialization Data Format",
+        href: registry_path + separator + "cenc" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-WEBM": {
+        title: "\"webm\" Initialization Data Format",
+        href: registry_path + separator + "webm" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-KEYIDS": {
+        title: "\"keyids\" Initialization Data Format",
+        href: registry_path + separator + "keyids" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
         publisher: "W3C"
     },
     "EME-STREAM-REGISTRY": {
         title: "Encrypted Media Extensions Stream Format Registry",
-        href: registry_base_path + "stream/",
+        href: stream_path + ((postfix !== "/")? "index.html" : "-registry/"),
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
         publisher: "W3C"
     }
