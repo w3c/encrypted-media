@@ -905,13 +905,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     }
   </script>
 </head>
-<body class="h-entry toc-inline" role="document" id="respecDocument">
+<body class="h-entry" role="document" id="respecDocument">
   <div class="head" role="contentinfo" id="respecHeader">
     <p>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-02-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-02">02 June 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-03-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-03">03 June 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1068,7 +1068,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li class="tocline"><a href="#cdm-unavailable" class="tocxref"><span class="secno">5.2.2 </span>CDM Unavailable</a></li>
             </ul>
           </li>
-          <li class="tocline"><a href="#media-keys-storage" class="tocxref"><span class="secno">5.3 </span>Storage and persistence</a></li>
+          <li class="tocline"><a href="#media-keys-storage" class="tocxref"><span class="secno">5.3 </span>Storage and Persistence</a></li>
         </ul>
       </li>
       <li class="tocline"><a href="#mediakeysession-interface" class="tocxref"><span class="secno">6. </span><span class="formerLink"><code>MediaKeySession</code></span> Interface</a>
@@ -1100,7 +1100,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li class="tocline"><a href="#update-key-statuses" class="tocxref"><span class="secno">6.6.2 </span>Update Key Statuses</a></li>
               <li class="tocline"><a href="#update-expiration" class="tocxref"><span class="secno">6.6.3 </span>Update Expiration</a></li>
               <li class="tocline"><a href="#session-closed" class="tocxref"><span class="secno">6.6.4 </span>Session Closed</a></li>
-              <li class="tocline"><a href="#monitor-cdm" class="tocxref"><span class="secno">6.6.5 </span>Monitor for CDM State Changes</a></li>
+              <li class="tocline"><a href="#media-key-session-destroyed" class="tocxref"><span class="secno">6.6.5 </span>MediaKeySession Destroyed</a></li>
+              <li class="tocline"><a href="#monitor-cdm" class="tocxref"><span class="secno">6.6.6 </span>Monitor for CDM State Changes</a></li>
             </ul>
           </li>
           <li class="tocline"><a href="#exceptions" class="tocxref"><span class="secno">6.7 </span>Exceptions</a></li>
@@ -2662,7 +2663,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <td><code id="idl-def-MediaKeySessionType.temporary">temporary</code></td>
           <td>
             <p>
-              A session for which the license and record of or data related to the session <em class="rfc2119" title="MUST NOT">MUST NOT</em> be persisted.
+              A session for which the license, key(s) and record of or data related to the session are not persisted.
             </p>
             <p>
               The application need not worry about managing such storage. Support for this session type is <em class="rfc2119" title="REQUIRED">REQUIRED</em>.
@@ -2677,7 +2678,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <p class=""><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
             </div>
             <p>
-              A session for which the license and any key(s) it contains <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> be persisted and for which a <a href="#record-of-key-usage">record of key usage</a> <em class="rfc2119" title="SHALL">SHALL</em> be persisted when the keys available within the session are destroyed. The <dfn id="record-of-key-usage" data-dfn-type="dfn">record of key usage</dfn> consists of:
+              A session for which the license and key(s) are not persisted and for which a <a href="#record-of-key-usage">record of key usage</a> is persisted when the keys available within the session are destroyed. The <dfn id="record-of-key-usage" data-dfn-type="dfn">record of key usage</dfn> consists of:
             </p>
             <ul>
               <li>
@@ -2945,7 +2946,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     </section>
 
     <section id="media-keys-storage" typeof="bibo:Chapter" resource="#media-keys-storage" property="bibo:hasPart">
-      <h3 id="h-media-keys-storage" resource="#h-media-keys-storage"><span property="xhv:role" resource="xhv:heading"><span class="secno">5.3 </span>Storage and persistence</span></h3>
+      <h3 id="h-media-keys-storage" resource="#h-media-keys-storage"><span property="xhv:role" resource="xhv:heading"><span class="secno">5.3 </span>Storage and Persistence</span></h3>
       <p>This section describes general requirements related to storage and persistence.</p>
 
       <p>
@@ -2973,6 +2974,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <p>
       The User Agent <em class="rfc2119" title="SHALL">SHALL</em> execute the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm continuously for each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object until the sooner of the <a href="#session-closed">Session Closed</a> algorithm being run or the destruction of the <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a>. The <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm <em class="rfc2119" title="MUST">MUST</em> be run in parallel to the main event loop, but not in parallel to other procedures defined in this specification that are also defined to be run in parallel.
     </p>
+    <p>
+      If a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object becomes inaccessible to the page and the <a href="#session-closed">Session Closed</a> algorithm has not already been run, the User Agent
+      <em class="rfc2119" title="MUST">MUST</em> run the <a href="#media-key-session-destroyed">MediaKeySession destroyed</a> algorithm before User Agent state associated with the <a href="#key-session">session</a> is deleted.
+    </p>
+
     <p>
       A MediaKeySession object <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> be destroyed and <em class="rfc2119" title="SHALL">SHALL</em> continue to receive events if it has not been closed and the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object that created it remains accessible. Otherwise, a MediaKeySession object that is no longer accessible to JavaScript <em class="rfc2119" title="SHALL NOT">SHALL NOT</em> receive further events and <em class="rfc2119" title="MAY">MAY</em> be destroyed.
     </p>
@@ -4339,17 +4345,46 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         </ol>
       </section>
 
+      <section id="media-key-session-destroyed" typeof="bibo:Chapter" resource="#media-key-session-destroyed" property="bibo:hasPart">
+        <h4 id="h-media-key-session-destroyed" resource="#h-media-key-session-destroyed"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.5 </span>MediaKeySession Destroyed</span></h4>
+        <p>
+          This algorithm performs steps that are necessary when a <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> is destroyed and the <a href="#session-closed">Session Closed</a> algorithm has not been run.
+        </p>
+        <p>The following steps are run in parallel to the main event loop:</p>
+        <ol>
+          <li>
+            <p>Let <var>session</var> be the associated <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.</p>
+          </li>
+          <li>
+            <p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p>
+          </li>
+          <li>
+            <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+          </li>
+          <li>
+            <p>
+              If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store the <var>record of key usage</var>, if it exists.
+            </p>
+            <div class="note">
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note75"><span>Note</span></div>
+              <p class="">
+                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
       <section id="monitor-cdm" typeof="bibo:Chapter" resource="#monitor-cdm" property="bibo:hasPart">
-        <h4 id="h-monitor-cdm" resource="#h-monitor-cdm"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.5 </span>Monitor for CDM State Changes</span></h4>
+        <h4 id="h-monitor-cdm" resource="#h-monitor-cdm"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.6.6 </span>Monitor for CDM State Changes</span></h4>
         <p>
           The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
           <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object in parallel to the main event loop but not in parallel to other procedures defined in this specification that are run in parallel to the main event loop.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note74"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note76"><span>Note</span></div>
           <p class="">This algorithm only applies to CDM state changes that are not covered by other algorithms. For example, <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
         </div>
-        <p></p>
         <p>
           The following steps are run:
         </p>
@@ -4516,7 +4551,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <li>
         <p>For each block of encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> encountered during the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent shall run the <a href="#encrypted-block-encountered">Encrypted Block Encountered</a> algorithm in the order the encrypted blocks were encountered.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note75"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note77"><span>Note</span></div>
           <p class="">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
         </div>
       </li>
@@ -4553,11 +4588,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <p>Provides the <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> to use when decrypting media data during playback.</p>
 
           <div class="note">
-            <div class="note-title marker" aria-level="4" role="heading" id="h-note76"><span>Note</span></div>
+            <div class="note-title marker" aria-level="4" role="heading" id="h-note78"><span>Note</span></div>
             <p class="">Support for clearing or replacing the associated <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
           </div>
           <div class="note">
-            <div class="note-title marker" aria-level="4" role="heading" id="h-note77"><span>Note</span></div>
+            <div class="note-title marker" aria-level="4" role="heading" id="h-note79"><span>Note</span></div>
             <p class="">Some implementations may only support decrypting media data provided via Media Source Extensions [<cite><a class="bibref" href="#bib-MEDIA-SOURCE">MEDIA-SOURCE</a></cite>]. This is not reflected in the results of calling <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code>.
             </p>
           </div>
@@ -4618,7 +4653,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <li>
                       <p>If the association cannot currently be removed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
                       <div class="note">
-                        <div class="note-title marker" aria-level="4" role="heading" id="h-note78"><span>Note</span></div>
+                        <div class="note-title marker" aria-level="4" role="heading" id="h-note80"><span>Note</span></div>
                         <p class="">For example, some implementations may not allow removal during playback.</p>
                       </div>
                     </li>
@@ -4775,7 +4810,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</td>
             <td>The element's <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
               <div class="note">
-                <div class="note-title marker" aria-level="4" role="heading" id="h-note79"><span>Note</span></div>
+                <div class="note-title marker" aria-level="4" role="heading" id="h-note81"><span>Note</span></div>
                 <p class="">It is possible that the element is playing or has played.</p>
               </div>
             </td>
@@ -4815,7 +4850,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
             </ol>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note80"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note82"><span>Note</span></div>
               <p class="">While the media element may allow loading of "Optionally-blockable Content" [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>], the user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose Initialization Data from such media data to the application.</p>
             </div>
           </li>
@@ -4830,11 +4865,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
             </ul>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note81"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div>
               <p class=""><code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
             </div>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note82"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
               <p class="">The <code><a href="#widl-MediaEncryptedEventInit-initData">initData</a></code> attribute will be null if the media data is <em>not</em> <a href="http://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> or is <a href="#mixed-content">mixed content</a>. Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </div>
@@ -4842,7 +4877,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <li>
             <p>If the media element's <code><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object before decoding potentially-encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, run the following steps:</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
               <p class="">These steps may be reached when the application provides <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> before calling <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code> to provide a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object. Selecting a <a href="#cdm">CDM</a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> object to <code><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys()</a></code>.
               </p>
             </div>
@@ -4897,7 +4932,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li>
                 <p>If <var>cdm</var> is no longer usable for any reason, run the following steps:</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note86"><span>Note</span></div>
                   <p class="">These steps are intended to be run on unrecoverable failures of the CDM.</p>
                 </div>
                 <ol>
@@ -4915,7 +4950,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li>
                 <p>If there is at least one <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> created by the <var>media keys</var> on which the <a href="#session-closed">Session Closed</a> algorithm has not been run, run the following steps:</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note87"><span>Note</span></div>
                   <p class="">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                 </div>
                 <ol>
@@ -4925,7 +4960,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                   <li>
                     <p>Let the <var>block key ID</var> be the key ID of <var>block</var>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="5" role="heading" id="h-note86"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="5" role="heading" id="h-note88"><span>Note</span></div>
                       <p class="">The key ID is generally specified by the container.</p>
                     </div>
                   </li>
@@ -4942,7 +4977,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                         <p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a href="#usable-for-decryption">usable for decryption</a>, let <var>session</var> be a
                           <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object containing that key and let <var>block key</var> be that key.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="5" role="heading" id="h-note87"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="5" role="heading" id="h-note89"><span>Note</span></div>
                           <p class="">If multiple sessions contain a key that is <a href="#usable-for-decryption">usable for decryption</a> for the <var>block key ID</var>, which session and key to use is <a href="#key-system">Key System</a>-dependent.</p>
                         </div>
                       </li>
@@ -4973,7 +5008,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                               </li>
                             </ol>
                             <div class="note">
-                              <div class="note-title marker" aria-level="5" role="heading" id="h-note88"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="5" role="heading" id="h-note90"><span>Note</span></div>
                               <p class="">
                                 Implementations <em class="rfc2119" title="MAY">MAY</em> optimize the times at which this step is executed provided the recorded key usage times remain accurate to within <var>key usage accuracy</var>.
                               </p>
@@ -5009,7 +5044,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                                   <li>
                                     <p>Process the decrypted block as normal.</p>
                                     <div class="note">
-                                      <div class="note-title marker" aria-level="5" role="heading" id="h-note89"><span>Note</span></div>
+                                      <div class="note-title marker" aria-level="5" role="heading" id="h-note91"><span>Note</span></div>
                                       <p class="">In other words, decode the block.</p>
                                     </div>
                                   </li>
@@ -5021,13 +5056,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                               </dd>
                             </dl>
                             <div class="note">
-                              <div class="note-title marker" aria-level="5" role="heading" id="h-note90"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="5" role="heading" id="h-note92"><span>Note</span></div>
                               <p class="">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
                             </div>
                           </li>
                         </ol>
                         <div class="note">
-                          <div class="note-title marker" aria-level="5" role="heading" id="h-note91"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="5" role="heading" id="h-note93"><span>Note</span></div>
                           <p class="">Otherwise, there is no key for the <var>block key ID</var> in any session so continue.</p>
                         </div>
                       </li>
@@ -5040,7 +5075,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <li>
             <p>Run the following steps:</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note92"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note94"><span>Note</span></div>
               <p class="">These steps are reached when there is no key that is <a href="#usable-for-decryption">usable for decryption</a> for <var>block</var>.</p>
             </div>
             <ol>
@@ -5052,7 +5087,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         </ol>
 
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note93"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note95"><span>Note</span></div>
           <div class="">
             <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a href="http://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
             <ol>
@@ -5095,7 +5130,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <li>
             <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note94"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note96"><span>Note</span></div>
               <p class="">As a result of the above step, the media element will become a <a href="http://www.w3.org/TR/html5/embedded-content-0.html#blocked-media-element">blocked media element</a> if it wasn't already. In that case, the media element will stop playback.</p>
             </div>
           </li>
@@ -5133,7 +5168,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               <li>
                 <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note95"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note97"><span>Note</span></div>
                   <p class="">As a result of the above step, the media element may no longer be a <a href="http://www.w3.org/TR/html5/embedded-content-0.html#blocked-media-element">blocked media element</a> and thus playback may resume.</p>
                 </div>
               </li>
@@ -5143,7 +5178,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                   <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_enough_data">HAVE_ENOUGH_DATA</a></code> as <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#ready-states">appropriate</a></code>.
                 </p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note96"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note98"><span>Note</span></div>
                   <div class="">
                     <p>
                       States beyond <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_current_data">HAVE_CURRENT_DATA</a></code> and the <code><a href="http://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplaythrough">canplaythrough</a></code> event do not (or are unlikely to) consider key availability beyond the current key.
@@ -5205,14 +5240,14 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <li>
             <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> avoid use of <a href="#distinctive-identifier">Distinctive Identifiers</a>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note97"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note99"><span>Note</span></div>
               <p class="">For example, use keys or identifiers that apply to a group of clients or devices rather than individual clients.</p>
             </div>
           </li>
           <li>
             <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> only use <a href="#distinctive-identifier">Distinctive Identifiers</a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note98"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note100"><span>Note</span></div>
               <p class="">For example, <code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> sessions may have different requirements.</p>
             </div>
           </li>
@@ -5234,12 +5269,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         <p>This <em class="rfc2119" title="MAY">MAY</em> be implemented using a <a href="#server-certificate">server certificate</a>.</p>
         <p>The license server <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose a <a href="#distinctive-identifier">Distinctive Identifier</a> to any entity other than the CDM that sent it.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note99"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note101"><span>Note</span></div>
           <p class="">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM. This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
           </p>
         </div>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note100"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note102"><span>Note</span></div>
           <div class="">
             <p>Among other things, this means that:</p>
             <ul>
@@ -5289,7 +5324,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <h3 id="h-support-multiple-keys" resource="#h-support-multiple-keys"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.3 </span>Support Multiple Keys</span></h3>
       <p>Implementations <em class="rfc2119" title="MUST">MUST</em> support multiple keys in each <a href="#idl-def-MediaKeySession" class="idlType"><code>MediaKeySession</code></a> object.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note101"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note103"><span>Note</span></div>
         <p class="">The mechanics of how multiple keys are supported is an implementation detail, but it <em class="rfc2119" title="MUST">MUST</em> be transparent to the application and these APIs.</p>
       </div>
 
@@ -5304,7 +5339,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         <h4 id="h-licenses-generated-are-independent-of-content-type" resource="#h-licenses-generated-are-independent-of-content-type"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.1 </span>Licenses Generated are Independent of Content Type</span></h4>
         <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow licenses generated with any <a href="#initialization-data-type">Initialization Data Type</a> they support to be used with any content type.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note102"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note104"><span>Note</span></div>
           <p class="">Otherwise, the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code> algorithm might, for example, reject a <a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a> because one of the <code><a href="#widl-MediaKeySystemConfiguration-initDataTypes">initDataTypes</a></code> is not supported with one of the <code><a href="#widl-MediaKeySystemConfiguration-videoCapabilities">videoCapabilities</a></code>.</p>
         </div>
       </section>
@@ -5313,7 +5348,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         <h4 id="h-support-extraction-from-media-data" resource="#h-support-extraction-from-media-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.4.2 </span>Support Extraction From Media Data</span></h4>
         <p>For any supported <a href="#initialization-data-type">Initialization Data Type</a> that may appear in a supported container, the user agents <em class="rfc2119" title="MUST">MUST</em> support <a href="#initdata-encountered">extracting</a> that type of <a href="#initialization-data">Initialization Data</a> from each such supported container.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note103"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note105"><span>Note</span></div>
           <p class="">In other words, indicating support for an <a href="#initialization-data-type">Initialization Data Type</a> implies both CDM support for generating license requests and, for container-specific types, user agent support for extracting it from the container. This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported <a href="#initialization-data">Initialization Data</a> from <em>any</em> supported content type.
           </p>
         </div>
@@ -5337,7 +5372,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-resource">Media resources</a>, including all tracks, <em class="rfc2119" title="MUST">MUST</em> be encrypted and packaged per a container-specific "common encryption" specification that allows the content to be decrypted in a fully specified and compatible way when a key or keys are provided.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note104"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note106"><span>Note</span></div>
           <p class="">
             The Encrypted Media Extensions Stream Format and Initialization Data Format Registry [<cite><a class="bibref" href="#bib-EME-STREAM-REGISTRY">EME-STREAM-REGISTRY</a></cite>] provides references to such stream formats.
           </p>
@@ -5350,7 +5385,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           In-band support content, such as captions, described audio, and transcripts, <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> be encrypted.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note105"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note107"><span>Note</span></div>
           <p class="">
             Decryption of such tracks - especially such that they can be provided back the user agent - is not generally supported by implementations. Thus, encrypting such tracks would prevent them from being widely available for use with accessibility features in user agent implementations.
           </p>
@@ -5370,7 +5405,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <p>
     </p>
     <div class="note">
-      <div class="note-title marker" aria-level="3" role="heading" id="h-note106"><span>Note</span></div>
+      <div class="note-title marker" aria-level="3" role="heading" id="h-note108"><span>Note</span></div>
       <p class="">This ensures that there is a common baseline level of functionality that is guaranteed to be supported in all user agents, including those that are entirely open source. Thus, content providers that need only basic decryption can build simple applications that will work on all platforms without needing to work with any content protection providers.
       </p>
     </div>
@@ -5619,13 +5654,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <p>User Agent and Key System implementations <em class="rfc2119" title="MUST">MUST</em> consider <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, <a href="#initialization-data">Initialization Data</a>, data passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors. They <em class="rfc2119" title="MUST">MUST</em> use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data. User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> validate data before passing it to the CDM.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note107"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note109"><span>Note</span></div>
         <p class="">Such validation is especially important if the CDM does not run in the same (sandboxed) context as, for example, the DOM.</p>
       </div>
 
       <p>Implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> return active content or passive content that affects program control flow to the application.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note108"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note110"><span>Note</span></div>
         <p class="">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the <a href="#initialization-data">Initialization Data</a> passed to <code><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest()</a></code>. Applications must determine the URLs to use. The <code><a href="#widl-MediaKeyMessageEvent-messageType">messageType</a></code> attribute of the <code><a href="#dom-evt-message">message</a></code> event can be used by the application to select among a set of URLs if applicable.
         </p>
       </div>
@@ -5638,7 +5673,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <p>Exploiting a CDM implementation that is not fully sandboxed and/or uses platform features may allow an attacker to access OS or platform features, elevate privilege (e.g. to run as system or root), and/or access drivers, kernel, firmware, hardware, etc. Such features, software, and hardware may not be written to be robust against hostile software or web-based attacks and may not be updated with security fixes, especially compared to the user agent. Lack of, infrequent, or slow updates for fixes to security vulnerabilities in CDM implementations increases the risk. Such CDM implementations and UAs that expose them <em class="rfc2119" title="MUST">MUST</em> be especially careful in all areas of security, including parsing of <a href="#input-data-security">all data</a>.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note109"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note111"><span>Note</span></div>
         <p class="">User agents should be especially diligent when using a CDM or underlying mechanism that is part of or provided by the client OS, platform and/or hardware.</p>
       </div>
 
@@ -5646,7 +5681,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that users are fully informed and/or give explicit consent before loading or invoking it. Such implementations <em class="rfc2119" title="SHOULD">SHOULD</em> only be supported on secure contexts to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note110"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note112"><span>Note</span></div>
         <p class="">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker. See also <a href="#privacy-prompts">User Alerts / Prompts</a> and <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
         </p>
       </div>
@@ -5710,7 +5745,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p>User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. Such alerts and consent <em class="rfc2119" title="SHOULD">SHOULD</em> be per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access. (A full <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> <em class="rfc2119" title="MUST">MUST</em> be used rather than just the domain because the protocol is important for security as described above.) User agents <em class="rfc2119" title="SHOULD">SHOULD</em> only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note111"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
               <p class="">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker. Alerting or prompting the user for consent on insecure origins without persisting the choice provides at least a minimum level of security because the user would be alerted to unexpected use (e.g. on a site that does not use encrypted media).
               </p>
             </div>
@@ -5746,7 +5781,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <p>Using these APIs on shared hosts compromises origin-based security and privacy mitigations implemented by user agents. For example, per-origin <a href="#distinctive-identifier">Distinctive Identifiers</a> are shared by all authors on one host name, and peristed data may be accessed and manipulated by any author on the host. The latter is especially important if, for example, modification or deletion of such data could erase a user's right to specific content.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note112"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note114"><span>Note</span></div>
         <p class="">Even if a path-restriction feature was made available by user agents, the usual DOM scripting security model would make it trivial to bypass this protection and access the data from any path.</p>
       </div>
       <p>Authors on shared hosts are therefore <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> to avoid using these APIs because doing so compromises origin-based security and privacy mitigations in user agents.</p>
@@ -5814,7 +5849,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               It is not possible to extract, derive or infer information from the CDM that is not either explicitly described in this specification or available to the page through other web platform APIs without user permission. This applies to any information that is exposed outside the client device or to the application, including, for example, in CDM messages.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note115"><span>Note</span></div>
               <div class="">
                 <p>The type of information covered by this requirement includes but is not limited to:</p>
                 <ul>
@@ -5936,7 +5971,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <dd>
             <p>User agents <em class="rfc2119" title="MAY">MAY</em>, possibly in a manner configured by the user, automatically delete <a href="#distinctive-identifier">Distinctive Identifiers</a> and/or other Key System data after a period of time.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note114"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note116"><span>Note</span></div>
               <div class="">
                 <p>For example, a user agent could be configured to such data as session-only storage, deleting the data once the user had closed all the browsing contexts that could access it.</p>
                 <p>This can restrict the ability of a site to track a user, as the site would then only be able to track the user across multiple sessions when he authenticates with the site itself (e.g. by making a purchase or logging in to a service).</p>
@@ -5969,13 +6004,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p>User agents <em class="rfc2119" title="MUST">MUST</em> prompt or otherwise inform the user before allowing use of a <a href="#distinctive-identifier">Distinctive Identifier</a> that is not <a href="#per-origin-identifiers">unique per-origin</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> prompt or otherwise inform the user before allowing use of all other <a href="#distinctive-identifier">Distinctive Identifier</a>.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note115"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note117"><span>Note</span></div>
               <p class="">The "not unique per-origin" and "not clearable" conditions cannot be true in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
             </div>
             <p>Such alerts and consent <em class="rfc2119" title="SHOULD">SHOULD</em> be per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access. User agent implementers that consider such alerts or consent appropriate for a Key System implementation <em class="rfc2119" title="SHOULD">SHOULD</em> only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note116"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note118"><span>Note</span></div>
               <p class="">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.</p>
             </div>
           </dd>
@@ -5988,7 +6023,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         </dl>
 
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note117"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note119"><span>Note</span></div>
           <p class="">While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether. Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not
             <!-- TODO: Bug 27269 --><a href="#per-origin-identifiers">unique per-origin</a>, then a profile can still be created.
           </p>
@@ -6010,7 +6045,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <p><a href="http://www.w3.org/TR/html5/browsers.html#origin-0">Origin</a>-independent individualization is performed between the <a href="#cdm">CDM</a> and an origin- and application-independent server. The process <em class="rfc2119" title="MUST">MUST</em> be performed by the user agent and <em class="rfc2119" title="MUST NOT">MUST NOT</em> use these APIs.
           </p>
           <div class="note">
-            <div class="note-title marker" aria-level="6" role="heading" id="h-note118"><span>Note</span></div>
+            <div class="note-title marker" aria-level="6" role="heading" id="h-note120"><span>Note</span></div>
             <p class="">For example, such a process may initialize a client device by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly using identifiers from the client device. Such communication would not involve providing application- or origin-specific information.
             </p>
           </div>

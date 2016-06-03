@@ -1229,7 +1229,7 @@
         <dt>temporary</dt>
         <dd>
           <p>
-            A session for which the license and record of or data related to the session MUST NOT be persisted.
+            A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
           <p>
             The application need not worry about managing such storage.
@@ -1240,7 +1240,7 @@
         <dd>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
-            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <a def-id="record-of-key-usage"></a> SHALL be persisted when
+            A session for which the license and key(s) are not persisted and for which a <a def-id="record-of-key-usage"></a> is persisted when
             the keys available within the session are destroyed.
             The <dfn id="record-of-key-usage">record of key usage</dfn> consists of:
           </p>
@@ -1449,6 +1449,13 @@
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
+      <p>
+        If a <a>MediaKeySession</a> object becomes inaccessible to the page
+        and the <a def-id="session-closed-algorithm"></a> algorithm has not already been run, the User Agent
+        MUST run the <a def-id="media-key-session-destroyed-algorithm"></a> algorithm before User Agent state
+        associated with the <a href="#key-session">session</a> is deleted.
+      </p>
+
       <p>
         A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
         not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
@@ -2337,7 +2344,28 @@
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
         </section>
-
+        <section id="media-key-session-destroyed">
+          <h4>MediaKeySession Destroyed</h4>
+          <p>
+            This algorithm performs steps that are necessary when a <a>MediaKeySession</a> is destroyed and
+            the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+          </p>
+          <p>The following steps are run in parallel to the main event loop:</p>
+          <ol>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+            <li><p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+            <li>
+              <p>
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                store the <var>record of key usage</var>, if it exists.
+              </p>
+              <p class="note">
+                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+              </p>
+            </li>
+          </ol>
+        </section>
         <section id="monitor-cdm">
           <h4>Monitor for CDM State Changes</h4>
           <p>
