@@ -235,6 +235,8 @@
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
     'destroy-session-algorithm' : { func: term_helper, fragment: 'destroy-session', link_text: 'Destroy Session', },
     'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
+    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
+    'monitor-cdm-algorithm': { func: term_helper, fragment: 'monitor-cdm', link_text: 'Monitor for CDM Changes',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
     'initdata-encountered-algorithm': { func: term_helper, fragment: 'initdata-encountered', link_text: 'Initialization Data Encountered',  },
@@ -323,6 +325,7 @@
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
+    'queue-a-task': { func: queue_helper, fragment: '', link_text: 'queue a task',  },
 
     'constructing-events': { func: dom_helper, fragment: 'constructing-events', link_text: 'Constructing events', },
     'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
