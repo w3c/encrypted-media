@@ -1411,7 +1411,7 @@
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -1732,7 +1732,7 @@
                         If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
                       </p>
                       <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                        Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                        Once the additional processing for one or more keys has completed, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
                       </p>
                     </li>
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
@@ -1887,7 +1887,7 @@
                               </p>
                               <p>
                                 Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
-                                Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
+                                Once the additional processing for one or more keys has completed, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
                               </p>
                             </li>
                             <li>
@@ -2251,6 +2251,7 @@
           <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a>MediaKeySession</a> or the status of one or more of the keys.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of <a def-id="key-id"></a> and associated <a>MediaKeyStatus</a> pairs.
           </p>
+          <p class="note">The algorithm is always run in a task.</p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
@@ -2281,6 +2282,7 @@
           <p>The Update Expiration algorithm updates the expiration time of a <a>MediaKeySession</a>.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and the new expiration time, which may be <code>NaN</code>.
           </p>
+          <p class="note">The algorithm is always run in a task.</p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
@@ -2293,6 +2295,7 @@
         <section id="session-closed">
           <h4>Session Closed</h4>
           <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">session</a> has been closed.</p>
+          <p class="note">The algorithm is always run in a task.</p>
           <p>
             Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to
             decrypt <a def-id="media-data"></a>. All <a>MediaKeySession</a> methods will fail and no further events will be queued for this object
@@ -2401,7 +2404,7 @@
                 </li>
                 <li>
                   <p>
-                    Run the <a def-id="update-key-statuses-algorithm"></a> algorithm, passing <var>session</var> and <var>statuses</var>.
+                    <a def-id="Queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm, passing <var>session</var> and <var>statuses</var>.
                   </p>
                 </li>
               </ol>
@@ -2418,7 +2421,7 @@
                 </li>
                 <li>
                   <p>
-                    Run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                    <a def-id="Queue-a-task"></a> to run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration</var>.
                   </p>
                 </li>
               </ol>
@@ -2786,7 +2789,7 @@
                         <a>MediaKeySession</a> object containing that key and let <var>block key</var> be that key.</p>
                           <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
-                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
+                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
                         <li><p>If <var>block key</var> is not null, run the following steps:
                           <ol>
                             <li>
