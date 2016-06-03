@@ -556,7 +556,7 @@
                 </p>
               </li>
 
-              <li><p>If the <a def-id="option-initDataTypes"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>, run the following steps:</p>
+              <li><p>If the <a def-id="option-initDataTypes"></a> member of <var>candidate configuration</var> is non-empty, run the following steps:</p>
                 <ol>
                   <li><p>Let <var>supported types</var> be an empty sequence of DOMStrings.</p></li>
                   <li><p>For each value in <var>candidate configuration</var>'s <a def-id="option-initDataTypes"></a> member:</p>
@@ -694,21 +694,42 @@
                 </ol>
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
-
-              <li><p>If the <a def-id="option-videoCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
-                <ol>
-                  <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
-                  <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
-                  <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
-                </ol>
+              
+              <li>
+                <p>
+                  If the <a def-id="option-videoCapabilities"></a> and <a def-id="option-audioCapabilities"></a> members in <var>candidate configuration</var>
+                  are both empty, return <code>NotSupported</code>.
+                </p>
               </li>
 
-              <li><p>If the <a def-id="option-audioCapabilities"></a> member is <a def-id="present-dictionary-member"></a> [[!WebIDL]] in <var>candidate configuration</var>:</p>
-                <ol>
-                  <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
-                  <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
-                  <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
-                </ol>
+              <li>
+                <dl class="switch">
+                  <dt>If the <a def-id="option-videoCapabilities"></a> member in <var>candidate configuration</var> is non-empty:</dt>
+                  <dd>
+                    <ol>
+                      <li><p>Let <var>video capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Video, <var>candidate configuration</var>'s <a def-id="option-videoCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                      <li><p>If <var>video capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Video capabilities were specified, but none were supported. -->
+                      <li><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to <var>video capabilities</var>.</p></li>
+                    </ol>
+                  </dd>
+                  <dt>Otherwise:</dt>
+                  <dd><p>Set the <a def-id="option-videoCapabilities"></a> member of <var>accumulated configuration</var> to an empty sequence.</p></dd>
+                </dl>
+              </li>
+
+              <li>
+                <dl class="switch">
+                  <dt>If the <a def-id="option-audioCapabilities"></a> member in <var>candidate configuration</var> is non-empty:</dt>
+                  <dd>
+                    <ol>
+                      <li><p>Let <var>audio capabilities</var> be the result of executing the <a def-id="get-supported-capabilities-for-audio-video-type-algorithm"></a> algorithm on Audio, <var>candidate configuration</var>'s <a def-id="option-audioCapabilities"></a> member, <var>accumulated configuration</var>, and <var>restrictions</var>.</p></li>
+                      <li><p>If <var>audio capabilities</var> is <code>null</code>, return <code>NotSupported</code>.</p></li><!-- Audio capabilities were specified, but none were supported. -->
+                      <li><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to <var>audio capabilities</var>.</p></li>
+                    </ol>
+                  </dd>
+                  <dt>Otherwise:</dt>
+                  <dd><p>Set the <a def-id="option-audioCapabilities"></a> member of <var>accumulated configuration</var> to an empty sequence.</p></dd>
+                </dl>
               </li>
 
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
@@ -1026,23 +1047,25 @@
           <dd>
             An optional label that will be preserved in the <a>MediaKeySystemConfiguration</a> returned from the <a def-id="getConfiguration"></a> method of <a>MediaKeySystemAccess</a>.
           </dd>
-          <dt>sequence&lt;DOMString&gt; initDataTypes</dt>
+          <dt>sequence&lt;DOMString&gt; initDataTypes = [ ]</dt>
           <dd>
             A list of supported <a def-id="initialization-data-type"></a> names.
             The <a def-id="initialization-data-type"></a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             Values in the sequence MUST not be the empty string.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities</dt>
+          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = [ ]</dt>
           <dd>
             A list of supported audio type and capability pairs.
             The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
-            When there is a conflict between values, the earlier value will be selected.
+            When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported.
+            In this case, the <a def-id="option-videoCapabilities"></a> element must not be empty.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities</dt>
+          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities = [ ]</dt>
           <dd>
             A list of supported video type and capability pairs.
             The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
-            When there is a conflict between values, the earlier value will be selected.
+            When there is a conflict between values, the earlier value will be selected. An empty list indicates that no video capabilities are supported.
+            In this case, the <a def-id="option-audioCapabilities"></a> element must not be empty.
           </dd>
           <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
@@ -1170,6 +1193,7 @@
                 </li>
                 <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
                 <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
+                <li><p>Initialize <var>instance</var> to enable, disable and/or select <a def-id="keysystem"></a> features using <var>configuration</var>.</p></li>
                 <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from using <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p></li>
                 <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
@@ -1197,7 +1221,6 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>If the CDM instance represented by a <a>MediaKeys</a> object <var>media keys</var> becomes unavailable for any reason, then the user agent shall run the <a def-id="cdm-unavailable-algorithm"></a> algorithm on <var>media keys</var>.</p>
       <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1206,7 +1229,7 @@
         <dt>temporary</dt>
         <dd>
           <p>
-            A session for which the license and record of or data related to the session MUST NOT be persisted.
+            A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
           <p>
             The application need not worry about managing such storage.
@@ -1217,7 +1240,7 @@
         <dd>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
-            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <a def-id="record-of-key-usage"></a> SHALL be persisted when
+            A session for which the license and key(s) are not persisted and for which a <a def-id="record-of-key-usage"></a> is persisted when
             the keys available within the session are destroyed.
             The <dfn id="record-of-key-usage">record of key usage</dfn> consists of:
           </p>
@@ -1394,7 +1417,7 @@
         </section>
       </section>
       <section id="media-keys-storage">
-        <h3>Storage and persistence</h3>
+        <h3>Storage and Persistence</h3>
         <p>This section describes general requirements related to storage and persistence.</p>
         
         <p>
@@ -1420,6 +1443,18 @@
     <section>
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
+      <p>
+        The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object until the sooner of
+        the <a def-id="session-closed-algorithm"></a> algorithm being run or the destruction of the <a>MediaKeySession</a>.
+        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
+        in this specification that are also defined to be run in parallel.
+      </p>
+      <p>
+        If a <a>MediaKeySession</a> object becomes inaccessible to the page
+        and the <a def-id="session-closed-algorithm"></a> algorithm has not already been run, the User Agent
+        MUST run the <a def-id="media-key-session-destroyed-algorithm"></a> algorithm before User Agent state
+        associated with the <a href="#key-session">session</a> is deleted.
+      </p>
 
       <p>
         A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
@@ -1915,14 +1950,17 @@
 
         <dt>Promise&lt;void&gt; remove()</dt>
         <dd>
-          <p>Removes stored session data associated with this object.</p>
+          <p>
+            For <a href="#is-persistent-session-type">persistent session types</a>, removes all license(s) and key(s) associated with the session.
+            Other session data will be cleared as defined for each session type once a release message acknowledgment is processed by <a def-id="update"></a>.
+          </p>
 
           <ol class="method-algorithm">
             <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
-            <li><p>If this object's <var>session type</var> is <a def-id="persistent-usage-record-session"></a> or <a def-id="persistent-license-session"></a>, run the following steps in parallel:</p>
+            <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Let <var>message</var> be <code>null</code>.</p></li>
@@ -1937,9 +1975,16 @@
                           <p>
                             Destroy the license(s) and/or key(s) associated with the session.
                           </p>
+                          <p class="note">
+                            This implies destruction of the license(s) and/or keys(s) whether they are in memory, persistent store or both.
+                          </p>
                         </li>
                         <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
                           <dl class="switch">
+                            <dt><a def-id="temporary-session"></a></dt>
+                            <dd>
+                              <p>Continue with the following steps.</p>
+                            </dd>
                             <dt><a def-id="persistent-usage-record-session"></a></dt>
                             <dd>
                               <ol>
@@ -2183,7 +2228,7 @@
 
         <section id="queue-message">
           <h4>Queue a "message" Event</h4>
-          <p>The Queue a "message" Event algorithm is run when the CDM needs to queue a message event to a <a>MediaKeySession</a> object.
+          <p>The Queue a "message" Event algorithm queues a message event to a <a>MediaKeySession</a> object.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object, a <var>message type</var>, and a <var>message</var>.
           </p>
           <p><var>message</var> MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form, if the <a>MediaKeySession</a> object's <var>use distinctive identifier</var> value is false.</p>
@@ -2203,8 +2248,7 @@
 
         <section id="update-key-statuses">
           <h4>Update Key Statuses</h4>
-          <p>The Update Key Statuses algorithm is run when the CDM changes the set of keys <a href="#known-key">known</a> to the session or the status of one or more of the keys.
-          This can happen as the result of a <a def-id="load"></a> or <a def-id="update"></a> call or some other event, such as expiration.
+          <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a>MediaKeySession</a> or the status of one or more of the keys.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of <a def-id="key-id"></a> and associated <a>MediaKeyStatus</a> pairs.
           </p>
           <p>The following steps are run:</p>
@@ -2234,8 +2278,7 @@
 
         <section id="update-expiration">
           <h4>Update Expiration</h4>
-          <p>The Update Expiration algorithm is run when the CDM changes the expiration time of a session.
-          This can happen as the result of an <a def-id="update"></a> call or some other event.
+          <p>The Update Expiration algorithm updates the expiration time of a <a>MediaKeySession</a>.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and the new expiration time, which may be <code>NaN</code>.
           </p>
           <p>The following steps are run:</p>
@@ -2258,7 +2301,7 @@
           <div class="note">
             <p>
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost.
-              In that case, this algorithm MUST be run.
+              In that case, the <a def-id="monitor-cdm-algorithm"></a> algorithm detects the change and runs this algorithm.
             </p>
             <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
             <p>
@@ -2286,9 +2329,114 @@
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
         </section>
-      </section>
+        <section id="media-key-session-destroyed">
+          <h4>MediaKeySession Destroyed</h4>
+          <p>
+            This algorithm performs steps that are necessary when a <a>MediaKeySession</a> is destroyed and
+            the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+          </p>
+          <p>The following steps are run in parallel to the main event loop:</p>
+          <ol>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+            <li><p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+            <li>
+              <p>
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                store the <var>record of key usage</var>, if it exists.
+              </p>
+              <p class="note">
+                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="monitor-cdm">
+          <h4>Monitor for CDM State Changes</h4>
+          <p>
+            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
+            <a>MediaKeySession</a> object in parallel to the main event loop but not in parallel to other procedures defined in this
+            specification that are run in parallel to the main event loop.
+          </p>
+          <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, <a def-id="update"></a> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
+          <p>
+            The following steps are run:
+          </p>
 
-      <section>
+          <ol>
+            <li>
+              <p>
+                Let <var>session</var> be the <a>MediaKeySession</a> object.
+              </p>
+            </li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+            <li>
+              <p>
+                If <var>cdm</var> has an outgoing message that has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>message type</var> and <var>message</var> be the message type and message, respectively.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="queue-message-algorithm"></a> algorithm, passing <var>session</var>, <var>message type</var> and <var>message</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys,
+                then <a def-id="queue-a-task"></a> to execute the following steps:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>statuses</var> be a list of Key ID and <a>MediaKeyStatus</a> value pairs containing one pair for each key
+                    <a href="#known-key">known</a> to <var>session</var>.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="update-key-statuses-algorithm"></a> algorithm, passing <var>session</var> and <var>statuses</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a def-id="queue-a-task"></a> to execute the following steps:
+              </p>
+              <ol>
+                <li>
+                  <p>
+                    Let <var>expiration</var> be the new expiration time of <var>session</var>.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                  </p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has closed <var>session</var>, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> had become unavailable, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+              </p>
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section id="exceptions">
         <h3>Exceptions</h3>
         <p id="error-names">The methods report errors by rejecting the returned promise with a <a def-id="simple-exception">simple exception</a> [[!WebIDL]] or a <a def-id="domexception"></a>.
         The following <a def-id="simple-exception">simple exceptions</a> and <a def-id="domexception-names">DOMException names</a> from [[!WebIDL]] are used in the algorithms.
@@ -2805,6 +2953,26 @@
       <h3>Implementation Requirements</h3>
       <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm">CDM</a> and server - that may not be explicitly addressed in the algorithms.</p>
 
+      <section id="persistent-state-requirements">
+        <h3>Persistent Data</h3>
+        <p>
+          Persistent data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+        </p>
+        <section id="allow-persistent-data-cleared">
+          <h3>Allow Persistent Data to Be Cleared</h3>
+          <p>
+            Implementations that use persistent data MUST allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          </p>
+          <p>
+            Implementations SHOULD allow users to clear persistent data along with cookies [[!COOKIES]] and other site data.
+            It is RECOMMENDED that users be offered the option to clear persistent data as part of user agent features to clear browsing history.
+          </p>
+          <p>
+            It is RECOMMENDED that users be able to request that persistent data be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [[!COOKIES]], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+          </p>
+        </section>
+      </section>
+        
       <section id="identifier-requirements">
         <h3>Identifiers</h3>
         <p>The use of <a def-id="distinctive-identifiers"></a> by implementations presents a privacy concern.
@@ -2868,16 +3036,13 @@
         </section>
 
         <section id="allow-identifiers-cleared">
-          <h3>Allow Identifiers to be Cleared</h3>
-          <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          <h3>Allow Identifiers to Be Cleared</h3>
+          <p>As a consequence of the requirements in <a href="allow-persistent-state-cleared">Allow Persistent Data to Be Cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          </p>
+          <p>
             Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
           </p>
-          <p>Implementations SHOULD allow users to clear <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> along with cookies [[!COOKIES]] and other site data.
-            It is RECOMMENDED that users be offered the option to clear <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> as part of user agent features to clear browsing history.
-          </p>
-          <p>It is RECOMMENDED that users be able to request that <a def-id="distinctive-identifiers"></a> be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [[!COOKIES]], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.</p>
         </section>
-
       </section>
 
       <section>
@@ -3372,7 +3537,7 @@
         <h3>User Tracking</h3>
         <section class="informative">
           <h4>Concerns</h4>
-          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or data, including keys, stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests.
+          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests.
             Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
             In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
           </p>
@@ -3381,9 +3546,11 @@
           <ul>
             <li><p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a></p></li>
             <li><p>Origins visisted (via stored or in-memory data, permissions, etc.)</p></li>
-            <li><p>Content viewed (via stored or in-memory keys, key IDs, data, etc.)</p></li>
+            <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p></li>
           </ul>
           <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and its profile storage), often in the CDM.</p>
+          
+          <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
           <p>Key Systems may access or create persistent or semi-persistent identifier(s), <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>, for a device or user of a device.
             In some cases these identifiers may be bound to a specific device in a secure manner.
@@ -3417,10 +3584,10 @@
               </p>
             </dd>
 
-            <dt>User deletion of <a def-id="distinctive-identifiers"></a></dt>
+            <dt>User deletion of persistent data, including <a def-id="distinctive-identifiers"></a></dt>
             <dd>
-              <p>User agents MUST provide users with the ability to clear any <a def-id="distinctive-identifiers"></a> maintained by Key Systems.
-                See <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a>.
+              <p>User agents MUST provide users with the ability to clear any persistent data, including <a def-id="distinctive-identifiers"></a>, maintained by Key Systems.
+                See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
               </p>
             </dd>
 
@@ -3581,7 +3748,8 @@
           <ul>
             <li><p>MUST ensure it is restricted to the <a def-id="origin"></a> for which it was created.</p></li>
             <li><p>MUST ensure it is restricted to the current profile and does not leak to or from private browsing sessions.</p></li>
-            <li><p>MUST allow the user to clear it, preferably by <a def-id="origin"></a>.</p></li>
+            <li><p>MUST allow the user to clear it.</p></li>
+            <li><p>SHOULD allow the user to clear it by <a def-id="origin"></a>.</p></li>
             <li><p>SHOULD treat it like other site data, including presenting it along with cookies [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.</p></li>
           </ul>
 
@@ -3596,7 +3764,7 @@
 
             <dt>User deletion of Key System storage</dt>
             <dd>
-              <p>User agents SHOULD present the user with a way to delete Key System storage for a specific <a def-id="origin"></a> or all origins.
+              <p>User agents SHOULD present the user with a way to specifically delete Key System storage, by <a def-id="origin"></a> and/or for all origins.
                 User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
               </p>
             </dd>
