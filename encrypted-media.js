@@ -162,6 +162,8 @@
     'initialization-data': { func: term_helper, fragment: 'initialization-data', link_text: 'Initialization Data'  },
     'initialization-data-type': { func: term_helper, fragment: 'initialization-data-type', link_text: 'Initialization Data Type'  },
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
+    'associable': { func: term_helper, fragment: 'associable', link_text: 'associable'  },
+    'non-associable': { func: term_helper, fragment: 'non-associable', link_text: 'non-associable'  },
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
     'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
@@ -234,7 +236,6 @@
 
     'queue-message-algorithm': { func: term_helper, fragment: 'queue-message', link_text: 'Queue a "message" Event',  },
     'session-closed-algorithm': { func: term_helper, fragment: 'session-closed', link_text: 'Session Closed',  },
-    'close-session-algorithm': { func: term_helper, fragment: 'close-session', link_text: 'Close Session',  },
     'monitor-cdm-algorithm': { func: term_helper, fragment: 'monitor-cdm', link_text: 'Monitor for CDM Changes',  },
     'encrypted-block-encountered-algorithm': { func: term_helper, fragment: 'encrypted-block-encountered', link_text: 'Encrypted Block Encountered',  },
     'attempt-to-decrypt-algorithm': { func: term_helper, fragment: 'attempt-to-decrypt', link_text: 'Attempt to Decrypt',  },
@@ -243,6 +244,7 @@
     'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'Update Expiration',  },
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
+    'media-key-session-destroyed-algorithm' : { func: term_helper, fragment: 'media-key-session-destroyed', link_text: 'MediaKeySession destroyed',  },
 
     'media-keys-storage': { func: term_helper, fragment: 'media-keys-storage', link_text: 'Storage and Persistence',  },
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },

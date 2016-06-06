@@ -327,33 +327,90 @@
           </p>
         </dd>
 
+        <dt id="non-associable-identifiers">Non-Associable Identifiers</dt>
+        <dd>
+          <p>Two identifiers or other values are said to be <dfn id="non-associable">non-associable</dfn> if they are not identical AND it is not possible - with a reasonable amount of time and effort - to correlate or associate them.
+						Otherwise, two values are <dfn id="associable">associable</dfn>.
+          </p>
+          <p>Implementation MUST NOT expose <a def-id="associable"></a> identifiers to applications, even in encrypted form, across origins or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.</p>
+
+          <div class="note">
+            <p>For example, two values that are completely unrelated or cryptographically distinct, such as via a cryptographically strong non-reversible hash function, are <a def-id="non-associable"></a>.</p>
+            <p>As counter examples, values created in the following ways are <a def-id="associable"></a>:</p>
+            <ul>
+              <li><p>Using a trivially-reversible hash function.</p></li>
+              <li><p>Sharing a prefix or other subset</p></li>
+              <li><p>Replacing random value N with N+10</p></li>
+              <li><p>XORing the origin with a fixed value (because it is trivially reversible)</p></li>
+            </ul>
+          </div>
+        </dd>
+
         <dt id="distinctive-identifier">Distinctive Identifier</dt>
         <dd>
-          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/117">Issue 117</a> - The definition of Distinctive Identifier needs to be refined and will likely change.</p>
+          <p class="note">
+            A distinctive identifier is a value for which it is possible to <a def-id="associable">associate</a> the values outside the device across a) origins or b) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data or it is not easy for a user to break such association.
+            In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a def-id="associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a def-id="associable"></a> even after attempts to clear browsing data. 
+            Possible causes of this include use of hardware or other indelible IDs in the individualization process.
+          </p>
           <p>A distinctive identifier is a piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
           <ul>
             <li><p>It is not shared across a large population of users or devices.</p></li>
-            <li><p>It is exposed outside the client device or exposed to the application such that the application has the opportunity to send it (even if in encrypted form if decryptable outside the device) or information about it outside the client device.</p></li>
-            <li><p>It is used in more than one session or <!-- TODO: Get clarity on this: -->is potentially used in one persistent session across the point of persistence.</p></li>
+            <li>
+              <p>It, information about it, or values derived or otherwise related to it are exposed, even in encrypted form, outside the client.
+                This includes but is not limited to providing it to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
+              </p>
+            </li>
+            <li><p>It has one or more the following properties:</p>
+              <ul>
+                <li><p>It is derived from a value that is indelible in some way, including but not limited to hardware, operating system installation instance, or client or other user account values.</p></li>
+                <li><p>The generation, <a href="#privacy-individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved such an indelible value or another distinctive identifier.</p></li>
+                <li>
+                  <p>It is <a href="#allow-identifiers-cleared">clearable</a> but not <a href="#allow-persistent-data-cleared-with-cookies">along with cookies and other site data</a>.</p>
+                  <p class="note">For example, via some mechanism external to the user agent, such as an OS-level mechanism.</p>
+                </li>
+              </ul>
+              <div class="note">
+                <p>Other properties of concern that are normatively prohibited include:</p> 
+                <ul>
+                  <li><p>It is indelible in some way.</p></li>
+                  <li><p>It is <em>not</em> <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
+                  <li><p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> are <a def-id="associable"></a> with previous value(s).</p></li>
+                  <li><p>Values are not <a href="#per-origin-identifiers">unique per-origin</a>.</p></li>
+                  <li><p>Values for different origins may be <a def-id="associable"></a>.</p></li>
+                </ul>
+              </div>
+            </li>
           </ul>
 
-          <p class="note">A distinctive identifier is typically unique to a user or device, but an identifier does not need to be strictly unique to be distinctive.
+          <p class="note">While a distinctive identifier is typically unique to a user or device, an identifier does not need to be strictly unique to be distinctive.
             For example, an identifier shared among a small number of users could still be distinctive.
           </p>
 
           <div class="note">
             <p>Examples of distinctive identifiers include but are not limited to:</p>
             <ul>
-              <li><p>A string of bytes that is included in key requests and that is different from the string included by other devices.</p></li>
-              <li><p>A public key included in key requests that is different from the public keys included in the requests by other devices.</p></li>
-              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other devices do not have.</p></li>
+              <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other devices, and based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>A public key included in key requests that is different from the public keys included in the requests by other devices and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other devices do not have and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
               <li><p>An identifier for such a key.</p></li>
+              <li><p>Such a value used to derive another value that is exposed even though the first value is not directly exposed.</p></li>
+              <li><p>A value derived from another distinctive identifier.</p></li>              
             </ul>
-            <p>Examples of things that are not distinctive identifiers:</p>
+            <p>Examples of things that are <em>not</em> distinctive identifiers:</p>
             <ul>
               <li><p>A public key shared among all copies of a given CDM version if the installed base is large.</p></li>
-              <li><p>A nonce or ephemeral key that is unique but used in only one <!-- TODO: Get clarity on this: "<a href="is-persistent-session-type">non-persistent</a>" --> session.</p></li>
+              <li><p>A nonce or ephemeral key that is unique but used in only one session.</p></li>
+              <li><p>A value that is not exposed, even in derived or similar ways, outside the client, including via <a href="#privacy-individualization">individualization</a> or similar.</p></li>
               <li><p>Device-unique keys used in attestations between, for example, the video pipeline and the CDM when the CDM does not let these attestations further flow to the application and instead makes a new attestation on its own using a key that does not constitute a distinctive identifier.</p></li>
+              <li>
+                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a <a def-id="non-associable"></a> value AND one or more of the following:</p>
+                <ul>
+                  <li><p>No indelible value or distinctive identifier was involved in the generation of the value.</p></li>
+                  <li><p>It is a random value generated <em>without</em> inputs from the system.</p></li>
+                  <li><p>It is a value provided by a server without the use of or knowledge of another distinctive identifier.</p></li>
+                </ul>
+              </li>
             </ul>
           </div>
           <p class="note">The source of the identifier does not affect whether it is distinctive.
@@ -611,7 +668,7 @@
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <p>If the <var>implementation</var> requires use of a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
                 <div class="note">
@@ -735,7 +792,7 @@
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <var>implementation</var> requires a <a def-id="distinctive-identifier"></a> for any of the combinations in <var>accumulated configuration</var></dt>
+                  <dt>If the <var>implementation</var> requires use of a <a def-id="distinctive-identifier"></a> for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>
                     <p>Change <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value to <a def-id="requirement-required"></a>.</p>
                   </dd>
@@ -1069,8 +1126,14 @@
           </dd>
           <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
-            Whether a persistent <a def-id="distinctive-identifier"></a> is required.
-            <p>Messages from the CDM, such as <a def-id="message"></a> events, MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form, when this member is <a def-id="requirement-not-allowed"></a>.
+            Whether use of a <a def-id="distinctive-identifier"></a> is required.
+            <p>when this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT use or expose a <a def-id="distinctive-identifier"></a> for any operations associated with any object created from this configuration.
+              This includes but is not limited to the following:
+            </p>
+            <ol>
+              <li><p>Any individualization process MUST NOT use and messages involved MUST NOT contain a Distinctive Identifier.</p></li>
+              <li><p>Messages from the CDM, such as <a def-id="message"></a> events, MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form.</p></li>
+            </ol>
           </dd>
           <dt>MediaKeysRequirement persistentState = "optional"</dt>
           <dd>
@@ -1229,7 +1292,7 @@
         <dt>temporary</dt>
         <dd>
           <p>
-            A session for which the license and record of or data related to the session MUST NOT be persisted.
+            A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
           <p>
             The application need not worry about managing such storage.
@@ -1240,7 +1303,7 @@
         <dd>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/85">Issue 85</a> - There are concerns about the architectural implications of <code>"persistent-usage-record"</code> sessions that are pending a TAG discussion. The outcome of this discussion could result in modification (including removal) of the feature.</p>
           <p>
-            A session for which the license and any key(s) it contains SHALL NOT be persisted and for which a <a def-id="record-of-key-usage"></a> SHALL be persisted when
+            A session for which the license and key(s) are not persisted and for which a <a def-id="record-of-key-usage"></a> is persisted when
             the keys available within the session are destroyed.
             The <dfn id="record-of-key-usage">record of key usage</dfn> consists of:
           </p>
@@ -1449,6 +1512,13 @@
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
+      <p>
+        If a <a>MediaKeySession</a> object becomes inaccessible to the page
+        and the <a def-id="session-closed-algorithm"></a> algorithm has not already been run, the User Agent
+        MUST run the <a def-id="media-key-session-destroyed-algorithm"></a> algorithm before User Agent state
+        associated with the <a href="#key-session">session</a> is deleted.
+      </p>
+
       <p>
         A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
         not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
@@ -2048,16 +2118,17 @@
         <p>The MediaKeyStatusMap object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/75">Issue 75</a> - The exact behavior of the iterable declaration is still being determined and may change in incompatible ways. This includes the definition of the value pairs and the <a href="#idl-def-ForEachCallback">ForEachCallback</a> parameters.</p>
         <dl title="interface MediaKeyStatusMap" class='idl'>
 
           <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
           <dd>
-            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-            associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
-            where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
-            define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
-            order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+            <p>
+              The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
+              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
+              where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
+              define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
+              order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+            </p>
           </dd>
 
           <dt>readonly attribute unsigned long size</dt>
@@ -2082,22 +2153,6 @@
               <dd>The <a def-id="key-id"></a> of the key.</dd>
             </dl>
           </dd>
-
-          <dt>void forEach()</dt>
-          <dd>
-            <p>Calls <var>callback</var> once for each key-value pair present in the MediaKeyStatus map.</p>
-            <dl class='parameters'>
-              <dt>ForEachCallback callback</dt>
-              <dd>A callback function</dd>
-            </dl>
-          </dd>
-        </dl>
-
-        <dl title="callback ForEachCallback = void" class="idl">
-          <dt>BufferSource keyId</dt>
-          <dd>The <a def-id="key-id"></a>.</dd>
-          <dt>MediaKeyStatus status</dt>
-          <dd>The key status.</dd>
         </dl>
 
         <dl title="enum MediaKeyStatus" class="idl">
@@ -2337,7 +2392,28 @@
             <li><p>Resolve <var>promise</var>.</p></li>
           </ol>
         </section>
-
+        <section id="media-key-session-destroyed">
+          <h4>MediaKeySession Destroyed</h4>
+          <p>
+            This algorithm performs steps that are necessary when a <a>MediaKeySession</a> is destroyed and
+            the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+          </p>
+          <p>The following steps are run in parallel to the main event loop:</p>
+          <ol>
+            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
+            <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+            <li><p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+            <li>
+              <p>
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                store the <var>record of key usage</var>, if it exists.
+              </p>
+              <p class="note">
+                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+              </p>
+            </li>
+          </ol>
+        </section>
         <section id="monitor-cdm">
           <h4>Monitor for CDM State Changes</h4>
           <p>
@@ -2953,7 +3029,7 @@
           <p>
             Implementations that use persistent data MUST allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
-          <p>
+          <p id="allow-persistent-data-cleared-with-cookies">
             Implementations SHOULD allow users to clear persistent data along with cookies [[!COOKIES]] and other site data.
             It is RECOMMENDED that users be offered the option to clear persistent data as part of user agent features to clear browsing history.
           </p>
@@ -3018,8 +3094,8 @@
           </p>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
 
-          <p id="non-reversible-identifiers">
-            It MUST NOT be possible (with a reasonable amount of time and effort) to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
+          <p>
+            Values across origins MUST be <a def-id="non-associable"></a>, meaning it MUST NOT be possible to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
             Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, MUST do so in a non-reversible way.
           </p>
           <p class="issue">Add more specific text about ensuring the desired non-reversible properties.</p>
@@ -3030,7 +3106,7 @@
           <p>As a consequence of the requirements in <a href="allow-persistent-state-cleared">Allow Persistent Data to Be Cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
           <p>
-            Once cleared, new different values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
+            Once cleared, new <a def-id="non-associable"></a> values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
           </p>
         </section>
       </section>
@@ -3559,7 +3635,7 @@
 
           <p>In addition, if a Key System permits keys to be stored and to be re-used between origins, then it may be possible for two origins to collude and track a unique user by recording their ability to access a common key.</p>
           <p>Finally, if any user interface for user control of Key Systems presents data separately from data in HTTP session cookies [[COOKIES]] or persistent storage, then users are likely to modify site authorization or delete data in one and not the others.
-            This would allow sites to use the various features as redundant backup for each other, defeating a user's attempts to protect his privacy.
+            This would allow sites to use the various features as redundant backup for each other, defeating a user's attempts to protect his or her privacy.
           </p>
 
           <p>The following section describes techniques that may mitigate the risks of tracking without user consent.</p>
@@ -3581,11 +3657,11 @@
               </p>
             </dd>
 
-            <dt>Use of (non-reversible) per-origin identifiers</dt>
+            <dt>Use of non-associable per-origin identifiers</dt>
             <dd>
               <!-- TODO: Bug 27269 -->
-              <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different value for each <a def-id="origin"></a>, either by allocation of different identifiers for different origins or by use of a non-reversible origin-specific mapping from an origin-independent identifier.
-                See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a> and <a href="#non-reversible-identifiers">non-reversible identifiers</a>.
+              <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different <a def-id="non-associable"></a> value for each <a def-id="origin"></a>.
+                See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
               </p>
             </dd>
 
@@ -3686,7 +3762,7 @@
             </p>
             <p>The resulting identifier MUST be origin- and application-independent.
               Such identifiers MUST NOT be provided to applications (see <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>), even encrypted.
-              Implementations MAY derive <a href="#non-reversible-identifiers">non-reversible</a> per-origin identifiers from such identifiers and provide those to the application (<a href="#encrypt-identifiers">encrypted</a>)
+              Implementations MAY derive <a def-id="non-associable"></a> per-origin identifiers from such identifiers and provide those to the application (<a href="#encrypt-identifiers">encrypted</a>).
             </p>
             <p>For such individualization, all message exchanges:</p>
             <ul>
@@ -4126,7 +4202,7 @@
     // Evaluate the current state using one of the map-like methods exposed by
     // event.target.<a def-id="keyStatuses"></a>.
     // For example:
-    event.target.<a def-id="keyStatuses"></a>.forEach(function(keyId, status, map) {
+    event.target.<a def-id="keyStatuses"></a>.forEach(function(status, keyId) {
       switch (status) {
         case <a def-id="status-usable"></a>:
           break;
