@@ -134,15 +134,15 @@
       <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/192">Issue 192</a> - The specification should do more to encourage/ensure CDM-level interoperability.</p>
       <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/221">Issue 221</a> - This specification contains sections for describing <a href="#security">security</a> and <a href="#privacy">privacy</a> considerations. These sections are not final and review is welcome.</p>
 
-<!-- This will be populated when addressing https://github.com/w3c/encrypted-media/issues/206.
-      <p>The following features are <strong>at risk</strong> and may be removed due to lack of implementation.
-      </p>
+      <p>The following features are <strong>at risk</strong> and may be removed:</p>
       <ul>
-        <li><a def-id=""></a></li>
+        <li><p>The <a def-id="persistent-usage-record-session"></a> session type.</p></li>
+        <li><p>The <a def-id="media-key-session-destroyed-algorithm"></a> algorithm.</p></li>
+        <li><p>Setting the <var>media element</var>'s <a def-id="readystate"></a> value based on key availability in the <a def-id="queue-waitingforkey-algorithm"></a> and <a def-id="resume-playback-algorithm"></a> algorithms.</p></li>
+        <li><p>Support for insecure contexts, including the <a def-id="are-insecure-contexts-allowed-algorithm"></a> algorithm and steps that call it.</p></li>
       </ul>
- -->
-    </section>
 
+    </section>
 
     <section id="introduction" class="informative">
       <h2>Introduction</h2>
@@ -1045,8 +1045,8 @@
                     <p>
                       The <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
                       <a def-id="requirement-not-allowed"></a> and any of the recommendations of
-                      <a href="#allow-identifiers-cleared">Allow Identifiers to be Cleared</a> are not supported by the combination of the
-                      User Agent, <var>implementation</var> and <var>accumulated configuration</var>.
+                      <a href="#allow-identifiers-cleared">Allow Identifiers to Be Cleared</a> or <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>
+					  are not supported by the combination of the User Agent, <var>implementation</var> and <var>accumulated configuration</var>.
                     </p>
                   </li>
                   <li>
@@ -1600,6 +1600,16 @@
             Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing
             the one-byte key ID <code>0</code> and the <a>MediaKeyStatus</a> most appropriate for the aggregated status of this object.
           </p>
+        </dd>
+
+        <dt>attribute EventHandler onkeystatuseschange</dt>
+        <dd>
+          <p>Event handler for the <a def-id="keystatuseschange"></a> event.</p>
+        </dd>
+
+        <dt>attribute EventHandler onmessage</dt>
+        <dd>
+          <p>Event handler for the <a def-id="message"></a> event.</p>
         </dd>
 
         <dt>Promise&lt;void&gt; generateRequest()</dt>
@@ -2660,7 +2670,12 @@
 
         <dt>attribute EventHandler onencrypted</dt>
         <dd>
-          <p>Event handler for the <a def-id="encrypted"></a> event MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+          <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p> 
+        </dd>
+
+        <dt>attribute EventHandler onwaitingforkey</dt>
+        <dd>
+          <p>Event handler for the <a def-id="waitingforkey"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd>
 
         <dt>Promise&lt;void&gt; setMediaKeys()</dt>
