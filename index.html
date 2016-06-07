@@ -3110,6 +3110,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 <span class="idlAttribute">    readonly        attribute <span class="idlAttrType">unrestricted double</span> <span class="idlAttrName"><a href="#widl-MediaKeySession-expiration">expiration</a></span>;</span>
 <span class="idlAttribute">    readonly        attribute <span class="idlAttrType">Promise&lt;void&gt;</span>       <span class="idlAttrName"><a href="#widl-MediaKeySession-closed">closed</a></span>;</span>
 <span class="idlAttribute">    readonly        attribute <span class="idlAttrType"><a href="#idl-def-MediaKeyStatusMap" class="idlType"><code>MediaKeyStatusMap</code></a></span>   <span class="idlAttrName"><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></span>;</span>
+<span class="idlAttribute">                    attribute <span class="idlAttrType">EventHandler</span>        <span class="idlAttrName"><a href="#widl-MediaKeySession-onkeystatuseschange">onkeystatuseschange</a></span>;</span>
+<span class="idlAttribute">                    attribute <span class="idlAttrType">EventHandler</span>        <span class="idlAttrName"><a href="#widl-MediaKeySession-onmessage">onmessage</a></span>;</span>
 <span class="idlMethod">    <span class="idlMethType">Promise&lt;void&gt;</span>    <span class="idlMethName"><a href="#widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData">generateRequest</a></span> (<span class="idlParam"><span class="idlParamType">DOMString</span> <span class="idlParamName">initDataType</span></span>, <span class="idlParam"><span class="idlParamType">BufferSource</span> <span class="idlParamName">initData</span></span>);</span>
 <span class="idlMethod">    <span class="idlMethType">Promise&lt;boolean&gt;</span> <span class="idlMethName"><a href="#widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId">load</a></span> (<span class="idlParam"><span class="idlParamType">DOMString</span> <span class="idlParamName">sessionId</span></span>);</span>
 <span class="idlMethod">    <span class="idlMethType">Promise&lt;void&gt;</span>    <span class="idlMethName"><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update</a></span> (<span class="idlParam"><span class="idlParamType">BufferSource</span> <span class="idlParamName">response</span></span>);</span>
@@ -3144,6 +3146,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               Some older platforms may contain Key System implementations that do not expose key IDs, making it impossible to provide a compliant user agent implementation. To maximize interoperability, user agent implementations exposing such CDMs <em class="rfc2119" title="SHOULD">SHOULD</em> implement this member as follows: Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing the one-byte key ID <code>0</code> and the <a href="#idl-def-MediaKeyStatus" class="idlType"><code>MediaKeyStatus</code></a> most appropriate for the aggregated status of this object.
             </p>
           </div>
+        </dd><dt id="widl-MediaKeySession-onkeystatuseschange"><code>onkeystatuseschange</code> of type <span class="idlAttrType">EventHandler</span></dt>
+        <dd>
+          <p>Event handler for the <code><a href="#dom-evt-keystatuseschange">keystatuseschange</a></code> event.</p>
+        </dd><dt id="widl-MediaKeySession-onmessage"><code>onmessage</code> of type <span class="idlAttrType">EventHandler</span></dt>
+        <dd>
+          <p>Event handler for the <code><a href="#dom-evt-message">message</a></code> event.</p>
         </dd><dt id="widl-MediaKeySession-sessionId"><code>sessionId</code> of type <span class="idlAttrType">DOMString</span>, readonly       </dt>
         <dd>
           <p>The <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
@@ -4654,6 +4662,7 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
     <pre class="idl"><span class="idlInterface" id="idl-def-HTMLMediaElement">partial interface <span class="idlInterfaceID">HTMLMediaElement</span> : <span class="idlSuperclass">EventTarget</span> {
 <span class="idlAttribute">    readonly        attribute <span class="idlAttrType"><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a>?</span>   <span class="idlAttrName"><a href="#widl-HTMLMediaElement-mediaKeys">mediaKeys</a></span>;</span>
 <span class="idlAttribute">                    attribute <span class="idlAttrType">EventHandler</span> <span class="idlAttrName"><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></span>;</span>
+<span class="idlAttribute">                    attribute <span class="idlAttrType">EventHandler</span> <span class="idlAttrName"><a href="#widl-HTMLMediaElement-onwaitingforkey">onwaitingforkey</a></span>;</span>
 <span class="idlMethod">    <span class="idlMethType">Promise&lt;void&gt;</span> <span class="idlMethName"><a href="#widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys">setMediaKeys</a></span> (<span class="idlParam"><span class="idlParamType"><a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a>?</span> <span class="idlParamName">mediaKeys</span></span>);</span>
 };</span></pre>
 
@@ -4664,7 +4673,10 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
           <p>The <a href="#idl-def-MediaKeys" class="idlType"><code>MediaKeys</code></a> being used when decrypting encrypted <a href="http://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> for this media element.</p>
         </dd><dt id="widl-HTMLMediaElement-onencrypted"><code>onencrypted</code> of type <span class="idlAttrType">EventHandler</span></dt>
         <dd>
-          <p>Event handler for the <code><a href="#dom-evt-encrypted">encrypted</a></code> event <em class="rfc2119" title="MUST">MUST</em> be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+          <p>Event handler for the <code><a href="#dom-evt-encrypted">encrypted</a></code> event. It <em class="rfc2119" title="MUST">MUST</em> be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
+        </dd><dt id="widl-HTMLMediaElement-onwaitingforkey"><code>onwaitingforkey</code> of type <span class="idlAttrType">EventHandler</span></dt>
+        <dd>
+          <p>Event handler for the <code><a href="#dom-evt-waitingforkey">waitingforkey</a></code> event. It <em class="rfc2119" title="MUST">MUST</em> be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd>
       </dl>
     </section>
