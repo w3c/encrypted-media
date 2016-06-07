@@ -1464,8 +1464,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <dd>
         <p>Two identifiers or other values are said to be <dfn id="non-associable" data-dfn-type="dfn">non-associable</dfn> if they are not identical AND it is not possible - with a reasonable amount of time and effort - to correlate or associate them. Otherwise, two values are <dfn id="associable" data-dfn-type="dfn">associable</dfn>.
         </p>
-        <p>Implementation <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose <a href="#associable">associable</a> identifiers to applications, even in encrypted form, across <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.</p>
-
         <div class="note">
           <div class="note-title marker" aria-level="3" role="heading" id="h-note10"><span>Note</span></div>
           <div class="">
@@ -1487,6 +1485,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             </ul>
           </div>
         </div>
+        <p>
+          <a href="#distinctive-identifier">Distinctive Identifiers</a> may be considered <a href="#non-associable">non-associable</a> as long as such correlation or association is only possible by the entity, such as an <a href="#privacy-individualization">individualization</a> server, that originally generated the <a href="#distinctive-identifier">Distinctive Identifiers</a> value. Such entities <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose this capability to applications and <em class="rfc2119" title="SHOULD">SHOULD</em> take care to avoid exposing such correlation to other entities or third parties. For all identifiers exposed to applications, including <a href="#distinctive-identifier">Distinctive Identifiers</a>, it <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible for one or more applications, including related license or other servers to achieve such correlation or association.
+        </p>
+        <p>
+          Implementation <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose <a href="#associable">associable</a> identifiers to applications, even in encrypted form, across <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.
+        </p>
       </dd>
 
       <dt id="distinctive-identifier">Distinctive Identifier</dt>
@@ -1495,7 +1499,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <div class="note-title marker" aria-level="3" role="heading" id="h-note11"><span>Note</span></div>
           <div class="">
             <p>
-              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to <a href="#associable">associate</a> values beyond what a user may expect on the web platform (e.g. cookies and other site data). For example, values that are <a href="#associable">associable</a> across a) <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origins</a>, b) profiles or user accounts, or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data or values for which it is not easy for a user to break such association. In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a href="#associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a href="#associable">associable</a> even after attempts to clear browsing data. Possible causes of this include use of hardware or other indelible IDs in the individualization process.
+              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data). For example, values that are <a href="#associable">associable</a> (by an entity other than the application) across a) <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origins</a>, b) profiles or user accounts, or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data or values for which it is not easy for a user to break such association. In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a href="#associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a href="#associable">associable</a> even after attempts to clear browsing data. Possible causes of this include use of hardware or other indelible IDs in the individualization process.
             </p>
             <p>
               Distinctive identifiers exposed to the application, even in encrypted form, <em class="rfc2119" title="MUST">MUST</em> adhere to the same <a href="#identifier-requirements">identifier requirements</a> as all other identifiers, including being <a href="#encrypt-identifiers">encrypted</a>, <a href="#per-origin-identifiers">unique per origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.
@@ -1547,13 +1551,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <p>It is <em>not</em> <a href="#allow-identifiers-cleared">clearable</a>.</p>
                   </li>
                   <li>
-                    <p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> are <a href="#associable">associable</a> with previous value(s).</p>
+                    <p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> are <a href="#associable">associable</a> with previous value(s) by the application or other third parties.</p>
                   </li>
                   <li>
                     <p>Values are not <a href="#per-origin-identifiers">unique per-origin</a>.</p>
                   </li>
                   <li>
-                    <p>Values for different origins may be <a href="#associable">associable</a>.</p>
+                    <p>Values for different origins may be <a href="#associable">associable</a> by applications or third parties.</p>
                   </li>
                 </ul>
                 <p>Examples of such normatively prohibited values include but is not limited to:</p>
@@ -1580,7 +1584,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <p>A pre-provisioned origin-specific value.</p>
                   </li>
                   <li>
-                    <p>Values generated by trivially-reversible means, which are thus <a href="#associable">associable</a>, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p>
+                    <p>Values generated by trivially-reversible means, which are thus <a href="#associable">associable</a> by applications or third parties, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p>
                   </li>
                 </ul>
               </div>
@@ -1645,7 +1649,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                 <p>Device-unique keys used in attestations between, for example, the video pipeline and the CDM when the CDM does not let these attestations further flow to the application and instead makes a new attestation on its own using a key that does not constitute a distinctive identifier.</p>
               </li>
               <li>
-                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a <a href="#non-associable">non-associable</a> value AND one or more of the following:</p>
+                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a value that is <a href="#non-associable">non-associable</a>, even by a central server such as an <a href="#privacy-individualization">individualization</a> server, AND one or more of the following:</p>
                 <ul>
                   <li>
                     <p>No indelible value or distinctive identifier was involved in the generation of the value.</p>
