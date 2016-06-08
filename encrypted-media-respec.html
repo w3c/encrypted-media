@@ -174,7 +174,7 @@
 
           <p>All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
             The CDM MUST NOT make direct out-of band network requests.
-            All messages and communication other than those described in <a href="#origin-independent-individualization">Origin-Independent Individualization</a> MUST be passed through the application via the APIs defined in this specification.
+            All messages and communication other than those described in <a href="#direct-individualization">Direct Individualization</a> MUST be passed through the application via the APIs defined in this specification.
             Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
             This includes all license exchange messages.
           </p>
@@ -2257,7 +2257,7 @@
           <dd>The message contains a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>.</dd>
           <dt>individualization-request</dt>
           <dd>
-            The message contains a request for per-origin individualization (or re-individualization). See <a href="#per-origin-individualization">Per-Origin Individualization</a>.<br/>
+            The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br/>
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-identifiers">distinctive per-origin</a> and MUST NOT contain any non-origin-specific <a def-id="distinctive-identifiers"></a>.
           </dd>
         </dl>
@@ -3793,26 +3793,21 @@
         <!-- TODO: This is out of place as a sub-section here. -->
         <section id="privacy-individualization">
           <h4>Individualization</h4>
-          <p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are sometimes obtained via a process called individualization or provisioning.</p>
-          <p>Individualization MAY be origin-independent or per-origin.
-            The resulting identifier MUST be origin-independent or per-origin, respectively.
-            In the former case the resulting identifier MUST NOT be provided to the application.
-            The mechanisms and flow for the two types of individualization are different, as described in the following sections.
+          <p>
+            Identifiers, especially <a def-id="distinctive-identifiers"></a>, are sometimes generated or obtained via a process called individualization or provisioning.
+            The resulting identifier(s) MUST be <!-- TODO(117): Use new macro. --><a def-id="non-associable"></a> by the application and use of them MUST only be exposed to a <a href="#per-origin-identifiers">single origin</a>.
+            This process MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
           </p>
-          <p>In all cases, implementations SHOULD avoid sending <a def-id="origin">origin(s)</a> or <a def-id="origin"></a>-specific information to centralized servers since this could create a central record of all origins visited by a user or device.</p>
-          <p>Individualization MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.</p>
+          <p>This process MUST be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a>.
+            The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
+          </p>
 
-          <section id="origin-independent-individualization">
-            <h5>Origin-Independent Individualization</h5>
-            <p><a def-id="origin">Origin</a>-independent individualization is performed between the <a def-id="cdm"></a> and an origin- and application-independent server.
+          <section id="direct-individualization">
+            <h5>Direct Individualization</h5>
+            <p>Direct Individualization is performed between the <a def-id="cdm"></a> and an origin- and application-independent server.
               The process MUST be performed by the user agent and MUST NOT use these APIs.
             </p>
-            <p class="note">For example, such a process may initialize a client device by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly using identifiers from the client device.
-              Such communication would not involve providing application- or origin-specific information.
-            </p>
-            <p>The resulting identifier MUST be origin- and application-independent.
-              Such identifiers MUST NOT be provided to applications (see <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>), even encrypted.
-              Implementations MAY derive <a def-id="non-associable"></a> per-origin identifiers from such identifiers and provide those to the application (<a href="#encrypt-identifiers">encrypted</a>).
+            <p class="note">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly using <!-- TODO(#117): Permanent -->identifiers from the client device.
             </p>
             <p>For such individualization, all message exchanges:</p>
             <ul>
@@ -3821,11 +3816,14 @@
               <li><p>MUST NOT be passed to or through the application via these APIs.</p></li>
               <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
             </ul>
+            <p>
+              Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with orign(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+            </p>
           </section>
 
-          <section id="per-origin-individualization">
-            <h5>Per-Origin Individualization</h5>
-            <p>Per-<a def-id="origin"></a> individualization is performed between the <a def-id="cdm"></a> and the application, including an application-selected server, and results in a per-origin identifier.
+          <section id="app-assisted-individualization">
+            <h5>App-Assisted Individualization</h5>
+            <p>App-Assisted Individualization is performed between the <a def-id="cdm"></a> and the application, including an application-selected server, and results in a per-origin identifier.
               The process MUST be performed via these APIs and MUST NOT involve other methods of communication.
               As with all other uses of the APIs, <a def-id="distinctive-identifiers"></a> MAY be used but indelible or non-origin-specific values MUST NOT be exposed, even in encrypted form.
               If one or more <a def-id="distinctive-identifiers"></a> are used, the resulting identifier is by definition also a <a def-id="distinctive-identifier"></a>.
@@ -3840,7 +3838,11 @@
               <li><p>MUST adhere to the <a href="#identifier-requirements">identifier requirements</a><!-- TODO(#117): Update reference. Ensure it includes exposing only values that are <a href="#per-origin-identifiers">unique per origin</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> <a def-id="distinctive-identifiers"></a>. --></p></li>
               <li><p>MUST NOT provide executable code to the CDM.</p></li>
             </ul>
-            <p>With appropriate precautions, such individualization can provide better privacy than origin-independent individualization, though not as good as models that do not use <a def-id="distinctive-identifiers"></a>.
+            <p>
+              When <a def-id="associable"></a> values, including <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>, are used in the process,
+              implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with orign(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+            </p>
+            <p>With appropriate precautions, such individualization can provide better privacy than <a href="#direct-individualization">Direct Individualization</a>, though not as good as models that do not use <a def-id="distinctive-identifiers"></a>.
               To preserve the benefits of such a design and to avoid introducing other privacy concerns,
               such implementations and the applications that support them SHOULD avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
             </p>
