@@ -323,7 +323,7 @@
           </p>
           <p class="note">
             Use of proprietary formats/contents is discouraged, and supporting or using <em>only</em> proprietary formats is strongly discouraged.
-            Proprietary formats should only be used with pre-existing content or on pre-existing devices that do not support the common formats.
+            Proprietary formats should only be used with pre-existing content or on pre-existing client devices that do not support the common formats.
           </p>
         </dd>
 
@@ -332,7 +332,7 @@
           <p>Two identifiers or other values are said to be <dfn id="non-associable">non-associable</dfn> if they are not identical AND it is not possible - with a reasonable amount of time and effort - to correlate or associate them.
 						Otherwise, two values are <dfn id="associable">associable</dfn>.
           </p>
-          <p>Implementation MUST NOT expose <a def-id="associable"></a> identifiers to applications, even in encrypted form, across origins or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.</p>
+          <p>Implementation MUST NOT expose <a def-id="associable"></a> identifiers to applications, even in encrypted form, across <a def-id="origin">origins</a> or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.</p>
 
           <div class="note">
             <p>For example, two values that are completely unrelated or cryptographically distinct, such as via a cryptographically strong non-reversible hash function, are <a def-id="non-associable"></a>.</p>
@@ -348,14 +348,30 @@
 
         <dt id="distinctive-identifier">Distinctive Identifier</dt>
         <dd>
-          <p class="note">
-            A distinctive identifier is a value for which it is possible to <a def-id="associable">associate</a> the values outside the device across a) origins or b) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data or it is not easy for a user to break such association.
-            In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a def-id="associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a def-id="associable"></a> even after attempts to clear browsing data. 
-            Possible causes of this include use of hardware or other indelible IDs in the individualization process.
-          </p>
+          <div class="note">
+            <p>
+              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to <a def-id="associable">associate</a> values beyond what a user may expect on the web platform (e.g. cookies and other site data).
+              For example, values that are <a def-id="associable"></a> across
+              a) <a def-id="origin">origins</a>,
+              b) profiles or user accounts,
+              or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
+              or values for which it is not easy for a user to break such association.
+              In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a def-id="associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a def-id="associable"></a> even after attempts to clear browsing data. 
+              Possible causes of this include use of hardware or other indelible IDs in the individualization process.
+            </p>
+            <p>
+              Distinctive identifiers exposed to the application, even in encrypted form, MUST adhere to the same <a href="#identifier-requirements">identifier requirements</a> as all other identifiers,
+              including being <a href="#encrypt-identifiers">encrypted</a>, <a href="#per-origin-identifiers">unique per origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.
+            </p>
+            <p>
+              While the instantiation or use of a distinctive identifier is triggered by the application's use of these APIs, the identifier need not be provided to the application to trigger conditions related to distinctive identifiers.
+              (The indelible value(s) MUST NOT ever be provided to the application, even in opaque or encrypted form.) 
+            </p> 
+          </div>
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/117">Issue 117</a> - Ensure providing "permanent" identifiers, such as to an <a href="#privacy-individualization">individualization</a> server normatively triggers conditions related to distinctive identifiers.</p>
           <p>A distinctive identifier is a piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
           <ul>
-            <li><p>It is not shared across a large population of users or devices.</p></li>
+            <li><p>It is not shared across a large population of users or client devices.</p></li>
             <li>
               <p>It, information about it, or values derived or otherwise related to it are exposed, even in encrypted form, outside the client.
                 This includes but is not limited to providing it to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
@@ -363,7 +379,7 @@
             </li>
             <li><p>It has one or more the following properties:</p>
               <ul>
-                <li><p>It is derived from a value that is indelible in some way, including but not limited to hardware, operating system installation instance, or client or other user account values.</p></li>
+                <li><p>It is derived from a value that is indelible in some way, including but not limited to hardware, operating system installation instance, user agent installation instance, <a def-id="cdm"></a> or other software component, confguration file or similar semi-permanent data, or client or other user account values.</p></li>
                 <li><p>The generation, <a href="#privacy-individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved such an indelible value or another distinctive identifier.</p></li>
                 <li>
                   <p>It is <a href="#allow-identifiers-cleared">clearable</a> but not <a href="#allow-persistent-data-cleared-with-cookies">along with cookies and other site data</a>.</p>
@@ -371,7 +387,7 @@
                 </li>
               </ul>
               <div class="note">
-                <p>Other properties of concern that are normatively prohibited include:</p> 
+                <p>Other properties of concern that are normatively prohibited for values exposed to the application include:</p> 
                 <ul>
                   <li><p>It is indelible in some way.</p></li>
                   <li><p>It is <em>not</em> <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
@@ -379,23 +395,38 @@
                   <li><p>Values are not <a href="#per-origin-identifiers">unique per-origin</a>.</p></li>
                   <li><p>Values for different origins may be <a def-id="associable"></a>.</p></li>
                 </ul>
+                <p>Examples of such normatively prohibited values include but is not limited to:</p>
+                <ul>
+                  <li><p>A single hardware-based value used for all origins.</p></li>
+                  <li><p>A single random based value used for all origins.</p></li>
+                  <li><p>A single value obtained from an <a href="#privacy-individualization">individualization</a> process that is used for all origins.</p></li>
+                  <li><p>Values that include all or part of any of the above values.</p></li>
+                  <li><p>A single value that is used for multiple but not all origins.</p></li>
+                  <li><p>A single value that is used for all origins on a domain. (Identifiers must be per-<a def-id="origin"></a>.)</p></li>
+                  <li><p>A pre-provisioned origin-specific value.</p></li>
+                  <li><p>Values generated by trivially-reversible means, which are thus <a def-id="associable"></a>, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p></li>
+                </ul>
               </div>
             </li>
           </ul>
 
-          <p class="note">While a distinctive identifier is typically unique to a user or device, an identifier does not need to be strictly unique to be distinctive.
+          <p class="note">While a distinctive identifier is typically unique to a user or client device, an identifier does not need to be strictly unique to be distinctive.
             For example, an identifier shared among a small number of users could still be distinctive.
           </p>
 
           <div class="note">
             <p>Examples of distinctive identifiers include but are not limited to:</p>
             <ul>
-              <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other devices, and based on or was acquired directly or indirectly using an indelible identifier.</p></li>
-              <li><p>A public key included in key requests that is different from the public keys included in the requests by other devices and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
-              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other devices do not have and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other client devices, and based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>A public key included in key requests that is different from the public keys included in the requests by other client devices and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other client devices do not have and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
               <li><p>An identifier for such a key.</p></li>
               <li><p>Such a value used to derive another value that is exposed even though the first value is not directly exposed.</p></li>
-              <li><p>A value derived from another distinctive identifier.</p></li>              
+              <li><p>A value derived from another distinctive identifier.</p></li>
+              <li><p>A random value that was reported to a (i.e. <a href="#privacy-individualization">individualization</a>) server along with an indelible value or provided by such a server after providing an indelible value.</p></li>
+              <li><p>A value derived from a unique value provisioned in the hardware device in the factory.</p></li>
+              <li><p>A value derived from a unique hardware value (e.g. MAC address or serial number) or software value (e.g. operating system installation instance or operating system user account name) in the hardware device in the factory.</p></li>
+              <li><p>A value derived from a unique value embedded in the CDM binary or other file used by the CDM.</p></li>
             </ul>
             <p>Examples of things that are <em>not</em> distinctive identifiers:</p>
             <ul>
@@ -858,7 +889,7 @@
                   <dd>
                     <p>
                       Inform the user that <var>accumulated configuration</var> is in use in the <var>origin</var> including, specifically, the information
-                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are in use if the <a def-id="option-distinctiveIdentifier"></a>
+                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> will be used if the <a def-id="option-distinctiveIdentifier"></a>
                       member of <var>accumulated configuration</var> is <a def-id="requirement-required"></a>. Continue to the next step.
                     </p>
                   </dd>
@@ -1034,7 +1065,7 @@
                       Request user consent to use <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                     </p>
                     <p>
-                      The consent MUST include consent to use a <a def-id="distinctive-identifier"></a> if
+                      The consent MUST include consent to use a <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> if
                       <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member is <a def-id="requirement-required"></a>.
                     </p>
                     <div class="note">
@@ -1126,12 +1157,12 @@
           </dd>
           <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
-            Whether use of a <a def-id="distinctive-identifier"></a> is required.
-            <p>when this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT use or expose a <a def-id="distinctive-identifier"></a> for any operations associated with any object created from this configuration.
+            Whether use of a <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is required.
+            <p>When this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT use or expose a <a def-id="distinctive-identifier"></a> for any operations associated with any object created from this configuration.
               This includes but is not limited to the following:
             </p>
             <ol>
-              <li><p>Any individualization process MUST NOT use and messages involved MUST NOT contain a Distinctive Identifier.</p></li>
+              <li><p>Any individualization process MUST NOT use and messages involved MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form.</p></li>
               <li><p>Messages from the CDM, such as <a def-id="message"></a> events, MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form.</p></li>
             </ol>
           </dd>
@@ -3059,9 +3090,10 @@
         
       <section id="identifier-requirements">
         <h3>Identifiers</h3>
-        <p>The use of <a def-id="distinctive-identifiers"></a> by implementations presents a privacy concern.
-          This defines requirements for avoiding or at least mitigating such concerns.
+        <p>The use of identifiers, especially <a def-id="distinctive-identifiers"></a>, by implementations presents a privacy concern.
+          This section defines requirements for avoiding or at least mitigating such concerns.
         </p>
+        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/117">Issue 117</a> - This section should apply to all persistent identifiers, not just <a def-id="distinctive-identifiers"></a>.</p>
 
         <section>
           <h3>Limit or Avoid use of Distinctive Identifiers</h3>
@@ -3085,7 +3117,7 @@
 
         <section id="encrypt-identifiers">
           <h3>Encrypt Identifiers</h3>
-          <p>When exposed to the application - either from a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifiers"></a> MUST be encrypted at the message exchange level.
+          <p>When exposed to the application - either via a <a def-id="message"></a> event or a message from the server, such as one that is passed to <a def-id="update"></a> - <a def-id="distinctive-identifiers"></a> MUST be encrypted at the message exchange level.
             The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
             The CDM MUST verify that the encryption key belongs to a valid license server for its Key System.
           </p>
@@ -3107,7 +3139,7 @@
 
         <section id="per-origin-identifiers">
           <h3>Use Per-Origin Identifiers</h3>
-          <p>All <a def-id="distinctive-identifiers"></a> MUST be distinctive per <a def-id="origin"></a>.
+          <p>All <a def-id="distinctive-identifiers"></a> MUST be unique per <a def-id="origin"></a>.
             That is, the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
           </p>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
@@ -3629,7 +3661,7 @@
           <p>User- or client-specific information that could be obtained via the APIs in this specification includes:</p>
           <ul>
             <li><p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a></p></li>
-            <li><p>Origins visisted (via stored or in-memory data, permissions, etc.)</p></li>
+            <li><p>Origins visited (via stored or in-memory data, permissions, etc.)</p></li>
             <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p></li>
           </ul>
           <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and its profile storage), often in the CDM.</p>
