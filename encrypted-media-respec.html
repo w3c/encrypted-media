@@ -327,36 +327,49 @@
           </p>
         </dd>
 
-        <dt id="non-associable-identifiers">Non-Associable Identifiers</dt>
+        <dt id="associable-identifiers">Associable Identifiers</dt>
         <dd>
-          <p>Two identifiers or other values are said to be <dfn id="non-associable">non-associable</dfn> if they are not identical AND it is not possible - with a reasonable amount of time and effort - to correlate or associate them.
-						Otherwise, two values are <dfn id="associable">associable</dfn>.
+          <p>
+            Two or more identifiers or other values are said to be <dfn id="associable">associable</dfn> if they are identical <em>or</em> it is possible - with a reasonable amount of time and effort - to correlate or associate them.
+            Otherwise, the values are <dfn id="non-associable">non-associable</dfn>.
           </p>
-          <p>Implementation MUST NOT expose <a def-id="associable"></a> identifiers to applications, even in encrypted form, across <a def-id="origin">origins</a> or across <a href="#allow-identifiers-cleared">clearing</a> of identifiers.</p>
-
           <div class="note">
-            <p>For example, two values that are completely unrelated or cryptographically distinct, such as via a cryptographically strong non-reversible hash function, are <a def-id="non-associable"></a>.</p>
-            <p>As counter examples, values created in the following ways are <a def-id="associable"></a>:</p>
+            <p>For example, values created in the following ways are <a def-id="associable"></a>:</p>
             <ul>
               <li><p>Using a trivially-reversible hash function.</p></li>
               <li><p>Sharing a prefix or other subset</p></li>
               <li><p>Replacing random value N with N+10</p></li>
               <li><p>XORing the origin with a fixed value (because it is trivially reversible)</p></li>
             </ul>
+            <p>In contrast, two values that are completely unrelated or cryptographically distinct, such as via a cryptographically strong non-reversible hash function, are <a def-id="non-associable"></a>.</p>
           </div>
+          <p>Two or more identifiers or other values are said to be <dfn id="associable-by-entity">associable by an entity</dfn> if it is possible - with a reasonable amount of time and effort - for the referenced entity or set of entities to correlate or associate them without participation of additional entity(ies).
+            Otherwise, the values are <dfn id="non-associable-by-entity">non-associable by an entity</dfn>.
+          </p>
+          <p>Two or more identifiers or other values are said to be <dfn id="non-associable-by-application">non-associable by the application</dfn> if they are <a href="#non-associable-by-entity">non-associable by an entity</a>
+            where the entity is set that includes the application, all other applications, and other entities such as servers that they use or with which they communicate.
+            Otherwise, the values would be considered <dfn id="associable-by-application">associable by the application</dfn>, which is forbidden.
+          </p>
+          <!-- TODO: Consider moving to Identifier Requirements section and referencing that from here. -->
+          <p>
+            All identifiers, including <a def-id="distinctive-identifiers"></a>, exposed by the implementation to applications, even in encrypted form, across <a def-id="origin">origins</a> or across <a href="#allow-identifiers-cleared">clearing of identifiers</a> MUST be <a def-id="non-associable-by-application"></a>.
+          </p>
+          <p class="note">
+            For all such identifiers, it MUST NOT be possible for one or more applications, including related license or other servers to achieve such correlation or association.
+          </p> 
         </dd>
 
         <dt id="distinctive-identifier">Distinctive Identifier</dt>
         <dd>
           <div class="note">
             <p>
-              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to <a def-id="associable">associate</a> values beyond what a user may expect on the web platform (e.g. cookies and other site data).
-              For example, values that are <a def-id="associable"></a> across
+              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data).
+              For example, values that are <a href="#associable-by-entity">associable by an entity other than the application</a> across
               a) <a def-id="origin">origins</a>,
               b) profiles or user accounts,
               or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
               or values for which it is not easy for a user to break such association.
-              In particular, a value is a distinctive identifier if it is possible for a central server, such as an <a href="#privacy-individualization">individualization</a> server, to <a def-id="associable">associate</a> values across origins, such as because the individualization requests contained a common value, or because values provided in individualization requests are <a def-id="associable"></a> even after attempts to clear browsing data. 
+              In particular, a value is a distinctive identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#privacy-individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. 
               Possible causes of this include use of hardware or other indelible IDs in the individualization process.
             </p>
             <p>
@@ -391,9 +404,9 @@
                 <ul>
                   <li><p>It is indelible in some way.</p></li>
                   <li><p>It is <em>not</em> <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
-                  <li><p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> are <a def-id="associable"></a> with previous value(s).</p></li>
-                  <li><p>Values are not <a href="#per-origin-identifiers">unique per-origin</a>.</p></li>
-                  <li><p>Values for different origins may be <a def-id="associable"></a>.</p></li>
+                  <li><p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> may be <a href="#associable-by-application">associable by the application</a> with previous value(s).</p></li>
+                  <li><p>Values may not be <a href="#per-origin-identifiers">unique per-origin</a>.</p></li>
+                  <li><p>Values for different origins may be <a href="#associable-by-application">associable by the application</a>.</p></li>
                 </ul>
                 <p>Examples of such normatively prohibited values include but is not limited to:</p>
                 <ul>
@@ -404,11 +417,17 @@
                   <li><p>A single value that is used for multiple but not all origins.</p></li>
                   <li><p>A single value that is used for all origins on a domain. (Identifiers must be per-<a def-id="origin"></a>.)</p></li>
                   <li><p>A pre-provisioned origin-specific value.</p></li>
-                  <li><p>Values generated by trivially-reversible means, which are thus <a def-id="associable"></a>, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p></li>
+                  <li><p>Values generated by trivially-reversible means, which are thus <a href="#associable-by-application">associable by the application</a>, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p></li>
                 </ul>
               </div>
             </li>
           </ul>
+
+          <p class="note">
+            While <a def-id="distinctive-identifiers"></a> are usually <a href="#associable-by-entity">associable by the entity that generated them</a> they MUST be <a def-id="non-associable-by-application"></a>.
+            In other words, such correlation or association is only possible by the entity, such as an <a href="#privacy-individualization">individualization</a> server, that originally generated the <a def-id="distinctive-identifier"></a> values.
+            Entities with access to the indelible <!-- TODO: Permanent Identifier --> value MUST NOT expose this capability to applications, as this would make resulting distinctive identifiers <a href="#associable-by-application">associable by the application</a>, and SHOULD take care to avoid exposing such correlation to other entities or third parties.
+          </p>
 
           <p class="note">While a distinctive identifier is typically unique to a user or client device, an identifier does not need to be strictly unique to be distinctive.
             For example, an identifier shared among a small number of users could still be distinctive.
@@ -435,7 +454,7 @@
               <li><p>A value that is not exposed, even in derived or similar ways, outside the client, including via <a href="#privacy-individualization">individualization</a> or similar.</p></li>
               <li><p>Device-unique keys used in attestations between, for example, the video pipeline and the CDM when the CDM does not let these attestations further flow to the application and instead makes a new attestation on its own using a key that does not constitute a distinctive identifier.</p></li>
               <li>
-                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a <a def-id="non-associable"></a> value AND one or more of the following:</p>
+                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a value that is <a def-id="non-associable"></a> (not just <a def-id="non-associable-by-application"></a>), even by a central server such as an <a href="#privacy-individualization">individualization</a> server, AND one or more of the following:</p>
                 <ul>
                   <li><p>No indelible value or distinctive identifier was involved in the generation of the value.</p></li>
                   <li><p>It is a random value generated <em>without</em> inputs from the system.</p></li>
@@ -2670,7 +2689,7 @@
 
         <dt>attribute EventHandler onencrypted</dt>
         <dd>
-          <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p> 
+          <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd>
 
         <dt>attribute EventHandler onwaitingforkey</dt>
@@ -3145,7 +3164,7 @@
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a def-id="distinctive-identifiers"></a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
 
           <p>
-            Values across origins MUST be <a def-id="non-associable"></a>, meaning it MUST NOT be possible to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
+            Values across origins MUST be <a def-id="non-associable-by-application">non-associable by applications</a>, meaning it MUST NOT be possible to correlate identifiers from multiple origins, such as to determine that they came from the same client or user.
             Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, MUST do so in a non-reversible way.
           </p>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/219">Issue 219</a> - Add more specific text about ensuring the desired non-reversible properties.</p>
@@ -3156,7 +3175,7 @@
           <p>As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
           <p>
-            Once cleared, new <a def-id="non-associable"></a> values MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
+            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
           </p>
         </section>
       </section>
@@ -3710,7 +3729,7 @@
             <dt>Use of non-associable per-origin identifiers</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
-              <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different <a def-id="non-associable"></a> value for each <a def-id="origin"></a>.
+              <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a>.
                 See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
               </p>
             </dd>
