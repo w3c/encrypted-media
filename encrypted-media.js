@@ -164,6 +164,7 @@
     'session-id': { func: term_helper, fragment: 'session-id', link_text: 'Session ID'  },
     'associable': { func: term_helper, fragment: 'associable', link_text: 'associable'  },
     'non-associable': { func: term_helper, fragment: 'non-associable', link_text: 'non-associable'  },
+    'non-associable-by-application': { func: term_helper, fragment: 'non-associable-by-application', link_text: 'non-associable by applications'  },
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
     'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
