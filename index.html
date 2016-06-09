@@ -6308,12 +6308,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </section>
 
       <!-- TODO: This is out of place as a sub-section here. -->
-      <!-- TODO(#117/#231): Update to use uses-distinctive-identifiers-or-distinctive-permanent-identifiers and [Distinctive] Permanent Identifiers as appropriate. -->
 
       <section id="privacy-individualization" typeof="bibo:Chapter" resource="#privacy-individualization" property="bibo:hasPart">
         <h4 id="h-privacy-individualization" resource="#h-privacy-individualization"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.2 </span>Individualization</span></h4>
         <p>
-          Identifiers, especially <a href="#distinctive-identifier">Distinctive Identifiers</a>, are sometimes generated or obtained via a process called individualization or provisioning. The resulting identifier(s) <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a> and use of them <em class="rfc2119" title="MUST">MUST</em> only be exposed to a <a href="#per-origin-identifiers">single origin</a>. This process <em class="rfc2119" title="MAY">MAY</em> be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
+          Identifiers, especially <a href="#distinctive-identifier">Distinctive Identifiers</a>, are sometimes generated or obtained via a process called individualization or provisioning. The resulting identifier(s) <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a> and <a href="#uses-distinctive-identifiers">use of them</a> <em class="rfc2119" title="MUST">MUST</em> only be exposed to a <a href="#per-origin-identifiers">single origin</a>. This process <em class="rfc2119" title="MAY">MAY</em> be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
         </p>
         <p>This process <em class="rfc2119" title="MUST">MUST</em> be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a>. The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
         </p>
@@ -6324,8 +6323,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </p>
           <div class="note">
             <div class="note-title marker" aria-level="6" role="heading" id="h-note130"><span>Note</span></div>
-            <p class="">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly using
-              <!-- TODO(#117): Permanent -->identifiers from the client device.
+            <p class="">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
             </p>
           </div>
           <p>For such individualization, all message exchanges:</p>
@@ -6350,7 +6348,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
         <section id="app-assisted-individualization" typeof="bibo:Chapter" resource="#app-assisted-individualization" property="bibo:hasPart">
           <h5 id="h-app-assisted-individualization" resource="#h-app-assisted-individualization"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.2.2 </span>App-Assisted Individualization</span></h5>
-          <p>App-Assisted Individualization is performed between the <a href="#cdm">CDM</a> and the application, including an application-selected server, and results in a per-origin identifier. The process <em class="rfc2119" title="MUST">MUST</em> be performed via these APIs and <em class="rfc2119" title="MUST NOT">MUST NOT</em> involve other methods of communication. As with all other uses of the APIs, <a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MAY">MAY</em> be used but indelible or non-origin-specific values <em class="rfc2119" title="MUST NOT">MUST NOT</em> be exposed, even in encrypted form. If one or more <a href="#distinctive-identifier">Distinctive Identifiers</a> are used, the resulting identifier is by definition also a <a href="#distinctive-identifier">Distinctive Identifier</a>.
+          <p>App-Assisted Individualization is performed between the <a href="#cdm">CDM</a> and the application, including an application-selected server, and results in a per-origin identifier. The process <em class="rfc2119" title="MUST">MUST</em> be performed via these APIs and <em class="rfc2119" title="MUST NOT">MUST NOT</em> involve other methods of communication. As with all other uses of the APIs, the process <em class="rfc2119" title="MAY">MAY</em> <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, but it <em class="rfc2119" title="MUST NOT">MUST NOT</em> <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> or non-origin-specific values, even in encrypted form. If the process <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, the resulting identifier is by definition also a <a href="#distinctive-identifier">Distinctive Identifier</a>.
           </p>
           <p>For such individualization, all message exchanges:</p>
           <ul>
@@ -6367,7 +6365,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
               <p><em class="rfc2119" title="MUST NOT">MUST NOT</em> be performed directly by the CDM.</p>
             </li>
             <li>
-              <p><em class="rfc2119" title="MUST NOT">MUST NOT</em> contain non-origin-specific per-client information or any type of indelible or semi-permanent identifer.</p>
+              <p><em class="rfc2119" title="MUST NOT">MUST NOT</em> contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.
+              </p>
+            </li>
+            <li>
+              <p><em class="rfc2119" title="MUST NOT">MUST NOT</em> contain non-origin-specific per-client information</p>
             </li>
             <li>
               <p><em class="rfc2119" title="MUST">MUST</em> adhere to the <a href="#identifier-requirements">identifier requirements</a>
@@ -6378,9 +6380,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             </li>
           </ul>
           <p>
-            When <a href="#associable">associable</a> values, including <a href="#distinctive-identifier">Distinctive Identifier(s)</a>, are used in the process, implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose, even in encrypted form, <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin(s)</a>-, origin- or application-specific information, or values that are <a href="#associable">associable</a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+            When <a href="#associable">associable</a> values, including <a href="#distinctive-identifier">Distinctive Identifier(s)</a>, are <a href="#uses-distinctive-identifiers">used</a> in the process, implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose, even in encrypted form, <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin(s)</a>-, origin- or application-specific information, or values that are <a href="#associable">associable</a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
           </p>
-          <p>With appropriate precautions, such individualization can provide better privacy than <a href="#direct-individualization">Direct Individualization</a>, though not as good as models that do not <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>.. To preserve the benefits of such a design and to avoid introducing other privacy concerns, such implementations and the applications that support them <em class="rfc2119" title="SHOULD">SHOULD</em> avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
+          <p>With appropriate precautions, such individualization can provide better privacy than <a href="#direct-individualization">Direct Individualization</a>, though not as good as models that do not <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>. To preserve the benefits of such a design and to avoid introducing other privacy concerns, such implementations and the applications that support them <em class="rfc2119" title="SHOULD">SHOULD</em> avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
           </p>
         </section>
       </section>
