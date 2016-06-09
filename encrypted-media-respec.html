@@ -359,6 +359,34 @@
           </p> 
         </dd>
 
+        <dt>Permanent Identifiers</dt>
+        <dd>
+          <p>
+            A <dfn id="permanent-identifier">Permanent Identifier</dfn> a value, piece of data, implication of the possession of a piece of data, or an observable behavior or timing that is indelible in some way or otherwise non-trivial for the user to remove, reset, or change.
+            This, includes but is not limited to:
+          </p>
+          <ul>
+            <li><p>A hardware or hardware-based identifier</p></li>
+            <li><p>A value provisioned in the hardware device in the factory</p></li>
+            <li><p>A value associated with or derived from the operating system installation instance</p></li>
+            <li><p>A value associated with or derived from the user agent installation instance</p></li>
+            <li><p>A value associated with or derived from the <a def-id="cdm"></a> or other software component</p></li>
+            <li><p>A value in a confguration file or similar semi-permanent data, even if generated on the client</p></li>
+            <li><p>Client or other user account values</p></li>
+          </ul>
+          
+          <p>
+            A <dfn id="distinctive-permanent-identifier">Distinctive Permanent Identifier</dfn> is a <a href="#permanent-identifier">Permanent Identifier</a> that is <em>not</em> shared across a large population of users or client devices.
+          </p>
+          <p>
+            When exposed outside the client, Distinctive Permanent Identifiers and values derived from or otherwise related to them MUST be <a href="#encrypt-identifiers">encrypted</a>.
+            Distinctive Permanent Identifiers MUST NOT ever be exposed to the application, even in encrypted form.
+          </p>
+          <p class="note">While a Distinctive Permanent Identifier is typically unique to a user or client device, an Permanent Identifier does not need to be strictly unique to be distinctive.
+            For example, a Distinctive Permanent Identifier shared among a small number of users could still be distinctive.
+          </p>
+        </dd>
+
         <dt id="distinctive-identifier">Distinctive Identifier</dt>
         <dd>
           <div class="note">
@@ -370,7 +398,7 @@
               or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
               or values for which it is not easy for a user to break such association.
               In particular, a value is a distinctive identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#privacy-individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. 
-              Possible causes of this include use of hardware or other indelible IDs in the individualization process.
+              Possible causes of this include use of <a def-id="distinctive-permanent-identifier-maybe-plural"></a> in the individualization process.
             </p>
             <p>
               Distinctive identifiers exposed to the application, even in encrypted form, MUST adhere to the same <a href="#identifier-requirements">identifier requirements</a><!-- TODO(#117): Update reference --> as all other identifiers,
@@ -378,22 +406,21 @@
             </p>
             <p>
               While the instantiation or use of a distinctive identifier is triggered by the application's use of these APIs, the identifier need not be provided to the application to trigger conditions related to distinctive identifiers.
-              (The indelible value(s) MUST NOT ever be provided to the application, even in opaque or encrypted form.) 
+              (The <a def-id="distinctive-permanent-identifier-maybe-plural"></a> MUST NOT ever be provided to the application, even in opaque or encrypted form.) 
             </p> 
           </div>
-          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/117">Issue 117</a> - Ensure providing "permanent" identifiers, such as to an <a href="#privacy-individualization">individualization</a> server normatively triggers conditions related to distinctive identifiers.</p>
-          <p>A distinctive identifier is a piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
+          <p>A distinctive identifier is a value, piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
           <ul>
-            <li><p>It is not shared across a large population of users or client devices.</p></li>
+            <li><p>It is <em>not</em> shared across a large population of users or client devices.</p></li>
             <li>
-              <p>It, information about it, or values derived or otherwise related to it are exposed, even in encrypted form, outside the client.
+              <p>It, information about it, or values derived from or otherwise related to it are exposed, even in encrypted form, outside the client.
                 This includes but is not limited to providing it to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
               </p>
             </li>
             <li><p>It has one or more the following properties:</p>
               <ul>
-                <li><p>It is derived from a value that is indelible in some way, including but not limited to hardware, operating system installation instance, user agent installation instance, <a def-id="cdm"></a> or other software component, confguration file or similar semi-permanent data, or client or other user account values.</p></li>
-                <li><p>The generation, <a href="#privacy-individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved such an indelible value or another distinctive identifier.</p></li>
+                <li><p>It is derived from one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.</p></li>
+                <li><p>The generation, <a href="#privacy-individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a> or another distinctive identifier.</p></li>
                 <li>
                   <p>It is <a href="#allow-identifiers-cleared">clearable</a> but not <a href="#allow-persistent-data-cleared-with-cookies">along with cookies and other site data</a>.</p>
                   <p class="note">For example, via some mechanism external to the user agent, such as an OS-level mechanism.</p>
@@ -402,7 +429,7 @@
               <div class="note">
                 <p>Other properties of concern that are normatively prohibited for values exposed to the application include:</p> 
                 <ul>
-                  <li><p>It is indelible in some way.</p></li>
+                  <li><p>It is a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
                   <li><p>It is <em>not</em> <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
                   <li><p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> may be <a href="#associable-by-application">associable by the application</a> with previous value(s).</p></li>
                   <li><p>Values may not be <a href="#per-origin-identifiers">unique per-origin</a>.</p></li>
@@ -426,7 +453,7 @@
           <p class="note">
             While <a def-id="distinctive-identifiers"></a> are usually <a href="#associable-by-entity">associable by the entity that generated them</a> they MUST be <a def-id="non-associable-by-application"></a>.
             In other words, such correlation or association is only possible by the entity, such as an <a href="#privacy-individualization">individualization</a> server, that originally generated the <a def-id="distinctive-identifier"></a> values.
-            Entities with access to the indelible <!-- TODO: Permanent Identifier --> value MUST NOT expose this capability to applications, as this would make resulting distinctive identifiers <a href="#associable-by-application">associable by the application</a>, and SHOULD take care to avoid exposing such correlation to other entities or third parties.
+            Entities with access to the <a def-id="distinctive-permanent-identifier-maybe-plural"></a> MUST NOT expose this capability to applications, as this would make resulting distinctive identifiers <a href="#associable-by-application">associable by the application</a>, and SHOULD take care to avoid exposing such correlation to other entities or third parties.
           </p>
 
           <p class="note">While a distinctive identifier is typically unique to a user or client device, an identifier does not need to be strictly unique to be distinctive.
@@ -436,13 +463,13 @@
           <div class="note">
             <p>Examples of distinctive identifiers include but are not limited to:</p>
             <ul>
-              <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other client devices, and based on or was acquired directly or indirectly using an indelible identifier.</p></li>
-              <li><p>A public key included in key requests that is different from the public keys included in the requests by other client devices and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
-              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other client devices do not have and is based on or was acquired directly or indirectly using an indelible identifier.</p></li>
+              <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other client devices, and based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
+              <li><p>A public key included in key requests that is different from the public keys included in the requests by other client devices and is based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
+              <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other client devices do not have and is based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>An identifier for such a key.</p></li>
               <li><p>Such a value used to derive another value that is exposed even though the first value is not directly exposed.</p></li>
               <li><p>A value derived from another distinctive identifier.</p></li>
-              <li><p>A random value that was reported to a (i.e. <a href="#privacy-individualization">individualization</a>) server along with an indelible value or provided by such a server after providing an indelible value.</p></li>
+              <li><p>A random value that was reported to a (i.e. <a href="#privacy-individualization">individualization</a>) server along with a <a def-id="distinctive-permanent-identifier"></a> or provided by such a server after providing a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>A value derived from a unique value provisioned in the hardware device in the factory.</p></li>
               <li><p>A value derived from a unique hardware value (e.g. MAC address or serial number) or software value (e.g. operating system installation instance or operating system user account name) in the hardware device in the factory.</p></li>
               <li><p>A value derived from a unique value embedded in the CDM binary or other file used by the CDM.</p></li>
@@ -456,16 +483,31 @@
               <li>
                 <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a value that is <a def-id="non-associable"></a> (not just <a def-id="non-associable-by-application"></a>), even by a central server such as an <a href="#privacy-individualization">individualization</a> server, AND one or more of the following:</p>
                 <ul>
-                  <li><p>No indelible value or distinctive identifier was involved in the generation of the value.</p></li>
+                  <li><p>No <a def-id="distinctive-permanent-identifier"></a> or distinctive identifier was involved in the generation of the value.</p></li>
                   <li><p>It is a random value generated <em>without</em> inputs from the system.</p></li>
                   <li><p>It is a value provided by a server without the use of or knowledge of another distinctive identifier.</p></li>
                 </ul>
               </li>
             </ul>
           </div>
-          <p class="note">The source of the identifier does not affect whether it is distinctive.
-            For example, an identifier that is permanently part of the client device, contained in the CDM, generated on the client, or generated as part of some individualization or other provisioning process is considered distinctive if it meets the criteria above.
+        </dd>
+
+        <dt>Use of Distinctive Identifiers and Distinctive Permanent Identifiers</dt>
+        <dd>
+          <p>
+            An implementation, configuration, instance, or object <dfn id="uses-distinctive-identifiers">uses Distinctive Identifier(s)</dfn> if, at any time during its lifetime or the lifetime of related such entities,
+            it exposes, even in encrypted form, on or more <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>, information about them, or values derived from or otherwise related to them outside the client.
+            This includes but is not limited to providing such a value to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
           </p>
+          <p>
+            An implementation, configuration, instance, or object <dfn id="uses-distinctive-permanent-identifiers">uses Permanent Distinctive Identifier(s)</dfn> if, at any time during its lifetime or the lifetime of related such entities,
+            it exposes, even in encrypted form, on or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a>, information about them, or values derived from or otherwise related to them outside the client.
+            This includes but is not limited to providing such a value to an <a href="#privacy-individualization">individualization</a> server.
+            Such values MUST NOT be provided to the application.
+          </p>
+          <p>
+            An implementation, configuration, instance, or object <dfn id="uses-distinctive-identifiers-or-distinctive-permanent-identifiers">uses Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</dfn> if it
+            <a href="#uses-distinctive-identifiers">uses Distinctive Identifier(s)</a> and/or <a href="#uses-distinctive-permanent-identifiers">uses Permanent Distinctive Identifier(s)</a>.
         </dd>
 
         <dt id="cross-origin">Cross Origin Limitations</dt>
@@ -709,7 +751,7 @@
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> does not support a persistent <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <p>If the <var>implementation</var> does not support <a href="#uses-distinctive-identifiers">use of Distinctive Identifier(s)</a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                     <!-- TODO: Find a better descriptive model for this than "combination" -->
                   </dd>
                   <dt><a def-id="requirement-optional"></a></dt>
@@ -718,7 +760,7 @@
                   </dd>
                   <dt><a def-id="requirement-not-allowed"></a></dt>
                   <dd>
-                    <p>If the <var>implementation</var> requires use of a <a def-id="distinctive-identifier"></a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
+                    <p>If the <var>implementation</var> requires <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> in combination with <var>accumulated configuration</var> and <var>restrictions</var>, return <code>NotSupported</code>.</p>
                   </dd>
                 </dl>
                 <div class="note">
@@ -842,7 +884,7 @@
               <!-- Replace "optional" values in the combined configuration before checking permissions and for the value exposed by MediaKeySystemAccess. -->
               <li><p>If <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value is <a def-id="requirement-optional"></a>, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
-                  <dt>If the <var>implementation</var> requires use of a <a def-id="distinctive-identifier"></a> for any of the combinations in <var>accumulated configuration</var></dt>
+                  <dt>If the <var>implementation</var> requires <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>
                     <p>Change <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> value to <a def-id="requirement-required"></a>.</p>
                   </dd>
@@ -908,7 +950,7 @@
                   <dd>
                     <p>
                       Inform the user that <var>accumulated configuration</var> is in use in the <var>origin</var> including, specifically, the information
-                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> will be used if the <a def-id="option-distinctiveIdentifier"></a>
+                      that <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and/or <a def-id="distinctive-permanent-identifier-maybe-plural"></a> as appropriate will be used if the <a def-id="option-distinctiveIdentifier"></a>
                       member of <var>accumulated configuration</var> is <a def-id="requirement-required"></a>. Continue to the next step.
                     </p>
                   </dd>
@@ -1084,7 +1126,7 @@
                       Request user consent to use <var>accumulated configuration</var> in the <var>origin</var> and wait for the user response.
                     </p>
                     <p>
-                      The consent MUST include consent to use a <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> if
+                      The consent MUST include consent to use a <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and/or <a def-id="distinctive-permanent-identifier-maybe-plural"></a> as appropriate if
                       <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member is <a def-id="requirement-required"></a>.
                     </p>
                     <div class="note">
@@ -1177,13 +1219,8 @@
           <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
           <dd>
             Whether use of a <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> is required.
-            <p>When this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT use or expose a <a def-id="distinctive-identifier"></a> for any operations associated with any object created from this configuration.
-              This includes but is not limited to the following:
+            <p>When this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> for any operations associated with any object created from this configuration.
             </p>
-            <ol>
-              <li><p>Any individualization process MUST NOT use and messages involved MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form.</p></li>
-              <li><p>Messages from the CDM, such as <a def-id="message"></a> events, MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form.</p></li>
-            </ol>
           </dd>
           <dt>MediaKeysRequirement persistentState = "optional"</dt>
           <dd>
@@ -1307,7 +1344,7 @@
                 <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
                 <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
                 <li><p>Initialize <var>instance</var> to enable, disable and/or select <a def-id="keysystem"></a> features using <var>configuration</var>.</p></li>
-                <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from using <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.</p></li>
+                <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.</p></li>
                 <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Let <var>media keys</var> be a new <a>MediaKeys</a> object, and initialize it as follows:</p>
@@ -2277,7 +2314,7 @@
           <dt>individualization-request</dt>
           <dd>
             The message contains a request for per-origin individualization (or re-individualization). See <a href="#per-origin-individualization">Per-Origin Individualization</a>.<br/>
-            As with all other messages, any identifiers in the message MUST be <a href="#per-origin-identifiers">distinctive per-origin</a> and MUST NOT contain any non-origin-specific <a def-id="distinctive-identifiers"></a>.
+            As with all other messages, any identifiers in the message MUST be <a href="#per-origin-identifiers">distinctive per-origin</a> and MUST NOT be <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.
           </dd>
         </dl>
 
@@ -2354,7 +2391,10 @@
           <p>The Queue a "message" Event algorithm queues a message event to a <a>MediaKeySession</a> object.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object, a <var>message type</var>, and a <var>message</var>.
           </p>
-          <p><var>message</var> MUST NOT contain a <a def-id="distinctive-identifier"></a>, even in an encrypted form, if the <a>MediaKeySession</a> object's <var>use distinctive identifier</var> value is false.</p>
+          <p>
+            <var>message</var> MUST NOT contain <a def-id="distinctive-permanent-identifier-maybe-plural"></a>, even in an encrypted form.
+            <var>message</var> MUST NOT contain <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>, even in an encrypted form, if the <a>MediaKeySession</a> object's <var>use distinctive identifier</var> value is false.
+          </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>session</var> be the specified <a>MediaKeySession</a> object.</p></li>
@@ -3109,24 +3149,24 @@
         
       <section id="identifier-requirements">
         <h3>Identifiers</h3>
-        <p>The use of identifiers, especially <a def-id="distinctive-identifiers"></a>, by implementations presents a privacy concern.
+        <p>The use of identifiers, especially <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>, by implementations presents a privacy concern.
           This section defines requirements for avoiding or at least mitigating such concerns.
         </p>
         <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/117">Issue 117</a> - This section should apply to all persistent identifiers, not just <a def-id="distinctive-identifiers"></a>.</p>
 
-        <section>
-          <h3>Limit or Avoid use of Distinctive Identifiers</h3>
+        <section id="limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">
+          <h3>Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers</h3>
           <ul>
             <li>
-              <p>Implementations SHOULD avoid use of <a def-id="distinctive-identifiers"></a>.</p>
-              <p class="note">For example, use keys or identifiers that apply to a group of clients or devices rather than individual clients.</p>
+              <p>Implementations SHOULD avoid <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use of Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>.</p>
+              <p class="note">For example, use identifiers or other values that apply to a group of clients or devices rather than individual clients.</p>
             </li>
             <li>
-              <p>Implementations SHOULD only use <a def-id="distinctive-identifiers"></a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
+              <p>Implementations SHOULD only <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
               <p class="note">For example, <a def-id="temporary-session"></a> and <a def-id="persistent-license-session"></a> sessions may have different requirements.</p>
             </li>
             <li>
-              <p>Implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> SHOULD support the option to not use it.
+              <p>Implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> SHOULD support the option to not use them.
                 When supported, applications can select for this mode using <a def-id="option-distinctiveIdentifier"></a> = <a def-id="requirement-not-allowed"></a>.
                 Selecting such an option MAY affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
               </p>
@@ -3143,6 +3183,7 @@
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/219">Issue 219</a> - Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p>
           <p>This MAY be implemented using a <a href="#server-certificate">server certificate</a>.</p>
           <p>The license server MUST NOT expose a <a def-id="distinctive-identifier"></a> to any entity other than the CDM that sent it.</p>
+          <a def-id="distinctive-permanent-identifiers"></a> MUST also be encrypted at the message exchange level.
           <p class="note">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM.
             This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
           </p>
@@ -3172,7 +3213,7 @@
 
         <section id="allow-identifiers-cleared">
           <h3>Allow Identifiers to Be Cleared</h3>
-          <p>As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>, implementations that use <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> MUST allow the user to clear those identifiers such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+          <p>As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>, implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> MUST allow the user to clear the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> and values associated with <a def-id="distinctive-permanent-identifier-maybe-plural"></a> such that they are no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
           <p>
             Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when <a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are subsequently needed.
@@ -3516,7 +3557,7 @@
           <p>Potential network attacks and their implications include:</p>
           <ul>
             <li><p>DNS spoofing attacks: One cannot guarantee that a host claiming to be in a certain domain (<a def-id="origin"></a>) really is from that domain.</p></li>
-            <li><p>Passive network attacks: One cannot guarantee that data, including <a def-id="distinctive-identifiers"></a>, transmitted between the client and server is not viewed by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
+            <li><p>Passive network attacks: One cannot guarantee that data, including <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>, transmitted between the client and server is not viewed by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
             <li>
               <p>Active network attacks: One cannot guarantee that Additional scripts or iframes are not injected into pages (both those that use these APIs for legitimate purposes and pages that do not use these APIs).
                 The consequences are that:
@@ -3524,7 +3565,7 @@
               <ul>
                 <li><p>Calls to these APIs can be injected into any page.</p></li>
                 <li><p>Calls to these APIs from pages using them for legitimate reasons can be manipulated, including modifying the requested functionality, modifying or adding calls, and modifying or injecting data. See also <a href="#input-data-security">Input Data Attacks and Vulnerabilities</a></p></li>
-                <li><p>Data, including <a def-id="distinctive-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
+                <li><p>Data, including <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
               </ul>
             </li>
           </ul>
@@ -3671,6 +3712,7 @@
       <section id="user-tracking">
         <h3>User Tracking</h3>
         <section class="informative">
+        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/237">Issue 237</a> - Address <a def-id="distinctive-permanent-identifiers"></a> in this section and ensure it reflects the current definition of <a def-id="distinctive-identifier"></a>.</p>
           <h4>Concerns</h4>
           <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests.
             Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
@@ -3712,10 +3754,10 @@
         <section>
           <h4>Mitigations</h4>
           <dl>
-            <dt>Do not use <a def-id="distinctive-identifiers"></a></dt>
+            <dt>Do not <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifiers or Distinctive Permanent Identifiers</a></dt>
             <dd>
-              <p>Key System implementations SHOULD avoid using <a def-id="distinctive-identifiers"></a> whenever possible and only use them when they meaningfully contribute to the robustness of the implementation.
-                See <a href="#limit-or-avoid-use-of-distinctive-identifiers">Limit or Avoid use of Distinctive Identifiers</a>.
+              <p>Key System implementations SHOULD avoid <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifiers and Distinctive Permanent Identifiers</a> whenever possible and only use them when they meaningfully contribute to the robustness of the implementation.
+                See <a href="#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers</a>.
               </p>
             </dd>
 
@@ -3729,7 +3771,7 @@
             <dt>Use of non-associable per-origin identifiers</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
-              <p>Implementations that use <a def-id="distinctive-identifiers"></a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a>.
+              <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a>.
                 See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
               </p>
             </dd>
@@ -3810,6 +3852,7 @@
         </section>
 
         <!-- TODO: This is out of place as a sub-section here. -->
+        <!-- TODO(#117/#231): Update to use uses-distinctive-identifiers-or-distinctive-permanent-identifiers and [Distinctive] Permanent Identifiers as appropriate. -->
         <section id="privacy-individualization">
           <h4>Individualization</h4>
           <p><a def-id="distinctive-identifier">Distinctive Identifier(s)</a> are sometimes obtained via a process called individualization or provisioning.</p>
@@ -3860,7 +3903,7 @@
               <li><p>MUST adhere to the <a href="#identifier-requirements">identifier requirements</a><!-- TODO(#117): Update reference. Ensure it includes exposing only values that are <a href="#per-origin-identifiers">unique per origin</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> <a def-id="distinctive-identifiers"></a>. --></p></li>
               <li><p>MUST NOT provide executable code to the CDM.</p></li>
             </ul>
-            <p>With appropriate precautions, such individualization can provide better privacy than origin-independent individualization, though not as good as models that do not use <a def-id="distinctive-identifiers"></a>.
+            <p>With appropriate precautions, such individualization can provide better privacy than origin-independent individualization, though not as good as models that do not <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>.
               To preserve the benefits of such a design and to avoid introducing other privacy concerns,
               such implementations and the applications that support them SHOULD avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
             </p>
@@ -3956,7 +3999,7 @@
       <section id="privacy-secureorigin">
         <h3>Secure Origin and Transport</h3>
         <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support these APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
-        This is especially important if a user agent chooses to support a Key System implementation that expose <a def-id="distinctive-identifiers"></a> or other such information without effectively anonymizing it in transit.
+        This is especially important if a user agent chooses to support a Key System implementation that may <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> or other such information without effectively anonymizing it in transit.
         </p>
         <p>Regardless of user agent limitations, applications SHOULD use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
         <p>All user agents MUST properly handle Mixed Content [[!MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
