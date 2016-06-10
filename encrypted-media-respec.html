@@ -2494,13 +2494,25 @@
             <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li>
               <p>
-                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
-                store <var>session</var>'s <var>record of key usage</var>, if it exists.
+                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, execute the following steps in parallel:
               </p>
-              <p class="note">
-                The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
-                a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
+              <ol>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+                <li>
+                  <p>Use <var>cdm</var> to store <var>session</var>'s <var>record of key usage</var>, if it exists.</p>
+                  <div class="note">
+                    <p>
+                      The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
+                      a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
+                    </p>
+                    <p>
+                      Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+                    </p>
+                  </div>
+                </li>
+              </ol>
               </p>
+
             </li>
             <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
@@ -2518,15 +2530,20 @@
           <ol>
             <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
-            <li><p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
             <li>
-              <p>
-                If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
-                store <var>session</var>'s <var>record of key usage</var>, if it exists.
-              </p>
-              <p class="note">
-                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
-              </p>
+              <p>Use <var>cdm</var> to execute the following steps:</p>
+              <ol>
+                <li><p>Close the <a href="#key-session">session</a> associated with <var>session</var>.</p></li>
+                <li>
+                  <p>
+                    If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>,
+                    store <var>session</var>'s <var>record of key usage</var>, if it exists.
+                  </p>
+                  <p class="note">
+                    Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+                  </p>
+                </li>
+              <ol>
             </li>
           </ol>
         </section>

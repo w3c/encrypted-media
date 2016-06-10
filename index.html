@@ -4566,14 +4566,29 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
           </li>
           <li>
             <p>
-              If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store <var>session</var>'s <var>record of key usage</var>, if it exists.
+              If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, execute the following steps in parallel:
             </p>
-            <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
-              <p class="">
-                The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as a result of the <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> method processing an acknowledgement of the record of key usage.
-              </p>
-            </div>
+            <ol>
+              <li>
+                <p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p>
+              </li>
+              <li>
+                <p>Use <var>cdm</var> to store <var>session</var>'s <var>record of key usage</var>, if it exists.</p>
+                <div class="note">
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
+                  <div class="">
+                    <p>
+                      The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as a result of the <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> method processing an acknowledgement of the record of key usage.
+                    </p>
+                    <p>
+                      Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ol>
+            <p></p>
+
           </li>
           <li>
             <p>Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing an empty sequence.</p>
@@ -4604,18 +4619,26 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
             <p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p>
           </li>
           <li>
-            <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
-          </li>
-          <li>
-            <p>
-              If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store <var>session</var>'s <var>record of key usage</var>, if it exists.
-            </p>
-            <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
-              <p class="">
-                Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
-              </p>
-            </div>
+            <p>Use <var>cdm</var> to execute the following steps:</p>
+            <ol>
+              <li>
+                <p>Close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+              </li>
+              <li>
+                <p>
+                  If <var>session</var>'s <var>session type</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, store <var>session</var>'s <var>record of key usage</var>, if it exists.
+                </p>
+                <div class="note">
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
+                  <p class="">
+                    Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
+                  </p>
+                </div>
+              </li>
+              <ol>
+
+              </ol>
+            </ol>
           </li>
         </ol>
       </section>
