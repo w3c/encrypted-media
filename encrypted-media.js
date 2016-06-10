@@ -324,6 +324,7 @@
     'present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'present', },
     'not-present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'not present', },
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
+    'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
 //    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
