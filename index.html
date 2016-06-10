@@ -5509,7 +5509,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
               <p><a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client and <em class="rfc2119" title="MUST NOT">MUST NOT</em> be exposed to the application.</p>
             </li>
             <li>
-              <p>All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs (e.g. persisted session data) <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>.</p>
+              <p>
+                All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>. This includes but is not limited to random identifiers, session data, and other CDM data.
+              </p>
             </li>
           </ul>
         </div>
@@ -5534,13 +5536,16 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </li>
           <li>
             <p>
-              Implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> <em class="rfc2119" title="SHOULD">SHOULD</em> support the option to not use them. Implementations with such support <em class="rfc2119" title="SHOULD">SHOULD</em> expose the ability for the user to select this option.
+              Implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> <em class="rfc2119" title="SHOULD">SHOULD</em> support the option to not use them.
+              <!-- TODO(#243): Decide whether to include this statement.
+                Implementations with such support SHOULD expose the ability for the user to select this option.
+                -->
             </p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note112"><span>Note</span></div>
               <div class="">
                 <p>
-                  When supported, applications can select for this mode using <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> = <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>. Selecting such an option <em class="rfc2119" title="MAY">MAY</em> affect the results of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code> call and/or the license requests that are generated from subsequently generated sessions.
+                  When supported, applications can select for this mode using <code><a href="#widl-MediaKeySystemConfiguration-distinctiveIdentifier">distinctiveIdentifier</a></code> = <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>. Selecting such an option may affect the results of the <code><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess()</a></code> call and/or the license requests that are generated from subsequently generated sessions.
                 </p>
                 <p>
                   Providing the user access to select or choose this implementation capability may allow the user to access content while maintaining a higher degree of privacy.
@@ -5562,19 +5567,21 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
         </div>
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
-          <p class="">Identifiers may be exposed in the following ways:</p>
+          <div class="">
+            <p>Identifiers may be exposed in the following ways:</p>
+            <ul>
+              <li>
+                <p>To the application via a <code><a href="#dom-evt-message">message</a></code> event.</p>
+              </li>
+              <li>
+                <p>In a message from a server, such as one that is passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>.</p>
+              </li>
+              <li>
+                <p>As part of <a href="#privacy-individualization">individualization</a>.</p>
+              </li>
+            </ul>
+          </div>
         </div>
-        <ul>
-          <li>
-            <p>To the application via a <code><a href="#dom-evt-message">message</a></code> event.</p>
-          </li>
-          <li>
-            <p>In a message from a server, such as one that is passed to <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>.</p>
-          </li>
-          <li>
-            <p>As part of <a href="#privacy-individualization">individualization</a>.</p>
-          </li>
-        </ul>
         <p>
           The <a href="#cdm">CDM</a> <em class="rfc2119" title="MUST">MUST</em> verify that the encryption key belongs to a valid server for its Key System. For identifers exposed to the application, this <em class="rfc2119" title="MAY">MAY</em> be implemented using a <a href="#server-certificate">server certificate</a>.
         </p>
@@ -5605,6 +5612,10 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
       <section id="per-origin-identifiers" typeof="bibo:Chapter" resource="#per-origin-identifiers" property="bibo:hasPart">
         <h4 id="h-per-origin-identifiers" resource="#h-per-origin-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.3 </span>Use Per-Origin Identifiers</span></h4>
+        <div class="issue" id="issue-7">
+          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue7"><span>Issue 7</span></div>
+          <p class=""><a href="https://github.com/w3c/encrypted-media/issues/242">Issue 242</a> - Add a section that covers this topic for values and data that are not identifiers.</p>
+        </div>
         <p>
           All potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be unique per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. That is, the identifier(s) used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs.
         </p>
@@ -5615,15 +5626,15 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
             <p><a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST NOT">MUST NOT</em> be exposed to the application or origin.</p>
           </div>
         </div>
-        <div class="issue" id="issue-7">
-          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue7"><span>Issue 7</span></div>
+        <div class="issue" id="issue-8">
+          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue8"><span>Issue 8</span></div>
           <p class=""><a href="https://github.com/w3c/encrypted-media/issues/101">Issue 101</a> - It has been suggested that the <a href="#distinctive-identifier">Distinctive Identifiers</a> be distinctive for the combination of top-level origin and the origin using these APIs.</p>
         </div>
         <p>
           Values across origins <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a>, meaning it <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible to correlate identifiers from multiple origins, such as to determine that they came from the same client or user. Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, <em class="rfc2119" title="MUST">MUST</em> do so in a non-reversible way.
         </p>
-        <div class="issue" id="issue-8">
-          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue8"><span>Issue 8</span></div>
+        <div class="issue" id="issue-9">
+          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue9"><span>Issue 9</span></div>
           <p class=""><a href="https://github.com/w3c/encrypted-media/issues/219">Issue 219</a> - Add more specific text about ensuring the desired non-reversible properties.</p>
         </div>
       </section>
@@ -5631,13 +5642,13 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <section id="allow-identifiers-cleared" typeof="bibo:Chapter" resource="#allow-identifiers-cleared" property="bibo:hasPart">
         <h4 id="h-allow-identifiers-cleared" resource="#h-allow-identifiers-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.4 </span>Allow Identifiers to Be Cleared</span></h4>
         <p>
-          As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>, all potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be clearable such that the values are no longer retrievable, observabe, or inferable both outside, such as via the APIs defined in this specification, and on the client device.
+          As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>, all potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be clearable such that the values are no longer retrievable, observable, or inferable both outside, such as via the APIs defined in this specification, and on the client device.
         </p>
         <p>
           Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> <em class="rfc2119" title="MUST">MUST</em> allow the user to clear the <a href="#distinctive-identifier">Distinctive Identifier(s)</a>. Implementations that <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> and <em class="rfc2119" title="MUST">MUST</em> allow the user to clear values associated with the <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifier(s)</a>.
         </p>
         <p>
-          Once cleared, new <a href="#non-associable-by-application">non-associable by applications</a> value(s) <em class="rfc2119" title="MUST">MUST</em> be generated when values, such as <a href="#distinctive-identifier">Distinctive Identifiers</a> subsequently needed.
+          Once cleared, new <a href="#non-associable-by-application">non-associable by applications</a> value(s) <em class="rfc2119" title="MUST">MUST</em> be generated when values, such as <a href="#distinctive-identifier">Distinctive Identifiers</a> are subsequently needed.
         </p>
       </section>
     </section>
@@ -6208,8 +6219,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <h3 id="h-user-tracking" resource="#h-user-tracking"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4 </span>User Tracking</span></h3>
 
       <section class="informative" typeof="bibo:Chapter" resource="#concerns-3" property="bibo:hasPart">
-        <div class="issue" id="issue-9">
-          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue9"><span>Issue 9</span></div>
+        <div class="issue" id="issue-10">
+          <div class="issue-title marker" aria-level="5" role="heading" id="h-issue10"><span>Issue 10</span></div>
           <p class=""><a href="https://github.com/w3c/encrypted-media/issues/237">Issue 237</a> - Address <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> in this section and ensure it reflects the current definition of <a href="#distinctive-identifier">Distinctive Identifier</a>.</p>
         </div>
         <h4 id="concerns-3" resource="#concerns-3"><span property="xhv:role" resource="xhv:heading">Concerns</span></h4>

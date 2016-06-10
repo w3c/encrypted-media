@@ -3177,7 +3177,12 @@
             </li>
             <li><p><a def-id="distinctive-identifiers"></a> MUST be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client, <a href="#per-origin-identifiers">unique per-origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
             <li><p><a def-id="distinctive-permanent-identifiers"></a> MUST be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client and MUST NOT be exposed to the application.</p></li>
-            <li><p>All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs (e.g. persisted session data) MUST be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
+            <li>
+              <p>
+                All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs MUST be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>.
+                This includes but is not limited to random identifiers, session data, and other CDM data.
+              </p>
+            </li>
           </ul>
         </div>
 
@@ -3195,12 +3200,14 @@
             <li>
               <p>
                 Implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> SHOULD support the option to not use them.
+                <!-- TODO(#243): Decide whether to include this statement.
                 Implementations with such support SHOULD expose the ability for the user to select this option.
+                -->
               </p>
               <div class="note">
                 <p>
                   When supported, applications can select for this mode using <a def-id="option-distinctiveIdentifier"></a> = <a def-id="requirement-not-allowed"></a>.
-                  Selecting such an option MAY affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
+                  Selecting such an option may affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
                 </p>
                 <p>
                   Providing the user access to select or choose this implementation capability may allow the user to access content while maintaining a higher degree of privacy.
@@ -3218,12 +3225,14 @@
             The encryption MUST ensure that the ciphertext cannot be used as a proxy for the actual identifier, even given the same plaintext.
           </p>
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/219">Issue 219</a> - Add more specific text about ensuring the desired privacy properties when encrypting identifiers.</p>
-          <p class="note">Identifiers may be exposed in the following ways:</p>
+          <div class="note">
+            <p>Identifiers may be exposed in the following ways:</p>
             <ul>
               <li><p>To the application via a <a def-id="message"></a> event.</p></li>
               <li><p>In a message from a server, such as one that is passed to <a def-id="update"></a>.</p></li>
               <li><p>As part of <a href="#privacy-individualization">individualization</a>.</p></li>
             </ul>
+          </div>
           <p>
             The <a def-id="cdm"></a> MUST verify that the encryption key belongs to a valid server for its Key System.
             For identifers exposed to the application, this MAY be implemented using a <a href="#server-certificate">server certificate</a>.
@@ -3244,7 +3253,8 @@
 
         <section id="per-origin-identifiers">
           <h3>Use Per-Origin Identifiers</h3>
-          <p>          
+          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/242">Issue 242</a> - Add a section that covers this topic for values and data that are not identifiers.</p>
+          <p>
             All potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> MUST be unique per <a def-id="origin"></a>.
             That is, the identifier(s) used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs.
           </p>
@@ -3265,14 +3275,14 @@
           <p>
             As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>,
             all potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> MUST be clearable
-            such that the values are no longer retrievable, observabe, or inferable both outside, such as via the APIs defined in this specification, and on the client device.
+            such that the values are no longer retrievable, observable, or inferable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
           <p>
             Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> MUST allow the user to clear the <a def-id="distinctive-identifier">Distinctive Identifier(s)</a>.
             Implementations that <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> and MUST allow the user to clear values associated with the <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.
           </p>
           <p>
-            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when values, such as <a def-id="distinctive-identifiers"></a> subsequently needed.
+            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when values, such as <a def-id="distinctive-identifiers"></a> are subsequently needed.
           </p>
         </section>
       </section>
