@@ -17,98 +17,74 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       padding: 0.5em;
       color: #333;
       background: #f8f8f8;
-      -webkit-text-size-adjust: none;
     }
     
     .hljs-comment,
-    .diff .hljs-header {
+    .hljs-quote {
       color: #998;
       font-style: italic;
     }
     
     .hljs-keyword,
-    .css .rule .hljs-keyword,
-    .hljs-winutils,
-    .nginx .hljs-title,
-    .hljs-subst,
-    .hljs-request,
-    .hljs-status {
+    .hljs-selector-tag,
+    .hljs-subst {
       color: #333;
       font-weight: bold;
     }
     
     .hljs-number,
-    .hljs-hexcolor,
-    .ruby .hljs-constant {
+    .hljs-literal,
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-tag .hljs-attr {
       color: #008080;
     }
     
     .hljs-string,
-    .hljs-tag .hljs-value,
-    .hljs-doctag,
-    .tex .hljs-formula {
+    .hljs-doctag {
       color: #d14;
     }
     
     .hljs-title,
-    .hljs-id,
-    .scss .hljs-preprocessor {
+    .hljs-section,
+    .hljs-selector-id {
       color: #900;
       font-weight: bold;
     }
     
-    .hljs-list .hljs-keyword,
     .hljs-subst {
       font-weight: normal;
     }
     
-    .hljs-class .hljs-title,
     .hljs-type,
-    .vhdl .hljs-literal,
-    .tex .hljs-command {
+    .hljs-class .hljs-title {
       color: #458;
       font-weight: bold;
     }
     
     .hljs-tag,
-    .hljs-tag .hljs-title,
-    .hljs-rule .hljs-property,
-    .django .hljs-tag .hljs-keyword {
+    .hljs-name,
+    .hljs-attribute {
       color: #000080;
       font-weight: normal;
     }
     
-    .hljs-attribute,
-    .hljs-variable,
-    .lisp .hljs-body,
-    .hljs-name {
-      color: #008080;
-    }
-    
-    .hljs-regexp {
+    .hljs-regexp,
+    .hljs-link {
       color: #009926;
     }
     
     .hljs-symbol,
-    .ruby .hljs-symbol .hljs-string,
-    .lisp .hljs-keyword,
-    .clojure .hljs-keyword,
-    .scheme .hljs-keyword,
-    .tex .hljs-special,
-    .hljs-prompt {
+    .hljs-bullet {
       color: #990073;
     }
     
-    .hljs-built_in {
+    .hljs-built_in,
+    .hljs-builtin-name {
       color: #0086b3;
     }
     
-    .hljs-preprocessor,
-    .hljs-pragma,
-    .hljs-pi,
-    .hljs-doctype,
-    .hljs-shebang,
-    .hljs-cdata {
+    .hljs-meta {
       color: #999;
       font-weight: bold;
     }
@@ -121,12 +97,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       background: #dfd;
     }
     
-    .diff .hljs-change {
-      background: #0086b3;
+    .hljs-emphasis {
+      font-style: italic;
     }
     
-    .hljs-chunk {
-      color: #aaa;
+    .hljs-strong {
+      font-weight: bold;
     }
   </style>
   <style id="respec-mainstyle">
@@ -1219,7 +1195,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
               <li class="tocline"><a href="#clear-key-release-format" class="tocxref"><span class="secno">9.1.5 </span>License Release Format</a>
                 <ul class="toc">
-                  <li class="tocline"><a href="#clear-key-release-format-example" class="tocxref"><span class="secno">9.1.5.1 </span>Example</a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-1" class="tocxref"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of key usage</var></a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-2" class="tocxref"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record license destruction</var></a></li>
                 </ul>
               </li>
               <li class="tocline"><a href="#clear-key-release-ack-format" class="tocxref"><span class="secno">9.1.6 </span>License Release Acknowledgement Format</a>
@@ -5740,6 +5717,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </li>
           <li>
             <p>
+              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, in the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm, the <var>message</var> reflecting the object's <var>record license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+            </p>
+          </li>
+          <li>
+            <p>
               The <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute method initially contains all key IDs that have been provided via <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>, with status <code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code>. When the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm is executed, the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute will be set to an empty list.
             </p>
           </li>
@@ -5770,14 +5752,14 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p><em>This section is non-normative.</em></p>
           <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
           <div class="example">
-            <div class="example-title marker"><span>Example 1</span></div><pre class="highlight hljs json">{
-  "<span class="hljs-attribute">kids</span>":
-    <span class="hljs-value">[
+            <div class="example-title marker"><span>Example 1</span></div><pre class="highlight hljs xquery">{
+  <span class="hljs-string">"kids"</span>:
+    [
      <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>,
      <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span>
-    ]</span>,
-  "<span class="hljs-attribute">type</span>":<code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code>
-<span class="hljs-value"></span>}</pre></div>
+    ],
+  <span class="hljs-string">"type"</span>:<code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code>
+}</pre></div>
         </section>
       </section>
 
@@ -5808,15 +5790,15 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p><em>This section is non-normative.</em></p>
           <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
           <div class="example">
-            <div class="example-title marker"><span>Example 2</span></div><pre class="highlight hljs clojure"><span class="hljs-collection">{
+            <div class="example-title marker"><span>Example 2</span></div><pre class="highlight hljs xquery">{
   <span class="hljs-string">"keys"</span>:
-    <span class="hljs-collection">[<span class="hljs-collection">{
+    [{
       <span class="hljs-string">"kty"</span>:<span class="hljs-string">"oct"</span>,
       <span class="hljs-string">"k"</span>:<span class="hljs-string">"tQ0bJVWb6b0KPL6KtZIy_A"</span>,
       <span class="hljs-string">"kid"</span>:<span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>
-    }</span>]</span>,
-  'type':</span><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code><span class="hljs-collection">
-}</span></pre></div>
+    }],
+  <span class="hljs-string">'type'</span>:<code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code>
+}</pre></div>
         </section>
       </section>
 
@@ -5824,10 +5806,17 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
         <h4 id="h-clear-key-release-format" resource="#h-clear-key-release-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5 </span>License Release Format</span></h4>
         <p>This section describes the format of the license release message to be provided via the <code><a href="#widl-MediaKeyMessageEvent-message">message</a></code> attribute of the <code><a href="#dom-evt-message">message</a></code> event.</p>
-        <p>The format is a JSON object containing the following members:</p>
+        <p>
+          The format is a JSON object. For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, the object shall contain the following member:
+        </p>
         <dl>
           <dt>"kids"</dt>
           <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+        </dl>
+        <p>
+          For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> the object shall also contain the following members:
+        </p>
+        <dl>
           <dt>"firstTime"</dt>
           <dd>The <a href="#first-decryption-time">first decryption time</a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
           <dt>"latestTime"</dt>
@@ -5837,17 +5826,32 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
         <p>When contained in the ArrayBuffer <code><a href="#widl-MediaKeyMessageEvent-message">message</a></code> attribute of a <a href="#idl-def-MediaKeyMessageEvent" class="idlType"><code>MediaKeyMessageEvent</code></a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [<cite><a class="bibref" href="#bib-ENCODING">ENCODING</a></cite>]. Applications <em class="rfc2119" title="MAY">MAY</em> decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a> [<cite><a class="bibref" href="#bib-ENCODING">ENCODING</a></cite>].
         </p>
 
-        <section id="clear-key-release-format-example" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example" property="bibo:hasPart">
-          <h5 id="h-clear-key-release-format-example" resource="#h-clear-key-release-format-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example</span></h5>
+        <section id="clear-key-release-format-example-1" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-1" property="bibo:hasPart">
+          <h5 id="h-clear-key-release-format-example-1" resource="#h-clear-key-release-format-example-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of key usage</var></span></h5>
           <p><em>This section is non-normative.</em></p>
-          <p>The following example is a license release for a session which contained two keys. (Line breaks are for readability only.)</p>
+          <p>
+            The following example is a license release for a <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> session which contained two keys. (Line breaks are for readability only.)
+          </p>
           <div class="example">
-            <div class="example-title marker"><span>Example 3</span></div><pre class="highlight hljs json">{
-  "<span class="hljs-attribute">kids</span>": <span class="hljs-value">[ <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>, <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span> ]</span>,
-  "<span class="hljs-attribute">tfirst</span>" : <span class="hljs-value"><span class="hljs-number">1430425323757</span></span>,
-  "<span class="hljs-attribute">tlatest</span>" : <span class="hljs-value"><span class="hljs-number">1430425383757</span>
-</span>}</pre></div>
+            <div class="example-title marker"><span>Example 3</span></div><pre class="highlight hljs xquery">{
+  <span class="hljs-string">"kids"</span>: [ <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>, <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span> ],
+  <span class="hljs-string">"firstTime"</span> : <span class="hljs-number">1430425323757</span>,
+  <span class="hljs-string">"latestTime"</span> : <span class="hljs-number">1430425383757</span>
+}</pre></div>
         </section>
+
+        <section id="clear-key-release-format-example-2" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-2" property="bibo:hasPart">
+          <h5 id="h-clear-key-release-format-example-2" resource="#h-clear-key-release-format-example-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record license destruction</var></span></h5>
+          <p><em>This section is non-normative.</em></p>
+          <p>
+            The following example is a license release for a <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> session which contained two keys. (Line breaks are for readability only.)
+          </p>
+          <div class="example">
+            <div class="example-title marker"><span>Example 4</span></div><pre class="highlight hljs xquery">{
+  <span class="hljs-string">"kids"</span>: [ <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>, <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span> ]
+}</pre></div>
+        </section>
+
       </section>
 
       <section id="clear-key-release-ack-format" typeof="bibo:Chapter" resource="#clear-key-release-ack-format" property="bibo:hasPart">
@@ -5868,13 +5872,13 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p><em>This section is non-normative.</em></p>
           <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
           <div class="example">
-            <div class="example-title marker"><span>Example 4</span></div><pre class="highlight hljs json">{
-  "<span class="hljs-attribute">kids</span>":
-    <span class="hljs-value">[
+            <div class="example-title marker"><span>Example 5</span></div><pre class="highlight hljs xquery">{
+  <span class="hljs-string">"kids"</span>:
+    [
      <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>,
      <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span>
     ]
-</span>}</pre></div>
+}</pre></div>
         </section>
       </section>
 
@@ -6484,7 +6488,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page. Only one session will ever be created.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 5</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 6</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onLoad</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">var</span> video = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'video'</span>);
 
@@ -6529,11 +6533,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>, <span class="hljs-string">'update() failed'</span>)
     );
   }
-</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 
-<span class="hljs-tag">&lt;<span class="hljs-title">body</span> <span class="hljs-attribute">onload</span>=<span class="hljs-value">'onLoad()'</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">'foo.webm'</span> <span class="hljs-attribute">autoplay</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">'video'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span></pre></div>
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span> <span class="hljs-attr">onload</span>=<span class="hljs-string">'onLoad()'</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'foo.webm'</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">id</span>=<span class="hljs-string">'video'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></pre></div>
     </section>
 
     <section id="example-selecting-key-system" typeof="bibo:Chapter" resource="#example-selecting-key-system" property="bibo:hasPart">
@@ -6542,7 +6546,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 6</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 7</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
 
@@ -6669,9 +6673,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
     }
     xmlhttp.send(request);
   }
-</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 
-<span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-value">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span></pre></div>
+<span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-string">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span></pre></div>
     </section>
 
     <section id="example-mediakeys-before-source" typeof="bibo:Chapter" resource="#example-mediakeys-before-source" property="bibo:hasPart">
@@ -6680,7 +6684,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 7</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 8</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
@@ -6706,9 +6710,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   ).catch(
     <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>, <span class="hljs-string">'Failed to create and initialize a MediaKeys object'</span>)
   );
-</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 
-<span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"v"</span> <span class="hljs-attribute">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-value">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span></pre></div>
+<span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"v"</span> <span class="hljs-attr">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-string">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span></pre></div>
     </section>
 
     <section id="example-using-all-events" typeof="bibo:Chapter" resource="#example-using-all-events" property="bibo:hasPart">
@@ -6717,7 +6721,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 8</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 9</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
@@ -6799,9 +6803,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   ).catch(
     <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>, <span class="hljs-string">'Failed to create and initialize a MediaKeys object'</span>)
   );
-</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 
-<span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"v"</span> <span class="hljs-attribute">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-value">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span></pre></div>
+<span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"v"</span> <span class="hljs-attr">autoplay</span> </span><code><a href="#widl-HTMLMediaElement-onencrypted">onencrypted</a></code><span class="hljs-tag">=<span class="hljs-string">'handleInitData(event)'</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span></pre></div>
     </section>
 
     <section id="example-stored-license" typeof="bibo:Chapter" resource="#example-stored-license" property="bibo:hasPart">
@@ -6809,7 +6813,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 9</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 10</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
@@ -6901,9 +6905,9 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
   ).catch(
     <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>, <span class="hljs-string">'Failed to create and initialize a MediaKeys object'</span>)
   );
-</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 
-<span class="hljs-tag">&lt;<span class="hljs-title">video</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">'v'</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">'foo.webm'</span> <span class="hljs-attribute">autoplay</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">video</span>&gt;</span></pre></div>
+<span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">id</span>=<span class="hljs-string">'v'</span> <span class="hljs-attr">src</span>=<span class="hljs-string">'foo.webm'</span> <span class="hljs-attr">autoplay</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span></pre></div>
     </section>
   </section>
 
