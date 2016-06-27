@@ -3444,6 +3444,12 @@
             </li>
             <li>
               <p>
+                For sessions of type <a def-id="persistent-license-session"></a>, in the <a def-id="remove"></a> algorithm, the <var>message</var> reflecting
+                the object's <var>record license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+              </p>
+            </li>
+            <li>
+              <p>
                 The <a def-id="keyStatuses"></a> attribute method initially contains all key IDs that have been provided via <a def-id="update"></a>, with status <a def-id="status-usable"></a>.
                 When the <a def-id="remove"></a> algorithm is executed, the <a def-id="keyStatuses"></a> attribute will be set to an empty list.
               </p>
@@ -3531,10 +3537,18 @@
 
           <h4>License Release Format</h4>
           <p>This section describes the format of the license release message to be provided via the <a def-id="message-event-message-attribute"></a> attribute of the <a def-id="message"></a> event.</p>
-          <p>The format is a JSON object containing the following members:</p>
+          <p>
+            The format is a JSON object. For sessions of type <a def-id="persistent-usage-record-session"></a> and <a def-id="persistent-license-session"></a>,
+            the object shall contain the following member:
+          </p>
           <dl>
             <dt>"kids"</dt>
             <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+          </dl>
+          <p>
+            For sessions of type <a def-id="persistent-usage-record-session"></a> the object shall also contain the following members:
+          </p>
+          <dl>
             <dt>"firstTime"</dt>
             <dd>The <a def-id="first-decryption-time"></a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
             <dt>"latestTime"</dt>
@@ -3545,18 +3559,35 @@
             Applications MAY decode the contents of the ArrayBuffer to a JSON string using the <a def-id="interface-textdecoder"></a> [[!ENCODING]].
           </p>
 
-          <section id="clear-key-release-format-example" class="informative">
-            <h5>Example</h5>
-            <p>The following example is a license release for a session which contained two keys. (Line breaks are for readability only.)</p>
+          <section id="clear-key-release-format-example-1" class="informative">
+            <h5>Example message reflecting a <var>record of license destruction</var></h5>
+            <p>
+              The following example is a license release for a <a def-id="persistent-license-session"></a> session that contained two keys.
+              (Line breaks are for readability only.)
+            </p>
+            <pre class="example highlight">
+{
+  "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ]
+}
+</pre>
+          </section>
+
+          <section id="clear-key-release-format-example-2" class="informative">
+            <h5>Example message reflecting a <var>record of key usage</var></h5>
+            <p>
+              The following example is a license release for a <a def-id="persistent-usage-record-session"></a> session that contained two keys.
+              (Line breaks are for readability only.)
+            </p>
             <pre class="example highlight">
 {
   "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ],
-  "tfirst" : 1430425323757,
-  "tlatest" : 1430425383757
+  "firstTime" : 1430425323757,
+  "latestTime" : 1430425383757
 }
 </pre>
           </section>
         </section>
+
         <section id="clear-key-release-ack-format">
           <h4>License Release Acknowledgement Format</h4>
           <p>This section describes the format of the license release acknowledgement provided via the <var>response</var> parameter of the <a def-id="update"></a> method.</p>
