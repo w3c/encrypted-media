@@ -914,13 +914,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     }
   </script>
 </head>
-<body class="h-entry toc-inline" role="document" id="respecDocument">
+<body class="h-entry" role="document" id="respecDocument">
   <div class="head" role="contentinfo" id="respecHeader">
     <p>
       <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-24-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-24">24 June 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-27-june-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-06-27">27 June 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -1195,7 +1195,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
               <li class="tocline"><a href="#clear-key-release-format" class="tocxref"><span class="secno">9.1.5 </span>License Release Format</a>
                 <ul class="toc">
-                  <li class="tocline"><a href="#clear-key-release-format-example" class="tocxref"><span class="secno">9.1.5.1 </span>Example</a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-1" class="tocxref"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of license destruction</var></a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-2" class="tocxref"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record of key usage</var></a></li>
                 </ul>
               </li>
               <li class="tocline"><a href="#clear-key-release-ack-format" class="tocxref"><span class="secno">9.1.6 </span>License Release Acknowledgement Format</a>
@@ -5713,6 +5714,11 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           </li>
           <li>
             <p>
+              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, in the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm, the <var>message</var> reflecting the object's <var>record license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+            </p>
+          </li>
+          <li>
+            <p>
               The <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute method initially contains all key IDs that have been provided via <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code>, with status <code><a href="#idl-def-MediaKeyStatus.usable">"usable"</a></code>. When the <code><a href="#widl-MediaKeySession-remove-Promise-void">remove()</a></code> algorithm is executed, the <code><a href="#widl-MediaKeySession-keyStatuses">keyStatuses</a></code> attribute will be set to an empty list.
             </p>
           </li>
@@ -5797,10 +5803,17 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
 
         <h4 id="h-clear-key-release-format" resource="#h-clear-key-release-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5 </span>License Release Format</span></h4>
         <p>This section describes the format of the license release message to be provided via the <code><a href="#widl-MediaKeyMessageEvent-message">message</a></code> attribute of the <code><a href="#dom-evt-message">message</a></code> event.</p>
-        <p>The format is a JSON object containing the following members:</p>
+        <p>
+          The format is a JSON object. For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, the object shall contain the following member:
+        </p>
         <dl>
           <dt>"kids"</dt>
           <dd>An array of <a href="#decryption-key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+        </dl>
+        <p>
+          For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> the object shall also contain the following members:
+        </p>
+        <dl>
           <dt>"firstTime"</dt>
           <dd>The <a href="#first-decryption-time">first decryption time</a> expressed as a number giving the time, in milliseconds since 01 January, 1970 UTC.</dd>
           <dt>"latestTime"</dt>
@@ -5810,15 +5823,29 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
         <p>When contained in the ArrayBuffer <code><a href="#widl-MediaKeyMessageEvent-message">message</a></code> attribute of a <a href="#idl-def-MediaKeyMessageEvent" class="idlType"><code>MediaKeyMessageEvent</code></a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [<cite><a class="bibref" href="#bib-ENCODING">ENCODING</a></cite>]. Applications <em class="rfc2119" title="MAY">MAY</em> decode the contents of the ArrayBuffer to a JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textdecoder">TextDecoder interface</a> [<cite><a class="bibref" href="#bib-ENCODING">ENCODING</a></cite>].
         </p>
 
-        <section id="clear-key-release-format-example" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example" property="bibo:hasPart">
-          <h5 id="h-clear-key-release-format-example" resource="#h-clear-key-release-format-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example</span></h5>
+        <section id="clear-key-release-format-example-1" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-1" property="bibo:hasPart">
+          <h5 id="h-clear-key-release-format-example-1" resource="#h-clear-key-release-format-example-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of license destruction</var></span></h5>
           <p><em>This section is non-normative.</em></p>
-          <p>The following example is a license release for a session which contained two keys. (Line breaks are for readability only.)</p>
+          <p>
+            The following example is a license release for a <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> session that contained two keys. (Line breaks are for readability only.)
+          </p>
           <div class="example">
             <div class="example-title marker"><span>Example 3</span></div><pre class="highlight hljs xquery">{
+  <span class="hljs-string">"kids"</span>: [ <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>, <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span> ]
+}</pre></div>
+        </section>
+
+        <section id="clear-key-release-format-example-2" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-2" property="bibo:hasPart">
+          <h5 id="h-clear-key-release-format-example-2" resource="#h-clear-key-release-format-example-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record of key usage</var></span></h5>
+          <p><em>This section is non-normative.</em></p>
+          <p>
+            The following example is a license release for a <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> session that contained two keys. (Line breaks are for readability only.)
+          </p>
+          <div class="example">
+            <div class="example-title marker"><span>Example 4</span></div><pre class="highlight hljs xquery">{
   <span class="hljs-string">"kids"</span>: [ <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>, <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span> ],
-  <span class="hljs-string">"tfirst"</span> : <span class="hljs-number">1430425323757</span>,
-  <span class="hljs-string">"tlatest"</span> : <span class="hljs-number">1430425383757</span>
+  <span class="hljs-string">"firstTime"</span> : <span class="hljs-number">1430425323757</span>,
+  <span class="hljs-string">"latestTime"</span> : <span class="hljs-number">1430425383757</span>
 }</pre></div>
         </section>
       </section>
@@ -5841,7 +5868,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
           <p><em>This section is non-normative.</em></p>
           <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
           <div class="example">
-            <div class="example-title marker"><span>Example 4</span></div><pre class="highlight hljs xquery">{
+            <div class="example-title marker"><span>Example 5</span></div><pre class="highlight hljs xquery">{
   <span class="hljs-string">"kids"</span>:
     [
      <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>,
@@ -6457,7 +6484,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page. Only one session will ever be created.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 5</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 6</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onLoad</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">var</span> video = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'video'</span>);
 
@@ -6515,7 +6542,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 6</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 7</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
 
@@ -6653,7 +6680,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       </p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 7</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 8</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
@@ -6690,7 +6717,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <code><a href="#widl-MediaKeySession-update-Promise-void--BufferSource-response">update()</a></code> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 8</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 9</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
@@ -6782,7 +6809,7 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
       <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
       <div class="example">
-        <div class="example-title marker"><span>Example 9</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+        <div class="example-title marker"><span>Example 10</span></div><pre class="highlight hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
   <span class="hljs-keyword">var</span> licenseUrl;
   <span class="hljs-keyword">var</span> serverCertificate;
   <span class="hljs-keyword">var</span> mediaKeys;
