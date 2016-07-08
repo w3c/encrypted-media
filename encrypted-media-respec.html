@@ -1611,7 +1611,7 @@
       </p>
       <p>
         The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object
-        that is accessible to the page and that is not <a def-id="media-key-session-closed"></a>.
+        that is not <a def-id="media-key-session-closed"></a>.
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
@@ -1867,7 +1867,7 @@
                   </p>
                 </li>
                 <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
-                <li><p>If there is a <a>MediaKeySession</a> object in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, and that is not <a def-id="media-key-session-closed"></a>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
+                <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1880,7 +1880,7 @@
                     <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is a <a>MediaKeySession</a> object in any <a def-id="document-concept"></a> that is not <a def-id="media-key-session-closed"></a> and that
+                    <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a> and that
                     represents the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
@@ -2694,8 +2694,8 @@
         <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a license destruction acknowledgement or key usage record acknowledgement.
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
-        <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object in any <a def-id="document-concept"></a> that is not
-        <a def-id="media-key-session-closed"></a>.
+        <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
+        <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a>.
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
           A session MAY only be loaded again if all objects that have ever represented it are <a def-id="media-key-session-closed"></a>.
         </p>
