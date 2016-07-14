@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Encrypted Media Extensions</title>
     <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
+    
     <script src="encrypted-media.js" class="remove"></script>
     <script class="remove">
       // The W3C diff service does not fix up relative URLs.
@@ -110,7 +111,7 @@
     <meta name="bug.component" content="Encrypted Media Extensions"/>
     -->
 
-    <link rel="stylesheet" href="eme.css"/>
+    <link rel="stylesheet" href="eme.css">
   </head>
   <body>
 
@@ -157,7 +158,7 @@
         A generic stack implemented using the API is shown below.
         This diagram shows an example flow; other combinations of API calls and events are possible.
       </p>
-      <img src="stack_overview.svg" alt="A generic stack implemented using the proposed APIs" height="700"></img>
+      <img src="stack_overview.svg" alt="A generic stack implemented using the proposed APIs" height="700">
     </section>
 
     <section id="definitions">
@@ -509,7 +510,7 @@
           <p>
             An implementation, configuration, instance, or object <dfn id="uses-distinctive-identifiers-or-distinctive-permanent-identifiers">uses Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</dfn> if it
             <a href="#uses-distinctive-identifiers">uses Distinctive Identifier(s)</a> and/or <a href="#uses-distinctive-permanent-identifiers">uses Distinctive Permanent Identifier(s)</a>.
-        </dd>
+        </p></dd>
 
         <dt id="cross-origin">Cross Origin Limitations</dt>
         <dd>
@@ -552,9 +553,9 @@
       <section>
         <h3><a>Navigator</a> Extension: <code>requestMediaKeySystemAccess()</code></h3>
 
-        <dl title="partial interface Navigator" class="idl">
-          <dt>Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
-          <dd>
+        <div><pre class="idl">partial interface Navigator {
+    Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess (DOMString keySystem, sequence&lt;MediaKeySystemConfiguration&gt; supportedConfigurations);
+};</pre><section><h2>Methods</h2><dl class="methods" data-dfn-for="Navigator" data-link-for="Navigator"><dt><dfn><code>requestMediaKeySystemAccess</code></dfn></dt><dd>
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
             This method should only be called when the author intends to create and use a <a>MediaKeys</a> object with the provided configuration.
             </p>
@@ -567,17 +568,7 @@
               Otherwise, it is resolved with a new <a>MediaKeySystemAccess</a> object.
             </p>
 
-            <dl class='parameters'>
-              <dt>DOMString keySystem</dt>
-              <dd>
-                The <a def-id="keysystem"></a> for which access is being requested.
-              </dd>
-              <dt>sequence&lt;<a>MediaKeySystemConfiguration</a>&gt; supportedConfigurations</dt>
-              <dd>
-                A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
-                The first element with a satisfiable configuration will be used.
-              </dd>
-            </dl>
+            
 
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
@@ -611,7 +602,7 @@
                     <ol>
                       <li><p>Let <var>candidate configuration</var> be the value.</p></li>
                       <li><p>Let <var>supported configuration</var> be the result of executing the <a def-id="get-supported-configuration-algorithm"></a> algorithm on <var>implementation</var>, <var>candidate configuration</var>, and <var>origin</var>.
-                      <li><p>If <var>supported configuration</var> is not <code>NotSupported</code>, run the following steps:</p>
+                      </p></li><li><p>If <var>supported configuration</var> is not <code>NotSupported</code>, run the following steps:</p>
                         <ol>
                           <li>
                             <p>Let <var>access</var> be a new <a>MediaKeySystemAccess</a> object, and initialize it as follows:</p>
@@ -633,8 +624,12 @@
               </li>
               <li><p>Return <var>promise</var>.</p></li>
             </ol>
-          </dd>
-        </dl>
+          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keySystem</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+                The <a def-id="keysystem"></a> for which access is being requested.
+              </td></tr><tr><td class="prmName">supportedConfigurations</td><td class="prmType"><code>sequence&lt;MediaKeySystemConfiguration&gt;</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+                A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
+                The first element with a satisfiable configuration will be used.
+              </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;MediaKeySystemAccess&gt;</code></div></dd></dl></section></div>
 
         <section>
           <h4>Algorithms</h4>
@@ -685,10 +680,10 @@
                     </p>
                   </li>
                 </ol>
-                <li>
+                </li><li>
                   <p>Return <var>supported configuration</var>.</p>
                 </li>
-              </li>
+              
             </ol>
           </section>
           <section>
@@ -747,7 +742,7 @@
                   <a def-id="distinctive-identifiers"></a> are not allowed according to <var>restrictions</var>, set <var>distinctive identifier requirement</var>
                   to <a def-id="requirement-not-allowed"></a>.
                 </p>
-              <li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
+              </li><li><p>Follow the steps for <var>distinctive identifier requirement</var> from the following list:</p>
                 <dl class="switch">
                   <dt><a def-id="requirement-required"></a></dt>
                   <dd>
@@ -777,7 +772,7 @@
                   A feature is required by an implementtion with this combination if all configurations in the combination that are suported by the implementation
                   include the feature.
                 </p>
-              </li>
+              </div></li>
               <li>
                 <p>
                   Set the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> to equal <var>distinctive identifier requirement</var>.
@@ -845,7 +840,7 @@
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.
               
-              <li>
+              </p></li><li>
                 <p>
                   If the <a def-id="option-videoCapabilities"></a> and <a def-id="option-audioCapabilities"></a> members in <var>candidate configuration</var>
                   are both empty, return <code>NotSupported</code>.
@@ -992,7 +987,7 @@
                   <li>
                     <p>
                       If <var>media types</var> is empty:
-                      <dl class="switch">
+                      </p><dl class="switch">
                         <dt>If <var>container</var> normatively implies a specific set of codecs and codec constraints:</dt>
                         <dd>
                           <p>
@@ -1006,7 +1001,7 @@
                           </p>
                         </dd>
                       </dl>
-                    </p>
+                    <p></p>
                   </li>
                   <li><p>If <var>content type</var> is not strictly a <var>audio/video type</var>, continue to the next iteration.</p>
                     <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
@@ -1155,14 +1150,14 @@
                       <li><p>Update <var>restrictions</var> to reflect the configurations for which consent was denied.</p></li>
                       <li><p>Return <code>ConsentDenied</code> and <var>restrictions</var>.</p></li>
                     </ol>
-                    </p>
+                    <p></p>
                   </li>
                 </ol>
               </li>
               <li>
                 <p>
                   If the <a def-id="option-distinctiveIdentifier"></a> member of <var>accumulated configuration</var> is not
-                  <a def-id="requirement-not-allowed"></a>, </a>return <code>InformUser</code>.
+                  <a def-id="requirement-not-allowed"></a>, return <code>InformUser</code>.
                 </p>
               </li>
               <li>
@@ -1176,80 +1171,72 @@
       <section>
         <h3><a>MediaKeySystemConfiguration</a> dictionary</h3>
 
-        <dl title="enum MediaKeysRequirement" class="idl">
-          <dt>required</dt>
-          <dd>
+        <div><pre class="idl">enum MediaKeysRequirement {
+    "required",
+    "optional",
+    "not-allowed"
+};</pre><table class="simple" data-dfn-for="MediaKeysRequirement" data-link-for="MediaKeysRequirement"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.required">required</code></dfn></td><td>
             <dl>
               <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
               <dd>The returned object MUST support this feature.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>CDM instances created by the object MAY use this feature.</dd>
             </dl>
-          <dt>optional</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.optional">optional</code></dfn></td><td>
             <dl>
               <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
               <dd>The returned object MAY support and use this feature.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>This value cannot and MUST NOT be present in such an object.</dd>
             </dl>
-          <dt>not-allowed</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.not-allowed">not-allowed</code></dfn></td><td>
             <dl>
               <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
               <dd>The returned object MUST function without using this feature and MUST NOT use it at any time.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>CDM instances created by the object MUST NOT use this feature.</dd>
             </dl>
-          </dd>
-        </dl>
+          </td></tr></tbody></table></div>
 
-        <dl title="dictionary MediaKeySystemConfiguration" class='idl'>
-          <dt>DOMString label = ""</dt>
-          <dd>
+        <div><pre class="idl">dictionary MediaKeySystemConfiguration {
+             DOMString                               label = "";
+             sequence&lt;DOMString&gt;                     initDataTypes = [];
+             sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = [];
+             sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities = [];
+             MediaKeysRequirement                    distinctiveIdentifier = "optional";
+             MediaKeysRequirement                    persistentState = "optional";
+             sequence&lt;DOMString&gt;                     sessionTypes;
+};</pre><section><h2>Dictionary <a class="idlType">MediaKeySystemConfiguration</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeySystemConfiguration" data-link-for="MediaKeySystemConfiguration"><dt><dfn><code>label</code></dfn> of type <span class="idlMemberType"><a>DOMString</a></span>, defaulting to <code>""</code></dt><dd>
             An optional label that will be preserved in the <a>MediaKeySystemConfiguration</a> returned from the <a def-id="getConfiguration"></a> method of <a>MediaKeySystemAccess</a>.
-          </dd>
-          <dt>sequence&lt;DOMString&gt; initDataTypes = []</dt>
-          <dd>
+          </dd><dt><dfn><code>initDataTypes</code></dfn> of type <span class="idlMemberType">sequence&lt;<a>DOMString</a>&gt;</span>, defaulting to <code>[]</code></dt><dd>
             A list of supported <a def-id="initialization-data-type"></a> names.
             The <a def-id="initialization-data-type"></a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             Values in the sequence MUST not be the empty string.
-          </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = []</dt>
-          <dd>
+          </dd><dt><dfn><code>audioCapabilities</code></dfn> of type <span class="idlMemberType">sequence&lt;<a>MediaKeySystemMediaCapability</a>&gt;</span>, defaulting to <code>[]</code></dt><dd>
             A list of supported audio type and capability pairs.
             The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported.
             In this case, the <a def-id="option-videoCapabilities"></a> element must not be empty.
-          </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities = []</dt>
-          <dd>
+          </dd><dt><dfn><code>videoCapabilities</code></dfn> of type <span class="idlMemberType">sequence&lt;<a>MediaKeySystemMediaCapability</a>&gt;</span>, defaulting to <code>[]</code></dt><dd>
             A list of supported video type and capability pairs.
             The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             When there is a conflict between values, the earlier value will be selected. An empty list indicates that no video capabilities are supported.
             In this case, the <a def-id="option-audioCapabilities"></a> element must not be empty.
-          </dd>
-          <dt>MediaKeysRequirement distinctiveIdentifier = "optional"</dt>
-          <dd>
+          </dd><dt><dfn><code>distinctiveIdentifier</code></dfn> of type <span class="idlMemberType"><a>MediaKeysRequirement</a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether use of a <a def-id="distinctive-identifier-maybe-plural"></a> is required.
             <p>When this member is <a def-id="requirement-not-allowed"></a>, the implementation MUST NOT <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> for any operations associated with any object created from this configuration.
             </p>
-          </dd>
-          <dt>MediaKeysRequirement persistentState = "optional"</dt>
-          <dd>
+          </dd><dt><dfn><code>persistentState</code></dfn> of type <span class="idlMemberType"><a>MediaKeysRequirement</a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
-            <p>The CDM MUST NOT persist any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> when this member is <a def-id="requirement-not-allowed"></a>.</a>
-            <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers (<a def-id="distinctive-identifiers"></a>) controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
+            <p>The CDM MUST NOT persist any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> when this member is <a def-id="requirement-not-allowed"></a>.
+            </p><p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers (<a def-id="distinctive-identifiers"></a>) controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
             <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is <a def-id="keysystem"></a> implementation-specific and may vary by feature used.</p>
             <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess"></a>.</p>
-          </dd>
-          <dt>sequence&lt;DOMString&gt; sessionTypes</dt>
-          <dd>
+          </dd><dt><dfn><code>sessionTypes</code></dfn> of type <span class="idlMemberType">sequence&lt;<a>DOMString</a>&gt;</span></dt><dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
             <p>If this member is <a def-id="not-present-dictionary-member"></a> [[!WebIDL]] when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
-          </dd>
-        </dl>
+          </dd></dl></section></div>
 
         <p>Implementations SHOULD NOT add members to the this dictionary.
           Should member(s) be added, they MUST be of type <a>MediaKeysRequirement</a>, and it is RECOMMENDED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
@@ -1263,18 +1250,17 @@
 
       <section>
         <h3><a>MediaKeySystemMediaCapability</a> dictionary</h3>
-        <dl title="dictionary MediaKeySystemMediaCapability" class='idl'>
-          <dt>DOMString contentType = ""</dt>
-          <dd>
+        <div><pre class="idl">dictionary MediaKeySystemMediaCapability {
+             DOMString contentType = "";
+             DOMString robustness = "";
+};</pre><section><h2>Dictionary <a class="idlType">MediaKeySystemMediaCapability</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability"><dt><dfn><code>contentType</code></dfn> of type <span class="idlMemberType"><a>DOMString</a></span>, defaulting to <code>""</code></dt><dd>
             <p>
               The type of the <a def-id="media-resource">media resource</a>.
               Its value must be a <a def-id="mime-types">valid MIME type</a> [[!HTML5]].
               The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded. [[!RFC6381]]
               The empty string is invalid.
             </p>
-          </dd>
-          <dt>DOMString robustness = ""</dt>
-          <dd>
+          </dd><dt><dfn><code>robustness</code></dfn> of type <span class="idlMemberType"><a>DOMString</a></span>, defaulting to <code>""</code></dt><dd>
             <p>
               The robustness level associated with the content type.
               The empty string indicates that any ability to decrypt and decode the content type is acceptable.
@@ -1288,8 +1274,7 @@
             <p>
               Applications SHOULD specify the robustness level(s) they require to avoid unexpected client incompatibilities.
             </p>
-          </dd>
-        </dl>
+          </div></dd></dl></section></div>
 
         <p>In order for the capability represented by this object to be considered supported, <a def-id="capability-contentType"></a> MUST NOT be the empty string and its entire value, including all codecs, MUST be supported with <a def-id="capability-robustness"></a>.</p>
         <p class="note">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p>
@@ -1301,15 +1286,13 @@
       <h2><a>MediaKeySystemAccess</a> Interface</h2>
       <p>The MediaKeySystemAccess object provides access to a <a def-id="keysystem"></a>.</p>
 
-      <dl title="interface MediaKeySystemAccess" class='idl'>
-        <dt>readonly attribute DOMString keySystem</dt>
-        <dd>
+      <div><pre class="idl">interface MediaKeySystemAccess {
+    readonly        attribute DOMString keySystem;
+    MediaKeySystemConfiguration getConfiguration ();
+    Promise&lt;MediaKeys&gt;          createMediaKeys ();
+};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>keySystem</code></dfn> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly       </dt><dd>
           Identifies the <a def-id="keysystem"></a> being used.
-        </dd>
-
-        <dt>MediaKeySystemConfiguration getConfiguration()</dt>
-        <!-- This is a method instead of an attribute because per https://www.w3.org/TR/WebIDL-1/#idl-dictionaries, "Dictionaries MUST NOT be used as the type of an attribute or constant." -->
-        <dd>
+        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>getConfiguration</code></dfn></dt><dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
           <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable <a>MediaKeySystemConfiguration</a> configuration passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
@@ -1328,10 +1311,7 @@
               </p>
             </li>
           </ol>
-        </dd>
-
-        <dt>Promise&lt;MediaKeys&gt; createMediaKeys()</dt>
-        <dd>
+        <div><em>No parameters.</em></div><div><em>Return type: </em><code>MediaKeySystemConfiguration</code></div></dd><dt><dfn><code>createMediaKeys</code></dfn></dt><dd>
           <p>Creates a new <a>MediaKeys</a> object for <var>keySystem</var>.</p>
 
           <ol class="method-algorithm">
@@ -1387,8 +1367,7 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-      </dl>
+        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;MediaKeys&gt;</code></div></dd></dl></section></div>
     </section>
 
 
@@ -1401,9 +1380,11 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <dl title="enum MediaKeySessionType" class="idl">
-        <dt>temporary</dt>
-        <dd>
+      <div><pre class="idl">enum MediaKeySessionType {
+    "temporary",
+    "persistent-usage-record",
+    "persistent-license"
+};</pre><table class="simple" data-dfn-for="MediaKeySessionType" data-link-for="MediaKeySessionType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeySessionType.temporary">temporary</code></dfn></td><td>
           <p>
             A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
@@ -1411,9 +1392,7 @@
             The application need not worry about managing such storage.
             Support for this session type is REQUIRED.
           </p>
-        </dd>
-        <dt>persistent-usage-record</dt>
-        <dd>
+        </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionType.persistent-usage-record">persistent-usage-record</code></dfn></td><td>
           <p>
             A session for which the license and key(s) are not persisted and for which a <a def-id="record-of-key-usage"></a> is persisted when
             the keys available within the session are destroyed.
@@ -1454,9 +1433,7 @@
             Can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of <a def-id="requirement-required"></a>.
             Support for this session type is OPTIONAL.
           </p>
-        </dd>
-        <dt>persistent-license</dt>
-        <dd>
+        </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></dfn></td><td>
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
             A <a def-id="record-of-license-destruction"></a> SHALL be persisted when the license and key(s) it contains are destroyed.
@@ -1472,20 +1449,15 @@
             Can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of <a def-id="requirement-required"></a>.
             Support for this session type is OPTIONAL.
           </p>
-        </dd>
-      </dl>
+        </td></tr></tbody></table></div>
 
-      <dl title="interface MediaKeys" class='idl'>
-        <dt>MediaKeySession createSession()</dt>
-        <dd>
+      <div><pre class="idl">interface MediaKeys {
+    MediaKeySession  createSession (optional MediaKeySessionType sessionType = "temporary");
+    Promise&lt;boolean&gt; setServerCertificate (BufferSource serverCertificate);
+};</pre><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeys" data-link-for="MediaKeys"><dt><dfn><code>createSession</code></dfn></dt><dd>
           <p>Returns a new <a>MediaKeySession</a> object.</p>
 
-          <dl class='parameters'>
-            <dt>optional MediaKeySessionType sessionType = "temporary"</dt>
-            <dd>
-              The type of session to create. The session type affects the behavior of the returned object.
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, <a def-id="throw"></a> [[!WebIDL]] a <a def-id="NotSupportedError"></a>.</p>
@@ -1516,24 +1488,16 @@
             </li>
             <li><p>Return <var>session</var>.</p></li>
           </ol>
-        </dd>
-
-        <dt>Promise&lt;boolean&gt; setServerCertificate()</dt>
-        <dd>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionType</td><td class="prmType"><code>MediaKeySessionType = "temporary"</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc">
+              The type of session to create. The session type affects the behavior of the returned object.
+            </td></tr></tbody></table><div><em>Return type: </em><code>MediaKeySession</code></div></dd><dt><dfn><code>setServerCertificate</code></dfn></dt><dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
           <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a> algorithm.</p>
           <p class="note">This method allows an application to proactively provide a server certificate to implementations that support it to avoid the additional round trip should the CDM request it.
             It is intended as an optimization, and applications are not required to use it.
           </p>
 
-          <dl class='parameters'>
-            <dt>BufferSource serverCertificate</dt>
-            <dd>
-              The server certificate.
-              The contents are <a def-id="keysystem"></a>-specific.
-              It MUST NOT contain executable code.
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
@@ -1550,9 +1514,11 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-
-      </dl>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">serverCertificate</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              The server certificate.
+              The contents are <a def-id="keysystem"></a>-specific.
+              It MUST NOT contain executable code.
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd></dl></section></div>
 
       <section id="">
         <h3>Algorithms</h3>
@@ -1650,26 +1616,27 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <dl title="interface MediaKeySession : EventTarget" class='idl'>
-        <dt>readonly attribute DOMString sessionId</dt>
-        <dd>
+      <div><pre class="idl">interface MediaKeySession : EventTarget {
+    readonly        attribute DOMString           sessionId;
+    readonly        attribute unrestricted double expiration;
+    readonly        attribute Promise&lt;void&gt;       closed;
+    readonly        attribute MediaKeyStatusMap   keyStatuses;
+                    attribute EventHandler        onkeystatuseschange;
+                    attribute EventHandler        onmessage;
+    Promise&lt;void&gt;    generateRequest (DOMString initDataType, BufferSource initData);
+    Promise&lt;boolean&gt; load (DOMString sessionId);
+    Promise&lt;void&gt;    update (BufferSource response);
+    Promise&lt;void&gt;    close ();
+    Promise&lt;void&gt;    remove ();
+};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>sessionId</code></dfn> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly       </dt><dd>
           <p>The <a def-id="session-id"></a> for this object and the associated key(s) or license(s).</p>
-        </dd>
-
-        <dt>readonly attribute unrestricted double expiration</dt>
-        <dd>
+        </dd><dt><dfn><code>expiration</code></dfn> of type <span class="idlAttrType"><a>unrestricted double</a></span>, readonly       </dt><dd>
           <p>The <a def-id="time">time</a> after which the key(s) in the session will no longer be <a def-id="usable-for-decryption"></a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
-        </dd>
-
-        <dt>readonly attribute Promise&lt;void&gt; closed</dt>
-        <dd>
+        </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;<a>void</a>&gt;</span>, readonly       </dt><dd>
           <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
-        </dd>
-
-        <dt>readonly attribute MediaKeyStatusMap keyStatuses</dt>
-        <dd>
+        </dd><dt><dfn><code>keyStatuses</code></dfn> of type <span class="idlAttrType"><a>MediaKeyStatusMap</a></span>, readonly       </dt><dd>
           <p>A reference to a read-only map of <a def-id="key-id">key IDs</a> <a href="#known-key">known</a> to the session to the current status of the associated key.
            Each entry MUST have a unique key ID.
          </p>
@@ -1685,34 +1652,16 @@
             Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing
             the one-byte key ID <code>0</code> and the <a>MediaKeyStatus</a> most appropriate for the aggregated status of this object.
           </p>
-        </dd>
-
-        <dt>attribute EventHandler onkeystatuseschange</dt>
-        <dd>
+        </dd><dt><dfn><code>onkeystatuseschange</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="keystatuseschange"></a> event.</p>
-        </dd>
-
-        <dt>attribute EventHandler onmessage</dt>
-        <dd>
+        </dd><dt><dfn><code>onmessage</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="message"></a> event.</p>
-        </dd>
-
-        <dt>Promise&lt;void&gt; generateRequest()</dt>
-        <dd>
+        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest</code></dfn></dt><dd>
           <p>Generates a license request based on the <var>initData</var>.
             A <a def-id="message"></a> of type <a def-id="message-type-license-request"></a> or <a def-id="message-type-individualization-request"></a> will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
 
-          <dl class='parameters'>
-            <dt>DOMString initDataType</dt>
-            <dd>
-              The <a def-id="initialization-data-type"></a> of the <var>initData</var>.
-            </dd>
-            <dt>BufferSource initData</dt>
-            <dd>
-              <a def-id="initialization-data"></a>
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
@@ -1779,8 +1728,8 @@
                         </dd>
                         <dt><a def-id="persistent-license-session"></a></dt>
                         <dd>
-                          <p>Let <var>requested license type</var> be a persistable license.<p>
-                        </dd>
+                          <p>Let <var>requested license type</var> be a persistable license.</p><p>
+                        </p></dd>
                       </dl>
                     </li>
 
@@ -1841,7 +1790,7 @@
                     <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
                     <li><p>Let this object's <var>callable</var> value be true.</p></li>
                     <li><p>Run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <a def-id="message-type-license-request"></a> and <var>message</var>.</p>
-                    <li>
+                    </li><li>
                       <p>Resolve <var>promise</var>.</p>
                       <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                     </li>
@@ -1851,18 +1800,14 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-
-        <dt>Promise&lt;boolean&gt; load()</dt>
-        <dd>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">initDataType</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              The <a def-id="initialization-data-type"></a> of the <var>initData</var>.
+            </td></tr><tr><td class="prmName">initData</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              <a def-id="initialization-data"></a>
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd><dt><dfn><code>load</code></dfn></dt><dd>
           <p>Loads the data stored for the specified session into this object.</p>
 
-          <dl class='parameters'>
-            <dt>DOMString sessionId</dt>
-            <dd>
-              The <a def-id="session-id"></a> of the session to load.
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
@@ -1890,7 +1835,7 @@
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li><p>If there is no data stored for the <var>sanitized session ID</var> in the <var>origin</var>, resolve <var>promise</var> with <code>false</code> and abort these steps.</p><!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
-                    <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
+                    </li><li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
                     <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a> and that
@@ -1924,29 +1869,22 @@
                     <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <var>expiration time</var>.</p></li>
                     <li><p>If <var>message</var> is not null, run the <a def-id="queue-message-algorithm"></a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
 
-                    <li>
+                    </li><li>
                       <p>Resolve <var>promise</var> with <code>true</code>.
-                      <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
-                    </p>
-                  </ol>
+                      </p><p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
+                    <p></p>
+                  </li></ol>
                 </li>
               </ol>
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-        <dt>Promise&lt;void&gt; update()</dt>
-        <dd>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionId</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              The <a def-id="session-id"></a> of the session to load.
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd><dt><dfn><code>update</code></dfn></dt><dd>
           <p>Provides messages, including licenses, to the CDM.</p>
 
-          <dl class='parameters'>
-            <dt>BufferSource response</dt>
-            <dd>
-              A message to be provided to the CDM.
-              The contents are <a def-id="keysystem"></a>-specific.
-              It MUST NOT contain executable code.
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
@@ -2099,10 +2037,11 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-
-        <dt>Promise&lt;void&gt; close()</dt>
-        <dd>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">response</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              A message to be provided to the CDM.
+              The contents are <a def-id="keysystem"></a>-specific.
+              It MUST NOT contain executable code.
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd><dt><dfn><code>close</code></dfn></dt><dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
 
@@ -2132,10 +2071,7 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-
-        <dt>Promise&lt;void&gt; remove()</dt>
-        <dd>
+        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd><dt><dfn><code>remove</code></dfn></dt><dd>
           <p>
             For <a href="#is-persistent-session-type">persistent session types</a>, removes all license(s) and key(s) associated with the session.
             Other session data will be cleared as defined for each session type once a release message acknowledgment is processed by <a def-id="update"></a>.
@@ -2232,95 +2168,97 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-
-      </dl>
+        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd></dl></section></div>
 
       <section>
         <h2><a>MediaKeyStatusMap</a> Interface</h2>
         <p>The MediaKeyStatusMap object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <dl title="interface MediaKeyStatusMap" class='idl'>
+        <div><pre class="idl">interface MediaKeyStatusMap {
+    iterable&lt;BufferSource,MediaKeyStatus&gt;;
+    readonly        attribute unsigned long size;
+    boolean has (BufferSource keyId);
+    any     get (BufferSource keyId);
+};</pre>
+          <section>
+            <h2>Attributes</h2>
+            <dl class="attributes" data-dfn-for="MediaKeyStatusMap" data-link-for="MediaKeyStatusMap"><dt><dfn><code>size</code></dfn> of type <span class="idlAttrType"><a>unsigned long</a></span>, readonly       </dt><dd>
+            <p>The number of <a href="#known-key">known keys.</a></p>
+              </dd>
+            </dl>
+          </section>
 
-          <dt>iterable &lt;BufferSource, MediaKeyStatus&gt;</dt>
-          <dd>
+          <section>
+            <h2>Methods</h2>
+            <dl class="methods" data-dfn-for="MediaKeyStatusMap" data-link-for="MediaKeyStatusMap">
+              <dt><dfn><code>has</code></dfn></dt>
+              <dd>
+                <p>Returns <code>true</code> if the status of the key identified by <var>keyId</var> is known.</p>
+            
+                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The <a def-id="key-id"></a> of the key.</td></tr></tbody></table>
+                <div><em>Return type: </em><code>boolean</code></div>
+              </dd>
+              <dt><dfn><code>get</code></dfn></dt>
+              <dd>
+                <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var> or <code>undefined</code> if the status of the key identified by <var>keyId</var> is not known.</p>
+            
+                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The <a def-id="key-id"></a> of the key.</td></tr></tbody></table>
+                <div><em>Return type: </em><code>any</code></div>
+              </dd>
+            </dl>
+            <p>
+              This interface has <code>entries</code>, <code>keys</code>, <code>values</code>, <code>forEach</code> and <code>@@iterator</code> methods
+              brought by <code>iterable</code>.
+            </p>
+            <p>
               The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
               associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
               where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
               define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
               order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
-          </dd>
+            </p>
+          </section>
+        </div>
 
-          <dt>readonly attribute unsigned long size</dt>
-          <dd>
-            <p>The number of <a href="#known-key">known keys.</a></p>
-          </dd>
-
-          <dt>boolean has( BufferSource keyId )</dt>
-          <dd>
-            <p>Returns <code>true</code> if the status of the key identified by <var>keyId</var> is known.</p>
-            <dl class='parameters'>
-              <dt>BufferSource keyId</dt>
-              <dd>The <a def-id="key-id"></a> of the key.</dd>
-            </dl>
-          </dd>
-
-          <dt>any get()</dt>
-          <dd>
-            <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var> or <code>undefined</code> if the status of the key identified by <var>keyId</var> is not known.</p>
-            <dl class='parameters'>
-              <dt>BufferSource keyId</dt>
-              <dd>The <a def-id="key-id"></a> of the key.</dd>
-            </dl>
-          </dd>
-        </dl>
-
-        <dl title="enum MediaKeyStatus" class="idl">
-          <dt>usable</dt>
-          <dd>
-            The CDM is certain the key is currently <a def-id="usable-for-decryption"></a>.<br/>
+        <div><pre class="idl">enum MediaKeyStatus {
+    "usable",
+    "expired",
+    "released",
+    "output-restricted",
+    "output-downscaled",
+    "status-pending",
+    "internal-error"
+};</pre><table class="simple" data-dfn-for="MediaKeyStatus" data-link-for="MediaKeyStatus"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.usable">usable</code></dfn></td><td>
+            The CDM is certain the key is currently <a def-id="usable-for-decryption"></a>.<br>
             Keys that <em>may not</em> currently be <a def-id="usable-for-decryption"></a> MUST NOT have this status.
-          </dd>
-          <dt>expired</dt>
-          <dd>
-            The key is no longer <a def-id="usable-for-decryption"></a> because its expiration time has passed.<br/>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.expired">expired</code></dfn></td><td>
+            The key is no longer <a def-id="usable-for-decryption"></a> because its expiration time has passed.<br>
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
-          </dd>
-          <dt>released</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.released">released</code></dfn></td><td>
             The key itself is no longer available to the CDM, but information about the key, such as a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>, is available.
-          </dd>
-          <dt>output-restricted</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.output-restricted">output-restricted</code></dfn></td><td>
             There are output restrictions associated with the key that cannot currently be met.
             Media data decrypted with this key may be blocked from presentation, if necessary according to
             the output restrictions.
             The application should avoid using streams that will trigger the output restrictions associated
             with the key.
-          </dd>
-          <dt>output-downscaled</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.output-downscaled">output-downscaled</code></dfn></td><td>
             There are output restrictions associated with the key that cannot currently be met.
             Media data decrypted with this key may be presented at a lower quality (e.g. resolution),
             if necessary according to the output restrictions.
             The application should avoid using streams that will trigger the output restrictions associated
-            with the key.<br/>
+            with the key.<br>
             Support for downscaling is OPTIONAL.
             Applications SHOULD NOT rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
-          </dd>
-          <dt>status-pending</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.status-pending">status-pending</code></dfn></td><td>
             The status of the key is not yet known and is being determined.
             The status will be updated with the actual status when it has been determined.
-          </dd>
-          <dt>internal-error</dt>
-          <dd>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.internal-error">internal-error</code></dfn></td><td>
             The key is not currently <a def-id="usable-for-decryption"></a> because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
-          </dd>
-        </dl>
+          </td></tr></tbody></table></div>
       </section>
 
       <section>
@@ -2328,28 +2266,23 @@
         <p>The MediaKeyMessageEvent object is used for the <a def-id="message"></a> event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[!DOM]].</p>
 
-        <dl title="enum MediaKeyMessageType" class="idl">
-          <dt>license-request</dt>
-          <dd>The message contains a request for a new license.</dd>
-          <dt>license-renewal</dt>
-          <dd>The message contains a request to renew an existing license.</dd>
-          <dt>license-release</dt>
-          <dd>The message contains a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>.</dd>
-          <dt>individualization-request</dt>
-          <dd>
-            The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br/>
+        <div><pre class="idl">enum MediaKeyMessageType {
+    "license-request",
+    "license-renewal",
+    "license-release",
+    "individualization-request"
+};</pre><table class="simple" data-dfn-for="MediaKeyMessageType" data-link-for="MediaKeyMessageType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></dfn></td><td>The message contains a request for a new license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></dfn></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></dfn></td><td>The message contains a <a def-id="record-of-license-destruction"></a> or <a def-id="record-of-key-usage"></a>.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></dfn></td><td>
+            The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br>
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-identifiers">distinctive per-origin</a> and MUST NOT be <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.
-          </dd>
-        </dl>
+          </td></tr></tbody></table></div>
 
-        <dl title="interface MediaKeyMessageEvent : Event" class="idl">
-          <dt class="extended-attribute">
-            Constructor(DOMString type, optional MediaKeyMessageEventInit eventInitDict)
-          </dt>
-          <dd>
+        <div><pre class="idl">[ Constructor (DOMString type, optional MediaKeyMessageEventInit eventInitDict)]
+interface MediaKeyMessageEvent : Event {
+    readonly        attribute MediaKeyMessageType messageType;
+    readonly        attribute ArrayBuffer         message;
+};</pre><section><h2>Constructors</h2><dl class="constructors" data-dfn-for="MediaKeyMessageEvent" data-link-for="MediaKeyMessageEvent"><dt><dfn><code>MediaKeyMessageEvent</code></dfn></dt><dd>
 
-          <dt>readonly attribute MediaKeyMessageType messageType</dt>
-          <dd>
+          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaKeyMessageEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeyMessageEvent" data-link-for="MediaKeyMessageEvent"><dt><dfn><code>messageType</code></dfn> of type <span class="idlAttrType"><a>MediaKeyMessageType</a></span>, readonly       </dt><dd>
             The type of the message.
             <p>Implementations MUST NOT require applications to handle message types.
               Implementations MUST support applications that do not differentiate messages and MUST NOT require that applications handle message types.
@@ -2358,26 +2291,20 @@
             <p class="note">This attribute allows an application to differentiate messages without parsing the message.
               It is intended to enable optional application and/or server optimizations, but applications are not required to use it.
             </p>
-          </dd>
-
-          <dt>readonly attribute ArrayBuffer message</dt>
-          <dd>
+          </dd><dt><dfn><code>message</code></dfn> of type <span class="idlAttrType"><a>ArrayBuffer</a></span>, readonly       </dt><dd>
             The message from the CDM. Messages are Key System-specific.
-          </dd>
-        </dl>
+          </dd></dl></section></div>
 
         <section>
           <h4><a>MediaKeyMessageEventInit</a></h4>
-          <dl title="dictionary MediaKeyMessageEventInit : EventInit" class="idl">
-            <dt>MediaKeyMessageType messageType = "license-request"</dt>
-            <dd>
+          <div><pre class="idl">dictionary MediaKeyMessageEventInit : EventInit {
+             MediaKeyMessageType messageType = "license-request";
+             ArrayBuffer         message;
+};</pre><section><h2>Dictionary <a class="idlType">MediaKeyMessageEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeyMessageEventInit" data-link-for="MediaKeyMessageEventInit"><dt><dfn><code>messageType</code></dfn> of type <span class="idlMemberType"><a>MediaKeyMessageType</a></span>, defaulting to <code>"license-request"</code></dt><dd>
               The type of the message.
-            </dd>
-            <dt>ArrayBuffer message</dt>
-            <dd>
+            </dd><dt><dfn><code>message</code></dfn> of type <span class="idlMemberType"><a>ArrayBuffer</a></span></dt><dd>
               The message.
-            </dd>
-          </dl>
+            </dd></dl></section></div>
         </section>
       </section>
 
@@ -2426,7 +2353,7 @@
               <p><a def-id="Queue-a-task"></a> to create an event named <var>message</var> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
               <p>The event interface <a>MediaKeyMessageEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
-                <a def-id="message-event-messagetype-attribute"></a> = the specified <var>message type</var><br></br>
+                <a def-id="message-event-messagetype-attribute"></a> = the specified <var>message type</var><br><br>
                 <a def-id="message-event-message-attribute"></a> = the specified <var>message</var>
               </li></ul>
             </li>
@@ -2656,35 +2583,35 @@
             <tr>
               <td><dfn id="dfn-TypeError"><code>TypeError</code></dfn></td>
               <td>
-                The parameter is empty.<br/>
-                Invalid initialization data.<br/>
-                Invalid response format.<br/>
+                The parameter is empty.<br>
+                Invalid initialization data.<br>
+                Invalid response format.<br>
                 A persistent license was provided for a <a def-id="temporary-session"></a> session.
               </td>
             </tr>
             <tr>
               <td><dfn id="dfn-NotSupportedError"><code>NotSupportedError</code></dfn></td>
               <td>
-                The existing MediaKeys object cannot be removed.<br/>
-                The key system is not supported.<br/>
-                The key system is not supported in an insecure context.<br/>
-                The initialization data type is not supported by the key system.<br/>
-                The session type is not supported by the key system.<br/>
-                The initialization data is not supported by the key system.<br/>
+                The existing MediaKeys object cannot be removed.<br>
+                The key system is not supported.<br>
+                The key system is not supported in an insecure context.<br>
+                The initialization data type is not supported by the key system.<br>
+                The session type is not supported by the key system.<br>
+                The initialization data is not supported by the key system.<br>
                 The operation is not supported by the key system.
               </td>
             </tr>
             <tr>
               <td><dfn id="dfn-InvalidStateError"><code>InvalidStateError</code></dfn></td>
-              <td>The existing MediaKeys object cannot be removed at this time.<br/>
-                The session has already been used.<br/>
-                The session is not yet initialized.<br/>
+              <td>The existing MediaKeys object cannot be removed at this time.<br>
+                The session has already been used.<br>
+                The session is not yet initialized.<br>
                 The session is closed.
               </td>
             </tr>
             <tr>
               <td><dfn id="dfn-QuotaExceededError"><code>QuotaExceededError</code></dfn></td>
-              <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br/>
+              <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br>
                 A non-closed session already exists for this sessionId.
               </td>
             </tr>
@@ -2760,24 +2687,18 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <dl title="partial interface HTMLMediaElement : EventTarget" class='idl'>
-        <dt>readonly attribute MediaKeys? mediaKeys</dt>
-        <dd>
+      <div><pre class="idl">partial interface HTMLMediaElement {
+    readonly        attribute MediaKeys?   mediaKeys;
+                    attribute EventHandler onencrypted;
+                    attribute EventHandler onwaitingforkey;
+    Promise&lt;void&gt; setMediaKeys (MediaKeys? mediaKeys);
+};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><a>MediaKeys</a></span>, readonly       , nullable</dt><dd>
           <p>The <a>MediaKeys</a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
-        </dd>
-
-        <dt>attribute EventHandler onencrypted</dt>
-        <dd>
+        </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd>
-
-        <dt>attribute EventHandler onwaitingforkey</dt>
-        <dd>
+        </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="waitingforkey"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd>
-
-        <dt>Promise&lt;void&gt; setMediaKeys()</dt>
-        <dd>
+        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys</code></dfn></dt><dd>
           <p>Provides the <a>MediaKeys</a> to use when decrypting media data during playback.</p>
 
           <p class="note">Support for clearing or replacing the associated <a>MediaKeys</a> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
@@ -2785,12 +2706,7 @@
             This is not reflected in the results of calling <a def-id="requestMediaKeySystemAccess"></a>.
           </p>
 
-          <dl class='parameters'>
-            <dt>MediaKeys? mediaKeys</dt>
-            <dd>
-              A <a>MediaKeys</a> object.
-            </dd>
-          </dl>
+          
 
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
@@ -2832,43 +2748,37 @@
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        </dd>
-      </dl>
+        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mediaKeys</td><td class="prmType"><code>MediaKeys</code></td><td class="prmNullTrue"><span role="img" aria-label="True">✔</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
+              A <a>MediaKeys</a> object.
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd></dl></section></div>
 
       <section>
         <h3><a>MediaEncryptedEvent</a></h3>
         <p>The MediaEncryptedEvent object is used for the <a def-id="encrypted"></a> event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[!DOM]].</p>
 
-        <dl title="interface MediaEncryptedEvent : Event" class="idl">
-          <dt class="extended-attribute">
-            Constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict)
-          </dt>
-          <dd>
+        <div><pre class="idl">[ Constructor (DOMString type, optional MediaEncryptedEventInit eventInitDict)]
+interface MediaEncryptedEvent : Event {
+    readonly        attribute DOMString    initDataType;
+    readonly        attribute ArrayBuffer? initData;
+};</pre><section><h2>Constructors</h2><dl class="constructors" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>MediaEncryptedEvent</code></dfn></dt><dd>
 
-          <dt>readonly attribute DOMString initDataType</dt>
-          <dd>
+          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaEncryptedEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly       </dt><dd>
             Indicates the <a def-id="initialization-data-type"></a> of the <a def-id="initialization-data"></a> contained in the <a def-id="encrypted-event-initdata-attribute"></a> attribute.
-          </dd>
-
-          <dt>readonly attribute ArrayBuffer? initData</dt>
-          <dd>
+          </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlAttrType"><a>ArrayBuffer</a></span>, readonly       , nullable</dt><dd>
             The <a def-id="initialization-data"></a> for the event.
-          </dd>
-        </dl>
+          </dd></dl></section></div>
 
         <section>
           <h4><a>MediaEncryptedEventInit</a></h4>
-          <dl title="dictionary MediaEncryptedEventInit : EventInit" class="idl">
-            <dt>DOMString initDataType = ""</dt>
-            <dd>
+          <div><pre class="idl">dictionary MediaEncryptedEventInit : EventInit {
+             DOMString    initDataType = "";
+             ArrayBuffer? initData = null;
+};</pre><section><h2>Dictionary <a class="idlType">MediaEncryptedEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaEncryptedEventInit" data-link-for="MediaEncryptedEventInit"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlMemberType"><a>DOMString</a></span>, defaulting to <code>""</code></dt><dd>
               The <a def-id="initialization-data-type"></a>.
-            </dd>
-            <dt>ArrayBuffer? initData = null</dt>
-            <dd>
+            </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlMemberType"><a>ArrayBuffer</a></span>, nullable, defaulting to <code>null</code></dt><dd>
               The <a def-id="initialization-data"></a>.
-            </dd>
-          </dl>
+            </dd></dl></section></div>
         </section>
       </section>
 
@@ -2893,11 +2803,11 @@
               <p class="note">It is possible that the element is playing or has played.</p>
               </td>
             </tr>
-              <td><a def-id="eventdfn">waitingforkey</a></td>
+              <tr><td><a def-id="eventdfn">waitingforkey</a></td>
               <td><a def-id="event"></a></td>
               <td>Playback is blocked waiting for a key.</td>
               <td>The element is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.</td>
-          </tbody>
+          </tr></tbody>
         </table>
       </section>
 
@@ -2921,9 +2831,9 @@
             </li>
             <li>
               <p><a def-id="Queue-a-task"></a> to create an event named <var>encrypted</var> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.
-              <p>The event interface <a>MediaEncryptedEvent</a> has:</p>
+              </p><p>The event interface <a>MediaEncryptedEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
-                <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br></br>
+                <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br><br>
                 <a def-id="encrypted-event-initdata-attribute"></a> = <var>initData</var>
               </li></ul>
               <p class="note"><a def-id="readystate"></a> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
@@ -2957,7 +2867,7 @@
             </li>
             <li>
               <p>If the media element's <var>waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.
-            </li>
+            </p></li>
           </ol>
         </section>
         <section id="attempt-to-decrypt">
@@ -3000,14 +2910,14 @@
                           <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.
-                        <li><p>If <var>block key</var> is not null, run the following steps:
-                          <ol>
+                        </p></li><li><p>If <var>block key</var> is not null, run the following steps:
+                          </p><ol>
                             <li>
                               <p>If <var>session</var>'s <var>session type</var> is <a def-id="persistent-usage-record-session"></a>, run the following steps:</p>
                                 <ol>
                                   <li>
                                     <p>Let <var>usage</var> be <var>session</var>'s <var>record of key usage</var>.
-                                  </li>
+                                  </p></li>
                                   <li>
                                     <p>
                                       If the <var>first decrypt time</var> of <var>usage</var> is <code>null</code>, set the <var>first decrypt time</var> of <var>usage</var> to the current time, accurate to within <a def-id="key-usage-accuracy"></a>.
@@ -3023,8 +2933,8 @@
                                   Implementations MAY optimize the times at which this step is executed provided the recorded key usage times remain
                                   accurate to within <var>key usage accuracy</var>.
                                 </p>
-                              </p>
-                            <li><p>Use the <var>cdm</var> to decrypt <var>block</var> using <var>block key</var>.</p></li>
+                              <p></p>
+                            </li><li><p>Use the <var>cdm</var> to decrypt <var>block</var> using <var>block key</var>.</p></li>
                             <li><p>Follow the steps for the first matching condition from the following list:</p>
                               <dl class="switch">
                                 <dt>If decryption fails</dt>
@@ -3103,7 +3013,7 @@
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>true</code>, abort these steps.
-            <li>
+            </p></li><li>
               <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
               <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, the media element will stop playback.</p>
             </li>
@@ -3199,7 +3109,7 @@
               <p>
                 All identifers that are not <a href="#permanent-identifier">Permanent Identifiers</a> MUST be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>.</p>
                 They SHOULD be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client.
-              </p>
+              <p></p>
             </li>
             <li><p><a def-id="distinctive-identifiers"></a> MUST be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client, <a href="#per-origin-identifiers">unique per-origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.</p></li>
             <li><p><a def-id="distinctive-permanent-identifiers"></a> MUST be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client and MUST NOT be exposed to the application.</p></li>
@@ -3379,8 +3289,8 @@
 
     <section id="common-key-systems">
       <h2>Common Key Systems</h2>
-      <p>All user agents MUST support the common key systems described in this section.<p>
-      <p class="note">This ensures that there is a common baseline level of functionality that is guaranteed to be supported in all user agents, including those that are entirely open source.
+      <p>All user agents MUST support the common key systems described in this section.</p><p>
+      </p><p class="note">This ensures that there is a common baseline level of functionality that is guaranteed to be supported in all user agents, including those that are entirely open source.
         Thus, content providers that need only basic decryption can build simple applications that will work on all platforms without needing to work with any content protection providers.
       </p>
 
@@ -3395,16 +3305,16 @@
           <h4>Capabilities</h4>
           <p>The following describe how Clear Key supports key system-specific capabilities:</p>
           <ul>
-            <li><p><a>MediaKeySystemConfiguration</a>:<p>
-              <ol>
+            <li><p><a>MediaKeySystemConfiguration</a>:</p><p>
+              </p><ol>
                 <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
                 <li><p><a def-id="option-distinctiveIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
               </ol>
             </li>
             <li><p>The <a def-id="persistent-usage-record-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p>
-            <li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
-            </li>
+            </li><li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
+            
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
             <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one <a def-id="htmlmediaelement"></a>.</p></li>
           </ul>
@@ -3482,8 +3392,7 @@
           <section id="clear-key-request-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">
-{
+            <pre class="example highlight">{
   "kids":
     [
      "LwVHf8JLtPrv2GUXFW2v_A",
@@ -3523,8 +3432,7 @@
           <section id="clear-key-license-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">
-{
+            <pre class="example highlight">{
   "keys":
     [{
       "kty":"oct",
@@ -3568,8 +3476,7 @@
               The following example is a license release for a <a def-id="persistent-license-session"></a> session that contained two keys.
               (Line breaks are for readability only.)
             </p>
-            <pre class="example highlight">
-{
+            <pre class="example highlight">{
   "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ]
 }
 </pre>
@@ -3581,8 +3488,7 @@
               The following example is a license release for a <a def-id="persistent-usage-record-session"></a> session that contained two keys.
               (Line breaks are for readability only.)
             </p>
-            <pre class="example highlight">
-{
+            <pre class="example highlight">{
   "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ],
   "firstTime" : 1430425323757,
   "latestTime" : 1430425383757
@@ -3608,8 +3514,7 @@
           <section id="clear-key-release-ack-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">
-{
+            <pre class="example highlight">{
   "kids":
     [
      "LwVHf8JLtPrv2GUXFW2v_A",
@@ -3825,7 +3730,7 @@
                   <li><p>User state not associated with or stored as a result of these APIs.</p></li>
                 </ul>
               </div>
-          </ul>
+          </li></ul>
         </section>
       </section>
 
@@ -4016,10 +3921,10 @@
               <li><p>MUST NOT be performed by the user agent.</p></li>
               <li><p>MUST NOT be performed directly by the CDM.</p></li>
               <li><p>MUST NOT contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.
-              <li><p>MUST NOT contain non-origin-specific per-client information</p></li>
+              </p></li><li><p>MUST NOT contain non-origin-specific per-client information</p></li>
               <li>
                 <p>MUST adhere to the <a href="#identifier-requirements">identifier requirements</a>.
-                <p class="note">This includes only using values that are <a href="#per-origin-identifiers">unique per origin</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
+                </p><p class="note">This includes only using values that are <a href="#per-origin-identifiers">unique per origin</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
               </li>
               <li><p>MUST NOT provide executable code to the CDM.</p></li>
             </ul>
@@ -4146,8 +4051,7 @@
         <p class="exampledescription">In this simple example, the source file and <a href="#clear-key">clear-text license</a> are hard-coded in the page.
         Only one session will ever be created.</p>
 
-        <pre class="example highlight">
-&lt;script&gt;
+        <pre class="example highlight">&lt;script&gt;
   function onLoad() {
     var video = document.getElementById('video');
 
@@ -4207,8 +4111,7 @@
         One of the supported key systems uses a serverCertificate, which is provided proactively.
         </p>
 
-        <pre class="example highlight">
-&lt;script&gt;
+        <pre class="example highlight">&lt;script&gt;
   var licenseUrl;
   var serverCertificate;
 
@@ -4348,8 +4251,7 @@
         This example does the latter.
         </p>
 
-        <pre class="example highlight">
-&lt;script&gt;
+        <pre class="example highlight">&lt;script&gt;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -4386,8 +4288,7 @@
         <p class="exampledescription">This is a more complete example showing all events being used.</p>
         <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <a def-id="update"></a> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
-        <pre class="example highlight">
-&lt;script&gt;
+        <pre class="example highlight">&lt;script&gt;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -4479,8 +4380,7 @@
         <h3>Stored License</h3>
         <p class="exampledescription">This example requests a persistent license for future use and stores it. It also provides functions for later retrieving the license and for destroying it.</p>
 
-        <pre class="example highlight">
-&lt;script&gt;
+        <pre class="example highlight">&lt;script&gt;
   var licenseUrl;
   var serverCertificate;
   var mediaKeys;
@@ -4590,7 +4490,7 @@
         </thead>
         <tbody>
           <tr>
-            <td>13 November 2014</a></td>
+            <td>13 November 2014</td>
             <td>Repository moved to GitHub.</td>
           </tr>
           <tr>
@@ -4653,31 +4553,7 @@
       </table>
     </section>
 
-    <script class="remove">
-      /* Rewrite the URLs for the remaining resources. */
-      /* The diff service separates each word into a separate line, so use multiline comments strings without spaces.
-       * The diff service cannot handle script in <body>, so it is not possible to use the service across changes in this section.
-       * Because of this, you can only compare to encrypted-media-respec.html and not to index.html.
-       */
-      if (isDiffService) {
-        Array.from(document.getElementsByTagName("img")).forEach(function (element, index, array) {
-          var urlComponents = element.src.split('/');
-          if (urlComponents[2] != diffServiceHostName)
-            return; /* The URL is for another server, so we do not need to fix it. */
-          var file = urlComponents[urlComponents.length - 1];
-          element.src = replacementOriginAndPath + file;
-          console.log("Rewrote-URL-as-" + element.src);
-        });
+    
+  
 
-        Array.from(document.getElementsByTagName("link")).forEach(function (element, index, array) {
-          var urlComponents = element.href.split('/');
-          if (urlComponents[2] != diffServiceHostName)
-            return; /* The URL is for another server, so we do not need to fix it. */
-          var file = urlComponents[urlComponents.length - 1];
-          element.href = replacementOriginAndPath + file;
-          console.log("Rewrote-URL-as-" + element.href);
-        });
-      }
-    </script>
-  </body>
-</html>
+</body></html>
