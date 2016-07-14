@@ -1025,7 +1025,7 @@
                   </li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
                   <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var> in combination with <var>restrictions</var>:</p>
-                    <p class="note"><var>requested media capability</var> (content type and robustness) must be supported with all previously added requested media capabilities.</p>
+                    <p class="note"><var>requested media capability</var> (content type and robustness) must be supported when used together with all previously added requested media capabilities.</p>
                     <ol>
                       <li>
                         <p>
@@ -1221,20 +1221,20 @@
           <dd>
             An optional label that will be preserved in the <a>MediaKeySystemConfiguration</a> returned from the <a def-id="getConfiguration"></a> method of <a>MediaKeySystemAccess</a>.
           </dd>
-          <dt>sequence&lt;DOMString&gt; initDataTypes = [ ]</dt>
+          <dt>sequence&lt;DOMString&gt; initDataTypes = []</dt>
           <dd>
             A list of supported <a def-id="initialization-data-type"></a> names.
             The <a def-id="initialization-data-type"></a> capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             Values in the sequence MUST not be the empty string.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = [ ]</dt>
+          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = []</dt>
           <dd>
             A list of supported audio type and capability pairs.
             The audio capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
             When there is a conflict between values, the earlier value will be selected. An empty list indicates that no audio capabilities are supported.
             In this case, the <a def-id="option-videoCapabilities"></a> element must not be empty.
           </dd>
-          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities = [ ]</dt>
+          <dt>sequence&lt;MediaKeySystemMediaCapability&gt; videoCapabilities = []</dt>
           <dd>
             A list of supported video type and capability pairs.
             The video capability of this object is considered supported if the list is empty or contains one or more values that are supported with all other members (as determined by the algorithm).
@@ -1351,33 +1351,17 @@
             <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>configuration</var> be the value of this object's <var>configuration</var> value.</p></li>
-                <li><p>Let <var>distinctive identifier requirement</var> be the value of <var>configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.</p></li>
-                <li><p>Follow the steps for the value of <var>distinctive identifier requirement</var> from the following list:</p>
-                  <dl class="switch">
-                    <dt><a def-id="requirement-required"></a></dt>
-                    <dd>
-                      Let <var>use distinctive identifier</var> be <code>true</code>.
-                    </dd>
-                    <dt><a def-id="requirement-not-allowed"></a></dt>
-                    <dd>
-                      Let <var>use distinctive identifier</var> be <code>false</code>.
-                    </dd>
-                  </dl>
-                  <p class="note">The value of <var>distinctive identifier requirement</var> cannot be <a def-id="requirement-optional"></a>.</p>
+                <li>
+                  <p>
+                    Let <var>use distinctive identifier</var> be <code>true</code> if the value of <var>configuration</var>'s <a def-id="option-distinctiveIdentifier"></a>
+                    member is <a def-id="requirement-required"></a> and <code>false</code> otherwise.
+                  </p>
                 </li>
-                <li><p>Let <var>persistent state requirement</var> be the value of <var>configuration</var>'s <a def-id="option-persistentState"></a> member.</p></li>
-                <li><p>Follow the steps for the value of <var>persistent state requirement</var> from the following list:</p>
-                  <dl class="switch">
-                    <dt><a def-id="requirement-required"></a></dt>
-                    <dd>
-                      Let <var>persistent state allowed</var> be <code>true</code>.
-                    </dd>
-                    <dt><a def-id="requirement-not-allowed"></a></dt>
-                    <dd>
-                      Let <var>persistent state allowed</var> be <code>false</code>.
-                    </dd>
-                  </dl>
-                  <p class="note">The value of <var>persistent state requirement</var> cannot be <a def-id="requirement-optional"></a>.</p>
+                <li>
+                  <p>
+                    Let <var>persistent state allowed</var> be <code>true</code> if the value of <var>configuration</var>'s <a def-id="option-persistentState"></a>
+                    member is <a def-id="requirement-required"></a> and <code>false</code> otherwise.
+                  <p>
                 </li>
                 <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
                 <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
@@ -1598,7 +1582,7 @@
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
             </li>
           </ol>
         </section>
@@ -1631,22 +1615,26 @@
       <h2><a>MediaKeySession</a> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
       <p>
-        The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object until the sooner of
-        the <a def-id="session-closed-algorithm"></a> algorithm being run or the destruction of the <a>MediaKeySession</a>.
+        A <a>MediaKeySession</a> object is <dfn id="media-key-session-closed">closed</dfn> if and only if the <a def-id="session-closed-algorithm"></a> algorithm has
+        been run.
+      </p>
+      <p>
+        The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object
+        that is not <a def-id="media-key-session-closed"></a>.
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
+
       <p>
         If a <a>MediaKeySession</a> object becomes inaccessible to the page
-        and the <a def-id="session-closed-algorithm"></a> algorithm has not already been run, the User Agent
+        and is not <a def-id="media-key-session-closed"></a>, the User Agent
         MUST run the <a def-id="media-key-session-destroyed-algorithm"></a> algorithm before User Agent state
         associated with the <a href="#key-session">session</a> is deleted.
       </p>
-
       <p>
-        A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it has
-        not been closed and the <a>MediaKeys</a> object that created it remains accessible. Otherwise,
-        a MediaKeySession object that is no longer accessible to JavaScript SHALL NOT receive further
+        A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it is
+        not <a def-id="media-key-session-closed"></a> and the <a>MediaKeys</a> object that created it remains accessible.
+        Otherwise, a MediaKeySession object that is no longer accessible to JavaScript SHALL NOT receive further
         events and MAY be destroyed.
       </p>
       <p class="note">
@@ -1672,7 +1660,7 @@
 
         <dt>readonly attribute Promise&lt;void&gt; closed</dt>
         <dd>
-          <p>Signals when object becomes closed as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
+          <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd>
 
@@ -1723,7 +1711,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
@@ -1873,7 +1861,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
@@ -1888,7 +1876,7 @@
                   </p>
                 </li>
                 <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
-                <li><p>If there is an unclosed session in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
+                <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1901,7 +1889,8 @@
                     <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is an unclosed session in any <a def-id="document-concept"></a> representing the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
+                    <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a> and that
+                    represents the <var>session data</var>, reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
                     <li><p>Load the <var>session data</var>.</p></li>
@@ -1956,7 +1945,7 @@
           </dl>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If <var>response</var> is an empty array, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>response copy</var> be a copy of the contents of the <var>response</var> parameter.</p></li>
@@ -2115,7 +2104,7 @@
 
           <ol class="method-algorithm">
             <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
-            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on <var>session</var>, return a resolved promise.</p></li>
+            <li><p>If <var>session</var> is <a def-id="media-key-session-closed"></a>, return a resolved promise.</p></li>
             <li><p>If <var>session</var>'s <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -2149,7 +2138,7 @@
           </p>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="session-closed-algorithm"></a> algorithm has been run on this object, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -2539,8 +2528,7 @@
         <section id="media-key-session-destroyed">
           <h4>MediaKeySession Destroyed</h4>
           <p>
-            This algorithm performs steps that are necessary when a <a>MediaKeySession</a> is destroyed and
-            the <a def-id="session-closed-algorithm"></a> algorithm has not been run.
+            This algorithm performs steps that are necessary when a <a>MediaKeySession</a> that is not <a def-id="media-key-session-closed"></a> is destroyed.
           </p>
           <p>The following steps are run in parallel to the main event loop:</p>
           <ol>
@@ -2715,9 +2703,10 @@
         <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a license destruction acknowledgement or key usage record acknowledgement.
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
-        <p>The CDM MUST ensure that data for a given session is only present in one active unclosed session in any <a def-id="document-concept"></a>.
+        <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
+        <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a>.
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
-          A session MAY only be loaded again after the <a def-id="session-closed-algorithm"></a> algorithm has not been run on the object representing it.
+          A session MAY only be loaded again if all objects that have ever represented it are <a def-id="media-key-session-closed"></a>.
         </p>
         <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD later remove the stored data using <a def-id="remove"></a>.
           The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
@@ -2991,7 +2980,7 @@
                     </li>
                   </ol>
                 </li>
-                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> on which the <a def-id="session-closed-algorithm"></a> algorithm has not been run, run the following steps:</p>
+                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                   <ol>
                     <li><p>Let <var>block</var> be the first entry in the media element's <var>encrypted block queue</var>.</p></li>
