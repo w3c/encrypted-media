@@ -283,6 +283,7 @@
     'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
 //    'RangeError': { func: local_exception_helper, fragment: '', link_text: 'RangeError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
+    'SecurityError': { func: local_exception_helper, fragment: '', link_text: 'SecurityError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
 
     'interface-textdecoder': { func: encodingapi_helper, fragment: 'interface-textdecoder', link_text: 'TextDecoder interface',  },
@@ -341,8 +342,6 @@
     'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
-
-    'are-insecure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-insecure-contexts-allowed---deprecated', link_text: 'Are insecure contexts allowed?',  },
 
 //    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
     'keyids-initdatatype': { func: link_helper, fragment: 'format-registry/initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },

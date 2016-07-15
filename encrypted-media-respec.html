@@ -137,7 +137,6 @@
       <ul>
         <li><p>The <a def-id="persistent-usage-record-session"></a> session type and the related <a def-id="media-key-session-destroyed-algorithm"></a> algorithm.</p></li>
         <li><p>Setting the <var>media element</var>'s <a def-id="readystate"></a> value based on key availability in the <a def-id="queue-waitingforkey-algorithm"></a> and <a def-id="resume-playback-algorithm"></a> algorithms.</p></li>
-        <li><p>Support for insecure contexts, including the <a def-id="are-insecure-contexts-allowed-algorithm"></a> algorithm and steps that call it.</p></li>
       </ul>
 
     </section>
@@ -596,22 +595,13 @@
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li><p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure context</a> [[!POWERFUL-FEATURES]], run the following steps:</p>
-
-                <ol>
-                  <li><p>If the result of running the <a def-id="are-insecure-contexts-allowed-algorithm"></a> algorithm is <code>Allowed</code>, skip the next step.</p>
-                    <p class="note">This step is <strong>DEPRECATED</strong>.
-                      It is expected that removal of this step will be evaluated during Candidate Recommendation (CR).
-                      Authors are advised that implementations MAY remove it before then.
-                    </p>
-                  </li>
-                  <li><p>Reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p>
-                    <p class="note">
-                      Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
-                      Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
-                    </p>
-                  </li>
-                </ol>
+              <li>
+                <p><b>TODO(#269): Use "current settings object" instead of "incumbent settings object".</b></p> 
+                <p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure context</a> [[!POWERFUL-FEATURES]], reject <var>promise</var> with a <a def-id="SecurityError"></a>.</p>
+                <p class="note">
+                  Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
+                  Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
+                </p>
               </li>
               <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of <var>document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -1065,12 +1055,6 @@
               </li>
               <li><p>Return <var>supported media capabilities</var>.</p></li>
             </ol>
-          </section>
-
-          <section>
-            <h5>Are insecure contexts allowed? - DEPRECATED</h5>
-            <p>This algorithm is <strong>DEPRECATED</strong>. When removed, callers will behave as if it returned <code>Not Allowed</code>.</p>
-            <p>Implementations SHOULD return <code>Not Allowed</code>. Implementations MAY return <code>Allowed</code>.</p>
           </section>
 
           <section>
@@ -2663,7 +2647,6 @@
               <td>
                 The existing MediaKeys object cannot be removed.<br/>
                 The key system is not supported.<br/>
-                The key system is not supported in an insecure context.<br/>
                 The initialization data type is not supported by the key system.<br/>
                 The session type is not supported by the key system.<br/>
                 The initialization data is not supported by the key system.<br/>
@@ -2683,6 +2666,10 @@
               <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br/>
                 A non-closed session already exists for this sessionId.
               </td>
+            </tr>
+            <tr>
+              <td><dfn id="dfn-SecurityError"><code>SecurityError</code></dfn></td>
+              <td>The API is not supported in insecure contexts.</td>
             </tr>
           </tbody>
         </table>
@@ -3657,15 +3644,12 @@
         <p class="note">User agents should be especially diligent when using a CDM or underlying mechanism that is part of or provided by the client OS, platform and/or hardware.</p>
 
         <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent SHOULD ensure that users are fully informed and/or give explicit consent before loading or invoking it.
-          <!-- TODO(#220): Update when support for insecure contexts is removed. -->
-          Such implementations SHOULD only be supported on secure contexts to mitigate the potential for <a href="#network-attacks">Network Attacks</a>.
         </p>
         <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
           See also <a href="#privacy-prompts">User Alerts / Prompts</a> and <a href="#privacy-secureorigin">Use Secure Origin and Transport</a>.
         </p>
       </section>
 
-      <!-- TODO(#220): Update when support for insecure contexts is removed. -->
       <section id="network-attacks">
         <h3>Network Attacks</h3>
         <section class="informative">
@@ -3695,8 +3679,7 @@
               <p>Applications using TLS can be sure that only the user, software working on behalf of the user, and other pages using TLS that have certificates identifying them as being from the same domain, can interact with that application.
                 Furthermore, <a def-id="origin"></a>-specific permissions in combination with a secure origin, ensure that permissions granted to an application cannot be abused by a network attacker.
               </p>
-              <p>User agents MAY choose to only support these APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
-                This is especially important if a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured.
+              <p>This API is only exposed on secure contexts.
                 See also <a href="#privacy-secureorigin">Secure Origin and Transport</a>.
               </p>
             </dd>
@@ -3716,9 +3699,7 @@
                 (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
                 User agents SHOULD only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
               </p>
-              <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
-                Alerting or prompting the user for consent on insecure origins without persisting the choice provides at least a minimum level of security because the user would be alerted to unexpected use (e.g. on a site that does not use encrypted media).
-              </p>
+              <p class="note">The restriction of this API to secure contexts ensures that a network attacker cannot exploit permissions granted to an unauthenticated origin.</p>
             </dd>
           </dl>
         </section>
@@ -4118,10 +4099,11 @@
 
       <section id="privacy-secureorigin">
         <h3>Secure Origin and Transport</h3>
-        <p>In order to protect identifiers and other information discussed in previous sections, user agents MAY choose to only support these APIs and/or specific Key Systems (i.e. based on privacy and security risks) on secure origins.
-        This is especially important if a user agent chooses to support a Key System implementation that may <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> or other such information without effectively anonymizing it in transit.
+        <p>
+          These APIs are only supported on secure origins, protecting information discussed in previous sections.
+          Identifiers are additionally encrypted as specified in <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
         </p>
-        <p>Regardless of user agent limitations, applications SHOULD use secure transport (e.g. HTTPS) for all traffic containing messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
+        <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
         <p>All user agents MUST properly handle Mixed Content [[!MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
       </section>
 
