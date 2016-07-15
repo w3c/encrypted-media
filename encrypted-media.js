@@ -283,7 +283,6 @@
     'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
 //    'RangeError': { func: local_exception_helper, fragment: '', link_text: 'RangeError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
-    'SecurityError': { func: local_exception_helper, fragment: '', link_text: 'SecurityError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
 
     'interface-textdecoder': { func: encodingapi_helper, fragment: 'interface-textdecoder', link_text: 'TextDecoder interface',  },

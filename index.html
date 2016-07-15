@@ -884,9 +884,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         ],
         "quotaexceedederror": [
           "dfn-QuotaExceededError"
-        ],
-        "securityerror": [
-          "dfn-SecurityError"
         ]
       },
       "postProcess": [
@@ -1789,7 +1786,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <h3 id="h-navigator-extension-requestmediakeysystemaccess" resource="#h-navigator-extension-requestmediakeysystemaccess"><span property="xhv:role" resource="xhv:heading"><span class="secno">3.1 </span><a href="#idl-def-Navigator" class="idlType"><code>Navigator</code></a> Extension: <code>requestMediaKeySystemAccess()</code></span></h3>
 
       <pre class="idl"><span class="idlInterface" id="idl-def-Navigator">partial interface <span class="idlInterfaceID">Navigator</span> {
-<span class="idlMethod">    <span class="idlMethType">Promise&lt;<a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a>&gt;</span> <span class="idlMethName"><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess</a></span> (<span class="idlParam"><span class="idlParamType">DOMString</span> <span class="idlParamName">keySystem</span></span>, <span class="idlParam"><span class="idlParamType">sequence&lt;<a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a>&gt;</span> <span class="idlParamName">supportedConfigurations</span></span>);</span>
+<span class="idlMethod">    [<span class="extAttr">SecureContext</span>]
+    <span class="idlMethType">Promise&lt;<a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a>&gt;</span> <span class="idlMethName"><a href="#widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations">requestMediaKeySystemAccess</a></span> (<span class="idlParam"><span class="idlParamType">DOMString</span> <span class="idlParamName">keySystem</span></span>, <span class="idlParam"><span class="idlParamType">sequence&lt;<a href="#idl-def-MediaKeySystemConfiguration" class="idlType"><code>MediaKeySystemConfiguration</code></a>&gt;</span> <span class="idlParamName">supportedConfigurations</span></span>);</span>
 };</span></pre>
 
       <section id="methods" typeof="bibo:Chapter" resource="#methods" property="bibo:hasPart">
@@ -1806,6 +1804,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <p>Any permission checks or user interaction, such as a prompt, <em class="rfc2119" title="MUST">MUST</em> be performed before resolving the promise.</p>
             <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected. Otherwise, it is resolved with a new <a href="#idl-def-MediaKeySystemAccess" class="idlType"><code>MediaKeySystemAccess</code></a> object.
             </p>
+            <div class="note">
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note22"><span>Note</span></div>
+              <div class="">
+                <p>This method is only exposed to <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure contexts</a> [<cite><a class="bibref" href="#bib-POWERFUL-FEATURES">POWERFUL-FEATURES</a></cite>] as indicated by the <code>[SecureContext]</code> IDL attribute.</p>
+                <p>
+                  Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations. Implementations <em class="rfc2119" title="MUST">MUST</em> meet all related requirements and <em class="rfc2119" title="SHOULD">SHOULD</em> follow related recommendations such that the risks on in an secure context would be similar.
+                </p>
+              </div>
+            </div>
             <table class="parameters">
               <tr>
                 <th>Parameter</th>
@@ -1847,16 +1854,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
               <li>
                 <p>Let <var>document</var> be the calling context's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a>.</p>
-              </li>
-              <li>
-                <p><b>TODO(#269): Use "current settings object" instead of "incumbent settings object".</b></p>
-                <p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure context</a> [<cite><a class="bibref" href="#bib-POWERFUL-FEATURES">POWERFUL-FEATURES</a></cite>], reject <var>promise</var> with a <code><a href="#dfn-SecurityError">SecurityError</a></code>.</p>
-                <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note22"><span>Note</span></div>
-                  <p class="">
-                    Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations. Implementations <em class="rfc2119" title="MUST">MUST</em> meet all related requirements and <em class="rfc2119" title="SHOULD">SHOULD</em> follow related recommendations such that the risks on in an secure context would be similar.
-                  </p>
-                </div>
               </li>
               <li>
                 <p>Let <var>origin</var> be the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of <var>document</var>.</p>
@@ -4637,10 +4634,6 @@ interface <span class="idlInterfaceID">MediaKeyMessageEvent</span> : <span class
             <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br> A non-closed session already exists for this sessionId.
             </td>
           </tr>
-          <tr>
-            <td><dfn id="dfn-SecurityError" data-dfn-type="dfn"><code>SecurityError</code></dfn></td>
-            <td>The API is not supported in insecure contexts.</td>
-          </tr>
         </tbody>
       </table>
     </section>
@@ -7000,8 +6993,6 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
         <dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. W3C. <a href="https://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="https://www.w3.org/TR/html5/" property="dc:requires">https://www.w3.org/TR/html5/</a>
         </dd><dt id="bib-MIXED-CONTENT">[MIXED-CONTENT]</dt>
         <dd>Mike West. W3C. <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 8 October 2015. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires">https://www.w3.org/TR/mixed-content/</a>
-        </dd><dt id="bib-POWERFUL-FEATURES">[POWERFUL-FEATURES]</dt>
-        <dd>Mike West. W3C. <a href="https://www.w3.org/TR/secure-contexts/" property="dc:requires"><cite>Secure Contexts</cite></a>. 15 July 2016. W3C Working Draft. URL: <a href="https://www.w3.org/TR/secure-contexts/" property="dc:requires">https://www.w3.org/TR/secure-contexts/</a>
         </dd><dt id="bib-RFC2119">[RFC2119]</dt>
         <dd>S. Bradner. IETF. <a href="https://tools.ietf.org/html/rfc2119" property="dc:requires"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119" property="dc:requires">https://tools.ietf.org/html/rfc2119</a>
         </dd><dt id="bib-RFC6381">[RFC6381]</dt>
@@ -7022,6 +7013,8 @@ interface <span class="idlInterfaceID">MediaEncryptedEvent</span> : <span class=
         <dd>David Dorwin; Adrian Bateman; Mark Watson. W3C. <a href="format-registry/stream/" property="dc:references"><cite>Encrypted Media Extensions Stream Format Registry</cite></a>. URL: <a href="format-registry/stream/" property="dc:references">format-registry/stream/</a>
         </dd><dt id="bib-MEDIA-SOURCE">[MEDIA-SOURCE]</dt>
         <dd>Matthew Wolenetz; Jerry Smith; Mark Watson; Aaron Colwell; Adrian Bateman. W3C. <a href="https://www.w3.org/TR/media-source/" property="dc:references"><cite>Media Source Extensions</cite></a>. 5 July 2016. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/media-source/" property="dc:references">https://www.w3.org/TR/media-source/</a>
+        </dd><dt id="bib-POWERFUL-FEATURES">[POWERFUL-FEATURES]</dt>
+        <dd>Mike West. W3C. <a href="https://www.w3.org/TR/secure-contexts/" property="dc:references"><cite>Secure Contexts</cite></a>. 15 July 2016. W3C Working Draft. URL: <a href="https://www.w3.org/TR/secure-contexts/" property="dc:references">https://www.w3.org/TR/secure-contexts/</a>
         </dd><dt id="bib-RFC6838">[RFC6838]</dt>
         <dd>N. Freed; J. Klensin; T. Hansen. IETF. <a href="https://tools.ietf.org/html/rfc6838" property="dc:references"><cite>Media Type Specifications and Registration Procedures</cite></a>. January 2013. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc6838" property="dc:references">https://tools.ietf.org/html/rfc6838</a>
         </dd><dt id="bib-RFC7515">[RFC7515]</dt>

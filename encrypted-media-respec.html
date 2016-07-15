@@ -564,7 +564,7 @@
         <h3><a>Navigator</a> Extension: <code>requestMediaKeySystemAccess()</code></h3>
 
         <dl title="partial interface Navigator" class="idl">
-          <dt>Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
+          <dt>[SecureContext] Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess()</dt>
           <dd>
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
             This method should only be called when the author intends to create and use a <a>MediaKeys</a> object with the provided configuration.
@@ -577,6 +577,13 @@
             <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
               Otherwise, it is resolved with a new <a>MediaKeySystemAccess</a> object.
             </p>
+            <div class="note">
+              <p>This method is only exposed to <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure contexts</a> [[POWERFUL-FEATURES]] as indicated by the <code>[SecureContext]</code> IDL attribute.</p>
+              <p>
+                Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
+                Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
+              </p>
+            </div> 
 
             <dl class='parameters'>
               <dt>DOMString keySystem</dt>
@@ -595,14 +602,6 @@
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li>
-                <p><b>TODO(#269): Use "current settings object" instead of "incumbent settings object".</b></p> 
-                <p>If the <a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure context</a> [[!POWERFUL-FEATURES]], reject <var>promise</var> with a <a def-id="SecurityError"></a>.</p>
-                <p class="note">
-                  Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
-                  Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
-                </p>
-              </li>
               <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of <var>document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps in parallel:</p>
@@ -2666,10 +2665,6 @@
               <td>The MediaKeys object cannot be used with additional HTMLMediaElements.<br/>
                 A non-closed session already exists for this sessionId.
               </td>
-            </tr>
-            <tr>
-              <td><dfn id="dfn-SecurityError"><code>SecurityError</code></dfn></td>
-              <td>The API is not supported in insecure contexts.</td>
             </tr>
           </tbody>
         </table>
