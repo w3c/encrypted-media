@@ -27,36 +27,46 @@ Use the following steps to publish the new index.html after modifying the `-resp
 
 ## Handling Pull Requests
 
-This spec does not use the green "Merge pull request" button. This ensures that each change is a single commit on the main `gh-pages` branch.
+This spec now uses the green "Merge pull request" button on GitHub. Using the steps below, this automatically ensures that each change is a single commit on the main `gh-pages` branch.  
 
-The following subsections contain instructions for merging. They assume the Bash functions that follow them are present.
+Manual merge instructions are retained below for reference, but are not recommended.
+
+### Merging Pull Requests With the Green "Merge Pull Request" Button ##
+
+1. The Green "Merge pull request" button on the Pull Request page will be enabled only if all checks have passed and there are no conflicts between the Pull Request and the base branch.
+1. When ready to merge:
+  1. Click the green "Merge pull request" button.
+  1. Choose to squash and merge from the button drop down menu.
+  1. Click the green "Confirm squash and merge" button.
+  1. Clean up the commit summary - single line field of bold text.
+     * Use the format "Issue #123: Description" or "Fix #123: Description" as the merge title.
+     * Use "Fix" if this merge resolves all items in the issue and the issue should be closed.
+  1. Clean up the additional commit text in the multiline text box below the summary.
+     * Most often, you will want to delete all of the text.
+     * The most likely exception is when there was some useful additional information in one of the commit messages in the PR. You may also want to provide some additional information in addition to the summary.
+
+## Manual Pull Request Steps (for reference only) ##
+Manual steps for merging Pull Requests are retained below.  They are not the preferred method for merging, and are retained for reference only.
+
+The following subsections contain manual instructions for merging. They assume the Bash functions that follow them are present.
 
 ### Merging Pull Requests from Forks
 
 1. `git checkout gh-pages`
-
 1. `pr <pull request ID>`
-
 1. If the pull request contains multiple commits, squash them as appropriate.
    * In general, all commits and merges should be squashed into a single commit.
    * If commits or sets of commits represent multiple distinct actions (i.e. do something then rename a variable), then the branch might be squashed into two or more commits, each representing a distinct action.
    * Squash commits by running `git rebase -i origin/gh-pages` then using `squash` on the commit(s) to be squashed.
-
 1. If index.html is not part of the pull request and needs to be updated:
   1. Generate index.html.
   1. Run the following:
-
-    ```
-    git add index.html
-    git commit --amend
-    ```
-
+     * `git add index.html`
+     * `git commit --amend`
 1. If the commit message needs to be updated (i.e. To add "Fix #\<bug ID\>: "), do one of the following and update the message:
     * Run `git rebase -i origin/gh-pages` then use `reword` to select the commit(s) to reword.
     * Run `git commit --amend` and edit the last commit message.
-
 1. `git push`
-
 1. Close the pull request by following these steps in the web interface:
   1. Let `hash` be the the commit hash.
   1. Navigate to the pull request.
