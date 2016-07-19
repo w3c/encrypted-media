@@ -396,7 +396,7 @@
               A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data).
               For example, values that are <a href="#associable-by-entity">associable by an entity other than the application</a> across
               a) <a def-id="origin">origins</a>,
-              b) profiles or user accounts,
+              b) <a def-id="browsing-profile">browsing profiles</a>,
               or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
               or values for which it is not easy for a user to break such association.
               In particular, a value is a distinctive identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#privacy-individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. 
@@ -539,7 +539,19 @@
           </p>    
           <p>Time is intended to be consistent with Unix time.   
 		  </p>
-        </dd> 
+        </dd>
+        <dt id="browsing-profile">Browsing Profile</dt>
+        <dd>
+          <p>
+            A User Agent on a given machine may support execution in a variety of different contexts or modes or temporary states that are expected to behave independently
+            with respect to application-visible state and data.
+            In particular, all stored data is expected to be independent. In this specification we refer to such independent contexts or modes as "Browsing Profiles".
+          </p>
+          <p class="note">
+            Examples of such independent contexts include if the user agent is running in different operating system user accounts or if the user agent provides the capability to define
+            multiple independent profiles for a single account.
+          </p>
+        </dd>
       </dl>
     </section>
 
@@ -1320,33 +1332,17 @@
             <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>configuration</var> be the value of this object's <var>configuration</var> value.</p></li>
-                <li><p>Let <var>distinctive identifier requirement</var> be the value of <var>configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member.</p></li>
-                <li><p>Follow the steps for the value of <var>distinctive identifier requirement</var> from the following list:</p>
-                  <dl class="switch">
-                    <dt><a def-id="requirement-required"></a></dt>
-                    <dd>
-                      Let <var>use distinctive identifier</var> be <code>true</code>.
-                    </dd>
-                    <dt><a def-id="requirement-not-allowed"></a></dt>
-                    <dd>
-                      Let <var>use distinctive identifier</var> be <code>false</code>.
-                    </dd>
-                  </dl>
-                  <p class="note">The value of <var>distinctive identifier requirement</var> cannot be <a def-id="requirement-optional"></a>.</p>
+                <li>
+                  <p>
+                    Let <var>use distinctive identifier</var> be <code>true</code> if the value of <var>configuration</var>'s <a def-id="option-distinctiveIdentifier"></a>
+                    member is <a def-id="requirement-required"></a> and <code>false</code> otherwise.
+                  </p>
                 </li>
-                <li><p>Let <var>persistent state requirement</var> be the value of <var>configuration</var>'s <a def-id="option-persistentState"></a> member.</p></li>
-                <li><p>Follow the steps for the value of <var>persistent state requirement</var> from the following list:</p>
-                  <dl class="switch">
-                    <dt><a def-id="requirement-required"></a></dt>
-                    <dd>
-                      Let <var>persistent state allowed</var> be <code>true</code>.
-                    </dd>
-                    <dt><a def-id="requirement-not-allowed"></a></dt>
-                    <dd>
-                      Let <var>persistent state allowed</var> be <code>false</code>.
-                    </dd>
-                  </dl>
-                  <p class="note">The value of <var>persistent state requirement</var> cannot be <a def-id="requirement-optional"></a>.</p>
+                <li>
+                  <p>
+                    Let <var>persistent state allowed</var> be <code>true</code> if the value of <var>configuration</var>'s <a def-id="option-persistentState"></a>
+                    member is <a def-id="requirement-required"></a> and <code>false</code> otherwise.
+                  <p>
                 </li>
                 <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
                 <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
@@ -1572,7 +1568,7 @@
         </p>
         
         <p>Persisted data MUST always be stored such that only the <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> can access it.
-          In addition, the data MUST only be accessible by the current profile of this user agent; other user agent profiles, user agents, and applications MUST NOT be able to access the stored data.
+          In addition, the data MUST only be accessible by the current <a def-id="browsing-profile"></a>; other browsing profiles, user agents, and applications MUST NOT be able to access the stored data.
           See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
         </p>
         
@@ -3697,7 +3693,7 @@ interface MediaEncryptedEvent : Event {
           <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
             It is important that steps be taken to avoid information leakage, especially across origins.
             This includes both in-memory and stored data.
-            Failure to do so could lead to information leakage to/from private browsing sessions, across profiles, and even across different browsers, applications, and operating system user accounts.
+            Failure to do so could lead to information leakage to/from private browsing sessions, across <a def-id="browsing-profile">browsing profiles</a> (including across operating system user accounts) and even across different browsers or applications.
           </p>
         </section>
         <section>
@@ -3740,7 +3736,7 @@ interface MediaEncryptedEvent : Event {
         <section class="informative">
         <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/237">Issue 237</a> - Address <a def-id="distinctive-permanent-identifiers"></a> in this section and ensure it reflects the current definition of <a def-id="distinctive-identifier"></a>.</p>
           <h4>Concerns</h4>
-          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across profiles and user accounts on the client device), building a profile of the user's activities or interests.
+          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.
             Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
             In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
           </p>
@@ -3751,7 +3747,7 @@ interface MediaEncryptedEvent : Event {
             <li><p>Origins visited (via stored or in-memory data, permissions, etc.)</p></li>
             <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p></li>
           </ul>
-          <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and its profile storage), often in the CDM.</p>
+          <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and associated <a def-id="browsing-profile"></a> storage), often in the CDM.</p>
           
           <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
@@ -3949,14 +3945,14 @@ interface MediaEncryptedEvent : Event {
             Potentially, this could reveal information about a user to another user of the same device, including potentially the <a def-id="origin">origins</a> that have used a particular Key System (i.e. sites visited) or even the content that has been decrypted using a Key System.
           </p>
           <p>If information stored by one origin affects the operation of the Key System for another origin, then potentially the sites visited or content viewed by a user on one site may be revealed to another, potentially malicious, site.</p>
-          <p>If information stored for one browsing profile, browser, or user account on the client device affects the operation of the Key System for other profiles, browsers, or accounts, then potentially the sites visited or content viewed by in one may be revealed by or correlatable with another profile, browser, or account.</p>
+          <p>If information stored for one <a def-id="browsing-profile"></a> on the client device affects the operation of the Key System for other <a def-id="browsing-profile">browsing profiles</a>, or browsers, then potentially the sites visited or content viewed in one may be revealed by or correlatable with another <a def-id="browsing-profile">browsing profile</a>, even including for different operating system user accounts or browsers.</p>
         </section>
         <section>
           <h4>Mitigations</h4>
           <p>In summary, user agent and CDM implementations that allow the CDM to persist data:</p>
           <ul>
             <li><p>MUST ensure it is restricted to the <a def-id="origin"></a> for which it was created.</p></li>
-            <li><p>MUST ensure it is restricted to the current profile and does not leak to or from private browsing sessions.</p></li>
+            <li><p>MUST ensure it is restricted to the current <a def-id="browsing-profile"></a> and does not leak to or from private browsing sessions.</p></li>
             <li><p>MUST allow the user to clear it.</p></li>
             <li><p>SHOULD allow the user to clear it by <a def-id="origin"></a>.</p></li>
             <li><p>SHOULD treat it like other site data, including presenting it along with cookies [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.</p></li>
