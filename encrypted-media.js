@@ -521,7 +521,7 @@
     // This is more useful than the long "widl-..." names when referencing
     // methods from outside this spec.
     // Because the <dt> already has a generated id, the id is added to the <code>.
-    $("dl.methods > dt > code").each(function() {
+    $("dl.methods > dt > dfn > code").each(function() {
         if (this.id) {
           console.error("Method " + this.textContent + "'s <code> element already has an 'id'.");
         }
