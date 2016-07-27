@@ -175,7 +175,8 @@
     <section id="introduction" class="informative">
       <h2>Introduction</h2>
       <p>
-        This specification enables script to select content protection mechanisms, control license/key exchange, and implement custom license management algorithms.
+        This specification enables script to select content protection mechanisms, control license/key exchange, and
+        execute custom license management algorithms.
         It supports a wide range of use cases without requiring client-side modifications in each user agent for each use case.
         This enables content providers to develop a single application solution for all devices.
       </p>
@@ -237,7 +238,7 @@
           Sessions are embodied as <a>MediaKeySession</a> objects.
           Each Key session is associated with a single instance of <a def-id="initialization-data"></a> provided in the <a def-id="generateRequest"></a> call.
           </p>
-          <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that object may access key(s) associated with the session.
+          <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that <a>MediaKeys</a> object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, <a def-id="cdm"></a> instances, and media elements MUST NOT access the key session or use its key(s).
           Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> once the session has been closed, including when the <a>MediaKeySession</a> object is destroyed.
           </p>
@@ -414,7 +415,7 @@
             For example, a Distinctive Permanent Identifier shared among a small number of users could still be distinctive.
           </p>
           <p class="note">
-            A <a def-id="distinctive-permanent-identifier"></a> is <em>not</em> a <a def-id="distinctive-identifiers"></a> because it is not derived or generated (within the scope of this specification).
+            A <a def-id="distinctive-permanent-identifier"></a> is <em>not</em> a <a def-id="distinctive-identifier"></a> because it is not derived or generated (within the scope of this specification).
           </p> 
         </dd>
 
@@ -606,7 +607,7 @@
               The resulting <a>MediaKeySystemAccess</a> will correspond to the first such element.
             </p>
             <p>Any permission checks or user interaction, such as a prompt, MUST be performed before resolving the promise.</p>
-            <p>If the <code>keySystem</code> is not supported or not allowed (in one at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
+            <p>If the <code>keySystem</code> is not supported or not allowed (in at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected.
               Otherwise, it is resolved with a new <a>MediaKeySystemAccess</a> object.
             </p>
             <div class="note">
@@ -644,7 +645,7 @@
                               <li><p>Let the <var>cdm implementation</var> value be <var>implementation</var>.</p></li>
                             </ol>
                           </li>
-                          <li><p>Resolve <var>promise</var> with <var>access</var> and abort these steps.</p></li>
+                          <li><p>Resolve <var>promise</var> with <var>access</var> and abort the parallel steps of this algorithm.</p></li>
                         </ol>
                       </li>
                     </ol>
@@ -1424,7 +1425,7 @@
             </li>
           </ul>
           <p>
-              A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the <a def-id="record-of-key-usage"></a> will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
+              A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the <a def-id="record-of-key-usage"></a> will be generated each time <a def-id="remove"></a> is called, until the record is acknowledged by a response passed to <a def-id="update"></a>.
           </p>
           <p>
             The <dfn id="key-usage-accuracy"><var>key usage accuracy</var></dfn> is implementation-dependant but SHALL NOT be greater than 60 seconds.
@@ -1697,6 +1698,7 @@
                 <li><p>If <var>sanitized init data</var> is empty, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p></li>
                 <li><p>Let <var>session id</var> be the empty string.</p></li>
                 <li><p>Let <var>message</var> be null.</p></li>
+                <li><p>Let <var>message type</var> be null.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
@@ -2095,7 +2097,8 @@
             <li><p>Run the following steps in parallel:</p>
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
-                <li><p>Let <var>message</var> be <code>null</code>.</p></li>
+                <li><p>Let <var>message</var> be null.</p></li>
+                <li><p>Let <var>message type</var> be null.</p></li>
                 <li><p>Use the <var>cdm</var> to execute the following steps:</p>
                   <ol>
                     <li>
@@ -2432,7 +2435,7 @@ interface MediaKeyMessageEvent : Event {
             </p>
             <p>Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.</p>
             <p>
-              After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no furter events
+              After this algorithm has run, event handlers for the events queued by this algorithm will be executed, but no further events
               can be queued. As a result, no messages can be sent by the CDM as a result of closing the session.
             </p>
           </div>
@@ -2725,7 +2728,19 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <li><p>If <var>mediaKeys</var> is not null, the CDM instance represented by <var>mediaKeys</var> is already in use by another media element, and the user agent is unable to use it with this element, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.</p></li>
+                <li>
+                  <p>If all the following conditions hold:</p>
+                  <ul>
+                    <li><p><var>mediaKeys</var> is not null,</p></li>
+                    <li>
+                      <p>the CDM instance represented by <var>mediaKeys</var> is already in use by another media element</p>
+                    </li>
+                    <li><p>the user agent is unable to use it with this element</p></li>
+                  </ul>
+                  <p>
+                    then let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="QuotaExceededError"></a>.
+                  </p>
+                </li>
                 <li><p>If the <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
                   <ol>
                     <li><p>If the user agent or CDM do not support removing the association, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a <a def-id="NotSupportedError"></a>.</p></li>
