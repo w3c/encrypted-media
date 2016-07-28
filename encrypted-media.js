@@ -171,14 +171,15 @@
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifier-maybe-plural': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier(s)'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
+    'browsing-profile': { func: term_helper, fragment: 'browsing-profile', link_text: 'browsing profile' },
     'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
     'record-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record of license destruction'  },
     'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
     'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
     'time': { func: term_helper, fragment: 'time', link_text: 'time'  },
 	
-    'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess()',  },
-    'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'widl-Navigator-requestMediaKeySystemAccess-Promise-MediaKeySystemAccess--DOMString-keySystem-sequence-MediaKeySystemConfiguration--supportedConfigurations', link_text: 'requestMediaKeySystemAccess',  },
+    'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess()',  },
+    'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess',  },
     'get-consent-status-algorithm' : { func: term_helper, fragment: 'get-consent-status', link_text: 'Get Consent Status' },
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
     'get-supported-configuration-and-consent-algorithm': { func: term_helper, fragment: 'get-supported-configuration-and-consent', link_text: 'Get Supported Configuration and Consent',  },
@@ -187,21 +188,21 @@
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.not-allowed', link_text: '"not-allowed"',  },
 
-    'option-label': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-label', link_text: 'label',  },
-    'option-initDataTypes': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-initDataTypes', link_text: 'initDataTypes',  },
-    'option-audioCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-audioCapabilities', link_text: 'audioCapabilities',  },
-    'option-videoCapabilities': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-videoCapabilities', link_text: 'videoCapabilities',  },
-    'option-persistentState': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-persistentState', link_text: 'persistentState',  },
-    'option-distinctiveIdentifier': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-distinctiveIdentifier', link_text: 'distinctiveIdentifier',  },
-    'option-sessionTypes': { func: idlref_helper, fragment: 'widl-MediaKeySystemConfiguration-sessionTypes', link_text: 'sessionTypes',  },
+    'option-label': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-label', link_text: 'label',  },
+    'option-initDataTypes': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-initdatatypes', link_text: 'initDataTypes',  },
+    'option-audioCapabilities': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-audiocapabilities', link_text: 'audioCapabilities',  },
+    'option-videoCapabilities': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-videocapabilities', link_text: 'videoCapabilities',  },
+    'option-persistentState': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-persistentstate', link_text: 'persistentState',  },
+    'option-distinctiveIdentifier': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-distinctiveidentifier', link_text: 'distinctiveIdentifier',  },
+    'option-sessionTypes': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-sessiontypes', link_text: 'sessionTypes',  },
 
-    'capability-contentType' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-contentType', link_text: 'contentType',  },
-    'capability-robustness' : { func: idlref_helper, fragment: 'widl-MediaKeySystemMediaCapability-robustness', link_text: 'robustness',  },
+    'capability-contentType' : { func: idlref_helper, fragment: 'dom-mediakeysystemmediacapability-contenttype', link_text: 'contentType',  },
+    'capability-robustness' : { func: idlref_helper, fragment: 'dom-mediakeysystemmediacapability-robustness', link_text: 'robustness',  },
 
-    'keySystem-attribute': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-keySystem', link_text: 'keySystem',  },
-    'getConfiguration': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-getConfiguration-MediaKeySystemConfiguration', link_text: 'getConfiguration()',  },
-//  'createMediaKeys': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
-    'createMediaKeys-call': { func: idlref_helper, fragment: 'widl-MediaKeySystemAccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys',  },
+    'keySystem-attribute': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-keysystem', link_text: 'keySystem',  },
+    'getConfiguration': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-getconfiguration', link_text: 'getConfiguration()',  },
+//  'createMediaKeys': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
+    'createMediaKeys-call': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-createmediakeys', link_text: 'createMediaKeys',  },
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
@@ -210,27 +211,27 @@
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
     'cdm-unavailable-algorithm': { func: term_helper, fragment: 'cdm-unavailable', link_text: 'CDM Unavailable',  },
 
-    'createSession-call': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession',  },
-    'setServerCertificate': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate', link_text: 'setServerCertificate()',  },
-    'setServerCertificate-call': { func: idlref_helper, fragment: 'widl-MediaKeys-setServerCertificate-Promise-boolean--BufferSource-serverCertificate', link_text: 'setServerCertificate',  },
+    'createSession-call': { func: idlref_helper, fragment: 'dom-mediakeys-createsession', link_text: 'createSession',  },
+    'setServerCertificate': { func: idlref_helper, fragment: 'dom-mediakeys-setservercertificate', link_text: 'setServerCertificate()',  },
+    'setServerCertificate-call': { func: idlref_helper, fragment: 'dom-mediakeys-setservercertificate', link_text: 'setServerCertificate',  },
 
-	'statusmap-size': { func: idlref_helper, fragment: 'widl-MediaKeyStatusMap-size', link_text: 'size',  },
+	'statusmap-size': { func: idlref_helper, fragment: 'dom-mediakeystatusmap-size', link_text: 'size',  },
 
 	
-    'sessionId': { func: idlref_helper, fragment: 'widl-MediaKeySession-sessionId', link_text: 'sessionId',  },
-    'expiration': { func: idlref_helper, fragment: 'widl-MediaKeySession-expiration', link_text: 'expiration',  },
-    'closed': { func: idlref_helper, fragment: 'widl-MediaKeySession-closed', link_text: 'closed',  },
-    'keyStatuses': { func: idlref_helper, fragment: 'widl-MediaKeySession-keyStatuses', link_text: 'keyStatuses',  },
-    'generateRequest': { func: idlref_helper, fragment: 'widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData', link_text: 'generateRequest()',  },
-    'generateRequest-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-generateRequest-Promise-void--DOMString-initDataType-BufferSource-initData', link_text: 'generateRequest',  },
-    'load': { func: idlref_helper, fragment: 'widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId', link_text: 'load()',  },
-    'load-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-load-Promise-boolean--DOMString-sessionId', link_text: 'load',  },
-    'update': { func: idlref_helper, fragment: 'widl-MediaKeySession-update-Promise-void--BufferSource-response', link_text: 'update()',  },
-    'update-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-update-Promise-void--BufferSource-response', link_text: 'update',  },
-//  'close': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close()',  },
-    'close-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-close-Promise-void', link_text: 'close',  },
-    'remove': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove()',  },
-    'remove-call': { func: idlref_helper, fragment: 'widl-MediaKeySession-remove-Promise-void', link_text: 'remove',  },
+    'sessionId': { func: idlref_helper, fragment: 'dom-mediakeysession-sessionid', link_text: 'sessionId',  },
+    'expiration': { func: idlref_helper, fragment: 'dom-mediakeysession-expiration', link_text: 'expiration',  },
+    'closed': { func: idlref_helper, fragment: 'dom-mediakeysession-closed', link_text: 'closed',  },
+    'keyStatuses': { func: idlref_helper, fragment: 'dom-mediakeysession-keystatuses', link_text: 'keyStatuses',  },
+    'generateRequest': { func: idlref_helper, fragment: 'dom-mediakeysession-generaterequest', link_text: 'generateRequest()',  },
+    'generateRequest-call': { func: idlref_helper, fragment: 'dom-mediakeysession-generaterequest', link_text: 'generateRequest',  },
+    'load': { func: idlref_helper, fragment: 'dom-mediakeysession-load', link_text: 'load()',  },
+    'load-call': { func: idlref_helper, fragment: 'dom-mediakeysession-load', link_text: 'load',  },
+    'update': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update()',  },
+    'update-call': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update',  },
+//  'close': { func: idlref_helper, fragment: 'dom-mediakeysession-close-Promise-void', link_text: 'close()',  },
+    'close-call': { func: idlref_helper, fragment: 'dom-mediakeysession-close', link_text: 'close',  },
+    'remove': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove()',  },
+    'remove-call': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove',  },
 
     'status-usable': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.usable', link_text: '"usable"',  },
     'status-expired': { func: idlref_helper, fragment: 'idl-def-MediaKeyStatus.expired', link_text: '"expired"',  },
@@ -250,14 +251,16 @@
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
     'media-key-session-destroyed-algorithm' : { func: term_helper, fragment: 'media-key-session-destroyed', link_text: 'MediaKeySession destroyed',  },
+ 
+    'media-key-session-closed' : { func: term_helper, fragment: 'media-key-session-closed', link_text: 'closed', },
 
     'media-keys-storage': { func: term_helper, fragment: 'media-keys-storage', link_text: 'Storage and Persistence',  },
     'session-storage': { func: term_helper, fragment: 'session-storage', link_text: 'Session Storage and Persistence',  },
 
-    'mediaKeys-attribute': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-mediaKeys', link_text: 'mediaKeys',  },
-    'onencrypted': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-onencrypted', link_text: 'onencrypted',  },
-    'setMediaKeys': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys()',  },
-    'setMediaKeys-call': { func: idlref_helper, fragment: 'widl-HTMLMediaElement-setMediaKeys-Promise-void--MediaKeys-mediaKeys', link_text: 'setMediaKeys',  },
+    'mediaKeys-attribute': { func: idlref_helper, fragment: 'dom-mediakeys', link_text: 'mediaKeys',  },
+    'onencrypted': { func: idlref_helper, fragment: 'dom-htmlmediaelement-onencrypted', link_text: 'onencrypted',  },
+    'setMediaKeys': { func: idlref_helper, fragment: 'dom-htmlmediaelement-setmediakeys', link_text: 'setMediaKeys()',  },
+    'setMediaKeys-call': { func: idlref_helper, fragment: 'dom-htmlmediaelement-setmediakeys', link_text: 'setMediaKeys',  },
 
     'keystatuseschange': { func: eventref_helper, fragment: 'keystatuseschange', link_text: 'keystatuseschange',  },
     'message': { func: eventref_helper, fragment: 'message', link_text: 'message',  },
@@ -269,11 +272,11 @@
     'message-type-license-release': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.license-release', link_text: '"license-release"',  },
     'message-type-individualization-request': { func: idlref_helper, fragment: 'idl-def-MediaKeyMessageType.individualization-request', link_text: '"individualization-request"',  },
 
-    'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-messageType', link_text: 'messageType',  },
-    'message-event-message-attribute': { func: idlref_helper, fragment: 'widl-MediaKeyMessageEvent-message', link_text: 'message',  },
+    'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-messagetype', link_text: 'messageType',  },
+    'message-event-message-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-message', link_text: 'message',  },
 
-    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initDataType', link_text: 'initDataType',  },
-    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'widl-MediaEncryptedEventInit-initData', link_text: 'initData',  },
+    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdatatype', link_text: 'initDataType',  },
+    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdata', link_text: 'initData',  },
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
@@ -339,11 +342,9 @@
 //    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
-    'are-insecure-contexts-allowed-algorithm': { func: term_helper, fragment: 'are-insecure-contexts-allowed---deprecated', link_text: 'Are insecure contexts allowed?',  },
+    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
 
-//    'contributors': { func: contributors_helper, fragment: '', link_text: '', },
     'keyids-initdatatype': { func: link_helper, fragment: 'format-registry/initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
-
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
@@ -518,7 +519,7 @@
     // This is more useful than the long "widl-..." names when referencing
     // methods from outside this spec.
     // Because the <dt> already has a generated id, the id is added to the <code>.
-    $("dl.methods > dt > code").each(function() {
+    $("dl.methods > dt > dfn > code").each(function() {
         if (this.id) {
           console.error("Method " + this.textContent + "'s <code> element already has an 'id'.");
         }
