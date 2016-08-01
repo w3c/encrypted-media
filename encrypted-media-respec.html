@@ -2352,7 +2352,7 @@ interface MediaKeyMessageEvent : Event {
           <ol>
             <li><p>Let the <var>session</var> be the specified <a>MediaKeySession</a> object.</p></li>
             <li>
-              <p><a def-id="Queue-a-task"></a> to create an event named <var>message</var> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
+              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="message"></a> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
               <p>The event interface <a>MediaKeyMessageEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="message-event-messagetype-attribute"></a> = the specified <var>message type</var><br><br>
@@ -2829,8 +2829,10 @@ interface MediaEncryptedEvent : Event {
 
         <section id="initdata-encountered">
           <h4>Initialization Data Encountered</h4>
-          <p>The following steps are run when the media element encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>:</p>
-
+          <p>
+            This algorithm queues an <a def-id="encrypted"></a> event for <a def-id="initialization-data"></a> encounterd in the <a def-id="media-data"></a>.
+          </p>
+          <p>The following steps are run:</p>
           <ol>
             <li><p>Let <var>initDataType</var> be the empty string.</p></li>
             <li><p>Let <var>initData</var> be null.</p></li>
@@ -2843,8 +2845,8 @@ interface MediaEncryptedEvent : Event {
               <p class="note">While the media element may allow loading of "Optionally-blockable Content" [[MIXED-CONTENT]], the user agent MUST NOT expose Initialization Data from such media data to the application.</p>
             </li>
             <li>
-              <p><a def-id="Queue-a-task"></a> to create an event named <var>encrypted</var> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.
-              </p><p>The event interface <a>MediaEncryptedEvent</a> has:</p>
+              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the media element.</p>
+              <p>The event interface <a>MediaEncryptedEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br><br>
                 <a def-id="encrypted-event-initdata-attribute"></a> = <var>initData</var>
@@ -2870,7 +2872,8 @@ interface MediaEncryptedEvent : Event {
 
         <section id="encrypted-block-encountered">
           <h4>Encrypted Block Encountered</h4>
-          <p>This algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible. The following steps are run:</p>
+          <p>This algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible.</p>
+          <p>The following steps are run:</p>
           <ol>
             <li>
               <p>Let <var>block</var> be the block of encrypted media data.</p>
@@ -2885,7 +2888,8 @@ interface MediaEncryptedEvent : Event {
         </section>
         <section id="attempt-to-decrypt">
           <h4>Attempt to Decrypt</h4>
-          <p>This algorithm attempts to decrypt media data that is queued for decryption. The following steps are run:</p>
+          <p>This algorithm attempts to decrypt media data that is queued for decryption.</p>
+          <p>The following steps are run:</p>
           <ol>
             <li><p>If the media element's <var>encrypted block queue</var> is empty, abort these steps.</p></li>
             <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
@@ -3018,7 +3022,8 @@ interface MediaEncryptedEvent : Event {
 
         <section id="queue-waitingforkey">
           <h4>Queue a "waitingforkey" Event</h4>
-          <p>The Queue a "waitingforkey" Event algorithm is run when the CDM cannot decrypt the current block.
+          <p>
+            This algorithm queues a <a def-id="waitingforkey"></a> event and updates <a def-id="readystate"></a>.
             It should only be called when the <a def-id="htmlmediaelement"></a> object is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.
             Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
@@ -3038,11 +3043,10 @@ interface MediaEncryptedEvent : Event {
 
         <section id="resume-playback">
           <h4>Attempt to Resume Playback If Necessary</h4>
-          <p>The Attempt to Resume Playback If Necessary algorithm is run when one or more keys may be or may have become available.
-          If playback is blocked waiting for a key, it resumes playback if a necessary key has been provided.
-          Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
+          <p>
+            This algorithm resumes playback if the media element is blocked waiting for a key and necessary key is currently <a def-id="usable-for-decryption"></a>
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
-
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
