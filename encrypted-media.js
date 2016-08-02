@@ -249,7 +249,7 @@
     'update-key-statuses-algorithm': { func: term_helper, fragment: 'update-key-statuses', link_text: 'Update Key Statuses',  },
     'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'Update Expiration',  },
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
-    'queue-waitingforkey-algorithm': { func: term_helper, fragment: 'queue-waitingforkey', link_text: 'Queue a "waitingforkey" Event',  },
+    'wait-for-key-algorithm': { func: term_helper, fragment: 'wait-for-key', link_text: 'Wait for Key',  },
     'media-key-session-destroyed-algorithm' : { func: term_helper, fragment: 'media-key-session-destroyed', link_text: 'MediaKeySession destroyed',  },
  
     'media-key-session-closed' : { func: term_helper, fragment: 'media-key-session-closed', link_text: 'closed', },
