@@ -201,7 +201,6 @@
 
     'keySystem-attribute': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-keysystem', link_text: 'keySystem',  },
     'getConfiguration': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-getconfiguration', link_text: 'getConfiguration()',  },
-//  'createMediaKeys': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-createMediaKeys-Promise-MediaKeys', link_text: 'createMediaKeys()',  },
     'createMediaKeys-call': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-createmediakeys', link_text: 'createMediaKeys',  },
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
@@ -215,9 +214,8 @@
     'setServerCertificate': { func: idlref_helper, fragment: 'dom-mediakeys-setservercertificate', link_text: 'setServerCertificate()',  },
     'setServerCertificate-call': { func: idlref_helper, fragment: 'dom-mediakeys-setservercertificate', link_text: 'setServerCertificate',  },
 
-	'statusmap-size': { func: idlref_helper, fragment: 'dom-mediakeystatusmap-size', link_text: 'size',  },
+    'statusmap-size': { func: idlref_helper, fragment: 'dom-mediakeystatusmap-size', link_text: 'size',  },
 
-	
     'sessionId': { func: idlref_helper, fragment: 'dom-mediakeysession-sessionid', link_text: 'sessionId',  },
     'expiration': { func: idlref_helper, fragment: 'dom-mediakeysession-expiration', link_text: 'expiration',  },
     'closed': { func: idlref_helper, fragment: 'dom-mediakeysession-closed', link_text: 'closed',  },
@@ -228,7 +226,6 @@
     'load-call': { func: idlref_helper, fragment: 'dom-mediakeysession-load', link_text: 'load',  },
     'update': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update()',  },
     'update-call': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update',  },
-//  'close': { func: idlref_helper, fragment: 'dom-mediakeysession-close-Promise-void', link_text: 'close()',  },
     'close-call': { func: idlref_helper, fragment: 'dom-mediakeysession-close', link_text: 'close',  },
     'remove': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove()',  },
     'remove-call': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove',  },
@@ -281,7 +278,6 @@
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
     'TypeError': { func: local_exception_helper, fragment: '', link_text: 'TypeError'  },
-//    'RangeError': { func: local_exception_helper, fragment: '', link_text: 'RangeError'  },
     'QuotaExceededError': { func: local_exception_helper, fragment: '', link_text: 'QuotaExceededError'  },
     'appropriate-error-name': { func: appropriate_error_name_helper, fragment: '', },
 
@@ -290,7 +286,6 @@
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
     'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
-//    'media-element-load-algorithm': { func: videoref_helper, fragment: 'media-element-load-algorithm', link_text: 'media element load',  },
     'resource-fetch-algorithm': { func: videoref_helper, fragment: 'concept-media-load-resource', link_text: 'resource fetch algorithm',  },
     'blocked-media-element': { func: videoref_helper, fragment: 'blocked-media-element', link_text: 'blocked media element',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
@@ -301,27 +296,18 @@
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'potentially-playing': { func: videoref_helper, fragment: 'potentially-playing', link_text: 'potentially playing',  },
     'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
-//    'media-src': { func: code_videoref_helper, fragment: 'attr-media-src', link_text: 'src',  },
     'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
     'ready-states': { func: code_videoref_helper, fragment: 'ready-states', link_text: 'Ready States',  },
-//    'have-nothing': { func: code_videoref_helper, fragment: 'dom-media-have_nothing', link_text: 'HAVE_NOTHING',  },
     'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
     'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
     'have-future-data': { func: code_videoref_helper, fragment: 'dom-media-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
     'have-enough-data': { func: code_videoref_helper, fragment: 'dom-media-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
-//    'loadedmetadata': { func: code_videoref_helper, fragment: 'event-media-loadedmetadata', link_text: 'loadedmetadata',  },
-//    'loadeddata': { func: code_videoref_helper, fragment: 'event-media-loadeddata', link_text: 'loadeddata',  },
     'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
     'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
     'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
  
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
 
-//    'invalid-access-err': { func: exception_helper, fragment: 'invalid_access_err', link_text: 'INVALID_ACCESS_ERR',  },
-//    'invalid-state-err': { func: exception_helper, fragment: 'invalid_state_err', link_text: 'INVALID_STATE_ERR',  },
-//    'not-found-err': { func: exception_helper, fragment: 'not_found_err', link_text: 'NOT_FOUND_ERR',  },
-//    'not-supported-err': { func: exception_helper, fragment: 'not_supported_err', link_text: 'NOT_SUPPORTED_ERR',  },
-//    'quota-exceeded-err': { func: exception_helper, fragment: 'quota_exceeded_err', link_text: 'QUOTA_EXCEEDED_ERR',  },
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
@@ -330,7 +316,6 @@
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
     'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
-//    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'queue a task',  },
     'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
     'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
@@ -339,7 +324,6 @@
     'constructing-events': { func: dom_helper, fragment: 'constructing-events', link_text: 'Constructing events', },
     'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
     'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
-//    'effective-script-origin': { func: browsers_helper, fragment: 'effective-script-origin', link_text: 'effective script origin', },
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
     'contributors': { func: contributors_helper, fragment: '', link_text: '', },
