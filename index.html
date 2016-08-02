@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" typeof="bibo:Document " prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta lang="" property="dc:language" content="en">
   <style>
@@ -741,7 +742,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       }
     }
   </style>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Encrypted Media Extensions</title>
 
 
@@ -758,7 +758,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   <link rel="stylesheet" href="eme.css">
   <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED">
   <!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]-->
-  <meta name="generator" content="ReSpec 4.3.0">
+  <meta name="generator" content="ReSpec 4.3.2">
   <script id="initialUserConfig" type="application/json">
     {
       "specStatus": "ED",
@@ -1213,7 +1213,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-01-august-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-08-01">01 August 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-02-august-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-08-02">02 August 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -6562,7 +6562,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
 
           <dt id="like-cookies">Treating <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data like cookies / web storage</dt>
           <dd>
-            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the presence of <a href="#distinctive-identifier">Distinctive Identifiers</a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>]. This might encourage users to view such identifiers with healthy suspicion. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the presence of <a href="#distinctive-identifier">Distinctive Identifiers</a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations. This might encourage users to view such identifiers with healthy suspicion. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
 
@@ -6710,40 +6710,25 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
 
       <section id="mitigations-4" typeof="bibo:Chapter" resource="#mitigations-4" property="bibo:hasPart">
         <h4 id="h-mitigations-4" resource="#h-mitigations-4"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.5.2 </span>Mitigations</span></h4>
-        <p>In summary, user agent and CDM implementations that allow the CDM to persist data:</p>
-        <ul>
-          <li>
-            <p><em class="rfc2119" title="MUST">MUST</em> ensure it is restricted to the <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> for which it was created.</p>
-          </li>
-          <li>
-            <p><em class="rfc2119" title="MUST">MUST</em> ensure it is restricted to the current <a href="#browsing-profile">browsing profile</a> and does not leak to or from private browsing sessions.</p>
-          </li>
-          <li>
-            <p><em class="rfc2119" title="MUST">MUST</em> allow the user to clear it.</p>
-          </li>
-          <li>
-            <p><em class="rfc2119" title="SHOULD">SHOULD</em> allow the user to clear it by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.</p>
-          </li>
-          <li>
-            <p><em class="rfc2119" title="SHOULD">SHOULD</em> treat it like other site data, including presenting it along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations.</p>
-          </li>
-        </ul>
-
         <dl>
-          <dt>Origin-specific Key System storage</dt>
+          <dt>Use Origin-specific and user agent profile-specific Key System storage</dt>
           <dd>
-            <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be stored in an <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>-specific way. Session data, licenses, and keys that are persistently stored <em class="rfc2119" title="MUST">MUST</em> be stored per-<a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. See <a href="#session-storage">Session Storage and Persistence</a>.
+            <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be stored in an <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>-specific and <a href="#browsing-profile">browsing profile</a>-specific way and <em class="rfc2119" title="MUST NOT">MUST NOT</em> leak to or from private browsing sessions. Session data, licenses, and keys that are persistently stored <em class="rfc2119" title="MUST">MUST</em> be stored per-<a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a>. See <a href="#session-storage">Session Storage and Persistence</a>.
             </p>
           </dd>
-
           <dt>User deletion of Key System storage</dt>
           <dd>
-            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the user with a way to specifically delete Key System storage, by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            <p>
+              User Agents <em class="rfc2119" title="MUST">MUST</em> allow the user to clear data persisted by the CDM and <em class="rfc2119" title="SHOULD">SHOULD</em> allow users to clear that data by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the user with a way to specifically delete Key System storage, by <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
             </p>
           </dd>
 
           <dt>Treating <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data like cookies / web storage</dt>
           <dd>
+            <p>
+              User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> treat data persisted by CDMs like other site data, including presenting it along with cookies [
+              <cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations.
+            </p>
             <p>See the <a href="#like-cookies">identical section above</a>.</p>
           </dd>
 
@@ -7273,7 +7258,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </dd><dt id="bib-HTML5">[HTML5]</dt>
         <dd>Ian Hickson; Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. W3C. <a href="https://www.w3.org/TR/html5/" property="dc:requires"><cite>HTML5</cite></a>. 28 October 2014. W3C Recommendation. URL: <a href="https://www.w3.org/TR/html5/" property="dc:requires">https://www.w3.org/TR/html5/</a>
         </dd><dt id="bib-MIXED-CONTENT">[MIXED-CONTENT]</dt>
-        <dd>Mike West. W3C. <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 8 October 2015. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires">https://www.w3.org/TR/mixed-content/</a>
+        <dd>Mike West. W3C. <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires"><cite>Mixed Content</cite></a>. 2 August 2016. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/mixed-content/" property="dc:requires">https://www.w3.org/TR/mixed-content/</a>
         </dd><dt id="bib-RFC2119">[RFC2119]</dt>
         <dd>S. Bradner. IETF. <a href="https://tools.ietf.org/html/rfc2119" property="dc:requires"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119" property="dc:requires">https://tools.ietf.org/html/rfc2119</a>
         </dd><dt id="bib-RFC6381">[RFC6381]</dt>
