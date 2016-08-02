@@ -3611,6 +3611,12 @@ interface MediaEncryptedEvent : Event {
                 <li><p>Data, including <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
               </ul>
             </li>
+            <li>
+              <p>
+                Abuse of persisted consent: One cannot guarantee that the host requesting use of these APIs is the host to which the user previously provided consent.
+                The consequences are that granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
+              </p>
+            </li>
           </ul>
         </section>
         <section>
@@ -3638,11 +3644,10 @@ interface MediaEncryptedEvent : Event {
             <dt id="security-prompts">Provide per-origin user alerts / prompts and permissions</dt>
             <dd>
               <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a def-id="origin"></a>.
-                Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
+                Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
                 (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
-                User agents SHOULD only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
               </p>
-              <p class="note">The restriction of this API to secure contexts ensures that a network attacker cannot exploit permissions granted to an unauthenticated origin.</p>
+              <p class="note">The restriction of this API to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.</p>
             </dd>
           </dl>
         </section>
@@ -3868,13 +3873,13 @@ interface MediaEncryptedEvent : Event {
             <dd>
               <p>User agents MUST ensure that users are fully informed and/or give explicit consent before <a def-id="distinctive-identifier-maybe-plural"></a> are exposed, such as in messages from the Key System implementation.</p>
               <p>User agents MUST prompt or otherwise inform the user before allowing use of a <a def-id="distinctive-identifier"></a> that is not <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used.
-                User agents SHOULD prompt or otherwise inform the user before allowing use of all other <a def-id="distinctive-identifier"></a>.
+                User agents SHOULD prompt or otherwise inform the user before allowing use of all other <a def-id="distinctive-identifiers"></a>.
               </p>
               <p class="note">The "not unique per-origin and profile" and "not clearable" conditions cannot be true in a compliant implementation because implementations MUST <a href="#per-origin-per-profile-identifiers">use per origin per profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
-              <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
-                User agent implementers that consider such alerts or consent appropriate for a Key System implementation SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
+              <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
+                (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
               </p>
-              <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.</p>
+              <p class="note">The restriction of this API to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.</p>
             </dd>
 
             <dt>Provide user controls to disable Key Systems or Key System use of identifiers</dt>
