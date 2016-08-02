@@ -3635,10 +3635,10 @@ interface MediaEncryptedEvent : Event {
               <p>User agents MAY choose to block all Mixed Content, including "Optionally-blockable Content" [[!MIXED-CONTENT]] to further increase security by preventing <a href="#input-data-security">untrusted media data</a> from being passed to the CDM (see <a href="#cdm-security">CDM Attacks and Vulnerabilities</a>).</p>
             </dd>
 
-            <dt id="security-prompts">Per-origin user alerts / prompts and permissions</dt>
+            <dt id="security-prompts">Provide per-origin user alerts / prompts and permissions</dt>
             <dd>
               <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a def-id="origin"></a>.
-                Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
+                Such alerts and consent SHOULD be per <a def-id="origin"></a> and <a def-id="browsing-profile"></a> to avoid valid uses enabling subsequent malicious access.
                 (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
                 User agents SHOULD only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
               </p>
@@ -3801,14 +3801,14 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>User deletion of persistent data, including <a def-id="distinctive-identifiers"></a></dt>
+            <dt>Provide user deletion of persistent data, including <a def-id="distinctive-identifiers"></a></dt>
             <dd>
               <p>User agents MUST provide users with the ability to clear any persistent data, including <a def-id="distinctive-identifiers"></a>, maintained by Key Systems.
                 See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
               </p>
             </dd>
 
-            <dt>Use of non-associable per-origin identifiers</dt>
+            <dt>Use non-associable per-origin per-profile identifiers</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
               <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
@@ -3816,7 +3816,7 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Encryption of <a def-id="distinctive-identifiers"></a></dt>
+            <dt>Encrypt <a def-id="distinctive-identifiers"></a></dt>
             <dd>
               <p><a def-id="distinctive-identifiers"></a> in Key System messages MUST be encrypted, together with a timestamp or nonce, such that the Key System messages are always different.
                 This prevents the use of Key System messages for tracking except by servers fully supporting the Key System.
@@ -3824,7 +3824,7 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Blocking third-party access</dt>
+            <dt>Block third-party access</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
               <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the <a def-id="origin"></a> of the top-level <a def-id="document-concept"></a> of the browsing context.
@@ -3832,7 +3832,7 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Expiring stored data</dt>
+            <dt>Expire stored data</dt>
             <dd>
               <p>User agents MAY, possibly in a manner configured by the user, automatically delete <a def-id="distinctive-identifiers"></a> and/or other Key System data after a period of time.</p>
               <div class="note">
@@ -3842,7 +3842,7 @@ interface MediaEncryptedEvent : Event {
               </div>
             </dd>
 
-            <dt id="like-cookies">Treating <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
+            <dt id="like-cookies">Treat <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
             <dd>
               <p>User agents SHOULD present the presence of <a def-id="distinctive-identifiers"></a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.
                 This might encourage users to view such identifiers with healthy suspicion.
@@ -3850,21 +3850,21 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Site-specific white-listing of access to each Key System</dt>
+            <dt>Require site-specific whitelisting of access to each Key System</dt>
             <dd>
               <p>User agents MAY require the user to explicitly authorize access to each Key System - and/or certain features - before a site can use it.
                 User agents SHOULD enable users to revoke this authorization either temporarily or permanently.
               </p>
             </dd>
 
-            <dt>Shared blacklists</dt>
+            <dt>Use shared blacklists</dt>
             <dd>
               <p>User agents MAY allow users to share their Key System <a def-id="origin"></a> blacklists.
                 This would allow communities to act together to protect their privacy.
               </p>
             </dd>
 
-            <dt id="privacy-prompts">Per-origin user alerts / prompts and permissions</dt>
+            <dt id="privacy-prompts">Provide per-origin user alerts / prompts and permissions</dt>
             <dd>
               <p>User agents MUST ensure that users are fully informed and/or give explicit consent before <a def-id="distinctive-identifier-maybe-plural"></a> are exposed, such as in messages from the Key System implementation.</p>
               <p>User agents MUST prompt or otherwise inform the user before allowing use of a <a def-id="distinctive-identifier"></a> that is not <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used.
@@ -3877,7 +3877,7 @@ interface MediaEncryptedEvent : Event {
               <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.</p>
             </dd>
 
-            <dt>User controls to disable Key Systems or Key System use of identifiers</dt>
+            <dt>Provide user controls to disable Key Systems or Key System use of identifiers</dt>
             <dd>
               <p>User Agents SHOULD provide users with a global control of whether a Key System is enabled and/or whether Key System use of <a def-id="distinctive-identifier-maybe-plural"></a> is enabled (if supported by the Key System).
                 User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
@@ -3971,14 +3971,14 @@ interface MediaEncryptedEvent : Event {
         <section>
           <h4>Mitigations</h4>
           <dl>
-            <dt>Use Origin-specific and user agent profile-specific Key System storage</dt>
+            <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
             <dd>
               <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be stored in an <a def-id="origin"></a>-specific and <a def-id="browsing-profile"></a>-specific way and MUST NOT leak to or from private browsing sessions.
                 Session data, licenses, and keys that are persistently stored MUST be stored per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
                 See <a def-id="session-storage"></a>.
               </p>
             </dd>
-            <dt>User deletion of Key System storage</dt>
+            <dt>Provide user deletion of Key System storage</dt>
             <dd>
               <p>
                 User Agents MUST allow the user to clear data persisted by the CDM and SHOULD allow users to clear that data by <a def-id="origin"></a>.
@@ -3987,7 +3987,7 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Treating <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
+            <dt>Treat <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
             <dd>
               <p>
                 User Agents SHOULD treat data persisted by CDMs like other site data, including presenting it along with cookies
@@ -3996,7 +3996,7 @@ interface MediaEncryptedEvent : Event {
               <p>See the <a href="#like-cookies">identical section above</a>.</p>
             </dd>
 
-            <dt>Encryption or obfuscation of Key System stored data</dt>
+            <dt>Encrypt or obfuscate Key System stored data</dt>
             <dd>
               <p>User agents SHOULD treat data stored by Key Systems as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information.
                 To this end, user agents SHOULD ensure that such data is securely stored and when deleting data, it is promptly deleted from the underlying storage.
