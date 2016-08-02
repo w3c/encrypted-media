@@ -1410,7 +1410,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <ul class="toc">
               <li class="tocline"><a href="#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers" class="tocxref"><span class="secno">8.2.1 </span>Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers</a></li>
               <li class="tocline"><a href="#encrypt-identifiers" class="tocxref"><span class="secno">8.2.2 </span>Encrypt Identifiers</a></li>
-              <li class="tocline"><a href="#per-origin-identifiers" class="tocxref"><span class="secno">8.2.3 </span>Use Per-Origin Identifiers</a></li>
+              <li class="tocline"><a href="#per-origin-per-profile-identifiers" class="tocxref"><span class="secno">8.2.3 </span>Use Per-Origin Per-Profile Identifiers</a></li>
               <li class="tocline"><a href="#allow-identifiers-cleared" class="tocxref"><span class="secno">8.2.4 </span>Allow Identifiers to Be Cleared</a></li>
             </ul>
           </li>
@@ -1809,7 +1809,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data). For example, values that are <a href="#associable-by-entity">associable by an entity other than the application</a> across a) <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origins</a>, b) <a href="#browsing-profile">browsing profiles</a>, or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data or values for which it is not easy for a user to break such association. In particular, a value is a distinctive identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#privacy-individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. Possible causes of this include use of <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifier(s)</a> in the individualization process.
             </p>
             <p>
-              Distinctive identifiers exposed to the application, even in encrypted form, <em class="rfc2119" title="MUST">MUST</em> adhere to the <a href="#identifier-requirements">identifier requirements</a>, including being <a href="#encrypt-identifiers">encrypted</a>, <a href="#per-origin-identifiers">unique per origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.
+              Distinctive identifiers exposed to the application, even in encrypted form, <em class="rfc2119" title="MUST">MUST</em> adhere to the <a href="#identifier-requirements">identifier requirements</a>, including being <a href="#encrypt-identifiers">encrypted</a>, <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, and <a href="#allow-identifiers-cleared">clearable</a>.
             </p>
             <p>
               While the instantiation or use of a distinctive identifier is triggered by the application's use of these APIs, the identifier need not be provided to the application to trigger conditions related to distinctive identifiers. (The <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifier(s)</a> <em class="rfc2119" title="MUST NOT">MUST NOT</em> ever be provided to the application, even in opaque or encrypted form.)
@@ -1857,7 +1857,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                     <p>Value(s) created after <a href="#allow-identifiers-cleared">clearing identifier(s)</a> may be <a href="#associable-by-application">associable by the application</a> with previous value(s).</p>
                   </li>
                   <li>
-                    <p>Values may not be <a href="#per-origin-identifiers">unique per-origin</a>.</p>
+                    <p>Values may not be <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>.</p>
                   </li>
                   <li>
                     <p>Values for different origins may be <a href="#associable-by-application">associable by the application</a>.</p>
@@ -2505,7 +2505,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
             <li>
               <p>
-                If <var>accumulated configuration</var>'s <code><a href="#dom-mediakeysystemconfiguration-distinctiveidentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code> and the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> associated with <var>accumulated configuration</var> are not <a href="#per-origin-identifiers">unique per-origin</a> and
+                If <var>accumulated configuration</var>'s <code><a href="#dom-mediakeysystemconfiguration-distinctiveidentifier">distinctiveIdentifier</a></code> value is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code> and the <a href="#distinctive-identifier">Distinctive Identifier(s)</a> associated with <var>accumulated configuration</var> are not <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and
                 <a href="#allow-identifiers-cleared">clearable</a>:
               </p>
               <ol>
@@ -2522,7 +2522,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                 <div class="note-title marker" aria-level="6" role="heading" id="h-note29"><span>Note</span></div>
                 <div class="">
                   <p>
-                    The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                    The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-per-profile-identifiers">use per-origin per-profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
                   </p>
                 </div>
               </div>
@@ -4514,7 +4514,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             <tr>
               <td><dfn data-dfn-for="mediakeymessagetype" data-dfn-type="dfn" id="dom-mediakeymessagetype-individualization-request" data-idl=""><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></dfn></td>
               <td>
-                The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br> As with all other messages, any identifiers in the message <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">distinctive per-origin</a> and <em class="rfc2119" title="MUST NOT">MUST NOT</em> be <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifier(s)</a>.
+                The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br> As with all other messages, any identifiers in the message <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and <em class="rfc2119" title="MUST NOT">MUST NOT</em> be <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifier(s)</a>.
               </td>
             </tr>
           </tbody>
@@ -5734,19 +5734,19 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </li>
             <li>
               <p>
-                All identifers that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>.</p>
+                All identifers that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a>.</p>
               They <em class="rfc2119" title="SHOULD">SHOULD</em> be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client.
               <p></p>
             </li>
             <li>
-              <p><a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client, <a href="#per-origin-identifiers">unique per-origin</a>, and <a href="#allow-identifiers-cleared">clearable</a>.</p>
+              <p><a href="#distinctive-identifier">Distinctive Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client, <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, and <a href="#allow-identifiers-cleared">clearable</a>.</p>
             </li>
             <li>
               <p><a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client and <em class="rfc2119" title="MUST NOT">MUST NOT</em> be exposed to the application.</p>
             </li>
             <li>
               <p>
-                All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-identifiers">unique per-origin</a> and <a href="#allow-identifiers-cleared">clearable</a>. This includes but is not limited to random identifiers, session data, and other CDM data.
+                All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs <em class="rfc2119" title="MUST">MUST</em> be <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a>. This includes but is not limited to random identifiers, session data, and other CDM data.
               </p>
             </li>
           </ul>
@@ -5839,14 +5839,14 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </div>
       </section>
 
-      <section id="per-origin-identifiers" typeof="bibo:Chapter" resource="#per-origin-identifiers" property="bibo:hasPart">
-        <h4 id="h-per-origin-identifiers" resource="#h-per-origin-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.3 </span>Use Per-Origin Identifiers</span></h4>
+      <section id="per-origin-per-profile-identifiers" typeof="bibo:Chapter" resource="#per-origin-per-profile-identifiers" property="bibo:hasPart">
+        <h4 id="h-per-origin-per-profile-identifiers" resource="#h-per-origin-per-profile-identifiers"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.2.3 </span>Use Per-Origin Per-Profile Identifiers</span></h4>
         <div class="issue" id="issue-2">
           <div class="issue-title marker" aria-level="5" role="heading" id="h-issue2"><span>Issue 2</span></div>
           <p class=""><a href="https://github.com/w3c/encrypted-media/issues/242">Issue 242</a> - Add a section that covers this topic for values and data that are not identifiers.</p>
         </div>
         <p>
-          All potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be unique per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. That is, the identifier(s) used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs.
+          All potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be unique per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. That is, the identifier(s) used for one <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using these APIs <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other origin using the APIs, and identifier(s) used in one <a href="#browsing-profile">browsing profile</a> <em class="rfc2119" title="MUST">MUST</em> be different from those used for any other profile, regardless of origin.
         </p>
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note115"><span>Note</span></div>
@@ -5856,7 +5856,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           </div>
         </div>
         <p>
-          Values across origins <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a>, meaning it <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible to correlate identifiers from multiple origins, such as to determine that they came from the same client or user. Specifically, implementations that derive per-origin identifiers from an origin-independent identifier, <em class="rfc2119" title="MUST">MUST</em> do so in a way that ensures the above non-associability property, for example by using derivation functions with appropriate non-reversible properties.
+          Values across origins and profiles <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a>, meaning it <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible to correlate identifiers from multiple origins or profiles, such as to determine that they came from the same client or user. Specifically, implementations that derive per-origin identifiers from an origin-independent and/or profile-independent identifier, <em class="rfc2119" title="MUST">MUST</em> do so in a way that ensures the above non-associability property, such as by using derivation functions with appropriate non-reversible properties.
         </p>
       </section>
 
@@ -6530,7 +6530,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <dt>Use of non-associable per-origin identifiers</dt>
           <dd>
             <!-- Issue #101 may affect this text. -->
-            <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> <em class="rfc2119" title="MUST">MUST</em> use a different <a href="#non-associable-by-application">non-associable by applications</a> value for each <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. See <a href="#per-origin-identifiers">Use Per-Origin Identifiers</a>.
+            <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> <em class="rfc2119" title="MUST">MUST</em> use a different <a href="#non-associable-by-application">non-associable by applications</a> value for each <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. See <a href="#per-origin-per-profile-identifiers">Use Per-Origin Per-Profile Identifiers</a>.
             </p>
           </dd>
 
@@ -6581,11 +6581,11 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <dt id="privacy-prompts">Per-origin user alerts / prompts and permissions</dt>
           <dd>
             <p>User agents <em class="rfc2119" title="MUST">MUST</em> ensure that users are fully informed and/or give explicit consent before <a href="#distinctive-identifier">Distinctive Identifier(s)</a> are exposed, such as in messages from the Key System implementation.</p>
-            <p>User agents <em class="rfc2119" title="MUST">MUST</em> prompt or otherwise inform the user before allowing use of a <a href="#distinctive-identifier">Distinctive Identifier</a> that is not <a href="#per-origin-identifiers">unique per-origin</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> prompt or otherwise inform the user before allowing use of all other <a href="#distinctive-identifier">Distinctive Identifier</a>.
+            <p>User agents <em class="rfc2119" title="MUST">MUST</em> prompt or otherwise inform the user before allowing use of a <a href="#distinctive-identifier">Distinctive Identifier</a> that is not <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> prompt or otherwise inform the user before allowing use of all other <a href="#distinctive-identifier">Distinctive Identifier</a>.
             </p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note130"><span>Note</span></div>
-              <p class="">The "not unique per-origin" and "not clearable" conditions cannot be true in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-identifiers">use per-origin identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
+              <p class="">The "not unique per-origin and profile" and "not clearable" conditions cannot be true in a compliant implementation because implementations <em class="rfc2119" title="MUST">MUST</em> <a href="#per-origin-per-profile-identifiers">use per origin per profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
             </div>
             <p>Such alerts and consent <em class="rfc2119" title="SHOULD">SHOULD</em> be per <a href="http://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access. User agent implementers that consider such alerts or consent appropriate for a Key System implementation <em class="rfc2119" title="SHOULD">SHOULD</em> only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
             </p>
@@ -6605,7 +6605,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note132"><span>Note</span></div>
           <p class="">While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether. Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not
-            <!-- Issue #101 may affect this text. --><a href="#per-origin-identifiers">unique per-origin</a>, then a profile can still be created.
+            <!-- Issue #101 may affect this text. --><a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, then a profile can still be created.
           </p>
         </div>
       </section>
@@ -6615,7 +6615,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <section id="privacy-individualization" typeof="bibo:Chapter" resource="#privacy-individualization" property="bibo:hasPart">
         <h4 id="h-privacy-individualization" resource="#h-privacy-individualization"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.2 </span>Individualization</span></h4>
         <p>
-          Identifiers, especially <a href="#distinctive-identifier">Distinctive Identifiers</a>, are sometimes generated or obtained via a process called individualization or provisioning. The resulting identifier(s) <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a> and <a href="#uses-distinctive-identifiers">use of them</a> <em class="rfc2119" title="MUST">MUST</em> only be exposed to a <a href="#per-origin-identifiers">single origin</a>. This process <em class="rfc2119" title="MAY">MAY</em> be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
+          Identifiers, especially <a href="#distinctive-identifier">Distinctive Identifiers</a>, are sometimes generated or obtained via a process called individualization or provisioning. The resulting identifier(s) <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by applications</a> and <a href="#uses-distinctive-identifiers">use of them</a> <em class="rfc2119" title="MUST">MUST</em> only be exposed to a <a href="#per-origin-per-profile-identifiers">single origin from a single profile</a>. This process <em class="rfc2119" title="MAY">MAY</em> be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
         </p>
         <p>This process <em class="rfc2119" title="MUST">MUST</em> be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a> depending on the CDM implementation. The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
         </p>
@@ -6627,7 +6627,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           </p>
           <div class="note">
             <div class="note-title marker" aria-level="6" role="heading" id="h-note133"><span>Note</span></div>
-            <p class="">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
+            <p class="">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-per-profile-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier for <a href="#per-origin-per-profile-identifiers">a single browsing profile</a> by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
             </p>
           </div>
           <p>For such individualization, all message exchanges:</p>
@@ -6680,7 +6680,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               </p>
               <div class="note">
                 <div class="note-title marker" aria-level="6" role="heading" id="h-note134"><span>Note</span></div>
-                <p class="">This includes only using values that are <a href="#per-origin-identifiers">unique per origin</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
+                <p class="">This includes only using values that are <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
               </div>
             </li>
             <li>
