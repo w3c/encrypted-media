@@ -611,7 +611,7 @@
               Otherwise, it is resolved with a new <a>MediaKeySystemAccess</a> object.
             </p>
             <div class="note">
-              <p>This method is only exposed to <a href="https://w3c.github.io/webappsec-secure-contexts/#secure-context">secure contexts</a> [[POWERFUL-FEATURES]] as indicated by the <code>[SecureContext]</code> IDL attribute.</p>
+              <p>This method is only exposed to <a href="https://www.w3.org/TR/secure-contexts/#secure-context">secure contexts</a> [[SECURE-CONTEXTS]] as indicated by the <code>[SecureContext]</code> IDL attribute.</p>
               <p>
                 Requiring Secure Contexts is <em>not</em> a replacement for other security- and privacy-related requirements and recommendations.
                 Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
@@ -1187,7 +1187,7 @@
       <section>
         <h3><a>MediaKeySystemConfiguration</a> dictionary</h3>
 
-        <div><pre class="idl">enum MediaKeysRequirement {
+        <div><pre class="idl">[SecureContext] enum MediaKeysRequirement {
     "required",
     "optional",
     "not-allowed"
@@ -1214,7 +1214,7 @@
             </dl>
           </td></tr></tbody></table></div>
 
-        <div><pre class="idl">dictionary MediaKeySystemConfiguration {
+        <div><pre class="idl">[SecureContext] dictionary MediaKeySystemConfiguration {
              DOMString                               label = "";
              sequence&lt;DOMString&gt;                     initDataTypes = [];
              sequence&lt;MediaKeySystemMediaCapability&gt; audioCapabilities = [];
@@ -1266,7 +1266,7 @@
 
       <section>
         <h3><a>MediaKeySystemMediaCapability</a> dictionary</h3>
-        <div><pre class="idl">dictionary MediaKeySystemMediaCapability {
+        <div><pre class="idl">[SecureContext] dictionary MediaKeySystemMediaCapability {
              DOMString contentType = "";
              DOMString robustness = "";
 };</pre><section><h2>Dictionary <a class="idlType">MediaKeySystemMediaCapability</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability"><dt><dfn><code>contentType</code></dfn> of type <span class="idlMemberType"><a>DOMString</a></span>, defaulting to <code>""</code></dt><dd>
@@ -1302,7 +1302,7 @@
       <h2><a>MediaKeySystemAccess</a> Interface</h2>
       <p>The MediaKeySystemAccess object provides access to a <a def-id="keysystem"></a>.</p>
 
-      <div><pre class="idl">interface MediaKeySystemAccess {
+      <div><pre class="idl">[SecureContext] interface MediaKeySystemAccess {
     readonly        attribute DOMString keySystem;
     MediaKeySystemConfiguration getConfiguration ();
     Promise&lt;MediaKeys&gt;          createMediaKeys ();
@@ -1380,7 +1380,7 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <div><pre class="idl">enum MediaKeySessionType {
+      <div><pre class="idl">[SecureContext] enum MediaKeySessionType {
     "temporary",
     "persistent-usage-record",
     "persistent-license"
@@ -1451,7 +1451,7 @@
           </p>
         </td></tr></tbody></table></div>
 
-      <div><pre class="idl">interface MediaKeys {
+      <div><pre class="idl">[SecureContext] interface MediaKeys {
     MediaKeySession  createSession (optional MediaKeySessionType sessionType = "temporary");
     Promise&lt;boolean&gt; setServerCertificate (BufferSource serverCertificate);
 };</pre><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeys" data-link-for="MediaKeys"><dt><dfn><code>createSession</code></dfn></dt><dd>
@@ -1616,7 +1616,7 @@
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <div><pre class="idl">interface MediaKeySession : EventTarget {
+      <div><pre class="idl">[SecureContext] interface MediaKeySession : EventTarget {
     readonly        attribute DOMString           sessionId;
     readonly        attribute unrestricted double expiration;
     readonly        attribute Promise&lt;void&gt;       closed;
@@ -2177,7 +2177,7 @@
         <p>The MediaKeyStatusMap object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <div><pre class="idl">interface MediaKeyStatusMap {
+        <div><pre class="idl">[SecureContext] interface MediaKeyStatusMap {
     iterable&lt;BufferSource,MediaKeyStatus&gt;;
     readonly        attribute unsigned long size;
     boolean has (BufferSource keyId);
@@ -2223,7 +2223,7 @@
           </section>
         </div>
 
-        <div><pre class="idl">enum MediaKeyStatus {
+        <div><pre class="idl">[SecureContext] enum MediaKeyStatus {
     "usable",
     "expired",
     "released",
@@ -2268,7 +2268,7 @@
         <p>The MediaKeyMessageEvent object is used for the <a def-id="message"></a> event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[!DOM]].</p>
 
-        <div><pre class="idl">enum MediaKeyMessageType {
+        <div><pre class="idl">[SecureContext] enum MediaKeyMessageType {
     "license-request",
     "license-renewal",
     "license-release",
@@ -2278,7 +2278,7 @@
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and MUST NOT be <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.
           </td></tr></tbody></table></div>
 
-        <div><pre class="idl">[ Constructor (DOMString type, optional MediaKeyMessageEventInit eventInitDict)]
+        <div><pre class="idl">[SecureContext, Constructor (DOMString type, optional MediaKeyMessageEventInit eventInitDict)]
 interface MediaKeyMessageEvent : Event {
     readonly        attribute MediaKeyMessageType messageType;
     readonly        attribute ArrayBuffer         message;
@@ -2299,7 +2299,7 @@ interface MediaKeyMessageEvent : Event {
 
         <section>
           <h4><a>MediaKeyMessageEventInit</a></h4>
-          <div><pre class="idl">dictionary MediaKeyMessageEventInit : EventInit {
+          <div><pre class="idl">[SecureContext] dictionary MediaKeyMessageEventInit : EventInit {
              MediaKeyMessageType messageType = "license-request";
              ArrayBuffer         message;
 };</pre><section><h2>Dictionary <a class="idlType">MediaKeyMessageEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeyMessageEventInit" data-link-for="MediaKeyMessageEventInit"><dt><dfn><code>messageType</code></dfn> of type <span class="idlMemberType"><a>MediaKeyMessageType</a></span>, defaulting to <code>"license-request"</code></dt><dd>
@@ -2689,10 +2689,10 @@ interface MediaKeyMessageEvent : Event {
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
       <div><pre class="idl">partial interface HTMLMediaElement {
-    readonly        attribute MediaKeys?   mediaKeys;
-                    attribute EventHandler onencrypted;
-                    attribute EventHandler onwaitingforkey;
-    Promise&lt;void&gt; setMediaKeys (MediaKeys? mediaKeys);
+    [SecureContext] readonly        attribute MediaKeys?   mediaKeys;
+                                    attribute EventHandler onencrypted;
+                                    attribute EventHandler onwaitingforkey;
+    [SecureContext] Promise&lt;void&gt; setMediaKeys (MediaKeys? mediaKeys);
 };</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><a>MediaKeys</a></span>, readonly       , nullable</dt><dd>
           <p>The <a>MediaKeys</a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
         </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
