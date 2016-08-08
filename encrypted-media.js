@@ -272,8 +272,8 @@
     'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-messagetype', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-message', link_text: 'message',  },
 
-    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdatatype', link_text: 'initDataType',  },
-    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdata', link_text: 'initData',  },
+    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdatatype', link_text: 'initDataType',  },
+    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdata', link_text: 'initData',  },
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
