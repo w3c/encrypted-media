@@ -447,7 +447,6 @@
 
     // Update links to external type definitions.
     var externalClassInfo = {
-      'MediaKeys': { spec: 'eme', fragment: 'idl-def-MediaKeys' },
       'AudioTrackList': {spec: 'html5', fragment: 'audiotracklist' },
       'TextTrackList': {spec: 'html5', fragment: 'texttracklist' },
       'TimeRanges': { spec: 'html5', fragment: 'timeranges' },
