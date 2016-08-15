@@ -272,8 +272,8 @@
     'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-messagetype', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-message', link_text: 'message',  },
 
-    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdatatype', link_text: 'initDataType',  },
-    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdata', link_text: 'initData',  },
+    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdatatype', link_text: 'initDataType',  },
+    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdata', link_text: 'initData',  },
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
@@ -334,7 +334,7 @@
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cen.html', link_text: '"cenc" Initialization Data Format', },
+    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cenc.html', link_text: '"cenc" Initialization Data Format', },
     'cenc-common-system': { func: link_helper, fragment: '../initdata/cenc.html#common-system', link_text: 'Common SystemID and PSSH Box Format', },
     'initdata-registry-keyids': { func: link_helper, fragment: '../initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
     'initdata-registry-webm': { func: link_helper, fragment: '../initdata/webm.html', link_text: '"webm" Initialization Data Format', },
@@ -447,7 +447,6 @@
 
     // Update links to external type definitions.
     var externalClassInfo = {
-      'MediaKeys': { spec: 'eme', fragment: 'idl-def-MediaKeys' },
       'AudioTrackList': {spec: 'html5', fragment: 'audiotracklist' },
       'TextTrackList': {spec: 'html5', fragment: 'texttracklist' },
       'TimeRanges': { spec: 'html5', fragment: 'timeranges' },
