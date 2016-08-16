@@ -334,7 +334,7 @@
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cen.html', link_text: '"cenc" Initialization Data Format', },
+    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cenc.html', link_text: '"cenc" Initialization Data Format', },
     'cenc-common-system': { func: link_helper, fragment: '../initdata/cenc.html#common-system', link_text: 'Common SystemID and PSSH Box Format', },
     'initdata-registry-keyids': { func: link_helper, fragment: '../initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
     'initdata-registry-webm': { func: link_helper, fragment: '../initdata/webm.html', link_text: '"webm" Initialization Data Format', },
@@ -447,7 +447,6 @@
 
     // Update links to external type definitions.
     var externalClassInfo = {
-      'MediaKeys': { spec: 'eme', fragment: 'idl-def-MediaKeys' },
       'AudioTrackList': {spec: 'html5', fragment: 'audiotracklist' },
       'TextTrackList': {spec: 'html5', fragment: 'texttracklist' },
       'TimeRanges': { spec: 'html5', fragment: 'timeranges' },

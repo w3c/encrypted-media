@@ -1,419 +1,630 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" typeof="bibo:Document " prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#">
-<head><meta lang="" property="dc:language" content="en">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</title>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta lang="" property="dc:language" content="en">
+  <style>
+    /*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
     
+    .hljs {
+      display: block;
+      overflow-x: auto;
+      padding: 0.5em;
+      color: #333;
+      background: #f8f8f8;
+    }
     
+    .hljs-comment,
+    .hljs-quote {
+      color: #998;
+      font-style: italic;
+    }
     
-    <!-- script to register bugs -->
-    <!-- Disabled unless/until it supports GitHub issues.
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .hljs-number,
+    .hljs-literal,
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-tag .hljs-attr {
+      color: #008080;
+    }
+    
+    .hljs-string,
+    .hljs-doctag {
+      color: #d14;
+    }
+    
+    .hljs-title,
+    .hljs-section,
+    .hljs-selector-id {
+      color: #900;
+      font-weight: bold;
+    }
+    
+    .hljs-subst {
+      font-weight: normal;
+    }
+    
+    .hljs-type,
+    .hljs-class .hljs-title {
+      color: #458;
+      font-weight: bold;
+    }
+    
+    .hljs-tag,
+    .hljs-name,
+    .hljs-attribute {
+      color: #000080;
+      font-weight: normal;
+    }
+    
+    .hljs-regexp,
+    .hljs-link {
+      color: #009926;
+    }
+    
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #990073;
+    }
+    
+    .hljs-built_in,
+    .hljs-builtin-name {
+      color: #0086b3;
+    }
+    
+    .hljs-meta {
+      color: #999;
+      font-weight: bold;
+    }
+    
+    .hljs-deletion {
+      background: #fdd;
+    }
+    
+    .hljs-addition {
+      background: #dfd;
+    }
+    
+    .hljs-emphasis {
+      font-style: italic;
+    }
+    
+    .hljs-strong {
+      font-weight: bold;
+    }
+  </style>
+  <style>
+    /* --- ISSUES/NOTES --- */
+    
+    div.issue-title,
+    div.note-title,
+    div.ednote-title,
+    div.warning-title {
+      padding-right: 1em;
+      min-width: 7.5em;
+      color: #b9ab2d;
+    }
+    
+    div.issue-title {
+      color: #e05252;
+    }
+    
+    div.note-title,
+    div.ednote-title {
+      color: #2b2;
+    }
+    
+    div.warning-title {
+      color: #f22;
+    }
+    
+    div.issue-title span,
+    div.note-title span,
+    div.ednote-title span,
+    div.warning-title span {
+      text-transform: uppercase;
+    }
+    
+    div.note,
+    div.issue,
+    div.ednote,
+    div.warning {
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    
+    .note> p:first-child,
+    .ednote> p:first-child,
+    .issue> p:first-child,
+    .warning> p:first-child {
+      margin-top: 0
+    }
+    
+    .issue,
+    .note,
+    .ednote,
+    .warning {
+      padding: .5em;
+      border-left-width: .5em;
+      border-left-style: solid;
+    }
+    
+    div.issue,
+    div.note,
+    div.ednote,
+    div.warning {
+      padding: 1em 1.2em 0.5em;
+      margin: 1em 0;
+      position: relative;
+      clear: both;
+    }
+    
+    span.note,
+    span.ednote,
+    span.issue,
+    span.warning {
+      padding: .1em .5em .15em;
+    }
+    
+    .issue {
+      border-color: #e05252;
+      background: #fbe9e9;
+    }
+    
+    .note,
+    .ednote {
+      border-color: #52e052;
+      background: #e9fbe9;
+    }
+    
+    .warning {
+      border-color: #f11;
+      border-width: .2em;
+      border-style: solid;
+      background: #fbe9e9;
+    }
+    
+    .warning-title:before {
+      content: "⚠";
+      /*U+26A0 WARNING SIGN*/
+      font-size: 3em;
+      float: left;
+      height: 100%;
+      padding-right: .3em;
+      vertical-align: top;
+      margin-top: -0.5em;
+    }
+    
+    li.task-list-item {
+      list-style: none;
+    }
+    
+    input.task-list-item-checkbox {
+      margin: 0 0.35em 0.25em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <style id="respec-mainstyle">
+    /*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+    /* Override code highlighter background */
+    
+    .hljs {
+      background: transparent !important;
+    }
+    /* --- INLINES --- */
+    
+    em.rfc2119 {
+      text-transform: lowercase;
+      font-variant: small-caps;
+      font-style: normal;
+      color: #900;
+    }
+    
+    h1 acronym,
+    h2 acronym,
+    h3 acronym,
+    h4 acronym,
+    h5 acronym,
+    h6 acronym,
+    a acronym,
+    h1 abbr,
+    h2 abbr,
+    h3 abbr,
+    h4 abbr,
+    h5 abbr,
+    h6 abbr,
+    a abbr {
+      border: none;
+    }
+    
+    dfn {
+      font-weight: bold;
+    }
+    
+    a.internalDFN {
+      color: inherit;
+      border-bottom: 1px solid #99c;
+      text-decoration: none;
+    }
+    
+    a.externalDFN {
+      color: inherit;
+      border-bottom: 1px dotted #ccc;
+      text-decoration: none;
+    }
+    
+    a.bibref {
+      text-decoration: none;
+    }
+    
+    cite .bibref {
+      font-style: normal;
+    }
+    
+    code {
+      color: #C83500;
+    }
+    
+    th code {
+      color: inherit;
+    }
+    /* --- TOC --- */
+    
+    .toc a,
+    .tof a {
+      text-decoration: none;
+    }
+    
+    a .secno,
+    a .figno {
+      color: #000;
+    }
+    
+    ul.tof,
+    ol.tof {
+      list-style: none outside none;
+    }
+    
+    .caption {
+      margin-top: 0.5em;
+      font-style: italic;
+    }
+    /* --- TABLE --- */
+    
+    table.simple {
+      border-spacing: 0;
+      border-collapse: collapse;
+      border-bottom: 3px solid #005a9c;
+    }
+    
+    .simple th {
+      background: #005a9c;
+      color: #fff;
+      padding: 3px 5px;
+      text-align: left;
+    }
+    
+    .simple th[scope="row"] {
+      background: inherit;
+      color: inherit;
+      border-top: 1px solid #ddd;
+    }
+    
+    .simple td {
+      padding: 3px 10px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .simple tr:nth-child(even) {
+      background: #f0f6ff;
+    }
+    /* --- DL --- */
+    
+    .section dd> p:first-child {
+      margin-top: 0;
+    }
+    
+    .section dd> p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .section dd {
+      margin-bottom: 1em;
+    }
+    
+    .section dl.attrs dd,
+    .section dl.eldef dd {
+      margin-bottom: 0;
+    }
+    
+    .respec-hidden {
+      display: none;
+    }
+    
+    @media print {
+      .removeOnSave {
+        display: none;
+      }
+    }
+  </style>
+  <title>ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</title>
+
+
+
+  <!-- script to register bugs -->
+  <!-- Disabled unless/until it supports GitHub issues.
     <script src="https://w3c.github.io/webcomponents/assets/scripts/bug-assist.js"></script>
     <meta name="bug.product" content="HTML WG">
     <meta name="bug.component" content="Encrypted Media Extensions">
     -->
 
-    <style>/* --- ISSUES/NOTES --- */
-div.issue-title, div.note-title , div.ednote-title, div.warning-title {
-    padding-right:  1em;
-    min-width: 7.5em;
-    color: #b9ab2d;
-}
-div.issue-title { color: #e05252; }
-div.note-title, div.ednote-title { color: #2b2; }
-div.warning-title { color: #f22; }
-div.issue-title span, div.note-title span, div.ednote-title span, div.warning-title span {
-    text-transform: uppercase;
-}
-div.note, div.issue, div.ednote, div.warning {
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.note > p:first-child, .ednote > p:first-child, .issue > p:first-child, .warning > p:first-child { margin-top: 0 }
-.issue, .note, .ednote, .warning {
-    padding: .5em;
-    border-left-width: .5em;
-    border-left-style: solid;
-}
-div.issue, div.note , div.ednote,  div.warning {
-    padding: 1em 1.2em 0.5em;
-    margin: 1em 0;
-    position: relative;
-    clear: both;
-}
-span.note, span.ednote, span.issue, span.warning { padding: .1em .5em .15em; }
-
-.issue {
-    border-color: #e05252;
-    background: #fbe9e9;
-}
-.note, .ednote {
-    border-color: #52e052;
-    background: #e9fbe9;
-}
-
-.warning {
-    border-color: #f11;
-    border-width: .2em;
-    border-style: solid;
-    background: #fbe9e9;
-}
-
-.warning-title:before{
-    content: "⚠"; /*U+26A0 WARNING SIGN*/
-    font-size: 3em;
-    float: left;
-    height: 100%;
-    padding-right: .3em;
-    vertical-align: top;
-    margin-top: -0.5em;
-}
-
-li.task-list-item {
-    list-style: none;
-}
-
-input.task-list-item-checkbox {
-    margin: 0 0.35em 0.25em -1.6em;
-    vertical-align: middle;
-}
-</style><link rel="stylesheet" href="../../eme.css">
-  <style>/*****************************************************************
- * ReSpec 3 CSS
- * Robin Berjon - http://berjon.com/
- *****************************************************************/
-
-/* --- INLINES --- */
-em.rfc2119 { 
-    text-transform:     lowercase;
-    font-variant:       small-caps;
-    font-style:         normal;
-    color:              #900;
-}
-
-h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
-h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
-    border: none;
-}
-
-dfn {
-    font-weight:    bold;
-}
-
-a.internalDFN {
-    color:  inherit;
-    border-bottom:  1px solid #99c;
-    text-decoration:    none;
-}
-
-a.externalDFN {
-    color:  inherit;
-    border-bottom:  1px dotted #ccc;
-    text-decoration:    none;
-}
-
-a.bibref {
-    text-decoration:    none;
-}
-
-cite .bibref {
-    font-style: normal;
-}
-
-code {
-    color:  #C83500;
-}
-
-/* --- TOC --- */
-.toc a, .tof a {
-    text-decoration:    none;
-}
-
-a .secno, a .figno {
-    color:  #000;
-}
-
-ul.tof, ol.tof {
-    list-style: none outside none;
-}
-
-.caption {
-    margin-top: 0.5em;
-    font-style:   italic;
-}
-
-/* --- TABLE --- */
-table.simple {
-    border-spacing: 0;
-    border-collapse:    collapse;
-    border-bottom:  3px solid #005a9c;
-}
-
-.simple th {
-    background: #005a9c;
-    color:  #fff;
-    padding:    3px 5px;
-    text-align: left;
-}
-
-.simple th[scope="row"] {
-    background: inherit;
-    color:  inherit;
-    border-top: 1px solid #ddd;
-}
-
-.simple td {
-    padding:    3px 10px;
-    border-top: 1px solid #ddd;
-}
-
-.simple tr:nth-child(even) {
-    background: #f0f6ff;
-}
-
-/* --- DL --- */
-.section dd > p:first-child {
-    margin-top: 0;
-}
-
-.section dd > p:last-child {
-    margin-bottom: 0;
-}
-
-.section dd {
-    margin-bottom:  1em;
-}
-
-.section dl.attrs dd, .section dl.eldef dd {
-    margin-bottom:  0;
-}
-
-.respec-hidden {
-    display: none;
-}
-
-@media print {
-    .removeOnSave {
-        display: none;
-    }
-}
-</style><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--><script id="initialUserConfig" type="application/json">{
-  "specStatus": "ED",
-  "shortName": "encrypted-media",
-  "edDraftURI": "https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html",
-  "editors": [
+  <link rel="stylesheet" href="../../eme.css">
+  <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED">
+  <!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]-->
+  <meta name="generator" content="ReSpec 4.4.1">
+  <script id="initialUserConfig" type="application/json">
     {
-      "name": "David Dorwin",
-      "url": "",
-      "company": "Google Inc.",
-      "companyURL": "https://www.google.com/"
-    },
-    {
-      "name": "Adrian Bateman",
-      "url": "",
-      "company": "Microsoft Corporation",
-      "companyURL": "https://www.microsoft.com/"
-    },
-    {
-      "name": "Mark Watson",
-      "url": "",
-      "company": "Netflix Inc.",
-      "companyURL": "https://www.netflix.com/"
-    },
-    {
-      "name": "Jerry Smith",
-      "url": "",
-      "company": "Microsoft Corporation",
-      "companyURL": "https://www.microsoft.com/"
-    }
-  ],
-  "otherLinks": [
-    {
-      "key": "Repository",
-      "href": "https://github.com/w3c/encrypted-media/"
-    }
-  ],
-  "emeDefGroupName": "mp4-stream-format",
-  "emeUnusedGroupNameExcludeList": [
-    "encrypted-media",
-    "eme-references-from-registry"
-  ],
-  "wg": "HTML Media Extensions Working Group",
-  "wgURI": "http://www.w3.org/html/wg/",
-  "wgPublicList": "public-html-media",
-  "wgPatentURI": "https://www.w3.org/2004/01/pp-impl/40318/status",
-  "noIDLIn": true,
-  "scheme": "https",
-  "definitionMap": {},
-  "preProcess": [
-    null
-  ],
-  "postProcess": [
-    null
-  ],
-  "localBiblio": {
-    "CENC": {
-      "title": "ISO/IEC 23001-7:2015, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO Base Media File Format files - 2nd Edition",
-      "href": "https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1",
-      "status": "International Standard",
-      "publisher": "ISO/IEC"
-    },
-    "EME-INITDATA-REGISTRY": {
-      "title": "Encrypted Media Extensions Initialization Data Format Registry",
-      "href": "../initdata/",
-      "authors": [
-        "David Dorwin",
-        "Adrian Bateman",
-        "Mark Watson"
+      "specStatus": "ED",
+      "shortName": "encrypted-media",
+      "edDraftURI": "https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html",
+      "editors": [
+      {
+        "name": "David Dorwin",
+        "url": "",
+        "company": "Google Inc.",
+        "companyURL": "https://www.google.com/"
+      },
+      {
+        "name": "Adrian Bateman",
+        "url": "",
+        "company": "Microsoft Corporation",
+        "companyURL": "https://www.microsoft.com/"
+      },
+      {
+        "name": "Mark Watson",
+        "url": "",
+        "company": "Netflix Inc.",
+        "companyURL": "https://www.netflix.com/"
+      },
+      {
+        "name": "Jerry Smith",
+        "url": "",
+        "company": "Microsoft Corporation",
+        "companyURL": "https://www.microsoft.com/"
+      }],
+      "otherLinks": [
+      {
+        "key": "Repository",
+        "href": "https://github.com/w3c/encrypted-media/"
+      }],
+      "emeDefGroupName": "mp4-stream-format",
+      "emeUnusedGroupNameExcludeList": [
+        "encrypted-media",
+        "eme-references-from-registry"
       ],
-      "publisher": "W3C"
-    },
-    "EME-STREAM-REGISTRY": {
-      "title": "Encrypted Media Extensions Stream Format Registry",
-      "href": "../stream/",
-      "authors": [
-        "David Dorwin",
-        "Adrian Bateman",
-        "Mark Watson"
+      "wg": "HTML Media Extensions Working Group",
+      "wgURI": "http://www.w3.org/html/wg/",
+      "wgPublicList": "public-html-media",
+      "wgPatentURI": "https://www.w3.org/2004/01/pp-impl/40318/status",
+      "noIDLIn": true,
+      "scheme": "https",
+      "definitionMap":
+      {},
+      "preProcess": [
+        null
       ],
-      "publisher": "W3C"
+      "postProcess": [
+        null
+      ],
+      "localBiblio":
+      {
+        "CENC":
+        {
+          "title": "ISO/IEC 23001-7:2015, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO Base Media File Format files - 2nd Edition",
+          "href": "https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1",
+          "status": "International Standard",
+          "publisher": "ISO/IEC"
+        },
+        "EME-INITDATA-REGISTRY":
+        {
+          "title": "Encrypted Media Extensions Initialization Data Format Registry",
+          "href": "../initdata/",
+          "authors": [
+            "David Dorwin",
+            "Adrian Bateman",
+            "Mark Watson"
+          ],
+          "publisher": "W3C"
+        },
+        "EME-STREAM-REGISTRY":
+        {
+          "title": "Encrypted Media Extensions Stream Format Registry",
+          "href": "../stream/",
+          "authors": [
+            "David Dorwin",
+            "Adrian Bateman",
+            "Mark Watson"
+          ],
+          "publisher": "W3C"
+        }
+      }
     }
-  }
-}</script></head>
-  <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
-  <p>
-            <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
-  </p>
-  <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</h1>
-  <h2 id="w3c-editor-s-draft-17-may-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-05-17">17 May 2016</time></h2>
-  <dl>
+  </script>
+</head>
+<body class="h-entry" role="document" id="respecDocument">
+  <div class="head" role="contentinfo" id="respecHeader">
+    <p>
+      <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
+    </p>
+    <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</h1>
+    <h2 id="w3c-editor-s-draft-09-august-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-08-09">09 August 2016</time></h2>
+    <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html">https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html</a></dd>
       <dt>Latest published version:</dt>
-      <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
+      <dd><a href="https://www.w3.org/TR/encrypted-media/">https://www.w3.org/TR/encrypted-media/</a></dd>
       <dt>Latest editor's draft:</dt>
       <dd><a href="https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html">https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html</a></dd>
-    <dt>Editors:</dt>
-    <dd class="p-author h-card vcard" property="bibo:editor" resource="_:editor0"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">David Dorwin</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.google.com/">Google Inc.</a></span>
-<span property="rdf:rest" resource="_:editor1"></span>
-</dd>
-<dd class="p-author h-card vcard" resource="_:editor1"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Adrian Bateman</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a></span>
-<span property="rdf:rest" resource="_:editor2"></span>
-</dd>
-<dd class="p-author h-card vcard" resource="_:editor2"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Mark Watson</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.netflix.com/">Netflix Inc.</a></span>
-<span property="rdf:rest" resource="_:editor3"></span>
-</dd>
-<dd class="p-author h-card vcard" resource="_:editor3"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Jerry Smith</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a></span>
-<span property="rdf:rest" resource="rdf:nil"></span>
-</dd>
+      <dt>Editors:</dt>
+      <dd class="p-author h-card vcard" property="bibo:editor" resource="_:editor0"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">David Dorwin</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.google.com/">Google Inc.</a></span>
+        <span property="rdf:rest" resource="_:editor1"></span>
+      </dd>
+      <dd class="p-author h-card vcard" resource="_:editor1"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Adrian Bateman</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a></span>
+        <span property="rdf:rest" resource="_:editor2"></span>
+      </dd>
+      <dd class="p-author h-card vcard" resource="_:editor2"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Mark Watson</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.netflix.com/">Netflix Inc.</a></span>
+        <span property="rdf:rest" resource="_:editor3"></span>
+      </dd>
+      <dd class="p-author h-card vcard" resource="_:editor3"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Jerry Smith</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a></span>
+        <span property="rdf:rest" resource="rdf:nil"></span>
+      </dd>
 
-          <dt>Repository:</dt>
-                <dd>
-                  <a href="https://github.com/w3c/encrypted-media/">https://github.com/w3c/encrypted-media/</a>
-                </dd>
-  </dl>
-      <p class="copyright">
-        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
-        2016
-        
-        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
-        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
-        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
-        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>). 
-        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
-        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
-            <a rel="license" href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
-        rules apply.
+      <dt>Repository:</dt>
+      <dd>
+        <a href="https://github.com/w3c/encrypted-media/">https://github.com/w3c/encrypted-media/</a>
+      </dd>
+    </dl>
+    <p class="copyright">
+      <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2016
+
+      <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+      <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+      <a href="https://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>).
+      <abbr title="World Wide Web Consortium">W3C</abbr> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+      <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+      <a rel="license" href="https://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+    </p>
+    <hr title="Separator for header">
+  </div>
+  <!-- TODO: Use styles for ISO boxes like the MSE registry. -->
+
+  <section id="abstract" class="introductory" property="dc:abstract">
+    <h2 id="h-abstract" resource="#h-abstract"><span property="xhv:role" resource="xhv:heading">Abstract</span></h2>
+    <p>This specification defines the stream format for using ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that uses the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite><a class="bibref" href="#bib-ENCRYPTED-MEDIA">ENCRYPTED-MEDIA</a></cite>].</p>
+    <div class="note">
+      <div class="note-title marker" aria-level="3" role="heading" id="h-note1"><span>Note</span></div>
+      <p class="">Although the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] associated with this format's MIME type/subtype strings supports multiple protection schemes, when used with Encrypted Media Extensions, these strings refer specifically to content encrypted and packaged using the 'cenc' protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].
       </p>
-  <hr title="Separator for header">
-</div>
-    <!-- TODO: Use styles for ISO boxes like the MSE registry. -->
-    <section id="abstract" class="introductory" property="dc:abstract"><h2 id="h-abstract" resource="#h-abstract"><span property="xhv:role" resource="xhv:heading">Abstract</span></h2>
-      <p>This specification defines the stream format for using ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that uses the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite><a class="bibref" href="#bib-ENCRYPTED-MEDIA">ENCRYPTED-MEDIA</a></cite>].</p>
-      <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note1"><span>Note</span></div><p class="">Although the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] associated with this format's MIME type/subtype strings supports multiple protection schemes,
-        when used with Encrypted Media Extensions, these strings refer specifically to content encrypted and packaged using the 'cenc' protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].
-      </p></div>
-    </section><section id="sotd" class="introductory"><h2 id="h-sotd" resource="#h-sotd"><span property="xhv:role" resource="xhv:heading">Status of This Document</span></h2>
-        <p>
-          <em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at http://www.w3.org/TR/.</em>
-        </p>
-          
-      <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>.</p>
-      <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
-    
-          <p>
-            This document was published by the <a href="http://www.w3.org/html/wg/">HTML Media Extensions Working Group</a> as an Editor's Draft.
-              If you wish to make comments regarding this document, please send them to
-              <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a>
-              (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
-              <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>).
-            
-              All comments are welcome.
-          </p>
-            <p>
-              Publication as an Editor's Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
-              Membership. This is a draft document and may be updated, replaced or obsoleted by other
-              documents at any time. It is inappropriate to cite this document as other than work in
-              progress.
-            </p>
-          <p>
-              This document was produced by
-              a group
-               operating under the
-              <a id="sotd_patent" property="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
+    </div>
+  </section>
+
+  <section id="sotd" class="introductory">
+    <h2 id="h-sotd" resource="#h-sotd"><span property="xhv:role" resource="xhv:heading">Status of This Document</span></h2>
+    <p>
+      <em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision of this technical report can be found in the <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at https://www.w3.org/TR/.</em>
+    </p>
+
+    <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>.</p>
+    <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
+
+    <p>
+      This document was published by the <a href="http://www.w3.org/html/wg/">HTML Media Extensions Working Group</a> as an Editor's Draft. If you wish to make comments regarding this document, please send them to
+      <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a> (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
+      <a href="https://lists.w3.org/Archives/Public/public-html-media/">archives</a>). All comments are welcome.
+    </p>
+    <p>
+      Publication as an Editor's Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.
+    </p>
+    <p>
+      This document was produced by a group operating under the
+      <a id="sotd_patent" property="w3p:patentRules" href="https://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
               Policy</a>.
-                <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="https://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent
-                disclosures</a>
-              made in connection with the deliverables of
-              the group; that page also includes
-              instructions for disclosing a patent. An individual who has actual knowledge of a patent
-              which the individual believes contains
-              <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+      <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="https://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent
+                disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+      <a href="https://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
               Claim(s)</a> must disclose the information in accordance with
-              <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+      <a href="https://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
               6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
-          </p>
-            <p>This document is governed by the <a id="w3c_process_revision" href="http://www.w3.org/2015/Process-20150901/">1 September 2015 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
-            </p>
-          
-</section><nav id="toc"><h2 class="introductory" id="table-of-contents" resource="#table-of-contents"><span property="xhv:role" resource="xhv:heading">Table of Contents</span></h2><ul class="toc" role="directory"><li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li><li class="tocline"><a href="#detect-format" class="tocxref"><span class="secno">2. </span>Detection</a></li><li class="tocline"><a href="#detect-encrypted-blocks" class="tocxref"><span class="secno">3. </span>Detecting Encrypted Blocks</a></li><li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">4. </span>Initialization Data Extraction</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li></ul></li></ul></nav>
+    </p>
+    <p>This document is governed by the <a id="w3c_process_revision" href="https://www.w3.org/2015/Process-20150901/">1 September 2015 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+    </p>
 
-    
+  </section>
+  <nav id="toc">
+    <h2 class="introductory" id="table-of-contents" resource="#table-of-contents"><span property="xhv:role" resource="xhv:heading">Table of Contents</span></h2>
+    <ol class="toc" role="directory">
+      <li class="tocline"><a href="#stream-format" class="tocxref"><span class="secno">1. </span>Stream Format</a></li>
+      <li class="tocline"><a href="#detect-format" class="tocxref"><span class="secno">2. </span>Detection</a></li>
+      <li class="tocline"><a href="#detect-encrypted-blocks" class="tocxref"><span class="secno">3. </span>Detecting Encrypted Blocks</a></li>
+      <li class="tocline"><a href="#init-data" class="tocxref"><span class="secno">4. </span>Initialization Data Extraction</a></li>
+      <li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a>
+        <ol class="toc">
+          <li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
 
-    <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" property="bibo:hasPart">
-      <!--OddPage--><h2 id="h-stream-format" resource="#h-stream-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">1. </span>Stream Format</span></h2>
-      <p>ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that is encrypted using the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] <em class="rfc2119" title="SHALL">SHALL</em> be encrypted at the sample level with AES-128 CTR encryption (Section 9 of [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]). This protection method enables multiple Key Systems to decrypt the same media content.</p>
-      <p>Each key is identified by a <a href="../../index.html#decryption-key-id">key ID</a> and each encrypted sample is associated with the key ID of the key needed to decrypt it. This association is signaled either through the specification of a default key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a key ID. Streams may contain a mixture of encrypted and unencrypted samples.</p>
+
+
+  <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" property="bibo:hasPart">
+    <!--OddPage-->
+    <h2 id="h-stream-format" resource="#h-stream-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">1. </span>Stream Format</span></h2>
+    <p>ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that is encrypted using the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] <em class="rfc2119" title="SHALL">SHALL</em> be encrypted at the sample level with AES-128 CTR encryption (Section 9 of [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]). This protection method enables multiple Key Systems to decrypt the same media content.</p>
+    <p>Each key is identified by a <a href="../../index.html#decryption-key-id">key ID</a> and each encrypted sample is associated with the key ID of the key needed to decrypt it. This association is signaled either through the specification of a default key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a key ID. Streams may contain a mixture of encrypted and unencrypted samples.</p>
+  </section>
+
+  <section id="detect-format" typeof="bibo:Chapter" resource="#detect-format" property="bibo:hasPart">
+    <!--OddPage-->
+    <h2 id="h-detect-format" resource="#h-detect-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">2. </span>Detection</span></h2>
+    <p>For a stream determined to be in the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>], this ISO Common Encryption ('cenc') Protection Scheme may be detected as follows.</p>
+    <p>Protection scheme signaling conforms with [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of <code>'cenc'</code>. [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]</p>
+  </section>
+
+  <section id="detect-encrypted-blocks" typeof="bibo:Chapter" resource="#detect-encrypted-blocks" property="bibo:hasPart">
+    <!--OddPage-->
+    <h2 id="h-detect-encrypted-blocks" resource="#h-detect-encrypted-blocks"><span property="xhv:role" resource="xhv:heading"><span class="secno">3. </span>Detecting Encrypted Blocks</span></h2>
+    <p>For the purposes of the <a href="../../index.html#encrypted-block-encountered">Encrypted Block Encountered</a>, encrypted blocks are identified as follows.</p>
+    <p>The encrypted block is a sample. Determining whether a sample is encrypted depends on the corresponding Track Encryption Box ('tenc') and the sample group with grouping type 'seig' (CencSampleEncryption group), if any, associated with the sample. The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the SampleGroupDescriptionBox ('sgpd'), pointed to by an index in the SampleToGroupBox ('sbgp').</p>
+    <p>Samples can be partially encrypted, specified by subsample information referenced by SampleAuxiliaryInformationSizesBox ('saiz') and SampleAuxiliaryInformationOffsetsBox ('saio') boxes.</p>
+    <p>For complete information, see [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].</p>
+  </section>
+
+  <section id="init-data" typeof="bibo:Chapter" resource="#init-data" property="bibo:hasPart">
+    <!--OddPage-->
+    <h2 id="h-init-data" resource="#h-init-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">4. </span>Initialization Data Extraction</span></h2>
+    <p>Streams may contain one or more Protection System Specific Header ('pssh') boxes [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>], each for a unique SystemID, at each location where a 'pssh' box is necessary. Content using this stream format <em class="rfc2119" title="SHOULD">SHOULD</em> include a box containing the <a href="../initdata/cenc.html#common-system">Common SystemID and PSSH Box Format</a>.
+    </p>
+    <p><a href="../../index.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes as defined by the <a href="../initdata/cenc.html">"cenc" Initialization Data Format</a> [<cite><a class="bibref" href="#bib-EME-INITDATA-REGISTRY">EME-INITDATA-REGISTRY</a></cite>].
+    </p>
+    <p>Each time one or more 'pssh' boxes are encountered, the <a href="../../index.html#initdata-encountered">Initialization Data Encountered</a> algorithm <em class="rfc2119" title="SHALL">SHALL</em> be invoked with <var title="">initDataType</var> = <code>"<a href="../initdata/cenc.html">cenc</a>"</code> [<cite><a class="bibref" href="#bib-EME-INITDATA-REGISTRY">EME-INITDATA-REGISTRY</a></cite>] and <var title="">initData</var> = the 'pssh' box(es). Multiple 'pssh' boxes <em class="rfc2119" title="MUST">MUST</em> be provided together if and only if they appear directly next to each other in the stream.</p>
+  </section>
+
+
+  <section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart">
+    <!--OddPage-->
+    <h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2>
+
+    <section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart">
+      <h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3>
+      <dl class="bibliography" resource=""><dt id="bib-CENC">[CENC]</dt>
+        <dd>ISO/IEC. <a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1" property="dc:requires"><cite>ISO/IEC 23001-7:2015, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO Base Media File Format files - 2nd Edition</cite></a>. International Standard. URL: <a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1" property="dc:requires">https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1</a>
+        </dd><dt id="bib-EME-INITDATA-REGISTRY">[EME-INITDATA-REGISTRY]</dt>
+        <dd>David Dorwin; Adrian Bateman; Mark Watson. W3C. <a href="../initdata/" property="dc:requires"><cite>Encrypted Media Extensions Initialization Data Format Registry</cite></a>. URL: <a href="../initdata/" property="dc:requires">../initdata/</a>
+        </dd><dt id="bib-ENCRYPTED-MEDIA">[ENCRYPTED-MEDIA]</dt>
+        <dd>David Dorwin; Jerry Smith; Mark Watson; Adrian Bateman. W3C. <a href="https://www.w3.org/TR/encrypted-media/" property="dc:requires"><cite>Encrypted Media Extensions</cite></a>. 5 July 2016. W3C Candidate Recommendation. URL: <a href="https://www.w3.org/TR/encrypted-media/" property="dc:requires">https://www.w3.org/TR/encrypted-media/</a>
+        </dd><dt id="bib-ISOBMFF">[ISOBMFF]</dt>
+        <dd>ISO/IEC. <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip" property="dc:requires"><cite>Information technology — Coding of audio-visual objects — Part 12: ISO Base Media File Format</cite></a>. December 2015. International Standard. URL: <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip" property="dc:requires">http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip</a>
+        </dd>
+      </dl>
     </section>
-
-    <section id="detect-format" typeof="bibo:Chapter" resource="#detect-format" property="bibo:hasPart">
-      <!--OddPage--><h2 id="h-detect-format" resource="#h-detect-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">2. </span>Detection</span></h2>
-      <p>For a stream determined to be in the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>], this ISO Common Encryption ('cenc') Protection Scheme may be detected as follows.</p>
-      <p>Protection scheme signaling conforms with [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of <code>'cenc'</code>. [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]</p>
-    </section>
-
-    <section id="detect-encrypted-blocks" typeof="bibo:Chapter" resource="#detect-encrypted-blocks" property="bibo:hasPart">
-      <!--OddPage--><h2 id="h-detect-encrypted-blocks" resource="#h-detect-encrypted-blocks"><span property="xhv:role" resource="xhv:heading"><span class="secno">3. </span>Detecting Encrypted Blocks</span></h2>
-      <p>For the purposes of the <a href="../../index.html#encrypted-block-encountered">Encrypted Block Encountered</a>, encrypted blocks are identified as follows.</p>
-      <p>The encrypted block is a sample. Determining whether a sample is encrypted depends on the corresponding Track Encryption Box ('tenc') and the sample group with grouping type 'seig' (CencSampleEncryption group), if any, associated with the sample.
-      The default encryption state of a sample is defined by the IsEncrypted flag in the associated track encryption box ('tenc'). This default state may be modified by the IsEncrypted flag in the SampleGroupDescriptionBox ('sgpd'), pointed to by an index in the SampleToGroupBox ('sbgp').</p>
-      <p>Samples can be partially encrypted, specified by subsample information referenced by SampleAuxiliaryInformationSizesBox ('saiz') and SampleAuxiliaryInformationOffsetsBox ('saio') boxes.</p>
-      <p>For complete information, see [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].</p>
-    </section>
-
-    <section id="init-data" typeof="bibo:Chapter" resource="#init-data" property="bibo:hasPart">
-      <!--OddPage--><h2 id="h-init-data" resource="#h-init-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">4. </span>Initialization Data Extraction</span></h2>
-      <p>Streams may contain one or more Protection System Specific Header ('pssh') boxes [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>], each for a unique SystemID, at each location where a 'pssh' box is necessary.
-        Content using this stream format <em class="rfc2119" title="SHOULD">SHOULD</em> include a box containing the <a href="../initdata/cenc.html#common-system">Common SystemID and PSSH Box Format</a>.
-      </p>
-      <p><a href="../../index.html#initialization-data">Initialization Data</a> is always one or more concatenated 'pssh' boxes as defined by the <a href="../initdata/cen.html">"cenc" Initialization Data Format</a> [<cite><a class="bibref" href="#bib-EME-INITDATA-REGISTRY">EME-INITDATA-REGISTRY</a></cite>].
-      </p>
-      <p>Each time one or more 'pssh' boxes are encountered, the <a href="../../index.html#initdata-encountered">Initialization Data Encountered</a> algorithm <em class="rfc2119" title="SHALL">SHALL</em> be invoked with <var title="">initDataType</var> = <code>"<a href="../initdata/cen.html">cenc</a>"</code> [<cite><a class="bibref" href="#bib-EME-INITDATA-REGISTRY">EME-INITDATA-REGISTRY</a></cite>] and <var title="">initData</var> = the 'pssh' box(es).  Multiple 'pssh' boxes <em class="rfc2119" title="MUST">MUST</em> be provided together if and only if they appear directly next to each other in the stream.</p>
-    </section>
-  
-
-<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart"><!--OddPage--><h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart"><h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3><dl class="bibliography" resource=""><dt id="bib-CENC">[CENC]</dt><dd>ISO/IEC. <a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1" property="dc:requires"><cite>ISO/IEC 23001-7:2015, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO Base Media File Format files - 2nd Edition</cite></a>. International Standard. URL: <a href="https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1" property="dc:requires">https://www.iso.org/obp/ui/#iso:std:iso-iec:23001:-7:ed-2:v1</a>
-</dd><dt id="bib-EME-INITDATA-REGISTRY">[EME-INITDATA-REGISTRY]</dt><dd>David Dorwin; Adrian Bateman; Mark Watson. W3C. <a href="../initdata/" property="dc:requires"><cite>Encrypted Media Extensions Initialization Data Format Registry</cite></a>. URL: <a href="../initdata/" property="dc:requires">../initdata/</a>
-</dd><dt id="bib-ENCRYPTED-MEDIA">[ENCRYPTED-MEDIA]</dt><dd>David Dorwin; Jerry Smith; Mark Watson; Adrian Bateman. W3C. <a href="http://www.w3.org/TR/encrypted-media/" property="dc:requires"><cite>Encrypted Media Extensions</cite></a>. 17 May 2016. W3C Working Draft. URL: <a href="http://www.w3.org/TR/encrypted-media/" property="dc:requires">http://www.w3.org/TR/encrypted-media/</a>
-</dd><dt id="bib-ISOBMFF">[ISOBMFF]</dt><dd>ISO/IEC. <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip" property="dc:requires"><cite>Information technology — Coding of audio-visual objects — Part 12: ISO Base Media File Format</cite></a>. December 2015. International Standard. URL: <a href="http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip" property="dc:requires">http://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip</a>
-</dd></dl></section></section><p role="navigation" id="back-to-top"><a href="#toc"><abbr title="Back to Top">↑</abbr></a></p><script async="" defer="" src="https://www.w3.org/scripts/TR/2016/fixup.js"></script></body></html>
+  </section>
+  <p role="navigation" id="back-to-top"><a href="#toc"><abbr title="Back to Top">↑</abbr></a></p>
+  <script src="https://www.w3.org/scripts/TR/2016/fixup.js"></script>
+</body>
+</html>

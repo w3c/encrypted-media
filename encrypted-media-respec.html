@@ -162,8 +162,6 @@
       <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>; there are also open bugs in the <a href="https://www.w3.org/brief/MjY5">previous bug tracker</a>. This draft highlights some of the pending issues that are still to be discussed in the working group. No decision has been taken on the outcome of these issues including whether they are valid.</p>
       <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
 
-      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/221">Issue 221</a> - This specification contains sections for describing <a href="#security">security</a> and <a href="#privacy">privacy</a> considerations. These sections are not final and review is welcome.</p>
-
       <p>The following features are <strong>at risk</strong> and may be removed:</p>
       <ul>
         <li><p>The <a def-id="persistent-usage-record-session"></a> session type and the related <a def-id="media-key-session-destroyed-algorithm"></a> algorithm.</p></li>
@@ -1564,7 +1562,7 @@
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session.</p>
             </li>
           </ol>
         </section>
@@ -1603,7 +1601,7 @@
       <p>
         The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object
         that is not <a def-id="media-key-session-closed"></a>.
-        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
+        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
 
@@ -1623,7 +1621,6 @@
         The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
         objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
       </p>
-
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2499,11 +2496,10 @@ interface MediaKeyMessageEvent : Event {
         <section id="monitor-cdm">
           <h4>Monitor for CDM State Changes</h4>
           <p>
-            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
-            <a>MediaKeySession</a> object in parallel to the main event loop but not in parallel to other procedures defined in this
-            specification that are run in parallel to the main event loop.
+            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change.
           </p>
           <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, <a def-id="update"></a> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
+          <p class="note">The algorithm is always run in parallel to the main event loop.</p>
           <p>
             The following steps are run:
           </p>
@@ -2705,16 +2701,16 @@ interface MediaKeyMessageEvent : Event {
                                     attribute EventHandler onencrypted;
                                     attribute EventHandler onwaitingforkey;
     [SecureContext] Promise&lt;void&gt; setMediaKeys (MediaKeys? mediaKeys);
-};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><a>MediaKeys</a></span>, readonly       , nullable</dt><dd>
-          <p>The <a>MediaKeys</a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
+};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <dfn> --><!-- Remove the id in <code> when https://github.com/w3c/respec/issues/893 is fixed. --><code id=dom-mediakeys>mediaKeys</code><!-- </dfn> --> of type <span class="idlAttrType"><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --></span>, readonly       , nullable</dt><dd>
+          <p>The <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
         </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="waitingforkey"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys</code></dfn></dt><dd>
-          <p>Provides the <a>MediaKeys</a> to use when decrypting media data during playback.</p>
+          <p>Provides the <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> to use when decrypting media data during playback.</p>
 
-          <p class="note">Support for clearing or replacing the associated <a>MediaKeys</a> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
+          <p class="note">Support for clearing or replacing the associated <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
           <p class="note">Some implementations may only support decrypting media data provided via Media Source Extensions [[MEDIA-SOURCE]].
             This is not reflected in the results of calling <a def-id="requestMediaKeySystemAccess"></a>.
           </p>
@@ -2774,7 +2770,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mediaKeys</td><td class="prmType"><code>MediaKeys</code></td><td class="prmNullTrue"><span role="img" aria-label="True">✔</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              A <a>MediaKeys</a> object.
+              A <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object.
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd></dl></section></div>
 
       <section>
@@ -3906,7 +3902,7 @@ interface MediaEncryptedEvent : Event {
           </p>
         </section>
 
-        <!-- TODO: This is out of place as a sub-section here. -->
+        <!-- TODO(https://github.com/w3c/encrypted-media/issues/301): This is out of place as a sub-section here. -->
         <section id="privacy-individualization">
           <h4>Individualization</h4>
           <p>
@@ -3914,8 +3910,9 @@ interface MediaEncryptedEvent : Event {
             The resulting identifier(s) MUST be <a def-id="non-associable-by-application"></a> and <a href="#uses-distinctive-identifiers">use of them</a> MUST only be exposed to a <a href="#per-origin-per-profile-identifiers">single origin from a single profile</a>.
             This process MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
           </p>
-          <p>This process MUST be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a> depending on the CDM implementation.
+          <p>This process MUST be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a>.
             The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
+            Which method is used depends on the CDM implementation and application of the requirements of this specification, especially those below.
           </p>
           <p class="note">
             <a def-id="option-distinctiveIdentifier"></a> controls whether <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a> may be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a>, including for individualization.
@@ -3940,7 +3937,7 @@ interface MediaEncryptedEvent : Event {
               <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
             </ul>
             <p>
-              Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+              Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
             </p>
           </section>
 
