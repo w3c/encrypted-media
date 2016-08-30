@@ -332,7 +332,7 @@
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
-  // the url fragment will get adjusted in encryptedMediaPreProcessor to the proper links
+  // The URL fragment will get adjusted to the proper links in encryptedMediaPreProcessor.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
     'initdata-registry-cenc': { func: link_helper, fragment: 'EME-INITDATA-CENC', link_text: '"cenc" Initialization Data Format', },
@@ -405,24 +405,24 @@
 
     // adjust emeRegistryReferencesDefinitions to use proper links
     // def-id are then replaced in encryptedMediaPostProcessor
-    function adjustFragment(key) {
+    function adjustFragments(key) {
       var entry = emeRegistryReferencesDefinitions[key];
       var fragment = entry.fragment;
-      var id = "";
-      var hash = fragment.indexOf('#');
-      if (hash !== -1) {
-        id = fragment.substring(hash);
-        fragment = fragment.substring(0, hash);
+      var anchor = "";
+      var anchorStart = fragment.indexOf('#');
+      if (anchorStart !== -1) {
+        anchor = fragment.substring(anchorStart);
+        fragment = fragment.substring(0, anchorStart);
       }
       var specref = registry_biblio_entries[fragment];
-      // not all fragment are associated with a specref
+      // not all fragments are associated with a specref
       if (specref === undefined) return;
       if (entry !== undefined) {
-        entry.fragment = specref.href + id;
+        entry.fragment = specref.href + anchor;
       }
     }
     for (var key in emeRegistryReferencesDefinitions) {
-      adjustFragment(key);
+      adjustFragments(key);
     }
 
    $("a[def-id]").each(function () {
