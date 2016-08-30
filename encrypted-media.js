@@ -501,7 +501,7 @@
         } else if (info.spec == 'dom') {
           baseURL = DOM_spec_url;
         } else if (info.spec == 'webidl') {
-          baseURL = "http://dev.w3.org/2006/webapi/WebIDL/";
+          baseURL = IDL_spec_url;
         } else if (info.spec == 'typed-array') {
           baseURL = "https://www.khronos.org/registry/typedarray/specs/latest/";
         } else if (info.spec == 'eme') {
