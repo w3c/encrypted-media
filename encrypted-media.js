@@ -332,15 +332,16 @@
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
+  // the url fragment will get adjusted in encryptedMediaPreProcessor to the proper links
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-    'initdata-registry-cenc': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-cenc/', link_text: '"cenc" Initialization Data Format', },
-    'cenc-common-system': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-cenc/#common-system', link_text: 'Common SystemID and PSSH Box Format', },
-    'initdata-registry-keyids': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-keyids/', link_text: '"keyids" Initialization Data Format', },
-    'initdata-registry-webm': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-initdata-webm/', link_text: '"webm" Initialization Data Format', },
-    'stream-registry': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-registry/', link_text: 'Encrypted Media Extensions Stream Format Registry', },
-    'stream-registry-webm': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-webm/', link_text: 'WebM Stream Format', },
-    'stream-registry-mp4': { func: link_helper, fragment: 'https://wwww.w3.org/TR/eme-stream-mp4/', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
+    'initdata-registry-cenc': { func: link_helper, fragment: 'EME-INITDATA-CENC', link_text: '"cenc" Initialization Data Format', },
+    'cenc-common-system': { func: link_helper, fragment: 'EME-INITDATA-CENC#common-system', link_text: 'Common SystemID and PSSH Box Format', },
+    'initdata-registry-keyids': { func: link_helper, fragment: 'EME-INITDATA-KEYIDS', link_text: '"keyids" Initialization Data Format', },
+    'initdata-registry-webm': { func: link_helper, fragment: 'EME-INITDATA-WEBM', link_text: '"webm" Initialization Data Format', },
+    'stream-registry': { func: link_helper, fragment: 'EME-STREAM-REGISTRY', link_text: 'Encrypted Media Extensions Stream Format Registry', },
+    'stream-registry-webm': { func: link_helper, fragment: 'EME-STREAM-WEBM', link_text: 'WebM Stream Format', },
+    'stream-registry-mp4': { func: link_helper, fragment: 'EME-STREAM-MP4', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession()',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
@@ -400,6 +401,28 @@
         window.respecConfig.localBiblio[property_name] = registry_biblio_entries[property_name];
     } else {
       window.respecConfig.localBiblio = registry_biblio_entries;
+    }
+
+    // adjust emeRegistryReferencesDefinitions to use proper links
+    // def-id are then replaced in encryptedMediaPostProcessor
+    function adjustFragment(key) {
+      var entry = emeRegistryReferencesDefinitions[key];
+      var fragment = entry.fragment;
+      var id = "";
+      var hash = fragment.indexOf('#');
+      if (hash !== -1) {
+        id = fragment.substring(hash);
+        fragment = fragment.substring(0, hash);
+      }
+      var specref = registry_biblio_entries[fragment];
+      // not all fragment are associated with a specref
+      if (specref === undefined) return;
+      if (entry !== undefined) {
+        entry.fragment = specref.href + id;
+      }
+    }
+    for (var key in emeRegistryReferencesDefinitions) {
+      adjustFragment(key);
     }
 
    $("a[def-id]").each(function () {
@@ -545,12 +568,12 @@
   }
 
   function getEncryptedMediaRegistryBibioEntries(registry_base_path, status) {
-    var registry_path = registry_base_path + "initdata/";
+    var initdata_path = registry_base_path + "initdata/";
     var stream_path = registry_base_path + "stream/";
     var postfix = ".html";
     var separator = "";
     if (status !== "ED") {
-      registry_path = "https://wwww.w3.org/TR/eme-initdata";
+      initdata_path = "https://wwww.w3.org/TR/eme-initdata";
       stream_path = "https://wwww.w3.org/TR/eme-stream";
       postfix = "/";
       separator = "-";
@@ -558,31 +581,43 @@
     return {
       "EME-INITDATA-REGISTRY": {
         title: "Encrypted Media Extensions Initialization Data Format Registry",
-        href: registry_path + ((postfix !== "/")? "index.html" : "-registry/"),
+        href: initdata_path + ((postfix !== "/")? "index.html" : "-registry/"),
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
         publisher: "W3C"
     },
       "EME-INITDATA-CENC": {
         title: "\"cenc\" Initialization Data Format",
-        href: registry_path + separator + "cenc" + postfix,
+        href: initdata_path + separator + "cenc" + postfix,
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
         publisher: "W3C"
     },
       "EME-INITDATA-WEBM": {
         title: "\"webm\" Initialization Data Format",
-        href: registry_path + separator + "webm" + postfix,
+        href: initdata_path + separator + "webm" + postfix,
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
         publisher: "W3C"
     },
       "EME-INITDATA-KEYIDS": {
         title: "\"keyids\" Initialization Data Format",
-        href: registry_path + separator + "keyids" + postfix,
+        href: initdata_path + separator + "keyids" + postfix,
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
         publisher: "W3C"
     },
     "EME-STREAM-REGISTRY": {
         title: "Encrypted Media Extensions Stream Format Registry",
         href: stream_path + ((postfix !== "/")? "index.html" : "-registry/"),
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    },
+    "EME-STREAM-MP4": {
+        title: "ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format",
+        href: stream_path + separator + "mp4" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+    "EME-STREAM-WEBM": {
+        title: "WebM Stream Format",
+        href: stream_path + separator + "webm" + postfix,
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
         publisher: "W3C"
     }
