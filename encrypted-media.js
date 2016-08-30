@@ -101,7 +101,7 @@
     term_helper(doc, df, 'error-names', 'error name');
   }
   function webmref_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.webmproject.org/code/specs/container/#' + id, text);
+    link_helper(doc, df, 'https://www.webmproject.org/docs/container/#' + id, text);
   }
 
   function queue_and_fire_helper(doc, df, id, text) {
