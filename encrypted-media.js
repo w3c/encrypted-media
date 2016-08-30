@@ -1,6 +1,6 @@
 (function() {
-  var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
-  var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
+  var EME_spec_url = "https://www.w3.org/TR/encrypted-media/";
+  var HTML_spec_url = "https://www.w3.org/TR/html5/embedded-content-0.html";
   var DOM_spec_url = "https://www.w3.org/TR/dom/";
   var IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
 
@@ -32,23 +32,23 @@
   }
 
   function encodingapi_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/encoding/#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/encoding/#' + id, text);
   }
 
   function webappapis_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/webappapis.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/webappapis.html#' + id, text);
   }
 
   function infrastructure_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/infrastructure.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/infrastructure.html#' + id, text);
   }
 
   function browsers_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/browsers.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/browsers.html#' + id, text);
   }
 
   function mixedcontent_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/mixed-content/#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/mixed-content/#' + id, text);
   }
 
   function term_helper(doc, df, id, text) {
