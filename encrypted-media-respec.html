@@ -3100,19 +3100,38 @@ interface MediaEncryptedEvent : Event {
       <section id="persistent-state-requirements">
         <h3>Persistent Data</h3>
         <p>
-          Persistent data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+          Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
         </p>
+        <section id="use-origin-specific-key-system-storage">
+          <h3>Use origin-specific and browsing profile-specific Key System storage</h3>
+          <p>Persistent Data that might impact messages or behavior in an application- or license server-visible way MUST be stored in an <a def-id="origin"></a>-specific and <a def-id="browsing-profile"></a>-specific way and MUST NOT leak to or from private browsing sessions.
+                Session data, licenses, and keys that are persistently stored MUST be stored per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
+          </p>
+          <p>
+                See <a def-id="session-storage"></a>.
+          </p>
+        </section>
         <section id="allow-persistent-data-cleared">
           <h3>Allow Persistent Data to Be Cleared</h3>
           <p>
-            Implementations that use persistent data MUST allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
+            Implementations that use Persistent Data MUST allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
           </p>
           <p id="allow-persistent-data-cleared-with-cookies">
-            Implementations SHOULD allow users to clear persistent data along with cookies [[!COOKIES]] and other site data.
-            It is RECOMMENDED that users be offered the option to clear persistent data as part of user agent features to clear browsing history.
+            Implementations SHOULD allow users to clear Persistent Data along with cookies [[!COOKIES]] and other site data.
+            It is RECOMMENDED that users be offered the option to clear Persistent Data as part of user agent features to clear browsing history, specifically
+            [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.
           </p>
           <p>
-            It is RECOMMENDED that users be able to request that persistent data be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [[!COOKIES]], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+            It is RECOMMENDED that users be able to request that Persistent Data be forgotten on a per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a> basis, particularly as part of a "Forget about this site" feature that forgets cookies [[!COOKIES]], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+          </p>
+          <p>
+              User agents SHOULD present the user with a way to specifically delete Persistent Data, by <a def-id="origin"></a> and/or for all origins.
+          </p>
+        </section>
+        <section>
+          <h3>Encrypt or obfuscate Persistent Data</h3>
+          <p>User agents SHOULD treat Persistent Data as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information.
+            To this end, user agents SHOULD ensure that Persistent Data is securely stored and when deleting data, it is promptly deleted from the underlying storage.
           </p>
         </section>
       </section>
@@ -3970,39 +3989,8 @@ interface MediaEncryptedEvent : Event {
         </section>
         <section>
           <h4>Mitigations</h4>
-          <dl>
-            <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
-            <dd>
-              <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be stored in an <a def-id="origin"></a>-specific and <a def-id="browsing-profile"></a>-specific way and MUST NOT leak to or from private browsing sessions.
-                Session data, licenses, and keys that are persistently stored MUST be stored per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
-                See <a def-id="session-storage"></a>.
-              </p>
-            </dd>
-            <dt>Provide user deletion of Key System storage</dt>
-            <dd>
-              <p>
-                User Agents MUST allow the user to clear data persisted by the CDM and SHOULD allow users to clear that data by <a def-id="origin"></a>.
-                User agents SHOULD present the user with a way to specifically delete Key System storage, by <a def-id="origin"></a> and/or for all origins.
-                User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
-              </p>
-            </dd>
-
-            <dt>Treat <a def-id="distinctive-identifiers"></a> and Key System stored data like cookies / web storage</dt>
-            <dd>
-              <p>
-                User Agents SHOULD treat data persisted by CDMs like other site data, including presenting it along with cookies
-                [[!COOKIES]], including it in "remove all data", and presenting it in the same UI locations.
-              </p>
-              <p>See the <a href="#like-cookies">identical section above</a>.</p>
-            </dd>
-
-            <dt>Encrypt or obfuscate Key System stored data</dt>
-            <dd>
-              <p>User agents SHOULD treat data stored by Key Systems as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information.
-                To this end, user agents SHOULD ensure that such data is securely stored and when deleting data, it is promptly deleted from the underlying storage.
-              </p>
-            </dd>
-          </dl>
+          <p>Requirements mitigating these concerns are defined in <a href="#persistent-state-requirements"></a>.</p>
+          <p>User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a> by following the recommendations of that section.</p>
         </section>
       </section>
 
