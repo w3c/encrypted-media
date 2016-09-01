@@ -1,6 +1,6 @@
 (function() {
-  var EME_spec_url = "http://www.w3.org/TR/encrypted-media/";
-  var HTML_spec_url = "http://www.w3.org/TR/html5/embedded-content-0.html";
+  var EME_spec_url = "https://www.w3.org/TR/encrypted-media/";
+  var HTML_spec_url = "https://www.w3.org/TR/html5/embedded-content-0.html";
   var DOM_spec_url = "https://www.w3.org/TR/dom/";
   var IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
 
@@ -32,23 +32,23 @@
   }
 
   function encodingapi_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/encoding/#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/encoding/#' + id, text);
   }
 
   function webappapis_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/webappapis.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/webappapis.html#' + id, text);
   }
 
   function infrastructure_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/infrastructure.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/infrastructure.html#' + id, text);
   }
 
   function browsers_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/html5/browsers.html#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/html5/browsers.html#' + id, text);
   }
 
   function mixedcontent_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.w3.org/TR/mixed-content/#' + id, text);
+    link_helper(doc, df, 'https://www.w3.org/TR/mixed-content/#' + id, text);
   }
 
   function term_helper(doc, df, id, text) {
@@ -101,7 +101,7 @@
     term_helper(doc, df, 'error-names', 'error name');
   }
   function webmref_helper(doc, df, id, text) {
-    link_helper(doc, df, 'http://www.webmproject.org/code/specs/container/#' + id, text);
+    link_helper(doc, df, 'https://www.webmproject.org/docs/container/#' + id, text);
   }
 
   function queue_and_fire_helper(doc, df, id, text) {
@@ -110,7 +110,7 @@
     webappapis_helper(doc, df, 'fire-a-simple-event', 'fire a simple event');
     df.appendChild(doc.createTextNode(' named'));
   }
-  
+
     function queue_helper(doc, df, id, text) {
     webappapis_helper(doc, df, 'queue-a-task', text);
   }
@@ -177,7 +177,7 @@
     'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
     'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
     'time': { func: term_helper, fragment: 'time', link_text: 'time'  },
-	
+
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess',  },
     'get-consent-status-algorithm' : { func: term_helper, fragment: 'get-consent-status', link_text: 'Get Consent Status' },
@@ -248,7 +248,7 @@
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'wait-for-key-algorithm': { func: term_helper, fragment: 'wait-for-key', link_text: 'Wait for Key',  },
     'media-key-session-destroyed-algorithm' : { func: term_helper, fragment: 'media-key-session-destroyed', link_text: 'MediaKeySession destroyed',  },
- 
+
     'media-key-session-closed' : { func: term_helper, fragment: 'media-key-session-closed', link_text: 'closed', },
 
     'media-keys-storage': { func: term_helper, fragment: 'media-keys-storage', link_text: 'Storage and Persistence',  },
@@ -272,8 +272,8 @@
     'message-event-messagetype-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-messagetype', link_text: 'messageType',  },
     'message-event-message-attribute': { func: idlref_helper, fragment: 'dom-mediakeymessageevent-message', link_text: 'message',  },
 
-    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdatatype', link_text: 'initDataType',  },
-    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedeventinit-initdata', link_text: 'initData',  },
+    'encrypted-event-initdatatype-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdatatype', link_text: 'initDataType',  },
+    'encrypted-event-initdata-attribute': { func: idlref_helper, fragment: 'dom-mediaencryptedevent-initdata', link_text: 'initData',  },
 
     'NotSupportedError': { func: local_exception_helper, fragment: '', link_text: 'NotSupportedError'  },
     'InvalidStateError': { func: local_exception_helper, fragment: '', link_text: 'InvalidStateError'  },
@@ -305,7 +305,7 @@
     'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
     'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
     'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
- 
+
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
 
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
@@ -332,15 +332,16 @@
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
+  // The URL fragment will get adjusted to the proper links in encryptedMediaPreProcessor.
   var emeRegistryReferencesDefinitions = {
     'eme-spec': { func: link_helper, fragment: '#', link_text: 'Encrypted Media Extensions', },
-    'initdata-registry-cenc': { func: link_helper, fragment: '../initdata/cen.html', link_text: '"cenc" Initialization Data Format', },
-    'cenc-common-system': { func: link_helper, fragment: '../initdata/cenc.html#common-system', link_text: 'Common SystemID and PSSH Box Format', },
-    'initdata-registry-keyids': { func: link_helper, fragment: '../initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
-    'initdata-registry-webm': { func: link_helper, fragment: '../initdata/webm.html', link_text: '"webm" Initialization Data Format', },
-    'stream-registry': { func: link_helper, fragment: '../stream/', link_text: 'Encrypted Media Extensions Stream Format Registry', },
-    'stream-registry-webm': { func: link_helper, fragment: '../stream/webm.html', link_text: 'WebM Stream Format', },
-    'stream-registry-mp4': { func: link_helper, fragment: '../stream/mp4.html', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
+    'initdata-registry-cenc': { func: link_helper, fragment: 'EME-INITDATA-CENC', link_text: '"cenc" Initialization Data Format', },
+    'cenc-common-system': { func: link_helper, fragment: 'EME-INITDATA-CENC#common-system', link_text: 'Common SystemID and PSSH Box Format', },
+    'initdata-registry-keyids': { func: link_helper, fragment: 'EME-INITDATA-KEYIDS', link_text: '"keyids" Initialization Data Format', },
+    'initdata-registry-webm': { func: link_helper, fragment: 'EME-INITDATA-WEBM', link_text: '"webm" Initialization Data Format', },
+    'stream-registry': { func: link_helper, fragment: 'EME-STREAM-REGISTRY', link_text: 'Encrypted Media Extensions Stream Format Registry', },
+    'stream-registry-webm': { func: link_helper, fragment: 'EME-STREAM-WEBM', link_text: 'WebM Stream Format', },
+    'stream-registry-mp4': { func: link_helper, fragment: 'EME-STREAM-MP4', link_text: 'ISO Common Encryption (\'cenc\') Protection Scheme for ISO Base Media File Format Stream Format', },
     'clear-key': { func: term_helper, fragment: 'clear-key', link_text: 'Clear Key'  },
     'createSession': { func: idlref_helper, fragment: 'widl-MediaKeys-createSession-MediaKeySession-MediaKeySessionType-sessionType', link_text: 'createSession()',  },
     'using-base64url': { func: term_helper, fragment: 'using-base64url', link_text: 'Using base64url'  },
@@ -392,12 +393,36 @@
     // Add the registry biblio entries to localBiblio.
     // If it is not empty, we need to add the entries to the existing object.
     var registry_base_path = is_registry_file ? "../" : "format-registry/";
-    var registry_biblio_entries = getEncryptedMediaRegistryBibioEntries(registry_base_path);
+    var registry_biblio_entries =
+     getEncryptedMediaRegistryBibioEntries(registry_base_path,
+                                           window.respecConfig.specStatus);
     if (window.respecConfig.localBiblio) {
       for (var property_name in registry_biblio_entries)
         window.respecConfig.localBiblio[property_name] = registry_biblio_entries[property_name];
     } else {
       window.respecConfig.localBiblio = registry_biblio_entries;
+    }
+
+    // adjust emeRegistryReferencesDefinitions to use proper links
+    // def-id are then replaced in encryptedMediaPostProcessor
+    function adjustFragments(key) {
+      var entry = emeRegistryReferencesDefinitions[key];
+      var fragment = entry.fragment;
+      var anchor = "";
+      var anchorStart = fragment.indexOf('#');
+      if (anchorStart !== -1) {
+        anchor = fragment.substring(anchorStart);
+        fragment = fragment.substring(0, anchorStart);
+      }
+      var specref = registry_biblio_entries[fragment];
+      // not all fragments are associated with a specref
+      if (specref === undefined) return;
+      if (entry !== undefined) {
+        entry.fragment = specref.href + anchor;
+      }
+    }
+    for (var key in emeRegistryReferencesDefinitions) {
+      adjustFragments(key);
     }
 
    $("a[def-id]").each(function () {
@@ -447,7 +472,6 @@
 
     // Update links to external type definitions.
     var externalClassInfo = {
-      'MediaKeys': { spec: 'eme', fragment: 'idl-def-MediaKeys' },
       'AudioTrackList': {spec: 'html5', fragment: 'audiotracklist' },
       'TextTrackList': {spec: 'html5', fragment: 'texttracklist' },
       'TimeRanges': { spec: 'html5', fragment: 'timeranges' },
@@ -477,7 +501,7 @@
         } else if (info.spec == 'dom') {
           baseURL = DOM_spec_url;
         } else if (info.spec == 'webidl') {
-          baseURL = "http://dev.w3.org/2006/webapi/WebIDL/";
+          baseURL = IDL_spec_url;
         } else if (info.spec == 'typed-array') {
           baseURL = "https://www.khronos.org/registry/typedarray/specs/latest/";
         } else if (info.spec == 'eme') {
@@ -530,11 +554,11 @@
         }
       }
     });
- 
+
     // THIS MUST BE LAST.
     // Check for duplicate ids.
     $("[id]").each(function () {
-      var elements = $("[id='" + this.id + "']"); 
+      var elements = $("[id='" + this.id + "']");
       if (elements.length != 1) {
         console.error("id '" + this.id + "' is used for " + elements.length + " elements. This instance: ", this);
       }
@@ -543,17 +567,57 @@
     return;
   }
 
-  function getEncryptedMediaRegistryBibioEntries(registry_base_path) {
+  function getEncryptedMediaRegistryBibioEntries(registry_base_path, status) {
+    var initdata_path = registry_base_path + "initdata/";
+    var stream_path = registry_base_path + "stream/";
+    var postfix = ".html";
+    var separator = "";
+    if (status !== "ED") {
+      initdata_path = "https://wwww.w3.org/TR/eme-initdata";
+      stream_path = "https://wwww.w3.org/TR/eme-stream";
+      postfix = "/";
+      separator = "-";
+    }
     return {
       "EME-INITDATA-REGISTRY": {
         title: "Encrypted Media Extensions Initialization Data Format Registry",
-        href: registry_base_path + "initdata/",
+        href: initdata_path + ((postfix !== "/")? "index.html" : "-registry/"),
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-CENC": {
+        title: "\"cenc\" Initialization Data Format",
+        href: initdata_path + separator + "cenc" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-WEBM": {
+        title: "\"webm\" Initialization Data Format",
+        href: initdata_path + separator + "webm" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+      "EME-INITDATA-KEYIDS": {
+        title: "\"keyids\" Initialization Data Format",
+        href: initdata_path + separator + "keyids" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
         publisher: "W3C"
     },
     "EME-STREAM-REGISTRY": {
         title: "Encrypted Media Extensions Stream Format Registry",
-        href: registry_base_path + "stream/",
+        href: stream_path + ((postfix !== "/")? "index.html" : "-registry/"),
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
+        publisher: "W3C"
+    },
+    "EME-STREAM-MP4": {
+        title: "ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format",
+        href: stream_path + separator + "mp4" + postfix,
+        authors: ["David Dorwin", "Adrian Bateman", "Mark Watson", "Jerry Smith"],
+        publisher: "W3C"
+    },
+    "EME-STREAM-WEBM": {
+        title: "WebM Stream Format",
+        href: stream_path + separator + "webm" + postfix,
         authors: ["David Dorwin", "Adrian Bateman", "Mark Watson"],
         publisher: "W3C"
     }

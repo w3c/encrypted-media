@@ -37,7 +37,7 @@
 
       previousMaturity: "WD",
 
-      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      // the specification's short name, as in https://www.w3.org/TR/short-name/
       shortName: "encrypted-media",
 
       useExperimentalStyles: true,
@@ -109,7 +109,7 @@
       wg:           "HTML Working Group",
 
       // URI of the public WG page
-      wgURI:        "http://www.w3.org/html/wg/",
+      wgURI:        "https://www.w3.org/html/wg/",
 
       // name (without the @w3c.org) of the public mailing to which comments are due
       wgPublicList: "public-html-media",
@@ -161,8 +161,6 @@
     <section id="sotd">
       <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>; there are also open bugs in the <a href="https://www.w3.org/brief/MjY5">previous bug tracker</a>. This draft highlights some of the pending issues that are still to be discussed in the working group. No decision has been taken on the outcome of these issues including whether they are valid.</p>
       <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
-
-      <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/221">Issue 221</a> - This specification contains sections for describing <a href="#security">security</a> and <a href="#privacy">privacy</a> considerations. These sections are not final and review is welcome.</p>
 
       <p>The following features are <strong>at risk</strong> and may be removed:</p>
       <ul>
@@ -415,44 +413,52 @@
             For example, a Distinctive Permanent Identifier shared among a small number of users could still be distinctive.
           </p>
           <p class="note">
-            A <a def-id="distinctive-permanent-identifier"></a> is <em>not</em> a <a def-id="distinctive-identifier"></a> because it is not derived or generated (within the scope of this specification).
-          </p> 
+            A Distinctive Permanent Identifier is <em>not</em> a <a def-id="distinctive-identifier"></a> because it is not derived or generated (within the scope of this specification).
+          </p>
+          <p class="note">
+            <a def-id="option-distinctiveIdentifier"></a> controls whether Distinctive Permanent Identifiers may be used.
+            Specifically, Distinctive Permanent Identifiers may only be used when the value of the <a def-id="option-distinctiveIdentifier"></a> member of the <a>MediaKeySystemAccess</a> used to create the <a>MediaKeys</a> object is <a def-id="requirement-required"></a>.
+          </p>
         </dd>
 
         <dt id="distinctive-identifier">Distinctive Identifier</dt>
         <dd>
           <div class="note">
             <p>
-              A distinctive identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data).
+              A Distinctive Identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g. cookies and other site data).
               For example, values that are <a href="#associable-by-entity">associable by an entity other than the application</a> across
               a) <a def-id="origin">origins</a>,
               b) <a def-id="browsing-profile">browsing profiles</a>,
               or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
               or values for which it is not easy for a user to break such association.
-              In particular, a value is a distinctive identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#privacy-individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. 
+              In particular, a value is a Distinctive Identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data. 
               Possible causes of this include use of <a def-id="distinctive-permanent-identifier-maybe-plural"></a> in the individualization process.
             </p>
             <p>
-              Distinctive identifiers exposed to the application, even in encrypted form, MUST adhere to the <a href="#identifier-requirements">identifier requirements</a>,
+              Distinctive Identifiers exposed to the application, even in encrypted form, MUST adhere to the <a href="#identifier-requirements">identifier requirements</a>,
               including being <a href="#encrypt-identifiers">encrypted</a>, <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, and <a href="#allow-identifiers-cleared">clearable</a>.
             </p>
             <p>
-              While the instantiation or use of a distinctive identifier is triggered by the application's use of these APIs, the identifier need not be provided to the application to trigger conditions related to distinctive identifiers.
+              While the instantiation or use of a Distinctive Identifier is triggered by the application's use of the APIs defined in this specification, the identifier need not be provided to the application to trigger conditions related to Distinctive Identifiers.
               (The <a def-id="distinctive-permanent-identifier-maybe-plural"></a> MUST NOT ever be provided to the application, even in opaque or encrypted form.) 
             </p>
           </div>
-          <p>A distinctive identifier is a value, piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
+          <p class="note">
+            <a def-id="option-distinctiveIdentifier"></a> controls whether Distinctive Identifiers may be used.
+            Specifically, Distinctive Identifiers may only be used when the value of the <a def-id="option-distinctiveIdentifier"></a> member of the <a>MediaKeySystemAccess</a> used to create the <a>MediaKeys</a> object is <a def-id="requirement-required"></a>.
+          </p>
+          <p>A Distinctive Identifier is a value, piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
           <ul>
             <li><p>It is <em>not</em> shared across a large population of users or client devices.</p></li>
             <li>
               <p>It, information about it, or values derived from or otherwise related to it are exposed, even in encrypted form, outside the client.
-                This includes but is not limited to providing it to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
+                This includes but is not limited to providing it to the application and/or license, <a href="#individualization">individualization</a>, or other server.
               </p>
             </li>
             <li><p>It has one or more the following properties:</p>
               <ul>
                 <li><p>It is derived from one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.</p></li>
-                <li><p>The generation, <a href="#privacy-individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a> or another distinctive identifier.</p></li>
+                <li><p>The generation, <a href="#individualization">individualization</a>, provisioning or other process that produced the value involved, used, provided, derived from, or similarly involved one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a> or another Distinctive Identifier.</p></li>
                 <li>
                   <p>It is <a href="#allow-identifiers-cleared">clearable</a> but not <a href="#allow-persistent-data-cleared-with-cookies">along with cookies and other site data</a>.</p>
                   <p class="note">For example, via some mechanism external to the user agent, such as an OS-level mechanism.</p>
@@ -471,53 +477,53 @@
                 <ul>
                   <li><p>A single hardware-based value used for all origins.</p></li>
                   <li><p>A single random based value used for all origins.</p></li>
-                  <li><p>A single value obtained from an <a href="#privacy-individualization">individualization</a> process that is used for all origins.</p></li>
+                  <li><p>A single value obtained from an <a href="#individualization">individualization</a> process that is used for all origins.</p></li>
                   <li><p>Values that include all or part of any of the above values.</p></li>
                   <li><p>A single value that is used for multiple but not all origins.</p></li>
                   <li><p>A single value that is used for all origins on a domain. (Identifiers must be per-<a def-id="origin"></a>.)</p></li>
                   <li><p>A pre-provisioned origin-specific value.</p></li>
-                  <li><p>Values generated by trivially-reversible means, which are thus <a href="#associable-by-application">associable by the application</a>, regardless of whether generated on the client or involving an a <a href="#privacy-individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p></li>
+                  <li><p>Values generated by trivially-reversible means, which are thus <a href="#associable-by-application">associable by the application</a>, regardless of whether generated on the client or involving an a <a href="#individualization">individualization</a> process. For example, XORing or otherwise integrating (part of) the origin with a fixed value.</p></li>
                 </ul>
               </div>
             </li>
           </ul>
 
           <p class="note">
-            While <a def-id="distinctive-identifiers"></a> are usually <a href="#associable-by-entity">associable by the entity that generated them</a> they MUST be <a def-id="non-associable-by-application"></a>.
-            In other words, such correlation or association is only possible by the entity, such as an <a href="#privacy-individualization">individualization</a> server, that originally generated the <a def-id="distinctive-identifier"></a> values.
-            Entities with access to the <a def-id="distinctive-permanent-identifier-maybe-plural"></a> MUST NOT expose this capability to applications, as this would make resulting distinctive identifiers <a href="#associable-by-application">associable by the application</a>, and SHOULD take care to avoid exposing such correlation to other entities or third parties.
+            While Distinctive Identifier are usually <a href="#associable-by-entity">associable by the entity that generated them</a> they MUST be <a def-id="non-associable-by-application"></a>.
+            In other words, such correlation or association is only possible by the entity, such as an <a href="#individualization">individualization</a> server, that originally generated the Distinctive Identifier values.
+            Entities with access to the <a def-id="distinctive-permanent-identifier-maybe-plural"></a> MUST NOT expose this capability to applications, as this would make resulting Distinctive Identifiers <a href="#associable-by-application">associable by the application</a>, and SHOULD take care to avoid exposing such correlation to other entities or third parties.
           </p>
 
-          <p class="note">While a distinctive identifier is typically unique to a user or client device, an identifier does not need to be strictly unique to be distinctive.
+          <p class="note">While a Distinctive Identifier is typically unique to a user or client device, an identifier does not need to be strictly unique to be distinctive.
             For example, an identifier shared among a small number of users could still be distinctive.
           </p>
 
           <div class="note">
-            <p>Examples of distinctive identifiers include but are not limited to:</p>
+            <p>Examples of Distinctive Identifiers include but are not limited to:</p>
             <ul>
               <li><p>A series of bytes that is included in key requests, different from the series of bytes included by other client devices, and based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>A public key included in key requests that is different from the public keys included in the requests by other client devices and is based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>Demonstration of possession of a private key (e.g. by signing some data) that other client devices do not have and is based on or was acquired directly or indirectly using a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>An identifier for such a key.</p></li>
               <li><p>Such a value used to derive another value that is exposed even though the first value is not directly exposed.</p></li>
-              <li><p>A value derived from another distinctive identifier.</p></li>
-              <li><p>A random value that was reported to a (i.e. <a href="#privacy-individualization">individualization</a>) server along with a <a def-id="distinctive-permanent-identifier"></a> or provided by such a server after providing a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
+              <li><p>A value derived from another Distinctive Identifier.</p></li>
+              <li><p>A random value that was reported to a (i.e. <a href="#individualization">individualization</a>) server along with a <a def-id="distinctive-permanent-identifier"></a> or provided by such a server after providing a <a def-id="distinctive-permanent-identifier"></a>.</p></li>
               <li><p>A value derived from a unique value provisioned in the hardware device in the factory.</p></li>
               <li><p>A value derived from a unique hardware value (e.g. MAC address or serial number) or software value (e.g. operating system installation instance or operating system user account name) in the hardware device in the factory.</p></li>
               <li><p>A value derived from a unique value embedded in the CDM binary or other file used by the CDM.</p></li>
             </ul>
-            <p>Examples of things that are <em>not</em> distinctive identifiers:</p>
+            <p>Examples of things that are <em>not</em> Distinctive Identifiers:</p>
             <ul>
               <li><p>A public key shared among all copies of a given CDM version if the installed base is large.</p></li>
               <li><p>A nonce or ephemeral key that is unique but used in only one session.</p></li>
-              <li><p>A value that is not exposed, even in derived or similar ways, outside the client, including via <a href="#privacy-individualization">individualization</a> or similar.</p></li>
-              <li><p>Device-unique keys used in attestations between, for example, the video pipeline and the CDM when the CDM does not let these attestations further flow to the application and instead makes a new attestation on its own using a key that does not constitute a distinctive identifier.</p></li>
+              <li><p>A value that is not exposed, even in derived or similar ways, outside the client, including via <a href="#individualization">individualization</a> or similar.</p></li>
+              <li><p>Device-unique keys used in attestations between, for example, the video pipeline and the CDM when the CDM does not let these attestations further flow to the application and instead makes a new attestation on its own using a key that does not constitute a Distinctive Identifier.</p></li>
               <li>
-                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a value that is <a def-id="non-associable"></a> (not just <a def-id="non-associable-by-application"></a>), even by a central server such as an <a href="#privacy-individualization">individualization</a> server, AND one or more of the following:</p>
+                <p>A value that is fully cleared/clearable along with browsing data, such as cookies, after which it will be replaced by a value that is <a def-id="non-associable"></a> (not just <a def-id="non-associable-by-application"></a>), even by a central server such as an <a href="#individualization">individualization</a> server, AND one or more of the following:</p>
                 <ul>
-                  <li><p>No <a def-id="distinctive-permanent-identifier"></a> or distinctive identifier was involved in the generation of the value.</p></li>
+                  <li><p>No <a def-id="distinctive-permanent-identifier"></a> or Distinctive Identifier was involved in the generation of the value.</p></li>
                   <li><p>It is a random value generated <em>without</em> inputs from the system.</p></li>
-                  <li><p>It is a value provided by a server without the use of or knowledge of another distinctive identifier.</p></li>
+                  <li><p>It is a value provided by a server without the use of or knowledge of another Distinctive Identifier.</p></li>
                 </ul>
               </li>
             </ul>
@@ -529,17 +535,21 @@
           <p>
             An implementation, configuration, instance, or object <dfn id="uses-distinctive-identifiers">uses Distinctive Identifier(s)</dfn> if, at any time during its lifetime or the lifetime of related such entities,
             it exposes, even in encrypted form, one or more <a def-id="distinctive-identifier-maybe-plural"></a>, information about them, or values derived from or otherwise related to them outside the client.
-            This includes but is not limited to providing such a value to the application and/or license, <a href="#privacy-individualization">individualization</a>, or other server.
+            This includes but is not limited to providing such a value to the application and/or license, <a href="#individualization">individualization</a>, or other server.
           </p>
           <p>
             An implementation, configuration, instance, or object <dfn id="uses-distinctive-permanent-identifiers">uses Distinctive Permanent Identifier(s)</dfn> if, at any time during its lifetime or the lifetime of related such entities,
             it exposes, even in encrypted form, one or more <a def-id="distinctive-permanent-identifier-maybe-plural"></a>, information about them, or values derived from or otherwise related to them outside the client.
-            This includes but is not limited to providing such a value to an <a href="#privacy-individualization">individualization</a> server.
+            This includes but is not limited to providing such a value to an <a href="#individualization">individualization</a> server.
             Such values MUST NOT be provided to the application.
           </p>
           <p>
             An implementation, configuration, instance, or object <dfn id="uses-distinctive-identifiers-or-distinctive-permanent-identifiers">uses Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</dfn> if it
             <a href="#uses-distinctive-identifiers">uses Distinctive Identifier(s)</a> and/or <a href="#uses-distinctive-permanent-identifiers">uses Distinctive Permanent Identifier(s)</a>.
+          </p>
+          <p class="note">
+            <a def-id="option-distinctiveIdentifier"></a> controls whether <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a> may be used.
+            Specifically, such identifiers may only be used when the value of the <a def-id="option-distinctiveIdentifier"></a> member of the <a>MediaKeySystemAccess</a> used to create the <a>MediaKeys</a> object is <a def-id="requirement-required"></a>.
           </p>
         </dd>
 
@@ -562,7 +572,7 @@
 		<dt id="time">Time</dt>
         <dd>
  		  <p>Time represents an instant in time with millisecond accuracy.  The instants in time it can represent are the same that can be represented with 
-		  <a class="external" href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [[!ECMA-262]]) – 
+		  <a class="external" href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [[!ECMA-262]]) – 
 		  namely, every millisecond in the 200,000,000 days centered around midnight of 1 January, 1970 UTC, except for any millisecond that is part of an inserted leap second.  Time does not include these added leap milliseconds.
           </p>    
           <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate.  It should never have the value <code>Infinity</code>.
@@ -960,7 +970,7 @@
                 </ol>
                 <div class="note">
                   <p>
-                  The "unique per-origin" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-per-profile-identifiers">use per-origin per-profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
+                  The "unique per origin and profile" and "clearable" conditions cannot be false in a compliant implementation because implementations MUST <a href="#per-origin-per-profile-identifiers">use per-origin per-profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifier</a>.
                   </p>
                 </div>
               </li>
@@ -1552,7 +1562,7 @@
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session.</p>
             </li>
           </ol>
         </section>
@@ -1591,7 +1601,7 @@
       <p>
         The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object
         that is not <a def-id="media-key-session-closed"></a>.
-        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop, but not in parallel to other procedures defined
+        The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
 
@@ -1611,7 +1621,6 @@
         The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
         objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
       </p>
-
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -2487,11 +2496,10 @@ interface MediaKeyMessageEvent : Event {
         <section id="monitor-cdm">
           <h4>Monitor for CDM State Changes</h4>
           <p>
-            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change. It is run for each
-            <a>MediaKeySession</a> object in parallel to the main event loop but not in parallel to other procedures defined in this
-            specification that are run in parallel to the main event loop.
+            The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change.
           </p>
           <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, <a def-id="update"></a> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
+          <p class="note">The algorithm is always run in parallel to the main event loop.</p>
           <p>
             The following steps are run:
           </p>
@@ -2693,16 +2701,16 @@ interface MediaKeyMessageEvent : Event {
                                     attribute EventHandler onencrypted;
                                     attribute EventHandler onwaitingforkey;
     [SecureContext] Promise&lt;void&gt; setMediaKeys (MediaKeys? mediaKeys);
-};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><a>MediaKeys</a></span>, readonly       , nullable</dt><dd>
-          <p>The <a>MediaKeys</a> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
+};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <dfn> --><!-- Remove the id in <code> when https://github.com/w3c/respec/issues/893 is fixed. --><code id=dom-mediakeys>mediaKeys</code><!-- </dfn> --> of type <span class="idlAttrType"><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --></span>, readonly       , nullable</dt><dd>
+          <p>The <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> being used when decrypting encrypted <a def-id="media-data"></a> for this media element.</p>
         </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>
           <p>Event handler for the <a def-id="waitingforkey"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys</code></dfn></dt><dd>
-          <p>Provides the <a>MediaKeys</a> to use when decrypting media data during playback.</p>
+          <p>Provides the <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> to use when decrypting media data during playback.</p>
 
-          <p class="note">Support for clearing or replacing the associated <a>MediaKeys</a> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
+          <p class="note">Support for clearing or replacing the associated <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
           <p class="note">Some implementations may only support decrypting media data provided via Media Source Extensions [[MEDIA-SOURCE]].
             This is not reflected in the results of calling <a def-id="requestMediaKeySystemAccess"></a>.
           </p>
@@ -2762,7 +2770,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mediaKeys</td><td class="prmType"><code>MediaKeys</code></td><td class="prmNullTrue"><span role="img" aria-label="True">✔</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              A <a>MediaKeys</a> object.
+              A <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object.
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;void&gt;</code></div></dd></dl></section></div>
 
       <section>
@@ -3086,7 +3094,7 @@ interface MediaEncryptedEvent : Event {
       <section id="media-element-restictions" class="informative">
         <h3>Media Element Restrictions</h3>
         <p>Media data processed by a CDM MAY be unavailable through JavaScript APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
-        This specification does not define conditions for such non-availability of media data, however, if media data is not available to JavaScript APIs then these APIs MAY behave as if no media data was present at all.</p>
+        This specification does not define conditions for such non-availability of media data, however, if media data is not available to JavaScript APIs then such APIs MAY behave as if no media data was present at all.</p>
         <p>Where media rendering is not performed by the UA, for example in the case of a hardware-based media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, MAY be unavailable. One likely restriction is that
         video media MAY be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
       </section>
@@ -3180,7 +3188,7 @@ interface MediaEncryptedEvent : Event {
             <li><p><a def-id="distinctive-permanent-identifiers"></a> MUST be <a href="#encrypt-identifiers">encrypted</a> when exposed outside the client and MUST NOT be exposed to the application.</p></li>
             <li>
               <p>
-                All potential identifiers or distinctive values not covered above that are generated as a result of use of these APIs MUST be <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a>.
+                All potential identifiers or distinctive values not covered above that are generated as a result of use of the APIs defined in this specification MUST be <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a>.
                 This includes but is not limited to random identifiers, session data, and other CDM data.
               </p>
             </li>
@@ -3228,7 +3236,7 @@ interface MediaEncryptedEvent : Event {
             <ul>
               <li><p>To the application via a <a def-id="message"></a> event.</p></li>
               <li><p>In a message from a server, such as one that is passed to <a def-id="update"></a>.</p></li>
-              <li><p>As part of <a href="#privacy-individualization">individualization</a>.</p></li>
+              <li><p>As part of <a href="#individualization">individualization</a>.</p></li>
             </ul>
           </div>
           <p>
@@ -3243,7 +3251,7 @@ interface MediaEncryptedEvent : Event {
             <p>Among other things, this means that:</p>
             <ul>
               <li><p>Every signature made with device-specific or user-specific keys MUST be different, even given the same plaintext.</p></li>
-              <li><p>Identifiers, keys, or certificates relating to device-specific or user-specific keys MUST be encrypted for the license or <a href="#privacy-individualization">individualization</a> server.</p></li>
+              <li><p>Identifiers, keys, or certificates relating to device-specific or user-specific keys MUST be encrypted for the license or <a href="#individualization">individualization</a> server.</p></li>
               <li><p>Messages from the license server to the CDM MUST NOT expose recipient-unique identifiers, such as the ID of the intended decryption key, on the outside of the encryption envelope.</p></li>
             </ul>
           </div>
@@ -3254,7 +3262,7 @@ interface MediaEncryptedEvent : Event {
           <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/242">Issue 242</a> - Add a section that covers this topic for values and data that are not identifiers.</p>
           <p>
             All potential identifiers or distinctive values that are not <a href="#permanent-identifier">Permanent Identifiers</a> MUST be unique per <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
-            That is, the identifier(s) used for one <a def-id="origin"></a> using these APIs MUST be different from those used for any other origin using the APIs,
+            That is, the identifier(s) used for one <a def-id="origin"></a> using the APIs defined in this specification MUST be different from those used for any other origin using the APIs,
             and identifier(s) used in one <a def-id="browsing-profile"></a> MUST be different from those used for any other profile, regardless of origin.
           </p>
           <div class="note">
@@ -3285,10 +3293,80 @@ interface MediaEncryptedEvent : Event {
         </section>
       </section>
 
+      <section id="individualization">
+        <h4>Individualization</h4>
+        <p>
+          Identifiers, especially <a def-id="distinctive-identifiers"></a>, are sometimes generated or obtained via a process called individualization or provisioning.
+          The resulting identifier(s) MUST be <a def-id="non-associable-by-application"></a> and <a href="#uses-distinctive-identifiers">use of them</a> MUST only be exposed to a <a href="#per-origin-per-profile-identifiers">single origin from a single profile</a>.
+          This process MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
+        </p>
+        <p>This process MUST be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a>.
+          The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
+          Which method is used depends on the CDM implementation and application of the requirements of this specification, especially those below.
+        </p>
+        <p class="note">
+          <a def-id="option-distinctiveIdentifier"></a> controls whether <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a> may be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a>, including for individualization.
+          Specifically, such identifiers may only be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a> when the value of the <a def-id="option-distinctiveIdentifier"></a> member of the <a>MediaKeySystemAccess</a> used to create the <a>MediaKeys</a> object is <a def-id="requirement-required"></a>.
+        </p>
+
+        <section id="direct-individualization">
+          <h5>Direct Individualization</h5>
+          <p>
+            Direct Individualization is performed between the <a def-id="cdm"></a> and an origin- and application-independent server.
+            Although the server is origin-independent, the result of the individualization enables the CDM to provide origin-specific identifiers per the other
+            requirements of this specification.
+            The process MUST be performed by the user agent and MUST NOT use the APIs defined in this specification.
+          </p>
+          <p class="note">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-per-profile-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier for <a href="#per-origin-per-profile-identifiers">a single browsing profile</a> by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
+          </p>
+          <p>For such individualization, all message exchanges:</p>
+          <ul>
+            <li><p>MUST be handled by the user agent and performed by the user agent via the user agent's network stack.</p></li>
+            <li><p>MUST NOT be performed directly by the CDM.</p></li>
+            <li><p>MUST NOT be passed to or through the application via the APIs defined in this specification.</p></li>
+            <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
+          </ul>
+          <p>
+            Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+          </p>
+        </section>
+
+        <section id="app-assisted-individualization">
+          <h5>App-Assisted Individualization</h5>
+          <p>App-Assisted Individualization is performed between the <a def-id="cdm"></a> and the application, including an application-selected server, and results in a per-origin identifier.
+            The process MUST be performed via the APIs defined in this specification and MUST NOT involve other methods of communication.
+            As with all other uses of the APIs, the process MAY <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, but it MUST NOT <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> or non-origin-specific values, even in encrypted form.
+            If the process <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, the resulting identifier is by definition also a <a def-id="distinctive-identifier"></a>.
+          </p>
+          <p>For such individualization, all message exchanges:</p>
+          <ul>
+            <li><p>MUST be passed to or through the application via the APIs defined in this specification.</p></li>
+            <li><p>SHALL use the message type <a def-id="message-type-individualization-request"></a> for all related <a def-id="message"></a> events.</p></li>
+            <li><p>MUST NOT be performed by the user agent.</p></li>
+            <li><p>MUST NOT be performed directly by the CDM.</p></li>
+            <li><p>MUST NOT contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.
+            </p></li><li><p>MUST NOT contain non-origin-specific per-client information</p></li>
+            <li>
+              <p>MUST adhere to the <a href="#identifier-requirements">identifier requirements</a>.
+              </p><p class="note">This includes only using values that are <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
+            </li>
+            <li><p>MUST NOT provide executable code to the CDM.</p></li>
+          </ul>
+          <p>
+            When <a def-id="associable"></a> values, including <a def-id="distinctive-identifier-maybe-plural"></a>, are <a href="#uses-distinctive-identifiers">used</a> in the process,
+            implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
+          </p>
+          <p>With appropriate precautions, such individualization can provide better privacy than <a href="#direct-individualization">Direct Individualization</a>, though not as good as models that do not <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>.
+            To preserve the benefits of such a design and to avoid introducing other privacy concerns,
+            such implementations and the applications that support them SHOULD avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
+          </p>
+        </section>
+      </section>
+
       <section>
         <h4>Support Multiple Keys</h4>
         <p>Implementations MUST support multiple keys in each <a>MediaKeySession</a> object.</p>
-        <p class="note">The mechanics of how multiple keys are supported is an implementation detail, but it MUST be transparent to the application and these APIs.</p>
+        <p class="note">The mechanics of how multiple keys are supported is an implementation detail, but it MUST be transparent to the application and the APIs defined in this specification.</p>
 
         <p>Implementations MUST support seamless switching between keys during playback.
           This includes both keys in the same <a>MediaKeySession</a> and keys in separate <a>MediaKeySession</a> objects.
@@ -3433,7 +3511,7 @@ interface MediaEncryptedEvent : Event {
               </p>
             </li>
             <li><p><a def-id="initialization-data"></a>: Implementations MAY support any combination of registered Initialization Data Types [[EME-INITDATA-REGISTRY]].
-              Implementations SHOULD support the <code>"<a def-id="keyids-initdatatype">keyids</a>"</code> type and other types appropriate for content types supported by the user agent.
+              Implementations SHOULD support the <code>"keyids"</code> type [[EME-INITDATA-KEYIDS]] and other types appropriate for content types supported by the user agent.
             </p></li>
           </ul>
         </section>
@@ -3646,14 +3724,20 @@ interface MediaEncryptedEvent : Event {
             <li><p>DNS spoofing attacks: One cannot guarantee that a host claiming to be in a certain domain (<a def-id="origin"></a>) really is from that domain.</p></li>
             <li><p>Passive network attacks: One cannot guarantee that data, including <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>, transmitted between the client and server is not viewed by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
             <li>
-              <p>Active network attacks: One cannot guarantee that Additional scripts or iframes are not injected into pages (both those that use these APIs for legitimate purposes and pages that do not use these APIs).
+              <p>Active network attacks: One cannot guarantee that Additional scripts or iframes are not injected into pages (both those that use the APIs defined in this specification for legitimate purposes and pages that do not use them).
                 The consequences are that:
               </p>
               <ul>
-                <li><p>Calls to these APIs can be injected into any page.</p></li>
-                <li><p>Calls to these APIs from pages using them for legitimate reasons can be manipulated, including modifying the requested functionality, modifying or adding calls, and modifying or injecting data. See also <a href="#input-data-security">Input Data Attacks and Vulnerabilities</a></p></li>
+                <li><p>Calls to the APIs defined in this specification can be injected into any page.</p></li>
+                <li><p>Calls to the APIs defined in this specification from pages using them for legitimate reasons can be manipulated, including modifying the requested functionality, modifying or adding calls, and modifying or injecting data. See also <a href="#input-data-security">Input Data Attacks and Vulnerabilities</a></p></li>
                 <li><p>Data, including <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>, transmitted between the client and server can be viewed and/or modified by other entities. See <a href="#user-tracking">User Tracking</a>.</p></li>
               </ul>
+            </li>
+            <li>
+              <p>
+                Abuse of persisted consent: One cannot guarantee that the host requesting use of the APIs defined in this specification is the host to which the user previously provided consent.
+                The consequences are that granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.
+              </p>
             </li>
           </ul>
         </section>
@@ -3666,7 +3750,7 @@ interface MediaEncryptedEvent : Event {
               <p>Applications using TLS can be sure that only the user, software working on behalf of the user, and other pages using TLS that have certificates identifying them as being from the same domain, can interact with that application.
                 Furthermore, <a def-id="origin"></a>-specific permissions in combination with a secure origin, ensure that permissions granted to an application cannot be abused by a network attacker.
               </p>
-              <p>This API is only exposed on secure contexts.
+              <p>The APIs defined in this specification are only exposed on secure contexts.
                 See also <a href="#privacy-secureorigin">Secure Origin and Transport</a>.
               </p>
             </dd>
@@ -3681,12 +3765,12 @@ interface MediaEncryptedEvent : Event {
 
             <dt id="security-prompts">Provide per-origin user alerts / prompts and permissions</dt>
             <dd>
-              <p>User Agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a def-id="origin"></a>.
-                Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
-                (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
-                User agents SHOULD only persist consent for secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), to mitigate the potential for future abuse via <a href="#network-attacks">Network Attacks</a>.
+              <p>User agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a def-id="origin"></a>.
               </p>
-              <p class="note">The restriction of this API to secure contexts ensures that a network attacker cannot exploit permissions granted to an unauthenticated origin.</p>
+              <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
+                (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
+              </p>
+              <p class="note">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.</p>
             </dd>
           </dl>
         </section>
@@ -3698,17 +3782,17 @@ interface MediaEncryptedEvent : Event {
           <h4>Potential Attacks</h4>
           <p>Malicious pages could host legitimate applications in an iframe in an attempt hide an attack or deceive the user as to the source, such as making the use appear to be from a legitimate content provider.
             This is especially relevent for user agents that support have <a href="#security-prompts">user alerts, prompts, and/or permissions</a>.
-            In addition to <a href="#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses of these APIs by hosting them in an <code>iframe</code>.
+            In addition to <a href="#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses of the APIs defined in this specification by hosting them in an <code>iframe</code>.
             By having the legitimate application performing the actions, the attacker can reuse existing granted permissions (or whitelisting) and/or appear to be a legitimate request or use.
           </p>
         </section>
         <section>
           <h4>Mitigations</h4>
-          <p>User agents are RECOMMENDED to base the UI and persistence of <a href="#security-prompts">user alerts, prompts, and/or permissions</a> on the combination of <a def-id="origin"></a> of the top-level <a def-id="document-concept"></a> and the <a def-id="origin"></a> using these APIs.
+          <p>User agents are RECOMMENDED to base the UI and persistence of <a href="#security-prompts">user alerts, prompts, and/or permissions</a> on the combination of <a def-id="origin"></a> of the top-level <a def-id="document-concept"></a> and the <a def-id="origin"></a> using the APIs defined in this specification.
             This ensures that users are informed of the main document making the request and that persisting a permission for one (legitimate) combination does not inadvertently allow malicious use to go undetected.
           </p>
           <p>Authors are RECOMMENDED to prevent other entities from hosting their applications in <code>iframe</code>s.
-            Applications that must support being hosted for legitimate application-design reasons SHOULD NOT allow hosting documents to provide <a href="#input-data-security">any data to be passed to the CDM</a> - either via these APIs or as media data - and SHOULD NOT allow hosting frames to invoke these APIs.
+            Applications that must support being hosted for legitimate application-design reasons SHOULD NOT allow hosting documents to provide <a href="#input-data-security">any data to be passed to the CDM</a> - either via the APIs defined in this specification or as media data - and SHOULD NOT allow hosting frames to invoke the APIs defined in this specification.
           </p>
         </section>
       </section>
@@ -3718,12 +3802,12 @@ interface MediaEncryptedEvent : Event {
         <p>Different authors sharing one host name, for example users hosting content on <code>geocities.com</code>, all share one <a def-id="origin"></a>.
           User agents do not provide features to restrict access to APIs by pathname.
         </p>
-        <p>Using these APIs on shared hosts compromises origin-based security and privacy mitigations implemented by user agents.
+        <p>Using the APIs defined in this specification on shared hosts compromises origin-based security and privacy mitigations implemented by user agents.
           For example, per-origin <a def-id="distinctive-identifiers"></a> are shared by all authors on one host name, and peristed data may be accessed and manipulated by any author on the host.
           The latter is especially important if, for example, modification or deletion of such data could erase a user's right to specific content.
         </p>
         <p class="note">Even if a path-restriction feature was made available by user agents, the usual DOM scripting security model would make it trivial to bypass this protection and access the data from any path.</p>
-        <p>Authors on shared hosts are therefore RECOMMENDED to avoid using these APIs because doing so compromises origin-based security and privacy mitigations in user agents.</p>
+        <p>Authors on shared hosts are therefore RECOMMENDED to avoid using the APIs defined in this specification because doing so compromises origin-based security and privacy mitigations in user agents.</p>
       </section>
 
     </section>
@@ -3786,7 +3870,7 @@ interface MediaEncryptedEvent : Event {
                   <li><p>Local directory paths, which may contain similar information.</p></li>
                   <li><p>Local network details (for example, the device's local IP address)</p></li>
                   <li><p>Local devices, including but not limited to Bluetooth, USB, and user media.</p></li>
-                  <li><p>User state not associated with or stored as a result of these APIs.</p></li>
+                  <li><p>User state not associated with or stored as a result of the APIs defined in this specification.</p></li>
                 </ul>
               </div>
           </li></ul>
@@ -3903,22 +3987,19 @@ interface MediaEncryptedEvent : Event {
 
             <dt>Use shared blacklists</dt>
             <dd>
-              <p>User agents MAY allow users to share their Key System <a def-id="origin"></a> blacklists.
+              <p>User agents MAY allow users to share blacklists of <a def-id="origin">origins</a> and/or Key Systems.
                 This would allow communities to act together to protect their privacy.
               </p>
             </dd>
 
             <dt id="privacy-prompts">Provide per-origin user alerts / prompts and permissions</dt>
             <dd>
-              <p>User agents MUST ensure that users are fully informed and/or give explicit consent before <a def-id="distinctive-identifier-maybe-plural"></a> are exposed, such as in messages from the Key System implementation.</p>
-              <p>User agents MUST prompt or otherwise inform the user before allowing use of a <a def-id="distinctive-identifier"></a> that is not <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and/or not <a href="#allow-identifiers-cleared">clearable</a> is used.
-                User agents SHOULD prompt or otherwise inform the user before allowing use of all other <a def-id="distinctive-identifier"></a>.
+              <p>User agents MUST ensure that users are fully informed and/or give explicit consent before <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.
               </p>
-              <p class="note">The "not unique per-origin and profile" and "not clearable" conditions cannot be true in a compliant implementation because implementations MUST <a href="#per-origin-per-profile-identifiers">use per origin per profile identifiers</a> and <a href="#allow-identifiers-cleared">allow the user to clear identifiers</a>.</p>
-              <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access.
-                User agent implementers that consider such alerts or consent appropriate for a Key System implementation SHOULD only support such Key Systems on secure origins (see <a href="#privacy-secureorigin">Secure Origin and Transport</a>), especially if they allow such consent to be persisted.
+              <p>Such alerts and consent SHOULD be per <a def-id="origin"></a> to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
+                (A full <a def-id="origin"></a> MUST be used rather than just the domain because the protocol is important for security as described above.)
               </p>
-              <p class="note">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker.</p>
+              <p class="note">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.</p>
             </dd>
 
             <dt>Provide user controls to disable Key Systems or Key System use of identifiers</dt>
@@ -3929,76 +4010,10 @@ interface MediaEncryptedEvent : Event {
             </dd>
           </dl>
 
-          <p class="note">While these suggestions prevent trivial use of this API for user tracking, they do not block it altogether.
+          <p class="note">While these suggestions prevent trivial use of the APIs defined in this specification for user tracking, they do not block it altogether.
             Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site.
             If a third party cooperates with multiple sites to obtain such information, and if identifiers are not <!-- Issue #101 may affect this text. --><a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, then a profile can still be created.
           </p>
-        </section>
-
-        <!-- TODO: This is out of place as a sub-section here. -->
-        <section id="privacy-individualization">
-          <h4>Individualization</h4>
-          <p>
-            Identifiers, especially <a def-id="distinctive-identifiers"></a>, are sometimes generated or obtained via a process called individualization or provisioning.
-            The resulting identifier(s) MUST be <a def-id="non-associable-by-application"></a> and <a href="#uses-distinctive-identifiers">use of them</a> MUST only be exposed to a <a href="#per-origin-per-profile-identifiers">single origin from a single profile</a>.
-            This process MAY be performed multiple times, such as after identifier(s) are <a href="#allow-identifiers-cleared">cleared</a>.
-          </p>
-          <p>This process MUST be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a> depending on the CDM implementation.
-            The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections.
-          </p>
-
-          <section id="direct-individualization">
-            <h5>Direct Individualization</h5>
-            <p>
-              Direct Individualization is performed between the <a def-id="cdm"></a> and an origin- and application-independent server.
-              Although the server is origin-independent, the result of the individualization enables the CDM to provide origin-specific identifiers per the other
-              requirements of this specification.
-              The process MUST be performed by the user agent and MUST NOT use these APIs.
-            </p>
-            <p class="note">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-per-profile-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier for <a href="#per-origin-per-profile-identifiers">a single browsing profile</a> by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
-            </p>
-            <p>For such individualization, all message exchanges:</p>
-            <ul>
-              <li><p>MUST be handled by the user agent and performed by the user agent via the user agent's network stack.</p></li>
-              <li><p>MUST NOT be performed directly by the CDM.</p></li>
-              <li><p>MUST NOT be passed to or through the application via these APIs.</p></li>
-              <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
-            </ul>
-            <p>
-              Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
-            </p>
-          </section>
-
-          <section id="app-assisted-individualization">
-            <h5>App-Assisted Individualization</h5>
-            <p>App-Assisted Individualization is performed between the <a def-id="cdm"></a> and the application, including an application-selected server, and results in a per-origin identifier.
-              The process MUST be performed via these APIs and MUST NOT involve other methods of communication.
-              As with all other uses of the APIs, the process MAY <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, but it MUST NOT <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> or non-origin-specific values, even in encrypted form.
-              If the process <a href="#uses-distinctive-identifiers">use one or more Distinctive Identifier(s)</a>, the resulting identifier is by definition also a <a def-id="distinctive-identifier"></a>.
-            </p>
-            <p>For such individualization, all message exchanges:</p>
-            <ul>
-              <li><p>MUST be passed to or through the application via these APIs.</p></li>
-              <li><p>SHALL use the message type <a def-id="message-type-individualization-request"></a> for all related <a def-id="message"></a> events.</p></li>
-              <li><p>MUST NOT be performed by the user agent.</p></li>
-              <li><p>MUST NOT be performed directly by the CDM.</p></li>
-              <li><p>MUST NOT contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.
-              </p></li><li><p>MUST NOT contain non-origin-specific per-client information</p></li>
-              <li>
-                <p>MUST adhere to the <a href="#identifier-requirements">identifier requirements</a>.
-                </p><p class="note">This includes only using values that are <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
-              </li>
-              <li><p>MUST NOT provide executable code to the CDM.</p></li>
-            </ul>
-            <p>
-              When <a def-id="associable"></a> values, including <a def-id="distinctive-identifier-maybe-plural"></a>, are <a href="#uses-distinctive-identifiers">used</a> in the process,
-              implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>-, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
-            </p>
-            <p>With appropriate precautions, such individualization can provide better privacy than <a href="#direct-individualization">Direct Individualization</a>, though not as good as models that do not <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>.
-              To preserve the benefits of such a design and to avoid introducing other privacy concerns,
-              such implementations and the applications that support them SHOULD avoid deferring or forwarding individualization messages to a central server or other server not controlled by the application author.
-            </p>
-          </section>
         </section>
       </section>
 
@@ -4052,7 +4067,7 @@ interface MediaEncryptedEvent : Event {
       <section id="privacy-secureorigin">
         <h3>Secure Origin and Transport</h3>
         <p>
-          These APIs are only supported on secure origins, protecting information discussed in previous sections.
+          The APIs defined in this specification are only supported on secure origins, protecting information discussed in previous sections.
           Identifiers are additionally encrypted as specified in <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
         </p>
         <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM (i.e. all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>).</p>
