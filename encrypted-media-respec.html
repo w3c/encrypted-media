@@ -3281,6 +3281,8 @@ interface MediaEncryptedEvent : Event {
             <li><p>MUST NOT be performed directly by the CDM.</p></li>
             <li><p>MUST NOT be passed to or through the application via the APIs defined in this specification.</p></li>
             <li><p>MUST be sent to a URL selected independently of any origin and application.</p></li>
+            <li><p>MUST encrypt all <a def-id="distinctive-identifiers"></a> and <a def-id="distinctive-permanent-identifiers"></a>.</p></li>
+            <li><p>MUST use TLS.</p></li>
           </ul>
           <p>
             Implementations MUST NOT expose, even in encrypted form, <a def-id="origin">origin(s)</a>, origin- or application-specific information, or values that are <a def-id="associable"></a> with origin(s) to centralized servers since this could create a central record of all origins visited by a user or device.
@@ -3836,16 +3838,16 @@ interface MediaEncryptedEvent : Event {
       <section id="user-tracking">
         <h3>User Tracking</h3>
         <section class="informative">
-        <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/237">Issue 237</a> - Address <a def-id="distinctive-permanent-identifiers"></a> in this section and ensure it reflects the current definition of <a def-id="distinctive-identifier"></a>.</p>
           <h4>Concerns</h4>
-          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key ids and records of key usage or records of license destruction stored in the <a def-id="cdm"></a>'s client-side database to track a user across multiple sessions (including across <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.
+          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key IDs, records of key usage, or records of license destruction, stored by the <a def-id="cdm"></a> to track a user across multiple sessions (including across <a def-id="origin">origins</a> and <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.
             Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
-            In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous Web usage.
+            In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous web usage.
           </p>
 
-          <p>User- or client-specific information that could be obtained via the APIs in this specification includes:</p>
+          <p>User- or client-specific information that could be obtained via implementations of the APIs in this specification includes:</p>
           <ul>
             <li><p><a def-id="distinctive-identifier-maybe-plural"></a></p></li>
+            <li><p><a def-id="distinctive-permanent-identifier-maybe-plural"></a></p></li>
             <li><p>Origins visited (via stored or in-memory data, permissions, etc.)</p></li>
             <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p></li>
           </ul>
@@ -3853,13 +3855,13 @@ interface MediaEncryptedEvent : Event {
           
           <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
-          <p>Key Systems may access or create persistent or semi-persistent identifier(s), <a def-id="distinctive-identifier-maybe-plural"></a>, for a device or user of a device.
+          <p>Key Systems may access or create persistent or semi-persistent identifier(s) for a device or user of a device.
             In some cases these identifiers may be bound to a specific device in a secure manner.
             If these identifiers are present in Key System messages, then devices and/or users may be tracked.
             If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
           </p>
 
-          <p>It is important to note that such identifiers, especially those that are non-clearable, non-<a def-id="origin"></a>-specific or hardware-bound, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
+          <p>It is important to note that such identifiers, especially those that are non-clearable, non-<a def-id="origin"></a>-specific, or <a href="#permanent-identifier">permanent</a>, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
 
           <p>If not mitigated, such tracking may take three forms depending on the design of the Key System:</p>
           <ul>
@@ -3868,20 +3870,45 @@ interface MediaEncryptedEvent : Event {
             <li><p>If Key System messages contain information derived from a user identifier in a consistent manner, for example such that a portion of the initial Key System message for a specific content item does not change over time and is dependent on the user identifier, then this information could be used by any application to track the device or user over time.</p></li>
           </ul>
 
-          <p>In addition, if a Key System permits keys to be stored and to be re-used between origins, then it may be possible for two origins to collude and track a unique user by recording their ability to access a common key.</p>
+          <p>In addition, if a Key System permits keys or other data to be stored and to be re-used between origins, then it may be possible for two origins to collude and track a unique user by recording their ability to access a common key.</p>
           <p>Finally, if any user interface for user control of Key Systems presents data separately from data in HTTP session cookies [[COOKIES]] or persistent storage, then users are likely to modify site authorization or delete data in one and not the others.
             This would allow sites to use the various features as redundant backup for each other, defeating a user's attempts to protect his or her privacy.
           </p>
+          
+          <p>
+            In addition to the potential for sites and other third-parties to track users, the user agent implementer, CDM vendor, or device vendor could build a profile of the user's activities or interests, such as sites using the APIs defined in this specification that the user visits.
+            Such tracking would undermine the privacy protections provided by the rest of the web platform, especially those related to isolation of origins.
+          </p>
+          
+          <p>
+            Identifiers, such as <a def-id="distinctive-identifiers"></a>, may be obtained from a server operated or provided by the CDM vendor, such as via an <a href="#individualization">individualization</a> process.
+            The process may include providing client identifier(s), including <a def-id="distinctive-permanent-identifier-maybe-plural"></a>, to the server.
+            In order to generate a per-origin identifier, a value representing the origin may also be provided.
+          </p>
 
+          <p>
+            In such an implementation, the CDM vendor may be able to track the activity of the user, such as number of origins visited or number of times a new identifier is required.
+            If the origin or a value <a def-id="associable"></a> with the origin is provided in the identifier request, the CDM vendor could track the sites visited by the user or user(s) of a device.
+          </p>
           <p>The following section describes techniques that may mitigate the risks of tracking without user consent.</p>
         </section>
         <section>
           <h4>Mitigations</h4>
           <dl>
+            <!-- TODO: Reorder these so related items are near each other. -->
             <dt>Do not <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifiers or Distinctive Permanent Identifiers</a></dt>
             <dd>
               <p>Key System implementations SHOULD avoid <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifiers and Distinctive Permanent Identifiers</a> whenever possible and only use them when they meaningfully contribute to the robustness of the implementation.
                 See <a href="#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers</a>.
+              </p>
+            </dd>
+
+            <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
+            <dd>
+              <!-- TODO: Reference section added for issue #242. -->
+              <p>Any data used by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be partitioned by <a def-id="origin"></a> and <a def-id="browsing-profile"></a> and MUST NOT leak to or from private browsing sessions.
+                This includes both in-memory and persisted data.
+                Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers MUST be partitioned per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
               </p>
             </dd>
 
@@ -3897,6 +3924,21 @@ interface MediaEncryptedEvent : Event {
               <!-- Issue #101 may affect this text. -->
               <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
                 See <a href="#per-origin-per-profile-identifiers">Use Per-Origin Per-Profile Identifiers</a>.
+              </p>
+            </dd>
+
+            <dt>Do not expose per-origin information to unrelated entities</dt>
+            <dd>
+              <p>
+                Do not provide <a def-id="origin">origin(s)</a> or values <a def-id="associable"></a> with origins to individualization servers or other entities not related to the origin.
+                Follow the requirements and recommendations in the <a href="#individualization">Individualization</a> section if such a process is used by the implementation. 
+              </p>
+            </dd>
+
+            <dt>Do not expose <a def-id="distinctive-permanent-identifiers"></a> to the application</dt>
+            <dd>
+              <p>
+                Implementations MUST NOT expose <a def-id="distinctive-permanent-identifiers"></a> to the application or origin. 
               </p>
             </dd>
 
@@ -3960,7 +4002,7 @@ interface MediaEncryptedEvent : Event {
 
             <dt>Provide user controls to disable Key Systems or Key System use of identifiers</dt>
             <dd>
-              <p>User Agents SHOULD provide users with a global control of whether a Key System is enabled and/or whether Key System use of <a def-id="distinctive-identifier-maybe-plural"></a> is enabled (if supported by the Key System).
+              <p>User Agents SHOULD provide users with a global control of whether a Key System is enabled and/or whether Key System <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use of Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a> is enabled (if supported by the Key System).
                 User agents SHOULD help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
               </p>
             </dd>
@@ -3988,8 +4030,9 @@ interface MediaEncryptedEvent : Event {
           <dl>
             <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
             <dd>
+              <!-- TODO: Reference section added for issue #242. -->
               <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be stored in an <a def-id="origin"></a>-specific and <a def-id="browsing-profile"></a>-specific way and MUST NOT leak to or from private browsing sessions.
-                Session data, licenses, and keys that are persistently stored MUST be stored per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
+                Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers MUST be stored per-<a def-id="origin"></a> and per-<a def-id="browsing-profile"></a>.
                 See <a def-id="session-storage"></a>.
               </p>
             </dd>
