@@ -327,8 +327,6 @@
     'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
 
     'contributors': { func: contributors_helper, fragment: '', link_text: '', },
-
-    'keyids-initdatatype': { func: link_helper, fragment: 'format-registry/initdata/keyids.html', link_text: '"keyids" Initialization Data Format', },
   };
 
   // These definitions referring to locations in the main EME spec are only referenced from the registry.
