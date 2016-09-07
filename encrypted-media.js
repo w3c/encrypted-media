@@ -371,12 +371,24 @@
   function encryptedMediaPreProcessor() {
     var original_EME_spec_url = EME_spec_url; // The loop may change multiple groupBaseURLs.
     var is_registry_file = window.respecConfig.edDraftURI.includes("/encrypted-media/format-registry/");
+    var specStatus = window.respecConfig.specStatus;
+    var specStatusIndex = location.search.indexOf("specStatus");
+    if (specStatusIndex !== -1) {
+      var status = location.search.substring(specStatusIndex);
+      specStatusIndex = status.indexOf('=');
+      status = status.substring(specStatusIndex+1);
+      var semicolon = status.indexOf(';');
+      if (semicolon !== -1) {
+        status = status.substring(0, semicolon);
+      }
+      specStatus = status;
+    }
     for (var x in groupBaseURLs) {
       // TODO: It is weird that EME_spec_url gets changed (once) in this loop.
       // TODO: This may not work for published registry pages unless we _don't_
       // use "ED" for them, and it may break for unpublished registry pages if
       // we stop using "ED" for them.
-      if (groupBaseURLs[x] == original_EME_spec_url && window.respecConfig.specStatus == "ED") {
+      if (groupBaseURLs[x] == original_EME_spec_url && specStatus == "ED") {
           // Refer to the local file rather than the published path.
           var file = "index.html";
           // Registry files need a relative path.
@@ -393,7 +405,7 @@
     var registry_base_path = is_registry_file ? "../" : "format-registry/";
     var registry_biblio_entries =
      getEncryptedMediaRegistryBibioEntries(registry_base_path,
-                                           window.respecConfig.specStatus);
+                                           specStatus);
     if (window.respecConfig.localBiblio) {
       for (var property_name in registry_biblio_entries)
         window.respecConfig.localBiblio[property_name] = registry_biblio_entries[property_name];
