@@ -1456,7 +1456,9 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         <ol class="toc">
           <li class="tocline"><a href="#persistent-state-requirements" class="tocxref"><span class="secno">8.1 </span>Persistent Data</a>
             <ol class="toc">
-              <li class="tocline"><a href="#allow-persistent-data-cleared" class="tocxref"><span class="secno">8.1.1 </span>Allow Persistent Data to Be Cleared</a></li>
+              <li class="tocline"><a href="#use-origin-specific-key-system-storage" class="tocxref"><span class="secno">8.1.1 </span>Use origin-specific and browsing profile-specific Key System storage</a></li>
+              <li class="tocline"><a href="#allow-persistent-data-cleared" class="tocxref"><span class="secno">8.1.2 </span>Allow Persistent Data to Be Cleared</a></li>
+              <li class="tocline"><a href="#encrypt-or-obfuscate-persistent-data" class="tocxref"><span class="secno">8.1.3 </span>Encrypt or obfuscate Persistent Data</a></li>
             </ol>
           </li>
           <li class="tocline"><a href="#identifier-requirements" class="tocxref"><span class="secno">8.2 </span>Identifiers</a>
@@ -5804,19 +5806,85 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
     <section id="persistent-state-requirements" typeof="bibo:Chapter" resource="#persistent-state-requirements" property="bibo:hasPart">
       <h3 id="h-persistent-state-requirements" resource="#h-persistent-state-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1 </span>Persistent Data</span></h3>
       <p>
-        Persistent data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+        Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers (including <a href="#distinctive-identifier">Distinctive Identifier(s)</a>), licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
       </p>
 
+      <section id="use-origin-specific-key-system-storage" typeof="bibo:Chapter" resource="#use-origin-specific-key-system-storage" property="bibo:hasPart">
+        <h4 id="h-use-origin-specific-key-system-storage" resource="#h-use-origin-specific-key-system-storage"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.1 </span>Use origin-specific and browsing profile-specific Key System storage</span></h4>
+        <p>Persistent Data that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be stored in an <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>-specific and <a href="#browsing-profile">browsing profile</a>-specific way and <em class="rfc2119" title="MUST NOT">MUST NOT</em> leak to or from private browsing sessions. Specifically but not exhaustively, session data, licenses, keys and per-origin identifiers <em class="rfc2119" title="MUST">MUST</em> be stored per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a>.
+        </p>
+        <p>
+          See <a href="#session-storage">Session Storage and Persistence</a>.
+        </p>
+      </section>
+
       <section id="allow-persistent-data-cleared" typeof="bibo:Chapter" resource="#allow-persistent-data-cleared" property="bibo:hasPart">
-        <h4 id="h-allow-persistent-data-cleared" resource="#h-allow-persistent-data-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.1 </span>Allow Persistent Data to Be Cleared</span></h4>
+        <h4 id="h-allow-persistent-data-cleared" resource="#h-allow-persistent-data-cleared"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.2 </span>Allow Persistent Data to Be Cleared</span></h4>
         <p>
-          Implementations that use persistent data <em class="rfc2119" title="MUST">MUST</em> allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
-        </p>
-        <p id="allow-persistent-data-cleared-with-cookies">
-          Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow users to clear persistent data along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data. It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be offered the option to clear persistent data as part of user agent features to clear browsing history.
+          Implementations that use Persistent Data <em class="rfc2119" title="MUST">MUST</em> allow the user to clear that data such that it is no longer retrievable both outside, such as via the APIs defined in this specification, and on the client device.
         </p>
         <p>
-          It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that users be able to request that persistent data be forgotten on a per-origin basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+          User Agents <em class="rfc2119" title="SHOULD">SHOULD</em>:
+        </p>
+        <ul>
+          <li>
+            <p>
+              Treat Persistent Data like other site data, such as cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>]. Specifically:
+            </p>
+            <ul>
+              <li>
+                <p id="allow-persistent-data-cleared-with-cookies">
+                  Allow users to clear Persistent Data along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Allow users to clear Persistent Data as part of user agent features to clear browsing history.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Include Persistent Data in "remove all data" features.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Present Persistent Data in the same UI locations as other site data.
+                </p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p>
+              Allow users to clear Persistent Data on a per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a> basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site.
+            </p>
+          </li>
+          <li>
+            <p>
+              Ensure that operations which clear Persistent Data are sufficiently atomic to prevent a "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time. See <a href="#incomplete-clearing">incomplete clearing of data</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Present these interfaces in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete data associated with all features that persist data, including cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and web storage, simultaneously.
+            </p>
+          </li>
+          <li>
+            <p>
+              Present the interfaces for disabling and re-enabling a Key System in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete all such data in all persistent storage features simultaneously.
+            </p>
+          </li>
+          <li>
+            <p>
+              Allow users to specifically delete Persistent Data, by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="encrypt-or-obfuscate-persistent-data" typeof="bibo:Chapter" resource="#encrypt-or-obfuscate-persistent-data" property="bibo:hasPart">
+        <h4 id="h-encrypt-or-obfuscate-persistent-data" resource="#h-encrypt-or-obfuscate-persistent-data"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1.3 </span>Encrypt or obfuscate Persistent Data</span></h4>
+        <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> treat Persistent Data as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information. To this end, user agents <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that Persistent Data is securely stored and when deleting data, it is promptly deleted from the underlying storage.
         </p>
       </section>
     </section>
@@ -6855,35 +6923,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
 
       <section id="mitigations-4" typeof="bibo:Chapter" resource="#mitigations-4" property="bibo:hasPart">
         <h4 id="h-mitigations-4" resource="#h-mitigations-4"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.5.2 </span>Mitigations</span></h4>
-        <dl>
-          <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
-          <dd>
-            <!-- TODO: Reference section added for issue #242. -->
-            <p>Any data persistently stored by the CDM that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be stored in an <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>-specific and <a href="#browsing-profile">browsing profile</a>-specific way and <em class="rfc2119" title="MUST NOT">MUST NOT</em> leak to or from private browsing sessions. Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers <em class="rfc2119" title="MUST">MUST</em> be stored per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a>. See <a href="#session-storage">Session Storage and Persistence</a>.
-            </p>
-          </dd>
-          <dt>Provide user deletion of Key System storage</dt>
-          <dd>
-            <p>
-              User Agents <em class="rfc2119" title="MUST">MUST</em> allow the user to clear data persisted by the CDM and <em class="rfc2119" title="SHOULD">SHOULD</em> allow users to clear that data by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the user with a way to specifically delete Key System storage, by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
-            </p>
-          </dd>
-
-          <dt>Treat <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data like cookies / web storage</dt>
-          <dd>
-            <p>
-              User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> treat data persisted by CDMs like other site data, including presenting it along with cookies [
-              <cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations.
-            </p>
-            <p>See the <a href="#like-cookies">identical section above</a>.</p>
-          </dd>
-
-          <dt>Encrypt or obfuscate Key System stored data</dt>
-          <dd>
-            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> treat data stored by Key Systems as potentially sensitive; it is quite possible for user privacy to be compromised by the release of this information. To this end, user agents <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that such data is securely stored and when deleting data, it is promptly deleted from the underlying storage.
-            </p>
-          </dd>
-        </dl>
+        <p>Requirements mitigating these concerns are defined in <a href="#persistent-state-requirements" class="sec-ref"><span class="secno">8.1</span> <span class="sec-title">Persistent Data</span></a>.</p>
       </section>
     </section>
 
@@ -6913,8 +6953,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
 
       <section id="mitigations-5" typeof="bibo:Chapter" resource="#mitigations-5" property="bibo:hasPart">
         <h4 id="h-mitigations-5" resource="#h-mitigations-5"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.6.2 </span>Mitigations</span></h4>
-        <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the interfaces for clearing <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data in a way that helps users to understand this possibility and enables them to delete data in all persistent identification and storage features, including HTTP session cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and web storage, simultaneously. Likewise, User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the interfaces for disabling and re-enabling a Key System in a way that helps users to understand this possibility and enables them to delete all such data in all persistent storage features simultaneously.
-        </p>
+        <p>Recommendations mitigating these concerns are defined in <a href="#persistent-state-requirements" class="sec-ref"><span class="secno">8.1</span> <span class="sec-title">Persistent Data</span></a>.</p>
       </section>
     </section>
 
