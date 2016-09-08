@@ -1271,7 +1271,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-06-september-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-09-06">06 September 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-08-september-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-09-08">08 September 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -5801,7 +5801,8 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
     <section id="persistent-state-requirements" typeof="bibo:Chapter" resource="#persistent-state-requirements" property="bibo:hasPart">
       <h3 id="h-persistent-state-requirements" resource="#h-persistent-state-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1 </span>Persistent Data</span></h3>
       <p>
-        Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers, licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+        Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers (including
+        <a def-id="distintive-identifier-maybe-plural" class="externalDFN"></a>), licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
       </p>
 
       <section id="use-origin-specific-key-system-storage" typeof="bibo:Chapter" resource="#use-origin-specific-key-system-storage" property="bibo:hasPart">
@@ -5823,34 +5824,55 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </p>
         <ul>
           <li>
-            <p id="allow-persistent-data-cleared-with-cookies">
-              allow users to clear Persistent Data along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data.
+            <p>
+              Treat Persistent Data like other site data, such as cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>]. Specifically:
+            </p>
+            <ul>
+              <li>
+                <p id="allow-persistent-data-cleared-with-cookies">
+                  Allow users to clear Persistent Data along with cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and other site data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Allow users to clear Persistent Data as part of user agent features to clear browsing history.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Include Persistent Data in "remove all data" features.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Present Persistent Data in the same UI locations as other site data.
+                </p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p>
+              Allow users to clear Persistent Data on a per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a> basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site.
             </p>
           </li>
           <li>
             <p>
-              allow users to clear Persistent Data as part of user agent features to clear browsing history, specifically [
-              <cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations.
+              Ensure that operations which clear Persistent Data are sufficiently atomic to prevent a "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time. See <a href="#incomplete-clearing">incomplete clearing of data</a>.
             </p>
           </li>
           <li>
             <p>
-              allow users to clear Persistent Data on a per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a> basis, particularly as part of a "Forget about this site" feature that forgets cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], databases, etc. associated with a particular site in an operation that is sufficiently atomic to prevent "cookie resurrection" type of recorrelation of a new identifier with the old by relying on another type of locally stored data that did not get cleared at the same time.
+              Present these interfaces in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete data associated with all features that persist data, including cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and web storage, simultaneously.
             </p>
           </li>
           <li>
             <p>
-              present these interfaces in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete data associated with all features that store persistent data, including cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>] and web storage, simultaneously.
+              Present the interfaces for disabling and re-enabling a Key System in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete all such data in all persistent storage features simultaneously.
             </p>
           </li>
           <li>
             <p>
-              present the interfaces for disabling and re-enabling a Key System in a way that helps users to understand the possibility of <a href="#incomplete-clearing">incomplete clearing of data</a> and enables them to delete all such data in all persistent storage features simultaneously.
-            </p>
-          </li>
-          <li>
-            <p>
-              allow users to specifically delete Persistent Data, by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins.
+              Allow users to specifically delete Persistent Data, by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and/or for all origins.
             </p>
           </li>
         </ul>
