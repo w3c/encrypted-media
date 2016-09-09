@@ -583,8 +583,8 @@
     var postfix = ".html";
     var separator = "";
     if (status !== "ED") {
-      initdata_path = "https://wwww.w3.org/TR/eme-initdata";
-      stream_path = "https://wwww.w3.org/TR/eme-stream";
+      initdata_path = "https://www.w3.org/TR/eme-initdata";
+      stream_path = "https://www.w3.org/TR/eme-stream";
       postfix = "/";
       separator = "-";
     }
