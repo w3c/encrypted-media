@@ -2130,7 +2130,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </div>
               <p>Requests access to the specified <a href="#key-system">Key System</a>. When <code>supportedConfigurations</code> is specified, the configuration specified by at least one of its elements must be supported. The resulting <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> will correspond to the first such element.
               </p>
-              <p>Any permission checks or user interaction, such as a prompt, <em class="rfc2119" title="MUST">MUST</em> be performed before resolving the promise.</p>
+              <p>Any permission checks or user interaction, such as a prompt for consent, <em class="rfc2119" title="MUST">MUST</em> be performed before resolving the promise.</p>
               <p>If the <code>keySystem</code> is not supported or not allowed (in at least one of the <code>supportedConfigurations</code>, if specified), the promise is rejected. Otherwise, it is resolved with a new <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> object.
               </p>
               <div class="note">
@@ -6521,7 +6521,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <p class="">User agents should be especially diligent when using a CDM or underlying mechanism that is part of or provided by the client OS, platform and/or hardware.</p>
       </div>
 
-      <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that users are fully informed and/or give explicit consent before loading or invoking it.
+      <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent <em class="rfc2119" title="SHOULD">SHOULD</em> <a href="#security-consent">ensure that users are fully informed and/or give explicit consent</a> before loading or invoking it.
       </p>
       <div class="note">
         <div class="note-title marker" aria-level="4" role="heading" id="h-note132"><span>Note</span></div>
@@ -6586,11 +6586,11 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <p>User agents <em class="rfc2119" title="MAY">MAY</em> choose to block all Mixed Content, including "Optionally-blockable Content" [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>] to further increase security by preventing <a href="#input-data-security">untrusted media data</a> from being passed to the CDM (see <a href="#cdm-security">CDM Attacks and Vulnerabilities</a>).</p>
           </dd>
 
-          <dt id="security-prompts">Fully inform users and/or require explicit user consent</dt>
+          <dt id="security-consent">Fully inform users and/or require explicit user consent</dt>
           <dd>
             <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g. DOM content) may be accessed by an <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a>.
             </p>
-            <p>Such alerts and consent <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>. (A full <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> <em class="rfc2119" title="MUST">MUST</em> be used rather than just the domain because the protocol is important for security as described above.)
+            <p>Such mechanisms <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>. (A full <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> <em class="rfc2119" title="MUST">MUST</em> be used rather than just the domain because the protocol is important for security as described above.)
             </p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note133"><span>Note</span></div>
@@ -6608,15 +6608,16 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <section class="informative" id="potential-attacks-1" typeof="bibo:Chapter" resource="#potential-attacks-1" property="bibo:hasPart">
         <h4 id="h-potential-attacks-1" resource="#h-potential-attacks-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">10.4.1 </span>Potential Attacks</span></h4>
         <p><em>This section is non-normative.</em></p>
-        <p>Malicious pages could host legitimate applications in an iframe in an attempt hide an attack or deceive the user as to the source, such as making the use appear to be from a legitimate content provider. This is especially relevent for user agents that support have <a href="#security-prompts">user alerts, prompts, and/or permissions</a>. In addition to <a href="#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses of the APIs defined in this specification by hosting them in an <code>iframe</code>. By having the legitimate application performing the actions, the attacker can reuse existing granted permissions (or whitelisting) and/or appear to be a legitimate request or use.
+        <p>Malicious pages could host legitimate applications in an iframe in an attempt hide an attack or deceive the user as to the source, such as making the use appear to be from a legitimate content provider. This is especially relevent for implementations that <a href="#security-consent">inform the user or require consent</a>, such as for security and/or <a href="#privacy-consent">privacy reasons</a>. In addition to <a href="#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses of the APIs defined in this specification by hosting them in an <code>iframe</code>. By having the legitimate application performing the actions, the attacker can reuse existing granted permissions (or whitelisting) and/or appear to be a legitimate request or use.
         </p>
       </section>
 
       <section id="mitigations-1" typeof="bibo:Chapter" resource="#mitigations-1" property="bibo:hasPart">
         <h4 id="h-mitigations-1" resource="#h-mitigations-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">10.4.2 </span>Mitigations</span></h4>
-        <p>User agents are <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> to base the UI and persistence of <a href="#security-prompts">user alerts, prompts, and/or permissions</a> on the combination of <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the top-level <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> and the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using the APIs defined in this specification. This ensures that users are informed of the main document making the request and that persisting a permission for one (legitimate) combination does not inadvertently allow malicious use to go undetected.
+        <p>User agents that <a href="#security-consent">inform the user or require consent</a>, including for security and/or <a href="#privacy-consent">privacy reasons</a>,
+          <em class="rfc2119" title="SHOULD">SHOULD</em> base the UI and persistence of consent on the combination of <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the top-level <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> and the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> using the APIs defined in this specification. This ensures that users are informed of the main document making the request and that persisting a permission for one (legitimate) combination does not inadvertently allow malicious use to go undetected.
         </p>
-        <p>Authors are <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> to prevent other entities from hosting their applications in <code>iframe</code>s. Applications that must support being hosted for legitimate application-design reasons <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> allow hosting documents to provide <a href="#input-data-security">any data to be passed to the CDM</a> - either via the APIs defined in this specification or as media data - and <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> allow hosting frames to invoke the APIs defined in this specification.
+        <p>Authors <em class="rfc2119" title="SHOULD">SHOULD</em> prevent other entities from hosting their applications in <code>iframe</code>s. Applications that must support being hosted for legitimate application-design reasons <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> allow hosting documents to provide <a href="#input-data-security">any data to be passed to the CDM</a> - either via the APIs defined in this specification or as media data - and <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> allow hosting frames to invoke the APIs defined in this specification.
         </p>
       </section>
     </section>
@@ -6882,11 +6883,11 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </p>
           </dd>
 
-          <dt id="privacy-prompts">Fully inform users and/or require explicit user consent</dt>
+          <dt id="privacy-consent">Fully inform users and/or require explicit user consent</dt>
           <dd>
             <p>User agents <em class="rfc2119" title="MUST">MUST</em> ensure that users are fully informed and/or give explicit consent before <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.
             </p>
-            <p>Such alerts and consent <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>. (A full <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> <em class="rfc2119" title="MUST">MUST</em> be used rather than just the domain because the protocol is important for security as described above.)
+            <p>Such mechanisms <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>. (A full <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> <em class="rfc2119" title="MUST">MUST</em> be used rather than just the domain because the protocol is important for security as described above.)
             </p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note137"><span>Note</span></div>
