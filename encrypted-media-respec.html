@@ -3209,10 +3209,46 @@ interface MediaEncryptedEvent : Event {
         </section>
       </section>
         
+      <section id="exposed-value-requirements">
+        <h3>Values Exposed to the Application</h3>
+        <p>Values exposed to the application could be used to identify the client or user, regardless of whether they are designed to be identifiers.
+          This section defines requirements for avoiding or at least mitigating such concerns.
+          There are additional requirements for <a href="#identifier-requirements">Identifiers</a>.
+        </p>
+
+        <section id="per-origin-per-profile-values">
+          <h3>Use Per-Origin Per-Profile Values</h3>
+          <!-- Issue #101 may affect this text. -->
+          <p>
+            All <a href="#distinctive-value">distinctive values</a> exposed to or inferable by the application MUST be unique per <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
+            That is, the value(s) used for one <a def-id="origin"></a> using the APIs defined in this specification MUST be different from those used for any other origin using the APIs,
+            and value(s) used in one <a def-id="browsing-profile"></a> MUST be different from those used for any other profile, regardless of origin.
+          </p>
+          <p>
+            Values across origins and profiles MUST be <a def-id="non-associable-by-application">non-associable by applications</a>, meaning it MUST NOT be possible to correlate values from multiple origins or profiles, such as to determine that they came from the same client or user.
+            Specifically, implementations that derive per-origin values from an origin-independent and/or profile-independent value, MUST do so in a way that ensures the above non-associability
+            property, such as by using derivation functions with appropriate non-reversible properties.
+          </p>
+        </section>
+
+        <section>
+          <h3>Allow Values to Be Cleared</h3>
+          <p>
+            As a consequence of the requirements in <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>,
+            all persisted values exposed to the application MUST be clearable
+            such that the values are no longer retrievable, observable, or inferable both outside, such as via the APIs defined in this specification, and on the client device.
+          </p>
+          <p>
+            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when values are subsequently needed.
+          </p>
+        </section>
+      </section>
+
       <section id="identifier-requirements">
         <h3>Identifiers</h3>
         <p>The use of identifiers, especially <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>, by implementations presents a privacy concern.
           This section defines requirements for avoiding or at least mitigating such concerns.
+          The requirements for <a href="#exposed-value-requirements">Values Exposed to the Application</a> also apply to identifiers exposed to the application. 
         </p>
         <div class="note">
           <p>In summary:</p>
@@ -3299,21 +3335,14 @@ interface MediaEncryptedEvent : Event {
 
         <section id="per-origin-per-profile-identifiers">
           <h3>Use Per-Origin Per-Profile Identifiers</h3>
-          <p class="issue"><a href="https://github.com/w3c/encrypted-media/issues/242">Issue 242</a> - Add a section that covers this topic for values and data that are not identifiers.</p>
           <p>
-            All potential identifiers or <a href="#distinctive-value">distinctive values</a> except <a def-id="distinctive-permanent-identifiers"></a> MUST be unique per <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
-            That is, the identifier(s) used for one <a def-id="origin"></a> using the APIs defined in this specification MUST be different from those used for any other origin using the APIs,
-            and identifier(s) used in one <a def-id="browsing-profile"></a> MUST be different from those used for any other profile, regardless of origin.
+            All identifiers except <a def-id="distinctive-permanent-identifiers"></a> MUST be unique per <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
+            See <a href="#per-origin-per-profile-values">Use Per-Origin Per-Profile Values</a>.
           </p>
           <div class="note">
             <p>This includes but is not limited to <a def-id="distinctive-identifiers"></a>.</p>
             <p><a def-id="distinctive-permanent-identifiers"></a> MUST NOT be exposed to the application or origin.</p>
           </div>
-          <p>
-            Values across origins and profiles MUST be <a def-id="non-associable-by-application">non-associable by applications</a>, meaning it MUST NOT be possible to correlate identifiers from multiple origins or profiles, such as to determine that they came from the same client or user.
-            Specifically, implementations that derive per-origin identifiers from an origin-independent and/or profile-independent identifier, MUST do so in a way that ensures the above non-associability
-            property, such as by using derivation functions with appropriate non-reversible properties.
-          </p>
         </section>
 
         <section id="non-associable-identifiers">
@@ -3338,7 +3367,7 @@ interface MediaEncryptedEvent : Event {
             Implementations that <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a> MUST allow the user to clear values associated with the <a def-id="distinctive-permanent-identifier-maybe-plural"></a>.
           </p>
           <p>
-            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when values, such as <a def-id="distinctive-identifiers"></a> are subsequently needed.
+            Once cleared, new <a def-id="non-associable-by-application"></a> value(s) MUST be generated when values, such as <a def-id="distinctive-identifiers"></a>, are subsequently needed.
           </p>
         </section>
       </section>
@@ -4016,10 +4045,16 @@ interface MediaEncryptedEvent : Event {
               </p>
             </dd>
 
-            <dt>Use non-associable per-origin per-profile identifiers</dt>
+            <dt>Use non-associable per-origin per-profile values and identifiers</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
-              <p>Implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a> MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
+              <p>
+                For all <a href="#distinctive-value">distinctive values</a> exposed to the application,
+                implementations MUST use a different <a def-id="non-associable-by-application"></a> value for each <a def-id="origin"></a> and <a def-id="browsing-profile"></a>.
+                See <a href="#per-origin-per-profile-values">Use Per-Origin Per-Profile Values</a>.
+              </p>
+              <p>
+                This is especially important for implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>.
                 See <a href="#per-origin-per-profile-identifiers">Use Per-Origin Per-Profile Identifiers</a>.
               </p>
             </dd>
