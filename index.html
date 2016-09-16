@@ -6850,42 +6850,9 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <section id="mitigations-3" typeof="bibo:Chapter" resource="#mitigations-3" property="bibo:hasPart">
         <h4 id="h-mitigations-3" resource="#h-mitigations-3"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.2 </span>Mitigations</span></h4>
         <dl>
-          <!-- TODO: Reorder these so related items are near each other.
-              Move "Use non-associable per-origin per-profile values and identifiers" above "Use origin-specific and browsing profile-specific Key System storage".
-             -->
           <dt>Do not <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifiers or Distinctive Permanent Identifiers</a></dt>
           <dd>
             <p>Key System implementations <em class="rfc2119" title="SHOULD">SHOULD</em> avoid <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifiers and Distinctive Permanent Identifiers</a> whenever possible and only use them when they meaningfully contribute to the robustness of the implementation. See <a href="#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers</a>.
-            </p>
-          </dd>
-
-          <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
-          <dd>
-            <p>Any data used by the CDM that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be partitioned by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a> and <em class="rfc2119" title="MUST NOT">MUST NOT</em> leak to or from private browsing sessions. This includes both in-memory and persisted data. Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers <em class="rfc2119" title="MUST">MUST</em> be partitioned per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a>. See <a href="#use-origin-specific-key-system-storage" class="sec-ref"><span class="secno">8.1.1</span> <span class="sec-title">Use origin-specific and browsing profile-specific Key System storage</span></a> and <a href="#per-origin-per-profile-values" class="sec-ref"><span class="secno">8.2.1</span> <span class="sec-title">Use Per-Origin Per-Profile Values</span></a>.
-            </p>
-          </dd>
-
-          <dt>Provide user deletion of persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a></dt>
-          <dd>
-            <p>User agents <em class="rfc2119" title="MUST">MUST</em> provide users with the ability to clear any persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a>, maintained by Key Systems. See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
-            </p>
-          </dd>
-
-          <dt>Use non-associable per-origin per-profile values and identifiers</dt>
-          <dd>
-            <!-- Issue #101 may affect this text. -->
-            <p>
-              For all <a href="#distinctive-value">distinctive values</a> exposed to the application, implementations <em class="rfc2119" title="MUST">MUST</em> use a different <a href="#non-associable-by-application">non-associable by applications</a> value for each <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. See <a href="#per-origin-per-profile-values" class="sec-ref"><span class="secno">8.2.1</span> <span class="sec-title">Use Per-Origin Per-Profile Values</span></a>.
-            </p>
-            <p>
-              This is especially important for implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>. See <a href="#per-origin-per-profile-identifiers" class="sec-ref"><span class="secno">8.3.3</span> <span class="sec-title">Use Per-Origin Per-Profile Identifiers</span></a>.
-            </p>
-          </dd>
-
-          <dt>Do not expose per-origin information to unrelated entities</dt>
-          <dd>
-            <p>
-              Do not provide <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin(s)</a> or values <a href="#associable">associable</a> with origins to individualization servers or other entities not related to the origin. Follow the requirements and recommendations in the <a href="#individualization">Individualization</a> section if such a process is used by the implementation.
             </p>
           </dd>
 
@@ -6902,10 +6869,39 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </p>
           </dd>
 
-          <dt>Block third-party access</dt>
+          <dt id="like-cookies">Treat <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data like cookies / web storage</dt>
+          <dd>
+            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the presence of <a href="#distinctive-identifier">Distinctive Identifiers</a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations. This might encourage users to view such identifiers with healthy suspicion. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            </p>
+          </dd>
+
+          <dt>Do not expose per-origin information to unrelated entities</dt>
+          <dd>
+            <p>
+              Do not provide <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin(s)</a> or values <a href="#associable">associable</a> with origins to individualization servers or other entities not related to the origin. Follow the requirements and recommendations in the <a href="#individualization">Individualization</a> section if such a process is used by the implementation.
+            </p>
+          </dd>
+
+          <dt>Use non-associable per-origin per-profile values and identifiers</dt>
           <dd>
             <!-- Issue #101 may affect this text. -->
-            <p>User agents <em class="rfc2119" title="MAY">MAY</em> restrict access to Key Systems and/or features to scripts originating at the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the top-level <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> of the browsing context. For example, <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
+            <p>
+              For all <a href="#distinctive-value">distinctive values</a> exposed to the application, implementations <em class="rfc2119" title="MUST">MUST</em> use a different <a href="#non-associable-by-application">non-associable by applications</a> value for each <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. See <a href="#per-origin-per-profile-values" class="sec-ref"><span class="secno">8.2.1</span> <span class="sec-title">Use Per-Origin Per-Profile Values</span></a>.
+            </p>
+            <p>
+              This is especially important for implementations that <a href="#uses-distinctive-identifiers">use Distinctive Identifier(s)</a>. See <a href="#per-origin-per-profile-identifiers" class="sec-ref"><span class="secno">8.3.3</span> <span class="sec-title">Use Per-Origin Per-Profile Identifiers</span></a>.
+            </p>
+          </dd>
+
+          <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
+          <dd>
+            <p>Any data used by the CDM that might impact messages or behavior in an application- or license server-visible way <em class="rfc2119" title="MUST">MUST</em> be partitioned by <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a> and <em class="rfc2119" title="MUST NOT">MUST NOT</em> leak to or from private browsing sessions. This includes both in-memory and persisted data. Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers <em class="rfc2119" title="MUST">MUST</em> be partitioned per-<a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and per-<a href="#browsing-profile">browsing profile</a>. See <a href="#use-origin-specific-key-system-storage" class="sec-ref"><span class="secno">8.1.1</span> <span class="sec-title">Use origin-specific and browsing profile-specific Key System storage</span></a> and <a href="#per-origin-per-profile-values" class="sec-ref"><span class="secno">8.2.1</span> <span class="sec-title">Use Per-Origin Per-Profile Values</span></a>.
+            </p>
+          </dd>
+
+          <dt>Provide user deletion of persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a></dt>
+          <dd>
+            <p>User agents <em class="rfc2119" title="MUST">MUST</em> provide users with the ability to clear any persistent data, including <a href="#distinctive-identifier">Distinctive Identifiers</a>, maintained by Key Systems. See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
             </p>
           </dd>
 
@@ -6922,21 +6918,10 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </div>
           </dd>
 
-          <dt id="like-cookies">Treat <a href="#distinctive-identifier">Distinctive Identifiers</a> and Key System stored data like cookies / web storage</dt>
+          <dt>Block third-party access</dt>
           <dd>
-            <p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> present the presence of <a href="#distinctive-identifier">Distinctive Identifiers</a> and data stored by Key Systems to the user in a way that associates them strongly with HTTP session cookies [<cite><a class="bibref" href="#bib-COOKIES">COOKIES</a></cite>], including it in "remove all data", and presenting it in the same UI locations. This might encourage users to view such identifiers with healthy suspicion. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
-            </p>
-          </dd>
-
-          <dt>Require site-specific whitelisting of access to each Key System</dt>
-          <dd>
-            <p>User agents <em class="rfc2119" title="MAY">MAY</em> require the user to explicitly authorize access to each Key System - and/or certain features - before a site can use it. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> enable users to revoke this authorization either temporarily or permanently.
-            </p>
-          </dd>
-
-          <dt>Use shared blacklists</dt>
-          <dd>
-            <p>User agents <em class="rfc2119" title="MAY">MAY</em> allow users to share blacklists of <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> and/or Key Systems. This would allow communities to act together to protect their privacy.
+            <!-- Issue #101 may affect this text. -->
+            <p>User agents <em class="rfc2119" title="MAY">MAY</em> restrict access to Key Systems and/or features to scripts originating at the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of the top-level <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> of the browsing context. For example, <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
             </p>
           </dd>
 
@@ -6956,6 +6941,18 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <dt>Provide user controls to disable Key Systems or Key System use of identifiers</dt>
           <dd>
             <p>User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> provide users with a global control of whether a Key System is enabled and/or whether Key System <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use of Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a> is enabled (if supported by the Key System). User agents <em class="rfc2119" title="SHOULD">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+            </p>
+          </dd>
+
+          <dt>Require site-specific whitelisting of access to each Key System</dt>
+          <dd>
+            <p>User agents <em class="rfc2119" title="MAY">MAY</em> require the user to explicitly authorize access to each Key System - and/or certain features - before a site can use it. User agents <em class="rfc2119" title="SHOULD">SHOULD</em> enable users to revoke this authorization either temporarily or permanently.
+            </p>
+          </dd>
+
+          <dt>Use shared blacklists</dt>
+          <dd>
+            <p>User agents <em class="rfc2119" title="MAY">MAY</em> allow users to share blacklists of <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> and/or Key Systems. This would allow communities to act together to protect their privacy.
             </p>
           </dd>
         </dl>
