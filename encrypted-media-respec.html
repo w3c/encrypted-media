@@ -2704,7 +2704,19 @@ interface MediaKeyMessageEvent : Event {
           <p>In addition to the criteria specified in [[!HTML5]], an <a def-id="htmlmediaelement"></a> SHALL be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
         </li>
         <li>
+          <p>When the user agent is ready to begin playback and has encountered an indication that the <a def-id="media-data"></a> may contain encrypted blocks during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a href="#media-may-contain-encrypted-blocks">Media Data May Contain Encrypted Blocks</a> algorithm.</p>
+          <p class="note">
+            For some container formats, such indication is separate from <a def-id="initialization-data"></a>.
+          </p>
+          <p class="note">
+            The algorithm is to be run after parsing the relevant container data, including running the <a def-id="initdata-encountered-algorithm"></a> algorithm, but before decoding starts.
+          </p>
+        </li>
+        <li>
           <p>When the user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
+          <p class="note">
+            Some container formats may support encrypted media data that does not contain <a def-id="initialization-data"></a> and thus support media data that does not trigger this algorithm.
+          </p>
         </li>
         <li>
           <p>For each block of encrypted <a def-id="media-data"></a> encountered during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm in the order the encrypted blocks were encountered.</p>
@@ -2859,6 +2871,26 @@ interface MediaEncryptedEvent : Event {
       <section id="htmlmediaelement-algorithms">
         <h3>Algorithms</h3>
 
+        <section id="media-may-contain-encrypted-blocks">
+          <h4>Media Data May Contain Encrypted Blocks</h4>
+          <p>
+            The Potentially Encrypted Media Encountered algorithm pauses playback if the user agent requires specification of a <a>MediaKeys</a> object before playing the media data.
+          </p>
+          <p>The following steps are run:</p>
+          <ol>
+            <li>
+              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted <a def-id="media-data"></a>, run the following steps:</p>
+              <p class="note">These steps may be reached when the application provides <a def-id="media-data"></a> before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
+                Selecting a <a def-id="cdm"></a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
+              </p>
+              <ol>
+                <li><p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the media element.</p></li>
+                <li><p>Wait for a signal to resume playback.</p></li>
+              </ol>
+            </li>
+          </ol>
+        </section>
+
         <section id="initdata-encountered">
           <h4>Initialization Data Encountered</h4>
           <p>
@@ -2888,17 +2920,6 @@ interface MediaEncryptedEvent : Event {
                 Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </li>
-            <li>
-              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted <a def-id="media-data"></a>, run the following steps:</p>
-              <p class="note">These steps may be reached when the application provides <a def-id="media-data"></a> before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
-                Selecting a <a def-id="cdm"></a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
-              </p>
-              <ol>
-                <li><p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the media element.</p></li>
-                <li><p>Wait for a signal to resume playback.</p></li>
-              </ol>
-            </li>
-            <li><p><i>Continue Normal Flow</i>: Continue with the existing media element's <a def-id="resource-fetch-algorithm"></a>.</p></li>
           </ol>
         </section>
 
