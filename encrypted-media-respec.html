@@ -2723,6 +2723,17 @@ interface MediaKeyMessageEvent : Event {
           <p class="note">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
         </li>
         <li>
+          <p>When one of the following occurs, the user agent SHALL run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+          <ul>
+            <li><p>The user agent cannot advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a> because the CDM does not have a key that is <a def-id="usable-for-decryption">usable to decrypt</a> the <a def-id="media-data"></a> ahead of the <a def-id="current-playback-position"></a>.</p></li>
+            <li>
+              <p>The user agent cannot provide data for the <a def-id="current-playback-position"></a> because the CDM does not have a key that is <a def-id="usable-for-decryption">usable to decrypt</a> the <a def-id="media-data"></a> at that position.</p>
+              <p class="note">For example, at the beginning of playback or after <a def-id="seeking"></a>.</p>
+            </li>
+          </ul>
+          <p class="note">The above conditions will occur sometime after reaching the end of the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.</p>
+        </li>
+        <li>
           <p>Additional attributes and a method are added, as specified below.</p>
         </li>
       </ul>
@@ -3047,13 +3058,11 @@ interface MediaEncryptedEvent : Event {
               </ol>
             </li>
             <li>
-              <p>Run the following steps:</p>
-              <p class="note">These steps are reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
-              <ol>
-                <li>
-                  <p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the media element.</p>
-                </li>
-              </ol>
+              <p>Continue.</p>
+              <p class="note">This step is reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
+              <div class="note">
+                <p>Once the user agent has rendered all the decrypted blocks that it can, it will run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+                <p>That algorithm is not run directly here in order to allow implementations to decrypt and decode media data ahead of the ahead of the current playback position without affecting the visible behavior.</p>
             </li>
           </ol>
 
@@ -3523,7 +3532,7 @@ interface MediaEncryptedEvent : Event {
           <p>
             The media container MUST NOT be encrypted.
             This specification relies on the user agent's ability to parse the media container without having to decrypt any of the media data.
-            This includes the <a def-id="encrypted-block-encountered-algorithm"></a> and <a def-id="initdata-encountered-algorithm"></a> algorithms as well as supporting standard <a def-id="htmlmediaelement"></a> [[!HTML5]] functionality, such as seeking.
+            This includes the <a def-id="encrypted-block-encountered-algorithm"></a> and <a def-id="initdata-encountered-algorithm"></a> algorithms as well as supporting standard <a def-id="htmlmediaelement"></a> [[!HTML5]] functionality, such as <a def-id="seeking"></a>.
           </p>
         </section>
 
