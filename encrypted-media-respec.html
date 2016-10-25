@@ -182,6 +182,9 @@
         Supported content is encrypted per container-specific "common encryption" specifications, enabling use across key systems.
         Supported content has an unencrypted container, enabling metadata to be provided to the application and maintaining compatibility with other <a def-id="htmlmediaelement"></a> features.
       </p>
+      <p class="note">
+        While this specification is independent of the source of the media data, authors should be aware that many implementations only support decrypting media data provided via Media Source Extensions [[MEDIA-SOURCE]].
+      </p>
       <p>
         A generic stack implemented using the API is shown below.
         This diagram shows an example flow; other combinations of API calls and events are possible.
@@ -204,9 +207,6 @@
             All messages and communication other than those described in <a href="#direct-individualization">Direct Individualization</a> MUST be passed through the application via the APIs defined in this specification.
             Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
             This includes all license exchange messages.
-          </p>
-          <p>
-
           </p>
         </dd>
 
@@ -2745,11 +2745,6 @@ interface MediaKeyMessageEvent : Event {
           <p>Provides the <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> to use when decrypting media data during playback.</p>
 
           <p class="note">Support for clearing or replacing the associated <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
-          <p class="note">Some implementations may only support decrypting media data provided via Media Source Extensions [[MEDIA-SOURCE]].
-            This is not reflected in the results of calling <a def-id="requestMediaKeySystemAccess"></a>.
-          </p>
-
-          
 
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
@@ -2854,7 +2849,7 @@ interface MediaEncryptedEvent : Event {
               <td><a def-id="eventdfn">encrypted</a></td>
               <td><a>MediaEncryptedEvent</a></td>
               <td>The user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a>.</td>
-              <td>The element's <a def-id="readystate"></a> is equal to <a def-id="have-metadata"></a> or greater.
+              <td>The element's <a def-id="readystate"></a> is equal to or greater than  <a def-id="have-metadata"></a>.
               <p class="note">It is possible that the element is playing or has played.</p>
               </td>
             </tr>
@@ -2862,7 +2857,10 @@ interface MediaEncryptedEvent : Event {
               <td><a def-id="eventdfn">waitingforkey</a></td>
               <td><a def-id="event"></a></td>
               <td>Playback is blocked waiting for a key.</td>
-              <td>The element is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.</td>
+              <td>
+                The <a def-id="readystate"></a> is equal to or less than <a def-id="have-current-data"></a>.
+                The element's <var>waiting for key</var> value is newly <code>true</code>.
+              </td>
             </tr>
           </tbody>
         </table>
@@ -3092,8 +3090,24 @@ interface MediaEncryptedEvent : Event {
               <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
               <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, the media element will stop playback.</p>
             </li>
+            <li>
+              <p>Follow the steps for the first matching condition from the following list:</p>
+              <dl class="switch">
+                <dt>If data for the immediate <a def-id="current-playback-position"></a> is available</dt>
+                <dd>
+                  <p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-current-data"></a>.</p>
+                </dd>
+                <dt>Otherwise</dt>
+                <dd>
+                  <p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-metadata"></a>.</p>
+                </dd>
+                <p class="note">
+                  In other words, if the video frame and audio data for the <a def-id="current-playback-position"></a> have been decoded because they were unencrypted and/or successfully decrypted, set <a def-id="readystate"></a> to <a def-id="have-current-data"></a>.
+                  Otherwise, including if this was previously the case but the data is no longer available, set <a def-id="readystate"></a> to <a def-id="have-metadata"></a>.
+                </p>
+              </dl>                  
+            </li>
             <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
-            <li><p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-metadata"></a>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
