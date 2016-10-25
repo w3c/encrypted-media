@@ -3072,7 +3072,23 @@ interface MediaEncryptedEvent : Event {
               <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, the media element will stop playback.</p>
             </li>
             <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
-            <li><p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-metadata"></a>.</p></li>
+            <li>
+              <p>Follow the steps for the first matching condition from the following list:</p>
+              <dl class="switch">
+                <dt>If data for the immediate <a def-id="current-playback-position"></a> is available</dt>
+                <dd>
+                  <p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-current-data"></a>.</p>
+                </dd>
+                <dt>Otherwise</dt>
+                <dd>
+                  <p>Set the <a def-id="readystate"></a> of <var>media element</var> to <a def-id="have-metadata"></a>.</p>
+                </dd>
+                <p class="note">
+                  In other words, if the video frame and audio data for the <a def-id="current-playback-position"></a> have been decoded because they were unencrypted and/or successfully decrypted, set <a def-id="readystate"></a> to <a def-id="have-current-data"></a>.
+                  Otherwise, including if this was previously the case but the data is no longer available, set <a def-id="readystate"></a> to <a def-id="have-metadata"></a>.
+                </p>
+              </dl>                  
+            </li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
