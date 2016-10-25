@@ -2837,7 +2837,7 @@ interface MediaEncryptedEvent : Event {
               <td><a def-id="eventdfn">encrypted</a></td>
               <td><a>MediaEncryptedEvent</a></td>
               <td>The user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a>.</td>
-              <td>The element's <a def-id="readystate"></a> is equal to <a def-id="have-metadata"></a> or greater.
+              <td>The element's <a def-id="readystate"></a> is equal to or greater than  <a def-id="have-metadata"></a>.
               <p class="note">It is possible that the element is playing or has played.</p>
               </td>
             </tr>
@@ -2845,7 +2845,10 @@ interface MediaEncryptedEvent : Event {
               <td><a def-id="eventdfn">waitingforkey</a></td>
               <td><a def-id="event"></a></td>
               <td>Playback is blocked waiting for a key.</td>
-              <td>The element is <a def-id="potentially-playing"></a> and its <a def-id="readystate"></a> is equal to <a def-id="have-future-data"></a> or greater.</td>
+              <td>
+                The <a def-id="readystate"></a> is equal to or less than <a def-id="have-current-data"></a>.
+                The element's <var>waiting for key</var> value is newly <code>true</code>.
+              </td>
             </tr>
           </tbody>
         </table>
@@ -3066,7 +3069,6 @@ interface MediaEncryptedEvent : Event {
               <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
               <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, the media element will stop playback.</p>
             </li>
-            <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
             <li>
               <p>Follow the steps for the first matching condition from the following list:</p>
               <dl class="switch">
@@ -3084,6 +3086,7 @@ interface MediaEncryptedEvent : Event {
                 </p>
               </dl>                  
             </li>
+            <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>

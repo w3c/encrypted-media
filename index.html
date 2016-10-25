@@ -5572,7 +5572,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <td><dfn id="dom-evt-encrypted"><code>encrypted</code></dfn></td>
             <td><a href="#dom-mediaencryptedevent" class="internalDFN" data-link-type="dfn"><code>MediaEncryptedEvent</code></a></td>
             <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</td>
-            <td>The element's <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code> or greater.
+            <td>The element's <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to or greater than <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code>.
               <div class="note">
                 <div class="note-title marker" aria-level="4" role="heading" id="h-note95"><span>Note</span></div>
                 <p class="">It is possible that the element is playing or has played.</p>
@@ -5583,7 +5583,9 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <td><dfn id="dom-evt-waitingforkey"><code>waitingforkey</code></dfn></td>
             <td><code><a href="https://www.w3.org/TR/dom/#event">Event</a></code></td>
             <td>Playback is blocked waiting for a key.</td>
-            <td>The element is <a href="https://www.w3.org/TR/html5/embedded-content-0.html#potentially-playing">potentially playing</a> and its <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_future_data">HAVE_FUTURE_DATA</a></code> or greater.</td>
+            <td>
+              The <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to or less than <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_current_data">HAVE_CURRENT_DATA</a></code>. The element's <var>waiting for key</var> value is newly <code>true</code>.
+            </td>
           </tr>
         </tbody>
       </table>
@@ -5906,9 +5908,6 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </div>
           </li>
           <li>
-            <p><a href="https://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="https://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-waitingforkey">waitingforkey</a></code> at the <var>media element</var>.</p>
-          </li>
-          <li>
             <p>Follow the steps for the first matching condition from the following list:</p>
             <dl class="switch">
               <dt>If data for the immediate <a href="https://www.w3.org/TR/html5/embedded-content-0.html#current-playback-position">current playback position</a> is available</dt>
@@ -5926,6 +5925,9 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                 </p>
               </div>
             </dl>
+          </li>
+          <li>
+            <p><a href="https://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to <a href="https://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event">fire a simple event</a> named <code><a href="#dom-evt-waitingforkey">waitingforkey</a></code> at the <var>media element</var>.</p>
           </li>
           <li>
             <p>Suspend playback.</p>
