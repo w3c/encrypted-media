@@ -2689,7 +2689,7 @@ interface MediaKeyMessageEvent : Event {
           <p><var>attaching media keys</var>, which SHALL have a boolean value, and</p>
         </li>
         <li>
-            <p><var>encrypted block queue</var>, which SHALL be a queue of encrypted blocks awaiting decryption, and</p>
+          <p><var>encrypted block queue</var>, which SHALL be a queue of encrypted blocks awaiting decryption, and</p>
         </li>
         <li>
           <p><var>waiting for key</var>, which SHALL have a boolean value.</p>
@@ -2698,7 +2698,13 @@ interface MediaKeyMessageEvent : Event {
       <p>The following modifications are made to the behaviour of the <a def-id="htmlmediaelement"></a>:</p>
       <ul>
         <li>
-          <p>When a <a def-id="htmlmediaelement"></a> is created, its internal <var>waiting for key</var> value SHALL be initialized to <code>false</code> and its <var>encrypted block queue</var> value SHALL be empty.</p>
+          <p>When a <a def-id="htmlmediaelement"></a> is created, its <var>attaching media keys</var> value SHALL be initialized to <code>false</code>, its <var>encrypted block queue</var> value SHALL be empty, and its <var>waiting for key</var> value SHALL be initialized to <code>false</code>.</p>
+        </li>
+        <li>
+          <p>When the <a def-id="current-playback-position"></a> is changed other than advancing in the <a def-id="direction-of-playback"></a> as part of normal playback, the <var>encrypted block queue</var> value SHALL be empty and the <var>waiting for key</var> value SHALL be set to <code>false</code>.</p>
+          <p class="note">
+            In other words, these values should be reset when, for example, <a def-id="loading-the-media-resource"></a> or <a def-id="seeking"></a>.
+          </p>
         </li>
         <li>
           <p>In addition to the criteria specified in [[!HTML5]], an <a def-id="htmlmediaelement"></a> SHALL be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
