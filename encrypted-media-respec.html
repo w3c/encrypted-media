@@ -1981,28 +1981,28 @@
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                           </p>
                         </dd>
-                        <dt>If <var>sanitized response</var> contains a license destruction acknowledgement and <var>sessionType</var> is <a def-id="persistent-license-session"></a></dt>
+                        <dt>If <var>sanitized response</var> contains a <a def-id="record-of-license-destruction"></a> acknowledgement and <var>sessionType</var> is <a def-id="persistent-license-session"></a></dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
                             <li>
                               <p>
                                 Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object,
-                                including the <a def-id="sessionId"></a> and license destruction record.
+                                including the <a def-id="sessionId"></a> and <a def-id="record-of-license-destruction"></a>.
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
                             <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
                         </dd>
-                        <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
+                        <dt>If <var>sanitized response</var> contains a <a def-id="record-of-key-usage"></a> acknowledgement and <var>sessionType</var> is <a def-id="persistent-usage-record-session"></a></dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
                             <li>
                               <p>
                                 Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object,
-                                including the <a def-id="sessionId"></a> and the <a def-id="record-of-key-usage"></a>.
+                                including the <a def-id="sessionId"></a> and <a def-id="record-of-key-usage"></a>.
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
@@ -2473,7 +2473,7 @@ interface MediaKeyMessageEvent : Event {
                   <div class="note">
                     <p>
                       The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as
-                      a result of the <a def-id="update"></a> method processing an acknowledgement of the record of key usage.
+                      a result of the <a def-id="update"></a> method processing an acknowledgement of the <a def-id="record-of-key-usage"></a>.
                     </p>
                     <p>
                       Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
@@ -2655,14 +2655,14 @@ interface MediaKeyMessageEvent : Event {
         <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
         <p>The following requirements apply in addition to those in <a def-id="media-keys-storage"></a>.</p>
         <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM MUST NOT persist a record of or data related to the session at any point.
-          This includes license(s), key(s), records of key usage or proof of license destruction, and the <a def-id="session-id"></a>.
+          This includes license(s), key(s), <a def-id="record-of-license-destruction-maybe-plural"></a>, <a def-id="record-of-key-usage-maybe-plural"></a>, and the <a def-id="session-id"></a>.
         </p>
         <p>The remainder of this section applies to session types for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code>.</p>
         <p>The CDM SHOULD NOT store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
           Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
         </p>
-        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a license destruction acknowledgement or key usage record acknowledgement.
+        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a <a def-id="record-of-license-destruction"></a> acknowledgement or <a def-id="record-of-key-usage"></a> acknowledgement.
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
@@ -3168,12 +3168,12 @@ interface MediaEncryptedEvent : Event {
 
     <section id="implementation-requirements">
       <h3>Implementation Requirements</h3>
-      <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm">CDM</a> and server - that may not be explicitly addressed in the algorithms.</p>
+      <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm"></a> and server - that may not be explicitly addressed in the algorithms.</p>
 
       <section id="persistent-state-requirements">
         <h3>Persistent Data</h3>
         <p>
-          Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers (including <a def-id="distinctive-identifier-maybe-plural"></a>), licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+          Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers (including <a def-id="distinctive-identifier-maybe-plural"></a>), licenses, keys, key IDs, <a def-id="records-of-license-destruction"></a>, or <a def-id="records-of-key-usage"></a> stored by the CDM or by the User Agent on behalf of the CDM.
         </p>
         <section id="use-origin-specific-key-system-storage">
           <h3>Use origin-specific and browsing profile-specific Key System storage</h3>
@@ -3632,7 +3632,7 @@ interface MediaEncryptedEvent : Event {
             <li>
               <p>
                 For sessions of type <a def-id="persistent-license-session"></a>, in the <a def-id="remove"></a> algorithm, the <var>message</var> reflecting
-                the object's <var>record license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+                the <var>record of license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
               </p>
             </li>
             <li>
@@ -3748,7 +3748,7 @@ interface MediaEncryptedEvent : Event {
           </p>
 
           <section id="clear-key-release-format-example-1" class="informative">
-            <h5>Example message reflecting a <var>record of license destruction</var></h5>
+            <h5>Example message reflecting a <a def-id="record-of-license-destruction"></a></h5>
             <p>
               The following example is a license release for a <a def-id="persistent-license-session"></a> session that contained two keys.
               (Line breaks are for readability only.)
@@ -3760,7 +3760,7 @@ interface MediaEncryptedEvent : Event {
           </section>
 
           <section id="clear-key-release-format-example-2" class="informative">
-            <h5>Example message reflecting a <var>record of key usage</var></h5>
+            <h5>Example message reflecting a <a def-id="record-of-key-usage"></a></h5>
             <p>
               The following example is a license release for a <a def-id="persistent-usage-record-session"></a> session that contained two keys.
               (Line breaks are for readability only.)
@@ -4021,7 +4021,7 @@ interface MediaEncryptedEvent : Event {
         <h3>User Tracking</h3>
         <section class="informative">
           <h4>Concerns</h4>
-          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key IDs, records of key usage, or records of license destruction, stored by the <a def-id="cdm"></a> to track a user across multiple sessions (including across <a def-id="origin">origins</a> and <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.
+          <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a def-id="distinctive-identifier"></a> or persistent data, including licenses, keys, key IDs, <a def-id="records-of-key-usage"></a>, or <a def-id="records-of-license-destruction"></a>, stored by or on behalf of the <a def-id="cdm"></a> to track a user across multiple sessions (including across <a def-id="origin">origins</a> and <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.
             Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
             In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous web usage.
           </p>
@@ -4031,11 +4031,11 @@ interface MediaEncryptedEvent : Event {
             <li><p><a def-id="distinctive-identifier-maybe-plural"></a></p></li>
             <li><p><a def-id="distinctive-permanent-identifier-maybe-plural"></a></p></li>
             <li><p>Origins visited (via stored or in-memory data, permissions, etc.)</p></li>
-            <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p></li>
+            <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, <a def-id="records-of-license-destruction"></a>, <a def-id="records-of-key-usage"></a>, etc.)</p></li>
           </ul>
           <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and associated <a def-id="browsing-profile"></a> storage), often in the CDM.</p>
           
-          <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
+          <p>Since the content of licenses, <a def-id="records-of-license-destruction"></a>, and <a def-id="records-of-key-usage"></a> are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
           <p>Key Systems may access or create persistent or semi-persistent identifier(s) for a device or user of a device.
             In some cases these identifiers may be bound to a specific device in a secure manner.
