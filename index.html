@@ -1078,6 +1078,12 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         "temporary": [
           "dom-mediakeysessiontype-temporary"
         ],
+        "persistent-license": [
+          "dom-mediakeysessiontype-persistent-license"
+        ],
+        "record of license destruction": [
+          "record-of-license-destruction"
+        ],
         "persistent-usage-record": [
           "dom-mediakeysessiontype-persistent-usage-record"
         ],
@@ -1092,12 +1098,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         ],
         "key usage accuracy": [
           "key-usage-accuracy"
-        ],
-        "persistent-license": [
-          "dom-mediakeysessiontype-persistent-license"
-        ],
-        "record of license destruction": [
-          "record-of-license-destruction"
         ],
         "createsession": [
           "dom-mediakeys-createsession",
@@ -1642,8 +1642,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
               </li>
               <li class="tocline"><a href="#clear-key-release-format" class="tocxref"><span class="secno">9.1.5 </span>License Release Format</a>
                 <ol class="toc">
-                  <li class="tocline"><a href="#clear-key-release-format-example-1" class="tocxref"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of license destruction</var></a></li>
-                  <li class="tocline"><a href="#clear-key-release-format-example-2" class="tocxref"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record of key usage</var></a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-1" class="tocxref"><span class="secno">9.1.5.1 </span>Example message reflecting a <span def-id="record-of-license-destruction" class="formerLink"></span></a></li>
+                  <li class="tocline"><a href="#clear-key-release-format-example-2" class="tocxref"><span class="secno">9.1.5.2 </span>Example message reflecting a <span def-id="record-of-key-usage" class="formerLink"></span></a></li>
                 </ol>
               </li>
               <li class="tocline"><a href="#clear-key-release-ack-format" class="tocxref"><span class="secno">9.1.6 </span>License Release Acknowledgement Format</a>
@@ -3362,8 +3362,8 @@ interface <span class="idlInterfaceID">MediaKeySystemAccess</span> {
     <div><pre class="def idl"><span class="idlEnum" id="idl-def-mediakeysessiontype" data-idl="" data-title="MediaKeySessionType">[<span class="extAttr"><span class="extAttrName">SecureContext</span></span>]
 enum <span class="idlEnumID">MediaKeySessionType</span> {
     "<a href="#dom-mediakeysessiontype-temporary" class="idlEnumItem">temporary</a>",
-    "<a href="#dom-mediakeysessiontype-persistent-usage-record" class="idlEnumItem">persistent-usage-record</a>",
-    "<a href="#dom-mediakeysessiontype-persistent-license" class="idlEnumItem">persistent-license</a>"
+    "<a href="#dom-mediakeysessiontype-persistent-license" class="idlEnumItem">persistent-license</a>",
+    "<a href="#dom-mediakeysessiontype-persistent-usage-record" class="idlEnumItem">persistent-usage-record</a>"
 };</span></pre>
       <table class="simple" data-dfn-for="MediaKeySessionType" data-link-for="MediaKeySessionType">
         <tbody>
@@ -3378,6 +3378,20 @@ enum <span class="idlEnumID">MediaKeySessionType</span> {
               </p>
               <p>
                 The application need not worry about managing such storage. Support for this session type is <em class="rfc2119" title="REQUIRED">REQUIRED</em>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td><dfn data-dfn-for="mediakeysessiontype" data-dfn-type="dfn" id="dom-mediakeysessiontype-persistent-license" data-idl=""><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></dfn></td>
+            <td>
+              <p>
+                A session for which the license (and potentially other data related to the session) will be persisted. A <a href="#record-of-license-destruction">record of license destruction</a> <em class="rfc2119" title="SHALL">SHALL</em> be persisted when the license and key(s) it contains are destroyed. The <dfn id="record-of-license-destruction" data-dfn-type="dfn">record of license destruction</dfn> is a <a href="#key-system">Key System</a>-specific attestation that the license and key(s) it contains are no longer usable by the client.
+              </p>
+              <p>
+                A <code><a href="#dom-evt-message">message</a></code> of type <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code> containing the <a href="#record-of-license-destruction">record of license destruction</a> will be generated when <code><a href="#dom-mediakeysession-remove">remove()</a></code> is called until the record is acknowledged by a response passed to <code><a href="#dom-mediakeysession-update">update()</a></code>.
+              </p>
+              <p>
+                The session <em class="rfc2119" title="MUST">MUST</em> be loadable via its <a href="#session-id">Session ID</a> once <code><a href="#dom-mediakeysession-update">update()</a></code> is called successfully. The application is responsible for managing any such storage that may be generated by the CDM. See <a href="#session-storage">Session Storage and Persistence</a>. Can only be created if the configuration associated with the <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> object that created this object has a <code><a href="#dom-mediakeysystemconfiguration-persistentstate">persistentState</a></code> value of <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>. Support for this session type is <em class="rfc2119" title="OPTIONAL">OPTIONAL</em>.
               </p>
             </td>
           </tr>
@@ -3420,20 +3434,6 @@ enum <span class="idlEnumID">MediaKeySessionType</span> {
                   User agents <em class="rfc2119" title="MAY">MAY</em> implement this mechanism by means other than persisting data on key destruction - for example by persisting data during playback which is later used to infer the fact of key destruction - provided the observable behavior is compliant to this specification.
                 </p>
               </div>
-              <p>
-                The session <em class="rfc2119" title="MUST">MUST</em> be loadable via its <a href="#session-id">Session ID</a> once <code><a href="#dom-mediakeysession-update">update()</a></code> is called successfully. The application is responsible for managing any such storage that may be generated by the CDM. See <a href="#session-storage">Session Storage and Persistence</a>. Can only be created if the configuration associated with the <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> object that created this object has a <code><a href="#dom-mediakeysystemconfiguration-persistentstate">persistentState</a></code> value of <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>. Support for this session type is <em class="rfc2119" title="OPTIONAL">OPTIONAL</em>.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td><dfn data-dfn-for="mediakeysessiontype" data-dfn-type="dfn" id="dom-mediakeysessiontype-persistent-license" data-idl=""><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></dfn></td>
-            <td>
-              <p>
-                A session for which the license (and potentially other data related to the session) will be persisted. A <a href="#record-of-license-destruction">record of license destruction</a> <em class="rfc2119" title="SHALL">SHALL</em> be persisted when the license and key(s) it contains are destroyed. The <dfn id="record-of-license-destruction" data-dfn-type="dfn">record of license destruction</dfn> is a <a href="#key-system">Key System</a>-specific attestation that the license and key(s) it contains are no longer usable by the client.
-              </p>
-              <p>
-                A <code><a href="#dom-evt-message">message</a></code> of type <code><a href="#idl-def-MediaKeyMessageType.license-release">"license-release"</a></code> containing the <a href="#record-of-license-destruction">record of license destruction</a> will be generated when <code><a href="#dom-mediakeysession-remove">remove()</a></code> is called until the record is acknowledged by a response passed to <code><a href="#dom-mediakeysession-update">update()</a></code>.
-              </p>
               <p>
                 The session <em class="rfc2119" title="MUST">MUST</em> be loadable via its <a href="#session-id">Session ID</a> once <code><a href="#dom-mediakeysession-update">update()</a></code> is called successfully. The application is responsible for managing any such storage that may be generated by the CDM. See <a href="#session-storage">Session Storage and Persistence</a>. Can only be created if the configuration associated with the <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> object that created this object has a <code><a href="#dom-mediakeysystemconfiguration-persistentstate">persistentState</a></code> value of <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>. Support for this session type is <em class="rfc2119" title="OPTIONAL">OPTIONAL</em>.
               </p>
@@ -3631,9 +3631,9 @@ interface <span class="idlInterfaceID">MediaKeys</span> {
             <dl class="switch">
               <dt><code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code></dt>
               <dd>Return <code>false</code>.</dd>
-              <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
-              <dd>Return <code>true</code>.</dd>
               <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
+              <dd>Return <code>true</code>.</dd>
+              <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
               <dd>Return <code>true</code>.</dd>
             </dl>
           </li>
@@ -3879,6 +3879,10 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                               <p class="">The returned license must not be persistable or require persisting information related to it.</p>
                             </div>
                           </dd>
+                          <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
+                          <dd>
+                            <p>Let <var>requested license type</var> be a persistable license.</p>
+                          </dd>
                           <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
                           <dd>
                             <ol>
@@ -3906,10 +3910,6 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                                 <p>Let <var>requested license type</var> be a non-persistable license that will persist a <a href="#record-of-key-usage">record of key usage</a>.</p>
                               </li>
                             </ol>
-                          </dd>
-                          <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
-                          <dd>
-                            <p>Let <var>requested license type</var> be a persistable license.</p>
                           </dd>
                         </dl>
                       </li>
@@ -4248,6 +4248,9 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                             <dl class="switch">
                               <dt>If <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code> and <var>sanitized response</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
                               <dd>Process <var>sanitized response</var>, not storing any session data.</dd>
+                              <dt>If <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <var>sanitized response</var> contains a persistable license</dt>
+                              <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>. Such data <em class="rfc2119" title="MUST">MUST</em> be stored such that only the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> can access it.
+                              </dd>
                               <dt>If <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> and <var>sanitized response</var> contains a non-persistable license</dt>
                               <dd>
                                 <p>Run the following steps:</p>
@@ -4263,8 +4266,6 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                                     </p>
                                   </li>
                                 </ol>
-                              </dd><dt>If <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <var>sanitized response</var> contains a persistable license</dt>
-                              <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>. Such data <em class="rfc2119" title="MUST">MUST</em> be stored such that only the <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> of this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> can access it.
                               </dd>
                               <dt>Otherwise</dt>
                               <dd>
@@ -4287,13 +4288,13 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                               </p>
                             </div>
                           </dd>
-                          <dt>If <var>sanitized response</var> contains a license destruction acknowledgement and <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
+                          <dt>If <var>sanitized response</var> contains a <a href="#record-of-license-destruction">record of license destruction</a> acknowledgement and <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
                           <dd>
                             <p>Run the following steps:</p>
                             <ol>
                               <li>
                                 <p>
-                                  Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object, including the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> and license destruction record.
+                                  Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object, including the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> and <a href="#record-of-license-destruction">record of license destruction</a>.
                                 </p>
                                 <div class="note">
                                   <div class="note-title marker" aria-level="4" role="heading" id="h-note72"><span>Note</span></div>
@@ -4305,13 +4306,13 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                               </li>
                             </ol>
                           </dd>
-                          <dt>If <var>sanitized response</var> contains a key usage record acknowledgement and <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
+                          <dt>If <var>sanitized response</var> contains a <a href="#record-of-key-usage">record of key usage</a> acknowledgement and <var>sessionType</var> is <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
                           <dd>
                             <p>Run the following steps:</p>
                             <ol>
                               <li>
                                 <p>
-                                  Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object, including the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> and the <a href="#record-of-key-usage">record of key usage</a>.
+                                  Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object, including the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> and <a href="#record-of-key-usage">record of key usage</a>.
                                 </p>
                                 <div class="note">
                                   <div class="note-title marker" aria-level="4" role="heading" id="h-note73"><span>Note</span></div>
@@ -4512,19 +4513,6 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                               <dd>
                                 <p>Continue with the following steps.</p>
                               </dd>
-                              <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
-                              <dd>
-                                <ol>
-                                  <li>
-                                    Store this object's <var>record of key usage</var>.
-                                  </li>
-                                  <li>
-                                    <p>
-                                      Let <var>message</var> be a message containing or reflecting this object's <var>record of key usage</var>.
-                                    </p>
-                                  </li>
-                                </ol>
-                              </dd>
                               <dt><code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code></dt>
                               <dd>
                                 <ol>
@@ -4541,6 +4529,19 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                                   <li>
                                     <p>
                                       Let <var>message</var> be a message containing or reflecting the <var>record of license destruction</var>.
+                                    </p>
+                                  </li>
+                                </ol>
+                              </dd>
+                              <dt><code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code></dt>
+                              <dd>
+                                <ol>
+                                  <li>
+                                    Store this object's <var>record of key usage</var>.
+                                  </li>
+                                  <li>
+                                    <p>
+                                      Let <var>message</var> be a message containing or reflecting this object's <var>record of key usage</var>.
                                     </p>
                                   </li>
                                 </ol>
@@ -5045,7 +5046,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
                   <div class="note-title marker" aria-level="5" role="heading" id="h-note88"><span>Note</span></div>
                   <div class="">
                     <p>
-                      The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as a result of the <code><a href="#dom-mediakeysession-update">update()</a></code> method processing an acknowledgement of the record of key usage.
+                      The <var>record of key usage</var> may not exist if no keys have been used in the session or if it has been deleted as a result of the <code><a href="#dom-mediakeysession-update">update()</a></code> method processing an acknowledgement of the <a href="#record-of-key-usage">record of key usage</a>.
                     </p>
                     <p>
                       Since it has no effects observable to the document, this step may be run asynchronously, including after the document has unloaded.
@@ -5243,12 +5244,12 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
       </h3>
       <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
       <p>The following requirements apply in addition to those in <a href="#media-keys-storage">Storage and Persistence</a>.</p>
-      <p>If the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM <em class="rfc2119" title="MUST NOT">MUST NOT</em> persist a record of or data related to the session at any point. This includes license(s), key(s), records of key usage or proof of license destruction, and the <a href="#session-id">Session ID</a>.
+      <p>If the result of running the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and CDM <em class="rfc2119" title="MUST NOT">MUST NOT</em> persist a record of or data related to the session at any point. This includes license(s), key(s), <a href="#record-of-license-destruction">record(s) of license destruction</a>, <a href="#record-of-key-usage">record(s) of key usage</a>, and the <a href="#session-id">Session ID</a>.
       </p>
       <p>The remainder of this section applies to session types for which the <a href="#is-persistent-session-type">Is persistent session type?</a> algorithm returns <code>true</code>.</p>
       <p>The CDM <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> store session data, including the Session ID, until <code><a href="#dom-mediakeysession-update">update()</a></code> is called the first time. Specifically, the CDM <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> store session data during the <code><a href="#dom-mediakeysession-generaterequest">generateRequest()</a></code> algorithm. This ensures that the application is aware of the session and knows it needs to eventually remove it.
       </p>
-      <p><em>All</em> data associated with a session <em class="rfc2119" title="MUST">MUST</em> be cleared when the session is cleared, such as in <code><a href="#dom-mediakeysession-update">update()</a></code> when processing a license destruction acknowledgement or key usage record acknowledgement. See <a href="#persistent-state-requirements">Persistent Data</a>.
+      <p><em>All</em> data associated with a session <em class="rfc2119" title="MUST">MUST</em> be cleared when the session is cleared, such as in <code><a href="#dom-mediakeysession-update">update()</a></code> when processing a <a href="#record-of-license-destruction">record of license destruction</a> acknowledgement or <a href="#record-of-key-usage">record of key usage</a> acknowledgement. See <a href="#persistent-state-requirements">Persistent Data</a>.
       </p>
       <p>The CDM <em class="rfc2119" title="MUST">MUST</em> ensure that data for a given session is only present in one <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object that is not
         <a href="#media-key-session-closed">closed</a> in any <a href="https://www.w3.org/TR/dom/#concept-document">Document</a>. In other words, <code><a href="#dom-mediakeysession-load">load()</a></code> <em class="rfc2119" title="MUST">MUST</em> fail when there is already a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <code><a href="#dom-mediakeysession-generaterequest">generateRequest()</a></code> is still active or it has been loaded into another object via <code><a href="#dom-mediakeysession-load">load()</a></code>. A session <em class="rfc2119" title="MAY">MAY</em> only be loaded again if all objects that have ever represented it are <a href="#media-key-session-closed">closed</a>.
@@ -6068,7 +6069,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <h3 id="h-persistent-state-requirements" resource="#h-persistent-state-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.1 </span>Persistent Data</span>
       </h3>
       <p>
-        Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers (including <a href="#distinctive-identifier">Distinctive Identifier(s)</a>), licenses, keys, key IDs, key usage information or records of license destruction stored by the CDM or by the User Agent on behalf of the CDM.
+        Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Specifically, it includes any identifiers (including <a href="#distinctive-identifier">Distinctive Identifier(s)</a>), licenses, keys, key IDs, <a href="#record-of-license-destruction">records of license destruction</a>, or <a href="#record-of-key-usage">records of key usage</a> stored by the CDM or by the User Agent on behalf of the CDM.
       </p>
 
       <section id="use-origin-specific-key-system-storage" typeof="bibo:Chapter" resource="#use-origin-specific-key-system-storage" property="bibo:hasPart">
@@ -6573,10 +6574,10 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </ol>
           </li>
           <li>
-            <p>The <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> <a href="#idl-def-mediakeysessiontype" class="internalDFN" data-link-type="dfn"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type.</p>
+            <p>The <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> <a href="#idl-def-mediakeysessiontype" class="internalDFN" data-link-type="dfn"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type.</p>
           </li>
           <li>
-            <p>The <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> <a href="#idl-def-mediakeysessiontype" class="internalDFN" data-link-type="dfn"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type.</p>
+            <p>The <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> <a href="#idl-def-mediakeysessiontype" class="internalDFN" data-link-type="dfn"><code>MediaKeySessionType</code></a>: Implementations <em class="rfc2119" title="MAY">MAY</em> support this type.</p>
           </li>
 
           <li>
@@ -6630,12 +6631,12 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           </li>
           <li>
             <p>
-              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, in the <code><a href="#dom-mediakeysession-remove">remove()</a></code> and <code><a href="#dom-mediakeysession-load">load()</a></code> algorithms, the <var>message</var> reflecting the object's <var>record of key usage</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, in the <code><a href="#dom-mediakeysession-remove">remove()</a></code> algorithm, the <var>message</var> reflecting the <var>record of license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
             </p>
           </li>
           <li>
             <p>
-              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, in the <code><a href="#dom-mediakeysession-remove">remove()</a></code> algorithm, the <var>message</var> reflecting the object's <var>record license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
+              For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, in the <code><a href="#dom-mediakeysession-remove">remove()</a></code> and <code><a href="#dom-mediakeysession-load">load()</a></code> algorithms, the <var>message</var> reflecting the object's <var>record of key usage</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
             </p>
           </li>
           <li>
@@ -6731,7 +6732,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </h4>
         <p>This section describes the format of the license release message to be provided via the <code><a href="#dom-mediakeymessageevent-message">message</a></code> attribute of the <code><a href="#dom-evt-message">message</a></code> event.</p>
         <p>
-          The format is a JSON object. For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code>, the object shall contain the following member:
+          The format is a JSON object. For sessions of type <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-usage-record">"persistent-usage-record"</a></code>, the object shall contain the following member:
         </p>
         <dl>
           <dt>"kids"</dt>
@@ -6751,7 +6752,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </p>
 
         <section id="clear-key-release-format-example-1" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-1" property="bibo:hasPart">
-          <h5 id="h-clear-key-release-format-example-1" resource="#h-clear-key-release-format-example-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example message reflecting a <var>record of license destruction</var></span>
+          <h5 id="h-clear-key-release-format-example-1" resource="#h-clear-key-release-format-example-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.1 </span>Example message reflecting a <a href="#record-of-license-destruction">record of license destruction</a></span>
           </h5>
           <p><em>This section is non-normative.</em></p>
           <p>
@@ -6764,7 +6765,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </section>
 
         <section id="clear-key-release-format-example-2" class="informative" typeof="bibo:Chapter" resource="#clear-key-release-format-example-2" property="bibo:hasPart">
-          <h5 id="h-clear-key-release-format-example-2" resource="#h-clear-key-release-format-example-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.2 </span>Example message reflecting a <var>record of key usage</var></span>
+          <h5 id="h-clear-key-release-format-example-2" resource="#h-clear-key-release-format-example-2"><span property="xhv:role" resource="xhv:heading"><span class="secno">9.1.5.2 </span>Example message reflecting a <a href="#record-of-key-usage">record of key usage</a></span>
           </h5>
           <p><em>This section is non-normative.</em></p>
           <p>
@@ -7087,7 +7088,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <h4 id="h-concerns-1" resource="#h-concerns-1"><span property="xhv:role" resource="xhv:heading"><span class="secno">11.4.1 </span>Concerns</span>
         </h4>
         <p><em>This section is non-normative.</em></p>
-        <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a href="#distinctive-identifier">Distinctive Identifier</a> or persistent data, including licenses, keys, key IDs, records of key usage, or records of license destruction, stored by the <a href="#cdm">CDM</a> to track a user across multiple sessions (including across <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> and <a href="#browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests. Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible. In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous web usage.
+        <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a <a href="#distinctive-identifier">Distinctive Identifier</a> or persistent data, including licenses, keys, key IDs, <a href="#record-of-key-usage">records of key usage</a>, or <a href="#record-of-license-destruction">records of license destruction</a>, stored by or on behalf of the <a href="#cdm">CDM</a> to track a user across multiple sessions (including across <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origins</a> and <a href="#browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests. Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible. In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous web usage.
         </p>
 
         <p>User- or client-specific information that could be obtained via implementations of the APIs in this specification includes:</p>
@@ -7102,12 +7103,12 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <p>Origins visited (via stored or in-memory data, permissions, etc.)</p>
           </li>
           <li>
-            <p>Content viewed (via stored or in-memory licenses, keys, key IDs, records of key usage, records of license destruction, etc.)</p>
+            <p>Content viewed (via stored or in-memory licenses, keys, key IDs, <a href="#record-of-license-destruction">records of license destruction</a>, <a href="#record-of-key-usage">records of key usage</a>, etc.)</p>
           </li>
         </ul>
         <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and associated <a href="#browsing-profile">browsing profile</a> storage), often in the CDM.</p>
 
-        <p>Since the content of licenses, records of key usage, and records of license destruction are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
+        <p>Since the content of licenses, <a href="#record-of-license-destruction">records of license destruction</a>, and <a href="#record-of-key-usage">records of key usage</a> are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
         <p>Key Systems may access or create persistent or semi-persistent identifier(s) for a device or user of a device. In some cases these identifiers may be bound to a specific device in a secure manner. If these identifiers are present in Key System messages, then devices and/or users may be tracked. If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
         </p>
