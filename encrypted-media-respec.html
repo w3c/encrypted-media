@@ -2699,22 +2699,25 @@ interface MediaKeyMessageEvent : Event {
           <p><var>encrypted block queue</var>, which SHALL be a queue of encrypted blocks awaiting decryption, and</p>
         </li>
         <li>
-          <p><var>waiting for key</var>, which SHALL have a boolean value.</p>
+          <p><var>decryption blocked waiting for key</var>, which SHALL have a boolean value.</p>
+        </li>
+        <li>
+          <p><var>playback blocked waiting for key</var>, which SHALL have a boolean value.</p>
         </li>
       </ul>
       <p>The following modifications are made to the behaviour of the <a def-id="htmlmediaelement"></a>:</p>
       <ul>
         <li>
-          <p>When a <a def-id="htmlmediaelement"></a> is created, its <var>attaching media keys</var> value SHALL be initialized to <code>false</code>, its <var>encrypted block queue</var> value SHALL be empty, and its <var>waiting for key</var> value SHALL be initialized to <code>false</code>.</p>
+          <p>When a <a def-id="htmlmediaelement"></a> is created, its <var>attaching media keys</var> value SHALL be initialized to <code>false</code>, its <var>encrypted block queue</var> value SHALL be empty, its <var>decryption blocked waiting for key</var> value SHALL be initialized to <code>false</code>, and its <var>playback blocked waiting for key</var> value SHALL be initialized to <code>false</code>.</p>
         </li>
         <li>
-          <p>When the <a def-id="current-playback-position"></a> is changed other than advancing in the <a def-id="direction-of-playback"></a> as part of normal playback, the <var>encrypted block queue</var> value SHALL be empty and the <var>waiting for key</var> value SHALL be set to <code>false</code>.</p>
+          <p>When the <a def-id="current-playback-position"></a> is changed other than advancing in the <a def-id="direction-of-playback"></a> as part of normal playback, the <var>encrypted block queue</var> value SHALL be empty, the <var>decryption blocked waiting for key</var> value SHALL be initialized to <code>false</code>, and the <var>playback blocked waiting for key</var> value SHALL be set to <code>false</code>.</p>
           <p class="note">
             In other words, these values should be reset when, for example, <a def-id="loading-the-media-resource"></a> or <a def-id="seeking"></a>.
           </p>
         </li>
         <li>
-          <p>In addition to the criteria specified in [[!HTML5]], an <a def-id="htmlmediaelement"></a> SHALL be considered a <a def-id="blocked-media-element"></a> if its <var>waiting for key</var> value is <code>true</code>.</p>
+          <p>In addition to the criteria specified in [[!HTML5]], an <a def-id="htmlmediaelement"></a> SHALL be considered a <a def-id="blocked-media-element"></a> if its <var>playback blocked waiting for key</var> value is <code>true</code>.</p>
         </li>
         <li>
           <p>When the user agent is ready to begin playback and has encountered an indication that the <a def-id="media-data"></a> may contain encrypted blocks during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a href="#media-may-contain-encrypted-blocks">Media Data May Contain Encrypted Blocks</a> algorithm.</p>
@@ -2734,6 +2737,16 @@ interface MediaKeyMessageEvent : Event {
         <li>
           <p>For each block of encrypted <a def-id="media-data"></a> encountered during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a def-id="encrypted-block-encountered-algorithm"></a> algorithm in the order the encrypted blocks were encountered.</p>
           <p class="note">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
+        </li>
+        <li>
+          <p>When one of the following occurs while the <var>decryption blocked waiting for key</var> value is <code>true</code>, the user agent SHALL run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+          <ul>
+            <li><p>The user agent cannot advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>.</p></li>
+            <li>
+              <p>The user agent cannot provide data for the <a def-id="current-playback-position"></a>.</p>
+              <p class="note">For example, at the beginning of playback or after <a def-id="seeking"></a>.</p>
+            </li>
+          </ul>
         </li>
         <li>
           <p>Additional attributes and a method are added, as specified below.</p>
@@ -2872,7 +2885,7 @@ interface MediaEncryptedEvent : Event {
               <td>Playback is blocked waiting for a key.</td>
               <td>
                 The <a def-id="readystate"></a> is equal to or less than <a def-id="have-current-data"></a>.
-                The element's <var>waiting for key</var> value is newly <code>true</code>.
+                The element's <var>playback blocked waiting for key</var> value is newly <code>true</code>.
               </td>
             </tr>
           </tbody>
@@ -2948,7 +2961,8 @@ interface MediaEncryptedEvent : Event {
               <p>Add <var>block</var> to the end of the media element's <var>encrypted block queue</var>.</p>
             </li>
             <li>
-              <p>If the media element's <var>waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.</p>
+              <p>If the media element's <var>decryption blocked waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.</p>
+              <!-- While media-may-contain-encrypted-blocks may also result in waiting for a key without setting this variable, it should not be possible to reach this algorithm in that case. -->
             </li>
           </ol>
         </section>
@@ -3060,13 +3074,11 @@ interface MediaEncryptedEvent : Event {
               </ol>
             </li>
             <li>
-              <p>Run the following steps:</p>
-              <p class="note">These steps are reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
-              <ol>
-                <li>
-                  <p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the media element.</p>
-                </li>
-              </ol>
+              <p>Set the media element's <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
+              <p class="note">This step is reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
+              <div class="note">
+                <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, i.e. all complete video frames), it will run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+                <p>That algorithm is not run directly here in order to allow implementations to decrypt and decode media data ahead of the ahead of the current playback position without affecting the visible behavior.</p>
             </li>
           </ol>
 
@@ -3098,9 +3110,9 @@ interface MediaEncryptedEvent : Event {
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
-            <li><p>If the <var>media element</var>'s <var>waiting for key</var> value is <code>true</code>, abort these steps.</p></li>
+            <li><p>If the <var>media element</var>'s <var>playback blocked waiting for key</var> value is <code>true</code>, abort these steps.</p></li>
             <li>
-              <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>true</code>.</p>
+              <p>Set the <var>media element</var>'s <var>playback blocked waiting for key</var> value to <code>true</code>.</p>
               <p class="note">As a result of the above step, the media element will become a <a def-id="blocked-media-element"></a> if it wasn't already. In that case, the media element will stop playback.</p>
             </li>
             <li>
@@ -3134,12 +3146,15 @@ interface MediaEncryptedEvent : Event {
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
-            <li><p>If the <var>media element</var>'s <var>waiting for key</var> is <code>false</code>, abort these steps.</p></li>
+            <li><p>If the <var>media element</var>'s <var>playback blocked waiting for key</var> is <code>false</code>, abort these steps.</p></li>
             <li><p>Run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm on the <var>media element</var>.</p></li>
             <li><p>If the user agent can advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>:</p>
               <ol>
                 <li>
-                  <p>Set the <var>media element</var>'s <var>waiting for key</var> value to <code>false</code>.</p>
+                  <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>false</code>.</p>
+                </li>
+                <li>
+                  <p>Set the <var>media element</var>'s <var>playback blocked waiting for key</var> value to <code>false</code>.</p>
                   <p class="note">As a result of the above step, the media element may no longer be a <a def-id="blocked-media-element"></a> and thus playback may resume.</p>
                 </li>
                 <li>
@@ -3536,7 +3551,7 @@ interface MediaEncryptedEvent : Event {
           <p>
             The media container MUST NOT be encrypted.
             This specification relies on the user agent's ability to parse the media container without having to decrypt any of the media data.
-            This includes the <a def-id="encrypted-block-encountered-algorithm"></a> and <a def-id="initdata-encountered-algorithm"></a> algorithms as well as supporting standard <a def-id="htmlmediaelement"></a> [[!HTML5]] functionality, such as seeking.
+            This includes the <a def-id="encrypted-block-encountered-algorithm"></a> and <a def-id="initdata-encountered-algorithm"></a> algorithms as well as supporting standard <a def-id="htmlmediaelement"></a> [[!HTML5]] functionality, such as <a def-id="seeking"></a>.
           </p>
         </section>
 
