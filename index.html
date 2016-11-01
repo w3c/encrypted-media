@@ -883,7 +883,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED">
   <!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]-->
   <link rel="canonical" href="https://www.w3.org/TR/encrypted-media/">
-  <meta name="generator" content="ReSpec 6.0.0">
+  <meta name="generator" content="ReSpec 6.0.2">
   <script id="initialUserConfig" type="application/json">
     {
       "specStatus": "ED",
@@ -1396,7 +1396,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
-    <h2 id="w3c-editor-s-draft-28-october-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-10-28">28 October 2016</time></h2>
+    <h2 id="w3c-editor-s-draft-31-october-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-10-31">31 October 2016</time></h2>
     <dl>
       <dt>This version:</dt>
       <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/">https://w3c.github.io/encrypted-media/</a></dd>
@@ -5649,12 +5649,15 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <h4 id="h-media-may-contain-encrypted-blocks" resource="#h-media-may-contain-encrypted-blocks"><span property="xhv:role" resource="xhv:heading"><span class="secno">7.3.1 </span>Media Data May Contain Encrypted Blocks</span>
         </h4>
         <p>
-          The Media Data May Contain Encrypted Blocks algorithm pauses playback if the user agent requires specification of a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object before playing the media data.
+          The Media Data May Contain Encrypted Blocks algorithm pauses playback if the user agent requires specification of a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object before playing the media data. Requests to run this algorithm include a target <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.
         </p>
         <p>The following steps are run:</p>
         <ol>
           <li>
-            <p>If the media element's <code><a href="#dom-mediakeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object before decoding potentially-encrypted <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, run the following steps:</p>
+            <p>Let the <var>media element</var> be the specified <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.</p>
+          </li>
+          <li>
+            <p>If the <var>media element</var>'s <code><a href="#dom-mediakeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object before decoding potentially-encrypted <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, run the following steps:</p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note101"><span>Note</span></div>
               <p class="">These steps may be reached when the application provides <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> before calling <code><a href="#dom-htmlmediaelement-setmediakeys">setMediaKeys()</a></code> to provide a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Selecting a <a href="#cdm">CDM</a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object to <code><a href="#dom-htmlmediaelement-setmediakeys">setMediaKeys()</a></code>.
@@ -5662,7 +5665,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </div>
             <ol>
               <li>
-                <p>Run the <a href="#wait-for-key">Wait for Key</a> algorithm on the media element.</p>
+                <p>Run the <a href="#wait-for-key">Wait for Key</a> algorithm on the <var>media element</var>.</p>
               </li>
               <li>
                 <p>Wait for a signal to resume playback.</p>
@@ -5676,10 +5679,13 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <h4 id="h-initdata-encountered" resource="#h-initdata-encountered"><span property="xhv:role" resource="xhv:heading"><span class="secno">7.3.2 </span>Initialization Data Encountered</span>
         </h4>
         <p>
-          The Initialization Data Encountered algorithm queues an <code><a href="#dom-evt-encrypted">encrypted</a></code> event for <a href="#initialization-data">Initialization Data</a> encounterd in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.
+          The Initialization Data Encountered algorithm queues an <code><a href="#dom-evt-encrypted">encrypted</a></code> event for <a href="#initialization-data">Initialization Data</a> encounterd in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. Requests to run this algorithm include a target <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.
         </p>
         <p>The following steps are run:</p>
         <ol>
+          <li>
+            <p>Let the <var>media element</var> be the specified <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.</p>
+          </li>
           <li>
             <p>Let <var>initDataType</var> be the empty string.</p>
           </li>
@@ -5702,7 +5708,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </div>
           </li>
           <li>
-            <p><a href="https://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to create an event named <code><a href="#dom-evt-encrypted">encrypted</a></code> that does not bubble and is not cancellable using the <a href="#dom-mediaencryptedevent" class="internalDFN" data-link-type="dfn"><code>MediaEncryptedEvent</code></a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the media element.</p>
+            <p><a href="https://www.w3.org/TR/html5/webappapis.html#queue-a-task">Queue a task</a> to create an event named <code><a href="#dom-evt-encrypted">encrypted</a></code> that does not bubble and is not cancellable using the <a href="#dom-mediaencryptedevent" class="internalDFN" data-link-type="dfn"><code>MediaEncryptedEvent</code></a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>media element</var>.</p>
             <p>The event interface <a href="#dom-mediaencryptedevent" class="internalDFN" data-link-type="dfn"><code>MediaEncryptedEvent</code></a> has:</p>
             <ul style="list-style-type:none">
               <li>
@@ -5727,18 +5733,21 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <h4 id="h-encrypted-block-encountered" resource="#h-encrypted-block-encountered"><span property="xhv:role" resource="xhv:heading"><span class="secno">7.3.3 </span>Encrypted Block Encountered</span>
         </h4>
         <p>
-          The Encrypted Block Encountered algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible.
+          The Encrypted Block Encountered algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible. Requests to run this algorithm include a target <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.
         </p>
         <p>The following steps are run:</p>
         <ol>
           <li>
+            <p>Let the <var>media element</var> be the specified <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.</p>
+          </li>
+          <li>
             <p>Let <var>block</var> be the block of encrypted media data.</p>
           </li>
           <li>
-            <p>Add <var>block</var> to the end of the media element's <var>encrypted block queue</var>.</p>
+            <p>Add <var>block</var> to the end of the <var>media element</var>'s <var>encrypted block queue</var>.</p>
           </li>
           <li>
-            <p>If the media element's <var>decryption blocked waiting for key</var> value is <code>false</code>, run the <a href="#attempt-to-decrypt">Attempt to Decrypt</a> algorithm.</p>
+            <p>If the <var>media element</var>'s <var>decryption blocked waiting for key</var> value is <code>false</code>, run the <a href="#attempt-to-decrypt">Attempt to Decrypt</a> algorithm.</p>
             <!-- While media-may-contain-encrypted-blocks may also result in waiting for a key without setting this variable, it should not be possible to reach this algorithm in that case. -->
           </li>
         </ol>
@@ -5748,15 +5757,18 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         <h4 id="h-attempt-to-decrypt" resource="#h-attempt-to-decrypt"><span property="xhv:role" resource="xhv:heading"><span class="secno">7.3.4 </span>Attempt to Decrypt</span>
         </h4>
         <p>
-          The Attempt to Decrypt algorithm attempts to decrypt media data that is queued for decryption.
+          The Attempt to Decrypt algorithm attempts to decrypt media data that is queued for decryption. Requests to run this algorithm include a target <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.
         </p>
         <p>The following steps are run:</p>
         <ol>
           <li>
-            <p>If the media element's <var>encrypted block queue</var> is empty, abort these steps.</p>
+            <p>Let the <var>media element</var> be the specified <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#htmlmediaelement">HTMLMediaElement</a></code> object.</p>
           </li>
           <li>
-            <p>If the media element's <code><a href="#dom-mediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
+            <p>If the <var>media element</var>'s <var>encrypted block queue</var> is empty, abort these steps.</p>
+          </li>
+          <li>
+            <p>If the <var>media element</var>'s <code><a href="#dom-mediakeys">mediaKeys</a></code> attribute is not null, run the following steps:</p>
             <ol>
               <li>
                 <p>Let <var>media keys</var> be the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object referenced by that attribute.</p>
@@ -5790,7 +5802,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                 </div>
                 <ol>
                   <li>
-                    <p>Let <var>block</var> be the first entry in the media element's <var>encrypted block queue</var>.</p>
+                    <p>Let <var>block</var> be the first entry in the <var>media element</var>'s <var>encrypted block queue</var>.</p>
                   </li>
                   <li>
                     <p>Let the <var>block key ID</var> be the key ID of <var>block</var>.</p>
@@ -5870,7 +5882,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                               <dd>
                                 <ol>
                                   <li>
-                                    <p>Remove <var>block</var> from the front of the media element's <var>encrypted block queue</var>.</p>
+                                    <p>Remove <var>block</var> from the front of the <var>media element</var>'s <var>encrypted block queue</var>.</p>
                                   </li>
                                   <li>
                                     <p>Process the decrypted block as normal.</p>
@@ -5904,7 +5916,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             </ol>
           </li>
           <li>
-            <p>Set the media element's <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
+            <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
             <div class="note">
               <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
               <p class="">This step is reached when there is no key that is <a href="#usable-for-decryption">usable for decryption</a> for <var>block</var>.</p>

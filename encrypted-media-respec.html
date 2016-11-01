@@ -2899,16 +2899,18 @@ interface MediaEncryptedEvent : Event {
           <h4>Media Data May Contain Encrypted Blocks</h4>
           <p>
             The Media Data May Contain Encrypted Blocks algorithm pauses playback if the user agent requires specification of a <a>MediaKeys</a> object before playing the media data.
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
+            <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li>
-              <p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted <a def-id="media-data"></a>, run the following steps:</p>
+              <p>If the <var>media element</var>'s <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted <a def-id="media-data"></a>, run the following steps:</p>
               <p class="note">These steps may be reached when the application provides <a def-id="media-data"></a> before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
                 Selecting a <a def-id="cdm"></a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
               </p>
               <ol>
-                <li><p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the media element.</p></li>
+                <li><p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the <var>media element</var>.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
               </ol>
             </li>
@@ -2919,9 +2921,11 @@ interface MediaEncryptedEvent : Event {
           <h4>Initialization Data Encountered</h4>
           <p>
             The Initialization Data Encountered algorithm queues an <a def-id="encrypted"></a> event for <a def-id="initialization-data"></a> encounterd in the <a def-id="media-data"></a>.
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
+            <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li><p>Let <var>initDataType</var> be the empty string.</p></li>
             <li><p>Let <var>initData</var> be null.</p></li>
             <li>
@@ -2933,7 +2937,7 @@ interface MediaEncryptedEvent : Event {
               <p class="note">While the media element may allow loading of "Optionally-blockable Content" [[MIXED-CONTENT]], the user agent MUST NOT expose Initialization Data from such media data to the application.</p>
             </li>
             <li>
-              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the media element.</p>
+              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>media element</var>.</p>
               <p>The event interface <a>MediaEncryptedEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br><br>
@@ -2951,17 +2955,19 @@ interface MediaEncryptedEvent : Event {
           <h4>Encrypted Block Encountered</h4>
           <p>
             The Encrypted Block Encountered algorithm queues a block of encrypted media data for decryption and attempts to decrypt if possible.
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
+            <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
             <li>
               <p>Let <var>block</var> be the block of encrypted media data.</p>
             </li>
             <li>
-              <p>Add <var>block</var> to the end of the media element's <var>encrypted block queue</var>.</p>
+              <p>Add <var>block</var> to the end of the <var>media element</var>'s <var>encrypted block queue</var>.</p>
             </li>
             <li>
-              <p>If the media element's <var>decryption blocked waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.</p>
+              <p>If the <var>media element</var>'s <var>decryption blocked waiting for key</var> value is <code>false</code>, run the <a def-id="attempt-to-decrypt-algorithm"></a> algorithm.</p>
               <!-- While media-may-contain-encrypted-blocks may also result in waiting for a key without setting this variable, it should not be possible to reach this algorithm in that case. -->
             </li>
           </ol>
@@ -2970,11 +2976,13 @@ interface MediaEncryptedEvent : Event {
           <h4>Attempt to Decrypt</h4>
           <p>
             The Attempt to Decrypt algorithm attempts to decrypt media data that is queued for decryption.
+            Requests to run this algorithm include a target <a def-id="htmlmediaelement"></a> object.
           </p>
           <p>The following steps are run:</p>
           <ol>
-            <li><p>If the media element's <var>encrypted block queue</var> is empty, abort these steps.</p></li>
-            <li><p>If the media element's <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
+            <li><p>Let the <var>media element</var> be the specified <a def-id="htmlmediaelement"></a> object.</p></li>
+            <li><p>If the <var>media element</var>'s <var>encrypted block queue</var> is empty, abort these steps.</p></li>
+            <li><p>If the <var>media element</var>'s <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
               <ol>
                 <li><p>Let <var>media keys</var> be the <a>MediaKeys</a> object referenced by that attribute.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by <var>media keys</var>'s <var>cdm instance</var> value.</p></li>
@@ -2996,7 +3004,7 @@ interface MediaEncryptedEvent : Event {
                 <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                   <ol>
-                    <li><p>Let <var>block</var> be the first entry in the media element's <var>encrypted block queue</var>.</p></li>
+                    <li><p>Let <var>block</var> be the first entry in the <var>media element</var>'s <var>encrypted block queue</var>.</p></li>
                     <li><p>Let the <var>block key ID</var> be the key ID of <var>block</var>.</p>
                       <p class="note">The key ID is generally specified by the container.</p>
                     </li>
@@ -3053,7 +3061,7 @@ interface MediaEncryptedEvent : Event {
                                 <dt>Otherwise</dt>
                                 <dd>
                                   <ol>
-                                    <li><p>Remove <var>block</var> from the front of the media element's <var>encrypted block queue</var>.</p></li>
+                                    <li><p>Remove <var>block</var> from the front of the <var>media element</var>'s <var>encrypted block queue</var>.</p></li>
                                     <li><p>Process the decrypted block as normal.</p>
                                         <p class="note">In other words, decode the block.</p>
                                     </li>
@@ -3074,7 +3082,7 @@ interface MediaEncryptedEvent : Event {
               </ol>
             </li>
             <li>
-              <p>Set the media element's <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
+              <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
               <p class="note">This step is reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
               <div class="note">
                 <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, i.e. all complete video frames), it will run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
