@@ -3630,6 +3630,14 @@ interface <span class="idlInterfaceID">MediaKeys</span> {
       <div class="note-title marker" aria-level="3" role="heading" id="h-note56"><span>Note</span></div>
       <p class="">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
     </div>
+    <div class="note">
+      <div class="note-title marker" aria-level="3" role="heading" id="h-note57"><span>Note</span></div>
+      <p class="">
+        Applications <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> rely on this behavior.
+        <!-- TODO: Replace and/or expand on this with an implementation of Issue #360. -->
+        Applications that want to ensure a session is closed before taking some other action <em class="rfc2119" title="SHOULD">SHOULD</em> call <code><a href="#dom-mediakeysession-close">close()</a></code> and wait for the returned promise to be resolved.
+      </p>
+    </div>
 
     <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [<cite><a class="bibref" href="#bib-WebIDL">WebIDL</a></cite>] type mapping errors.</p>
     <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -3659,7 +3667,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
           <dd>
             <p>The <a href="#time">time</a> after which the key(s) in the session will no longer be <a href="#usable-for-decryption">usable for decryption</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="4" role="heading" id="h-note57"><span>Note</span></div>
+              <div class="note-title marker" aria-level="4" role="heading" id="h-note58"><span>Note</span></div>
               <p class="">This value <em class="rfc2119" title="MAY">MAY</em> change during the session lifetime, such as when an action triggers the start of a window.</p>
             </div>
           </dd><dt><dfn data-dfn-for="mediakeysession" data-dfn-type="dfn" id="dom-mediakeysession-closed" data-idl=""><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;void&gt;</span>, readonly       </dt>
@@ -3670,12 +3678,12 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>A reference to a read-only map of <a href="#decryption-key-id">key IDs</a> <a href="#known-key">known</a> to the session to the current status of the associated key. Each entry <em class="rfc2119" title="MUST">MUST</em> have a unique key ID.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="4" role="heading" id="h-note58"><span>Note</span></div>
+              <div class="note-title marker" aria-level="4" role="heading" id="h-note59"><span>Note</span></div>
               <p class="">The map entries and their values may be updated whenever the event loop spins. The map <em class="rfc2119" title="MUST NOT">MUST NOT</em> ever be inconsistent or partially updated, but it may change between accesses if the event loop spins in between the accesses. Key IDs may be added as the result of a <code><a href="#dom-mediakeysession-load">load()</a></code> or <code><a href="#dom-mediakeysession-update">update()</a></code> call. Key IDs may be removed as the result of a <code><a href="#dom-mediakeysession-update">update()</a></code> call that removes knowledge of existing keys (or replaces the existing set of keys with a new set). Key IDs <em class="rfc2119" title="MUST NOT">MUST NOT</em> be removed because they became unusable, such as due to expiration. Instead, such keys <em class="rfc2119" title="MUST">MUST</em> be given an appropriate status, such as <code><a href="#idl-def-MediaKeyStatus.expired">"expired"</a></code>.
               </p>
             </div>
             <div class="note">
-              <div class="note-title marker" aria-level="4" role="heading" id="h-note59"><span>Note</span></div>
+              <div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div>
               <p class="">
                 Some older platforms may contain Key System implementations that do not expose key IDs, making it impossible to provide a compliant user agent implementation. To maximize interoperability, user agent implementations exposing such CDMs <em class="rfc2119" title="SHOULD">SHOULD</em> implement this member as follows: Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing the one-byte key ID <code>0</code> and the <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> most appropriate for the aggregated status of this object.
               </p>
@@ -3802,7 +3810,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                           <dd>
                             <p>Let <var>requested license type</var> be a temporary non-persistable license.</p>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note60"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div>
                               <p class="">The returned license must not be persistable or require persisting information related to it.</p>
                             </div>
                           </dd>
@@ -3879,7 +3887,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>Resolve <var>promise</var>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note62"><span>Note</span></div>
                           <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                         </div>
                       </li>
@@ -3949,7 +3957,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                   <li>
                     <p>Let <var>sanitized session ID</var> be a validated and/or sanitized version of <var>sessionId</var>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="4" role="heading" id="h-note62"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="4" role="heading" id="h-note63"><span>Note</span></div>
                       <p class="">The user agent should thoroughly validate the sessionId value before passing it to the CDM. At a minimum, this should include checking that the length and value (e.g. alphanumeric) are reasonable.
                       </p>
                     </div>
@@ -3960,7 +3968,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                   <li>
                     <p>If there is a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object that is not <a href="#media-key-session-closed">closed</a> in this object's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> whose <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a <code><a href="#dfn-QuotaExceededError">QuotaExceededError</a></code>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="4" role="heading" id="h-note63"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="4" role="heading" id="h-note64"><span>Note</span></div>
                       <p class="">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                     </div>
                   </li>
@@ -3993,7 +4001,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>If there is a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object that is not <a href="#media-key-session-closed">closed</a> in any <a href="https://www.w3.org/TR/dom/#concept-document">Document</a> and that represents the <var>session data</var>, reject <var>promise</var> with a <code><a href="#dfn-QuotaExceededError">QuotaExceededError</a></code>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note64"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note65"><span>Note</span></div>
                           <p class="">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                         </div>
                       </li>
@@ -4045,7 +4053,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>Resolve <var>promise</var> with <code>true</code>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note65"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note66"><span>Note</span></div>
                           <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                         </div>
                       </li>
@@ -4108,7 +4116,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                   <li>
                     <p>Let <var>sanitized response</var> be a validated and/or sanitized version of <var>response copy</var>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="4" role="heading" id="h-note66"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="4" role="heading" id="h-note67"><span>Note</span></div>
                       <p class="">The user agent should thoroughly validate the response before passing it to the CDM. This may include verifying values are within reasonable limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or generating a fully sanitized version. The user agent should check that the length and values of fields are reasonable. Unknown fields should be rejected or removed.
                       </p>
                     </div>
@@ -4140,7 +4148,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                           <dt>If <var>sanitized response</var> contains a license or key(s)</dt>
                           <dd>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note67"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note68"><span>Note</span></div>
                               <p class="">This includes an initial license, an updated license, and a license renewal message.</p>
                             </div>
                             <p>Process <var>sanitized response</var>, following the stipulation for the first matching condition from the following list:</p>
@@ -4158,15 +4166,15 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                             <p>See also <a href="#session-storage">Session Storage and Persistence</a>.</p>
                             <p>State information, including keys, for each session <em class="rfc2119" title="MUST">MUST</em> be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note68"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note69"><span>Note</span></div>
                               <p class="">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
                             </div>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note69"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note70"><span>Note</span></div>
                               <p class="">The replacement algorithm within a session is <a href="#key-system">Key System</a>-dependent.</p>
                             </div>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note70"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note71"><span>Note</span></div>
                               <p class="">It is <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that CDM implementations support a standard and reasonably high minimum number of keys per <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> objects. This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (i.e. adaptive streams, various audio and video tracks) using different keys.
                               </p>
                             </div>
@@ -4180,7 +4188,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                                   Close the <a href="#key-session">key session</a> and clear <em>all</em> stored session data associated with this object, including the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> and <a href="#record-of-license-destruction">record of license destruction</a>.
                                 </p>
                                 <div class="note">
-                                  <div class="note-title marker" aria-level="4" role="heading" id="h-note71"><span>Note</span></div>
+                                  <div class="note-title marker" aria-level="4" role="heading" id="h-note72"><span>Note</span></div>
                                   <p class="">A subsequent call to <code><a href="#dom-mediakeysession-load">load()</a></code> with the value of this object's <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> would fail because there is no data stored for that session ID.</p>
                                 </div>
                               </li>
@@ -4192,7 +4200,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                           <dt>Otherwise</dt>
                           <dd>Process <var>sanitized response</var>, not storing any session data.
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note72"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note73"><span>Note</span></div>
                               <p class="">For example, <var>sanitized response</var> may contain information that will be used to generate another <code><a href="#dom-evt-message">message</a></code> event. In this case, there is no need to verify the contents against the <var>sessionType</var>.
                               </p>
                             </div>
@@ -4249,7 +4257,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>Resolve <var>promise</var>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note73"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note74"><span>Note</span></div>
                           <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                         </div>
                       </li>
@@ -4265,7 +4273,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
           <dd>
             <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="4" role="heading" id="h-note74"><span>Note</span></div>
+              <div class="note-title marker" aria-level="4" role="heading" id="h-note75"><span>Note</span></div>
               <p class="">The returned promise is resolved when the request has been processed, and the <code><a href="#dom-mediakeysession-closed">closed</a></code> attribute promise is resolved when the session is closed.</p>
             </div>
 
@@ -4295,7 +4303,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                   <li>
                     <p>Use <var>cdm</var> to close the <a href="#key-session">key session</a> associated with <var>session</var>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="4" role="heading" id="h-note75"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="4" role="heading" id="h-note76"><span>Note</span></div>
                       <p class="">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                     </div>
                   </li>
@@ -4308,7 +4316,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>Resolve <var>promise</var>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note76"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note77"><span>Note</span></div>
                           <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                         </div>
                       </li>
@@ -4365,7 +4373,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                               Destroy the license(s) and/or key(s) associated with the session.
                             </p>
                             <div class="note">
-                              <div class="note-title marker" aria-level="4" role="heading" id="h-note77"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="4" role="heading" id="h-note78"><span>Note</span></div>
                               <p class="">
                                 This implies destruction of the license(s) and/or keys(s) whether they are in memory, persistent store or both.
                               </p>
@@ -4427,7 +4435,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                       <li>
                         <p>Resolve <var>promise</var>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note78"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note79"><span>Note</span></div>
                           <p class="">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
                         </div>
                       </li>
@@ -4450,7 +4458,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
       <p>The MediaKeyStatusMap object is a read-only map of <a href="#decryption-key-id">key IDs</a> to the current status of the associated key.</p>
       <p>A key's status is independent of whether the key is currently being used and of media data.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note79"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note80"><span>Note</span></div>
         <p class="">For example, if a key has output requirements that cannot currently be met, the key's status should be <code><a href="#idl-def-MediaKeyStatus.output-downscaled">"output-downscaled"</a></code> or <code><a href="#idl-def-MediaKeyStatus.output-restricted">"output-restricted"</a></code>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
       </div>
       <div><pre class="def idl"><span class="idlInterface" id="idl-def-mediakeystatusmap" data-idl="" data-title="MediaKeyStatusMap">[<span class="extAttr"><span class="extAttrName">SecureContext</span></span>]
@@ -4682,7 +4690,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
               <p>Implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> require applications to handle message types. Implementations <em class="rfc2119" title="MUST">MUST</em> support applications that do not differentiate messages and <em class="rfc2119" title="MUST NOT">MUST NOT</em> require that applications handle message types. Specifically, Key Systems <em class="rfc2119" title="MUST">MUST</em> support passing all types of messages to a single URL.
               </p>
               <div class="note">
-                <div class="note-title marker" aria-level="5" role="heading" id="h-note80"><span>Note</span></div>
+                <div class="note-title marker" aria-level="5" role="heading" id="h-note81"><span>Note</span></div>
                 <p class="">This attribute allows an application to differentiate messages without parsing the message. It is intended to enable optional application and/or server optimizations, but applications are not required to use it.
                 </p>
               </div>
@@ -4783,7 +4791,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
         <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> or the status of one or more of the keys. Requests to run this algorithm include a target <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object and a sequence of <a href="#decryption-key-id">key ID</a> and associated <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> pairs.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note81"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note82"><span>Note</span></div>
           <p class="">The algorithm is always run in a task.</p>
         </div>
         <p>The following steps are run:</p>
@@ -4816,7 +4824,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
               </li>
             </ol>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note82"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div>
               <p class="">The effect of this steps is that the contents of <var>session</var>'s <code><a href="#dom-mediakeysession-keystatuses">keyStatuses</a></code> attribute are replaced without invalidating existing references to the attribute. This replacement is atomic from a script perspective. That is, script <em class="rfc2119" title="MUST NOT">MUST NOT</em> ever see a partially populated sequence.
               </p>
             </div>
@@ -4836,7 +4844,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
         <p>The Update Expiration algorithm updates the expiration time of a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a>. Requests to run this algorithm include a target <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note83"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
           <p class="">The algorithm is always run in a task.</p>
         </div>
         <p>The following steps are run:</p>
@@ -4861,14 +4869,14 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
         </h4>
         <p>The Session Closed algorithm updates the <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> state after a <a href="#key-session">key session</a> has been closed by the <a href="#cdm">CDM</a>.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note84"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
           <p class="">The algorithm is always run in a task.</p>
         </div>
         <p>
           When a session is closed, the license(s) and key(s) associated with it are no longer available to decrypt <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>. All <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> methods will fail and no further events will be queued for this object after this algorithm is run.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note85"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note86"><span>Note</span></div>
           <div class="">
             <p>
               The CDM may close a session at any point, such as when the session is no longer needed or when system resources are lost. In that case, the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm detects the change and runs this algorithm.
@@ -4906,11 +4914,11 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
           The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note86"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note87"><span>Note</span></div>
           <p class="">This algorithm only applies to CDM state changes that are not covered by other algorithms. For example, <code><a href="#dom-mediakeysession-update">update()</a></code> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
         </div>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note87"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note88"><span>Note</span></div>
           <p class="">The algorithm is always run in parallel to the main event loop.</p>
         </div>
         <p>
@@ -5082,7 +5090,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
       <li>
         <p>When the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#current-playback-position">current playback position</a> is changed other than advancing in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#direction-of-playback">direction of playback</a> as part of normal playback, the <var>encrypted block queue</var> value <em class="rfc2119" title="SHALL">SHALL</em> be empty, the <var>decryption blocked waiting for key</var> value <em class="rfc2119" title="SHALL">SHALL</em> be initialized to <code>false</code>, and the <var>playback blocked waiting for key</var> value <em class="rfc2119" title="SHALL">SHALL</em> be set to <code>false</code>.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note88"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note89"><span>Note</span></div>
           <p class="">
             In other words, these values should be reset when, for example, <a href="https://www.w3.org/TR/html5/embedded-content-0.html#loading-the-media-resource">loading the media resource</a> or <a href="https://www.w3.org/TR/html5/embedded-content-0.html#seeking">seeking</a>.
           </p>
@@ -5094,13 +5102,13 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
       <li>
         <p>When the user agent is ready to begin playback and has encountered an indication that the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> may contain encrypted blocks during the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119" title="SHALL">SHALL</em> run the <a href="#media-may-contain-encrypted-blocks">Media Data May Contain Encrypted Blocks</a> algorithm.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note89"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note90"><span>Note</span></div>
           <p class="">
             For some container formats, such indication is separate from <a href="#initialization-data">Initialization Data</a>.
           </p>
         </div>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note90"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note91"><span>Note</span></div>
           <p class="">
             The algorithm is to be run after parsing the relevant container data, including running the <a href="#initdata-encountered">Initialization Data Encountered</a> algorithm, but before decoding starts.
           </p>
@@ -5109,7 +5117,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
       <li>
         <p>When the user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> during the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119" title="SHALL">SHALL</em> run the <a href="#initdata-encountered">Initialization Data Encountered</a> algorithm.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note91"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note92"><span>Note</span></div>
           <p class="">
             Some container formats may support encrypted media data that does not contain <a href="#initialization-data">Initialization Data</a> and thus support media data that does not trigger this algorithm.
           </p>
@@ -5118,7 +5126,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
       <li>
         <p>For each block of encrypted <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> encountered during the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119" title="SHALL">SHALL</em> run the <a href="#encrypted-block-encountered">Encrypted Block Encountered</a> algorithm in the order the encrypted blocks were encountered.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="3" role="heading" id="h-note92"><span>Note</span></div>
+          <div class="note-title marker" aria-level="3" role="heading" id="h-note93"><span>Note</span></div>
           <p class="">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
         </div>
       </li>
@@ -5131,7 +5139,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
           <li>
             <p>The user agent cannot provide data for the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#current-playback-position">current playback position</a>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="3" role="heading" id="h-note93"><span>Note</span></div>
+              <div class="note-title marker" aria-level="3" role="heading" id="h-note94"><span>Note</span></div>
               <p class="">For example, at the beginning of playback or after <a href="https://www.w3.org/TR/html5/embedded-content-0.html#seeking">seeking</a>.</p>
             </div>
           </li>
@@ -5180,7 +5188,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
               <!-- </a> -->to use when decrypting media data during playback.</p>
 
             <div class="note">
-              <div class="note-title marker" aria-level="4" role="heading" id="h-note94"><span>Note</span></div>
+              <div class="note-title marker" aria-level="4" role="heading" id="h-note95"><span>Note</span></div>
               <p class="">Support for clearing or replacing the associated
                 <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys
                 <!-- </a> -->object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
@@ -5254,7 +5262,7 @@ dictionary <span class="idlDictionaryID">MediaKeyMessageEventInit</span> : <span
                       <li>
                         <p>If the association cannot currently be removed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="4" role="heading" id="h-note95"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="4" role="heading" id="h-note96"><span>Note</span></div>
                           <p class="">For example, some implementations may not allow removal during playback.</p>
                         </div>
                       </li>
@@ -5415,7 +5423,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <td>The user agent encounters <a href="#initialization-data">Initialization Data</a> in the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>.</td>
             <td>The element's <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is equal to or greater than <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code>.
               <div class="note">
-                <div class="note-title marker" aria-level="4" role="heading" id="h-note96"><span>Note</span></div>
+                <div class="note-title marker" aria-level="4" role="heading" id="h-note97"><span>Note</span></div>
                 <p class="">It is possible that the element is playing or has played.</p>
               </div>
             </td>
@@ -5450,7 +5458,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <li>
             <p>If the <var>media element</var>'s <code><a href="#dom-mediakeys">mediaKeys</a></code> attribute is null and the implementation requires specification of a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object before decoding potentially-encrypted <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, run the following steps:</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note97"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note98"><span>Note</span></div>
               <p class="">These steps may be reached when the application provides <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a> before calling <code><a href="#dom-htmlmediaelement-setmediakeys">setMediaKeys()</a></code> to provide a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object. Selecting a <a href="#cdm">CDM</a> may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object to <code><a href="#dom-htmlmediaelement-setmediakeys">setMediaKeys()</a></code>.
               </p>
             </div>
@@ -5494,7 +5502,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               </li>
             </ol>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note98"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note99"><span>Note</span></div>
               <p class="">While the media element may allow loading of "Optionally-blockable Content" [<cite><a class="bibref" href="#bib-MIXED-CONTENT">MIXED-CONTENT</a></cite>], the user agent <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose Initialization Data from such media data to the application.</p>
             </div>
           </li>
@@ -5508,11 +5516,11 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               </li>
             </ul>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note99"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note100"><span>Note</span></div>
               <p class=""><code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
             </div>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note100"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note101"><span>Note</span></div>
               <p class="">The <code><a href="#dom-mediaencryptedevent-initdata">initData</a></code> attribute will be null if the media data is <em>not</em> <a href="https://www.w3.org/TR/html5/infrastructure.html#cors-same-origin">CORS-same-origin</a> or is <a href="#mixed-content">mixed content</a>. Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </div>
@@ -5570,7 +5578,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               <li>
                 <p>If <var>cdm</var> is no longer usable for any reason, run the following steps:</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note101"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note102"><span>Note</span></div>
                   <p class="">These steps are intended to be run on unrecoverable failures of the CDM.</p>
                 </div>
                 <ol>
@@ -5588,7 +5596,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               <li>
                 <p>If there is at least one <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> created by the <var>media keys</var> that is not <a href="#media-key-session-closed">closed</a>, run the following steps:</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note102"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note103"><span>Note</span></div>
                   <p class="">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                 </div>
                 <ol>
@@ -5598,7 +5606,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                   <li>
                     <p>Let the <var>block key ID</var> be the key ID of <var>block</var>.</p>
                     <div class="note">
-                      <div class="note-title marker" aria-level="5" role="heading" id="h-note103"><span>Note</span></div>
+                      <div class="note-title marker" aria-level="5" role="heading" id="h-note104"><span>Note</span></div>
                       <p class="">The key ID is generally specified by the container.</p>
                     </div>
                   </li>
@@ -5615,7 +5623,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                         <p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a href="#usable-for-decryption">usable for decryption</a>, let <var>session</var> be a
                           <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object containing that key and let <var>block key</var> be that key.</p>
                         <div class="note">
-                          <div class="note-title marker" aria-level="5" role="heading" id="h-note104"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="5" role="heading" id="h-note105"><span>Note</span></div>
                           <p class="">If multiple sessions contain a key that is <a href="#usable-for-decryption">usable for decryption</a> for the <var>block key ID</var>, which session and key to use is <a href="#key-system">Key System</a>-dependent.</p>
                         </div>
                       </li>
@@ -5654,7 +5662,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                                   <li>
                                     <p>Process the decrypted block as normal.</p>
                                     <div class="note">
-                                      <div class="note-title marker" aria-level="5" role="heading" id="h-note105"><span>Note</span></div>
+                                      <div class="note-title marker" aria-level="5" role="heading" id="h-note106"><span>Note</span></div>
                                       <p class="">In other words, decode the block.</p>
                                     </div>
                                   </li>
@@ -5666,13 +5674,13 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                               </dd>
                             </dl>
                             <div class="note">
-                              <div class="note-title marker" aria-level="5" role="heading" id="h-note106"><span>Note</span></div>
+                              <div class="note-title marker" aria-level="5" role="heading" id="h-note107"><span>Note</span></div>
                               <p class="">Not all decryption problems (i.e. using the wrong key) will result in a decryption failure. In such cases, no error is fired here but one may be fired during decode.</p>
                             </div>
                           </li>
                         </ol>
                         <div class="note">
-                          <div class="note-title marker" aria-level="5" role="heading" id="h-note107"><span>Note</span></div>
+                          <div class="note-title marker" aria-level="5" role="heading" id="h-note108"><span>Note</span></div>
                           <p class="">Otherwise, there is no key for the <var>block key ID</var> in any session so continue.</p>
                         </div>
                       </li>
@@ -5685,11 +5693,11 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <li>
             <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note108"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note109"><span>Note</span></div>
               <p class="">This step is reached when there is no key that is <a href="#usable-for-decryption">usable for decryption</a> for <var>block</var>.</p>
             </div>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note109"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note110"><span>Note</span></div>
               <div class="">
                 <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, i.e. all complete video frames), it will run the <a href="#wait-for-key">Wait for Key</a> algorithm.</p>
                 <p>That algorithm is not run directly here in order to allow implementations to decrypt and decode media data ahead of the ahead of the current playback position without affecting the visible behavior.</p>
@@ -5699,7 +5707,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </ol>
 
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note110"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note111"><span>Note</span></div>
           <div class="">
             <p>For frame-based encryption, this may be implemented as follows when the media element attempts to decode a frame as part of the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#concept-media-load-resource">resource fetch algorithm</a>:</p>
             <ol>
@@ -5743,7 +5751,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <li>
             <p>Set the <var>media element</var>'s <var>playback blocked waiting for key</var> value to <code>true</code>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note111"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note112"><span>Note</span></div>
               <p class="">As a result of the above step, the media element will become a <a href="https://www.w3.org/TR/html5/embedded-content-0.html#blocked-media-element">blocked media element</a> if it wasn't already. In that case, the media element will stop playback.</p>
             </div>
           </li>
@@ -5759,7 +5767,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                 <p>Set the <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> of <var>media element</var> to <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code>.</p>
               </dd>
               <div class="note">
-                <div class="note-title marker" aria-level="5" role="heading" id="h-note112"><span>Note</span></div>
+                <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
                 <p class="">
                   In other words, if the video frame and audio data for the <a href="https://www.w3.org/TR/html5/embedded-content-0.html#current-playback-position">current playback position</a> have been decoded because they were unencrypted and/or successfully decrypted, set <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> to <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_current_data">HAVE_CURRENT_DATA</a></code>. Otherwise, including if this was previously the case but the data is no longer available, set <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-readystate">readyState</a></code> to <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_metadata">HAVE_METADATA</a></code>.
                 </p>
@@ -5801,7 +5809,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               <li>
                 <p>Set the <var>media element</var>'s <var>playback blocked waiting for key</var> value to <code>false</code>.</p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note113"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note114"><span>Note</span></div>
                   <p class="">As a result of the above step, the media element may no longer be a <a href="https://www.w3.org/TR/html5/embedded-content-0.html#blocked-media-element">blocked media element</a> and thus playback may resume.</p>
                 </div>
               </li>
@@ -5811,7 +5819,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
                   <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_enough_data">HAVE_ENOUGH_DATA</a></code> as <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#ready-states">appropriate</a></code>.
                 </p>
                 <div class="note">
-                  <div class="note-title marker" aria-level="5" role="heading" id="h-note114"><span>Note</span></div>
+                  <div class="note-title marker" aria-level="5" role="heading" id="h-note115"><span>Note</span></div>
                   <div class="">
                     <p>
                       States beyond <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#dom-media-have_current_data">HAVE_CURRENT_DATA</a></code> and the <code><a href="https://www.w3.org/TR/html5/embedded-content-0.html#event-media-canplaythrough">canplaythrough</a></code> event do not (or are unlikely to) consider key availability beyond the current key.
@@ -5970,7 +5978,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <p>The use of identifiers, especially <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>, by implementations presents a privacy concern. This section defines requirements for avoiding or at least mitigating such concerns. The requirements for <a href="#exposed-value-requirements">Values Exposed to the Application</a> also apply to identifiers exposed to the application.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note115"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note116"><span>Note</span></div>
         <div class="">
           <p>In summary:</p>
           <ul>
@@ -6009,14 +6017,14 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <li>
             <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> avoid <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use of Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note116"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note117"><span>Note</span></div>
               <p class="">For example, use identifiers or other values that apply to a group of clients or devices rather than individual clients.</p>
             </div>
           </li>
           <li>
             <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> only <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note117"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note118"><span>Note</span></div>
               <p class="">For example, <code><a href="#idl-def-MediaKeySessionType.temporary">"temporary"</a></code> and <code><a href="#idl-def-MediaKeySessionType.persistent-license">"persistent-license"</a></code> sessions may have different requirements.</p>
             </div>
           </li>
@@ -6025,7 +6033,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               Implementations that <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> <em class="rfc2119" title="SHOULD">SHOULD</em> support the option to not use them. Implementations with such support <em class="rfc2119" title="SHOULD">SHOULD</em> expose the ability for the user to select this option.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note118"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note119"><span>Note</span></div>
               <div class="">
                 <p>
                   When supported, applications can select for this mode using <code><a href="#dom-mediakeysystemconfiguration-distinctiveidentifier">distinctiveIdentifier</a></code> = <code><a href="#idl-def-MediaKeysRequirement.not-allowed">"not-allowed"</a></code>. Selecting such an option may affect the results of the <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> call and/or the license requests that are generated from subsequently generated sessions.
@@ -6046,7 +6054,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <a href="#distinctive-identifier">Distinctive Identifiers</a> and <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be encrypted at the message exchange level when exposed outside the client. All other identifiers <em class="rfc2119" title="SHOULD">SHOULD</em> be encrypted at the message exchange level when exposed outside the client. The encryption <em class="rfc2119" title="MUST">MUST</em> ensure that any two instances of the identifier ciphertext are <a href="#associable-by-entity">associable</a> only by an entity in possession of the decryption key.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note119"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note120"><span>Note</span></div>
           <div class="">
             <p>Identifiers may be exposed in the following ways:</p>
             <ul>
@@ -6067,12 +6075,12 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </p>
         <p>The server <em class="rfc2119" title="MUST NOT">MUST NOT</em> expose a <a href="#distinctive-identifier">Distinctive Identifier</a> to any entity other than the CDM that sent it.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note120"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note121"><span>Note</span></div>
           <p class="">Specifically, it should not be provided to the application or included unencrypted in messages to the CDM. This can be accomplished by encrypting the identifier or message with the identifier or such that it is only decryptable by that specific CDM.
           </p>
         </div>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note121"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note122"><span>Note</span></div>
           <div class="">
             <p>Among other things, this means that:</p>
             <ul>
@@ -6097,7 +6105,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           All identifiers except <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> <em class="rfc2119" title="MUST">MUST</em> be unique per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> and <a href="#browsing-profile">browsing profile</a>. See <a href="#per-origin-per-profile-values" class="sec-ref"><span class="secno">8.2.1</span> <span class="sec-title">Use Per-Origin Per-Profile Values</span></a>.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note122"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note123"><span>Note</span></div>
           <div class="">
             <p>This includes but is not limited to <a href="#distinctive-identifier">Distinctive Identifiers</a>.</p>
             <p><a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> <em class="rfc2119" title="MUST NOT">MUST NOT</em> be exposed to the application or origin.</p>
@@ -6112,7 +6120,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           All identifiers, including <a href="#distinctive-identifier">Distinctive Identifiers</a>, exposed by the implementation to applications, even in encrypted form, <em class="rfc2119" title="MUST">MUST</em> be <a href="#non-associable-by-application">non-associable by application(s)</a> across <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origins</a>, <a href="#browsing-profile">browsing profiles</a>, and <a href="#allow-identifiers-cleared">clearing of identifiers</a>.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note123"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note124"><span>Note</span></div>
           <p class="">
             For all such identifiers, it <em class="rfc2119" title="MUST NOT">MUST NOT</em> be possible for one or more applications, including related license or other servers to achieve such correlation or association.
           </p>
@@ -6143,7 +6151,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <p>This process <em class="rfc2119" title="MUST">MUST</em> be performed either <a href="#direct-individualization">directly by the user agent</a> or <a href="#app-assisted-individualization">through the application</a>. The mechanisms, flow, and restrictions for the two types of individualization are different, as described in the following sections. Which method is used depends on the CDM implementation and application of the requirements of this specification, especially those below.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note124"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note125"><span>Note</span></div>
         <p class="">
           <code><a href="#dom-mediakeysystemconfiguration-distinctiveidentifier">distinctiveIdentifier</a></code> controls whether <a href="#distinctive-identifier">Distinctive Identifiers</a> and <a href="#distinctive-permanent-identifier">Distinctive Permanent Identifiers</a> may be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a>, including for individualization. Specifically, such identifiers may only be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a> when the value of the <code><a href="#dom-mediakeysystemconfiguration-distinctiveidentifier">distinctiveIdentifier</a></code> member of the <a href="#idl-def-mediakeysystemaccess" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemAccess</code></a> used to create the <a href="#idl-def-mediakeys" class="internalDFN" data-link-type="dfn"><code>MediaKeys</code></a> object is <code><a href="#idl-def-MediaKeysRequirement.required">"required"</a></code>.
         </p>
@@ -6156,7 +6164,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           Direct Individualization is performed between the <a href="#cdm">CDM</a> and an origin- and application-independent server. Although the server is origin-independent, the result of the individualization enables the CDM to provide origin-specific identifiers per the other requirements of this specification. The process <em class="rfc2119" title="MUST">MUST</em> be performed by the user agent and <em class="rfc2119" title="MUST NOT">MUST NOT</em> use the APIs defined in this specification.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note125"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note126"><span>Note</span></div>
           <p class="">For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-per-profile-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier for <a href="#per-origin-per-profile-identifiers">a single browsing profile</a> by communicating with a pre-determined server hosted by the user agent or CDM vendor, possibly <a href="#uses-distinctive-permanent-identifiers">using Distinctive Permanent Identifier(s)</a> or other <a href="#permanent-identifier">Permanent Identifier(s)</a> from the client device.
           </p>
         </div>
@@ -6214,7 +6222,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <li>
             <p><em class="rfc2119" title="MUST">MUST</em> adhere to the <a href="#identifier-requirements">identifier requirements</a>.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note126"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note127"><span>Note</span></div>
               <p class="">This includes only using values that are <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.</p>
             </div>
           </li>
@@ -6235,7 +6243,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       </h3>
       <p>Implementations <em class="rfc2119" title="MUST">MUST</em> support multiple keys in each <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note127"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note128"><span>Note</span></div>
         <p class="">The mechanics of how multiple keys are supported is an implementation detail, but it <em class="rfc2119" title="MUST">MUST</em> be transparent to the application and the APIs defined in this specification.</p>
       </div>
 
@@ -6252,7 +6260,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </h4>
         <p>Implementations <em class="rfc2119" title="SHOULD">SHOULD</em> allow licenses generated with any <a href="#initialization-data-type">Initialization Data Type</a> they support to be used with any content type.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note128"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note129"><span>Note</span></div>
           <p class="">Otherwise, the <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> algorithm might, for example, reject a <a href="#idl-def-mediakeysystemconfiguration" class="internalDFN" data-link-type="dfn"><code>MediaKeySystemConfiguration</code></a> because one of the <code><a href="#dom-mediakeysystemconfiguration-initdatatypes">initDataTypes</a></code> is not supported with one of the <code><a href="#dom-mediakeysystemconfiguration-videocapabilities">videoCapabilities</a></code>.</p>
         </div>
       </section>
@@ -6262,7 +6270,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </h4>
         <p>For any supported <a href="#initialization-data-type">Initialization Data Type</a> that may appear in a supported container, the user agents <em class="rfc2119" title="MUST">MUST</em> support <a href="#initdata-encountered">extracting</a> that type of <a href="#initialization-data">Initialization Data</a> from each such supported container.</p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note129"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note130"><span>Note</span></div>
           <p class="">In other words, indicating support for an <a href="#initialization-data-type">Initialization Data Type</a> implies both CDM support for generating license requests and, for container-specific types, user agent support for extracting it from the container. This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported <a href="#initialization-data">Initialization Data</a> from <em>any</em> supported content type.
           </p>
         </div>
@@ -6289,7 +6297,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-resource">Media resources</a>, including all tracks, <em class="rfc2119" title="MUST">MUST</em> be encrypted and packaged per a container-specific "common encryption" specification that allows the content to be decrypted in a fully specified and compatible way when a key or keys are provided.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note130"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note131"><span>Note</span></div>
           <p class="">
             The Encrypted Media Extensions Stream Format and Initialization Data Format Registry [<cite><a class="bibref" href="#bib-EME-STREAM-REGISTRY">EME-STREAM-REGISTRY</a></cite>] provides references to such stream formats.
           </p>
@@ -6303,7 +6311,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           In-band support content, such as captions, described audio, and transcripts, <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> be encrypted.
         </p>
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note131"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note132"><span>Note</span></div>
           <p class="">
             Decryption of such tracks - especially such that they can be provided back the user agent - is not generally supported by implementations. Thus, encrypting such tracks would prevent them from being widely available for use with accessibility features in user agent implementations.
           </p>
@@ -6322,7 +6330,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
     </h2>
     <p>All user agents <em class="rfc2119" title="MUST">MUST</em> support the common key systems described in this section.</p>
     <div class="note">
-      <div class="note-title marker" aria-level="3" role="heading" id="h-note132"><span>Note</span></div>
+      <div class="note-title marker" aria-level="3" role="heading" id="h-note133"><span>Note</span></div>
       <p class="">This ensures that there is a common baseline level of functionality that is guaranteed to be supported in all user agents, including those that are entirely open source. Thus, content providers that need only basic decryption can build simple applications that will work on all platforms without needing to work with any content protection providers.
       </p>
     </div>
@@ -6577,13 +6585,13 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <p>User Agent and Key System implementations <em class="rfc2119" title="MUST">MUST</em> consider <a href="https://www.w3.org/TR/html5/embedded-content-0.html#media-data">media data</a>, <a href="#initialization-data">Initialization Data</a>, data passed to <code><a href="#dom-mediakeysession-update">update()</a></code>, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors. They <em class="rfc2119" title="MUST">MUST</em> use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data. User Agents <em class="rfc2119" title="SHOULD">SHOULD</em> validate data before passing it to the CDM.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note133"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note134"><span>Note</span></div>
         <p class="">Such validation is especially important if the CDM does not run in the same (sandboxed) context as, for example, the DOM.</p>
       </div>
 
       <p>Implementations <em class="rfc2119" title="MUST NOT">MUST NOT</em> return active content or passive content that affects program control flow to the application.</p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note134"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note135"><span>Note</span></div>
         <p class="">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the <a href="#initialization-data">Initialization Data</a> passed to <code><a href="#dom-mediakeysession-generaterequest">generateRequest()</a></code>. Applications must determine the URLs to use. The <code><a href="#dom-mediakeymessageevent-messagetype">messageType</a></code> attribute of the <code><a href="#dom-evt-message">message</a></code> event can be used by the application to select among a set of URLs if applicable.
         </p>
       </div>
@@ -6597,14 +6605,14 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <p>Exploiting a CDM implementation that is not fully sandboxed and/or uses platform features may allow an attacker to access OS or platform features, elevate privilege (e.g. to run as system or root), and/or access drivers, kernel, firmware, hardware, etc. Such features, software, and hardware may not be written to be robust against hostile software or web-based attacks and may not be updated with security fixes, especially compared to the user agent. Lack of, infrequent, or slow updates for fixes to security vulnerabilities in CDM implementations increases the risk. Such CDM implementations and UAs that expose them <em class="rfc2119" title="MUST">MUST</em> be especially careful in all areas of security, including parsing of <a href="#input-data-security">all data</a>.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note135"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note136"><span>Note</span></div>
         <p class="">User agents should be especially diligent when using a CDM or underlying mechanism that is part of or provided by the client OS, platform and/or hardware.</p>
       </div>
 
       <p>If a user agent chooses to support a Key System implementation that cannot be sufficiently sandboxed or otherwise secured, the user agent <em class="rfc2119" title="SHOULD">SHOULD</em> <a href="#security-consent">ensure that users are fully informed and/or give explicit consent</a> before loading or invoking it.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note136"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note137"><span>Note</span></div>
         <p class="">Granting permissions to unauthenticated origins is equivalent to granting the permissions to any origin in the presence of a network attacker. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
         </p>
       </div>
@@ -6676,7 +6684,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <p>Such mechanisms <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note137"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note138"><span>Note</span></div>
               <p class="">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
               </p>
             </div>
@@ -6717,7 +6725,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
       <p>Using the APIs defined in this specification on shared hosts compromises origin-based security and privacy mitigations implemented by user agents. For example, per-origin <a href="#distinctive-identifier">Distinctive Identifiers</a> are shared by all authors on one host name, and peristed data may be accessed and manipulated by any author on the host. The latter is especially important if, for example, modification or deletion of such data could erase a user's right to specific content.
       </p>
       <div class="note">
-        <div class="note-title marker" aria-level="4" role="heading" id="h-note138"><span>Note</span></div>
+        <div class="note-title marker" aria-level="4" role="heading" id="h-note139"><span>Note</span></div>
         <p class="">Even if a path-restriction feature was made available by user agents, the usual DOM scripting security model would make it trivial to bypass this protection and access the data from any path.</p>
       </div>
       <p>Authors on shared hosts are therefore <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> to avoid using the APIs defined in this specification because doing so compromises origin-based security and privacy mitigations in user agents.</p>
@@ -6792,7 +6800,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
               It is not possible to extract, derive or infer information from the CDM that is not either explicitly described in this specification or available to the page through other web platform APIs without user permission. This applies to any information that is exposed outside the client device or to the application, including, for example, in CDM messages.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note139"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note140"><span>Note</span></div>
               <div class="">
                 <p>The type of information covered by this requirement includes but is not limited to:</p>
                 <ul>
@@ -6955,7 +6963,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
           <dd>
             <p>User agents <em class="rfc2119" title="MAY">MAY</em>, possibly in a manner configured by the user, automatically delete <a href="#distinctive-identifier">Distinctive Identifiers</a> and/or other Key System data after a period of time.</p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note140"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note141"><span>Note</span></div>
               <div class="">
                 <p>For example, a user agent could be configured to store such data as session-only storage, deleting the data once the user had closed all the browsing contexts that could access it.</p>
                 <p>This can restrict the ability of a site to track a user, as the site would then only be able to track the user across multiple sessions when he authenticates with the site itself (e.g. by making a purchase or logging in to a service).</p>
@@ -6978,7 +6986,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
             <p>Such mechanisms <em class="rfc2119" title="MUST">MUST</em> be per <a href="https://www.w3.org/TR/html5/browsers.html#origin-0">origin</a> to avoid valid uses enabling subsequent malicious access and <em class="rfc2119" title="MUST">MUST</em> be per <a href="#browsing-profile">browsing profile</a>.
             </p>
             <div class="note">
-              <div class="note-title marker" aria-level="5" role="heading" id="h-note141"><span>Note</span></div>
+              <div class="note-title marker" aria-level="5" role="heading" id="h-note142"><span>Note</span></div>
               <p class="">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
               </p>
             </div>
@@ -7004,7 +7012,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
         </dl>
 
         <div class="note">
-          <div class="note-title marker" aria-level="5" role="heading" id="h-note142"><span>Note</span></div>
+          <div class="note-title marker" aria-level="5" role="heading" id="h-note143"><span>Note</span></div>
           <p class="">While these suggestions prevent trivial use of the APIs defined in this specification for user tracking, they do not block it altogether. Within a single origin, a site can continue to track the user during a session, and can then pass all this information to a third party along with any identifying information (names, credit card numbers, addresses) obtained by the site. If a third party cooperates with multiple sites to obtain such information, and if identifiers are not
             <!-- Issue #101 may affect this text. --><a href="#per-origin-per-profile-identifiers">unique per origin and profile</a>, then a profile can still be created.
           </p>

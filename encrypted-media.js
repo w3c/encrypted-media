@@ -223,6 +223,7 @@
     'load-call': { func: idlref_helper, fragment: 'dom-mediakeysession-load', link_text: 'load',  },
     'update': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update()',  },
     'update-call': { func: idlref_helper, fragment: 'dom-mediakeysession-update', link_text: 'update',  },
+    'close': { func: idlref_helper, fragment: 'dom-mediakeysession-close', link_text: 'close()',  },
     'close-call': { func: idlref_helper, fragment: 'dom-mediakeysession-close', link_text: 'close',  },
     'remove': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove()',  },
     'remove-call': { func: idlref_helper, fragment: 'dom-mediakeysession-remove', link_text: 'remove',  },
