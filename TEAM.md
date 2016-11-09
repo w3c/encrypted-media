@@ -16,7 +16,7 @@ Use the following steps to publish the new index.html after modifying the `-resp
 1. Open an Incognito or private browsing window. (This generally ensures that extensions are not loaded and will not interfere with the output.)
 1. Open the `-respec.html` file in that window.
 1. **Verify that there are no errors** next to the ReSpec bubble in the upper right corner.
-1. **Verify that ReSpec completed and there are no exceptions** by checking the browser's console (i.e. `Ctrl+Shift+i`). You should see no messages.
+1. **Verify that ReSpec completed and there are no exceptions** by checking the browser's console (e.g., `Ctrl+Shift+i`). You should see no messages.
 1. ReSpec button => Save Snapshot => Save as HTML
 1. `mv ~/Downloads/index.html ./`
 1. Review the diff in a tool like `gitk`.
@@ -39,7 +39,7 @@ The following subsections contain instructions for merging. They assume the Bash
 
 1. If the pull request contains multiple commits, squash them as appropriate.
    * In general, all commits and merges should be squashed into a single commit.
-   * If commits or sets of commits represent multiple distinct actions (i.e. do something then rename a variable), then the branch might be squashed into two or more commits, each representing a distinct action.
+   * If commits or sets of commits represent multiple distinct actions (e.g., do something then rename a variable), then the branch might be squashed into two or more commits, each representing a distinct action.
    * Squash commits by running `git rebase -i origin/gh-pages` then using `squash` on the commit(s) to be squashed.
 
 1. If index.html is not part of the pull request and needs to be updated:
@@ -51,7 +51,7 @@ The following subsections contain instructions for merging. They assume the Bash
     git commit --amend
     ```
 
-1. If the commit message needs to be updated (i.e. To add "Fix #\<bug ID\>: "), do one of the following and update the message:
+1. If the commit message needs to be updated (e.g., to add "Fix #\<bug ID\>: "), do one of the following and update the message:
     * Run `git rebase -i origin/gh-pages` then use `reword` to select the commit(s) to reword.
     * Run `git commit --amend` and edit the last commit message.
 
