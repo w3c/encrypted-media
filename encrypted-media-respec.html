@@ -1402,7 +1402,7 @@
       <p>The MediaKeys object represents a set of keys that an associated HTMLMediaElement can use for decryption of <a def-id="media-data"></a> during playback.
         It also represents a CDM instance.
       </p>
-      <p>A MediaKeys object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
+      <p>A <a>MediaKeys</a> object may be destroyed by the user agent when it is no longer accessible (i.e. there are no JavaScript references and no attached media element).</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
@@ -1581,22 +1581,24 @@
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
-
       <p>
-        If a <a>MediaKeySession</a> object becomes inaccessible to the page
-        and is not <a def-id="media-key-session-closed"></a>, the User Agent
-        MUST use the CDM to close the session before User Agent state
-        associated with the <a href="#key-session">session</a> is deleted.
-      </p>
-      <p>
-        A MediaKeySession object SHALL NOT be destroyed and SHALL continue to receive events if it is
+        A <a>MediaKeySession</a> object SHALL NOT be destroyed and SHALL continue to receive events if it is
         not <a def-id="media-key-session-closed"></a> and the <a>MediaKeys</a> object that created it remains accessible.
-        Otherwise, a MediaKeySession object that is no longer accessible to JavaScript SHALL NOT receive further
+        Otherwise, a <a>MediaKeySession</a> object that is no longer accessible to JavaScript SHALL NOT receive further
         events and MAY be destroyed.
       </p>
       <p class="note">
         The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
         objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
+      </p>
+      <p>
+        If a <a>MediaKeySession</a> object is not <a def-id="media-key-session-closed"></a> when it becomes inaccessible to the page, the CDM SHALL close the <a href="#key-session">key session</a> associated with the object.
+      </p>
+      <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
+      <p class="note">
+        Exactly when the key session is closed is an implementation detail, and applications SHOULD NOT rely on specific timing.
+        <!-- TODO: Replace and/or expand on this with an implementation of Issue #360. --> 
+        Applications that want to ensure a session is closed before taking some other action SHOULD call <a def-id="close"></a> and wait for the returned promise to be resolved.
       </p>
 
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[!WebIDL]] type mapping errors.</p>
@@ -1898,7 +1900,7 @@
                           <ol>
                             <li>
                               <p>
-                                Close the <a href="#key-session">session</a> and clear <em>all</em> stored session data associated with this object,
+                                Close the <a href="#key-session">key session</a> and clear <em>all</em> stored session data associated with this object,
                                 including the <a def-id="sessionId"></a> and <a def-id="record-of-license-destruction"></a>.
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
@@ -1984,7 +1986,7 @@
               <ol>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
                 <li>
-                  <p>Use <var>cdm</var> to close the <a href="#key-session">session</a> associated with <var>session</var>.</p>
+                  <p>Use <var>cdm</var> to close the <a href="#key-session">key session</a> associated with <var>session</var>.</p>
                   <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
                 <li>
@@ -2325,10 +2327,10 @@ interface MediaKeyMessageEvent : Event {
       
         <section id="session-closed">
           <h4>Session Closed</h4>
-          <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">session</a> has been closed.</p>
+          <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">key session</a> has been closed by the <a def-id="cdm"></a>.</p>
           <p class="note">The algorithm is always run in a task.</p>
           <p>
-            Closing a <a href="#key-session">session</a> means that the license(s) and key(s) associated with it are no longer available to
+            When a session is closed, the license(s) and key(s) associated with it are no longer available to
             decrypt <a def-id="media-data"></a>. All <a>MediaKeySession</a> methods will fail and no further events will be queued for this object
             after this algorithm is run.
           </p>
