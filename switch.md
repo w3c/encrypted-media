@@ -6,5 +6,5 @@ _NOTE_: Applications are advised that at the time of this writing, at least some
 
 Support of switching when MediaKeys is set after the playback starts, or when the clear stream uses a different contentType, is a quality of implementation issue.
 
-_NOTE_: Applications are advised that at the time of this writing, at least some major browser do not support this. Applications that need this functionality SHOULD set MediaKeys before loading the media resource.
+_NOTE_: Applications are advised that at the time of this writing, at least some major browser do not support this. Applications that need this functionality **SHOULD** set MediaKeys before loading the media resource.
 
