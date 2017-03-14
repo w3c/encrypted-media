@@ -1,6 +1,6 @@
 (function() {
   var EME_spec_url = "https://www.w3.org/TR/encrypted-media/";
-  var HTML_spec_url = "https://www.w3.org/TR/html51/embedded-content-0.html";
+  var HTML_spec_url = "https://www.w3.org/TR/html51/semantics-embedded-content.html";
   var DOM_spec_url = "https://www.w3.org/TR/dom/";
   var IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
 
@@ -105,18 +105,18 @@
   }
 
   function queue_and_fire_helper(doc, df, id, text) {
-    webappapis_helper(doc, df, 'queue-a-task', text);
+    webappapis_helper(doc, df, 'queuing', text);
     df.appendChild(doc.createTextNode(' to '));
-    webappapis_helper(doc, df, 'fire-a-simple-event', 'fire a simple event');
+    webappapis_helper(doc, df, 'firing-a-simple-event-named-e', 'fire a simple event');
     df.appendChild(doc.createTextNode(' named'));
   }
 
     function queue_helper(doc, df, id, text) {
-    webappapis_helper(doc, df, 'queue-a-task', text);
+    webappapis_helper(doc, df, 'queuing', text);
   }
 
   function queue_and_fire_track_event_helper(doc, df, id, text) {
-    webappapis_helper(doc, df, 'queue-a-task', 'Queue a task');
+    webappapis_helper(doc, df, 'queuing', 'Queue a task');
     df.appendChild(doc.createTextNode(' to fire a '));
     infrastructure_helper(doc, df, 'concept-events-trusted', 'trusted event');
     df.appendChild(doc.createTextNode(' named '));
@@ -127,7 +127,7 @@
   }
 
   function queue_and_run_helper(doc, df, id, text) {
-    webappapis_helper(doc, df, 'queue-a-task', text);
+    webappapis_helper(doc, df, 'queuing', text);
     df.appendChild(doc.createTextNode(' to run the'));
   }
 
@@ -283,25 +283,25 @@
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
     'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
-    'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
+    'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement-htmlmediaelement', link_text: 'HTMLMediaElement',  },
     'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
-    'media-crossorigin': { func: code_videoref_helper, fragment: 'attr-media-crossorigin', link_text: 'crossorigin',  },
+    'media-crossorigin': { func: code_videoref_helper, fragment: 'element-attrdef-media-crossorigin', link_text: 'crossorigin',  },
     'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
     'loading-the-media-resource': { func: videoref_helper, fragment: 'loading-the-media-resource', link_text: 'loading the media resource',  },
-    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'concept-media-load-resource', link_text: 'resource fetch algorithm',  },
-    'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
+    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'resource-fetch-algorithm', link_text: 'resource fetch algorithm',  },
+    'current-playback-position': { func: videoref_helper, fragment: 'current-position', link_text: 'current playback position',  },
     'blocked-media-element': { func: videoref_helper, fragment: 'blocked-media-element', link_text: 'blocked media element',  },
     'potentially-playing': { func: videoref_helper, fragment: 'potentially-playing', link_text: 'potentially playing',  },
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'seeking': { func: videoref_helper, fragment: 'seeking', link_text: 'seeking',  },
-    'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
+    'readystate': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-readystate', link_text: 'readyState',  },
     'ready-states': { func: code_videoref_helper, fragment: 'ready-states', link_text: 'Ready States',  },
-    'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
-    'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
-    'have-future-data': { func: code_videoref_helper, fragment: 'dom-media-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
-    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-media-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
-    'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
+    'have-metadata': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_metadata', link_text: 'HAVE_METADATA',  },
+    'have-current-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
+    'have-future-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
+    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
+    'canplaythrough': { func: code_videoref_helper, fragment: 'eventdef-media-canplaythrough', link_text: 'canplaythrough',  },
     'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
 
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
@@ -314,15 +314,15 @@
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
     'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
-    'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
-    'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
-    'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
-    'queue-a-task': { func: queue_helper, fragment: '', link_text: 'queue a task',  },
+    'queuing-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
+    'queuing-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
+    'queuing': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
+    'queuing': { func: queue_helper, fragment: '', link_text: 'queue a task',  },
 
     'constructing-events': { func: dom_helper, fragment: 'constructing-events', link_text: 'Constructing events', },
     'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
-    'origin': { func: browsers_helper, fragment: 'origin-0', link_text: 'origin', },
-    'cors-same-origin': { func: infrastructure_helper, fragment: 'cors-same-origin', link_text: 'CORS-same-origin', },
+    'origin': { func: browsers_helper, fragment: 'concept-cross-origin', link_text: 'origin', },
+    'cors-same-origin': { func: browsers_helper, fragment: 'same-origin', link_text: 'CORS-same-origin', },
 
     'contributors': { func: contributors_helper, fragment: '', link_text: '', },
   };
