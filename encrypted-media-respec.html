@@ -34,11 +34,11 @@
       var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
       specStatus: "ED",
-
-      previousMaturity: "WD",
+      implementationReportURI: "https://w3c.github.io/test-results/encrypted-media/all.html",
 
       // the specification's short name, as in https://www.w3.org/TR/short-name/
       shortName: "encrypted-media",
+      license: 'w3c-software-doc',
 
       useExperimentalStyles: true,
 
@@ -1538,7 +1538,7 @@
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queuing"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session.</p>
             </li>
           </ol>
         </section>
@@ -1744,7 +1744,7 @@
                   </ol>
                 </li>
                 <li>
-                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <p><a def-id="queuing"></a> to run the following steps:</p>
                   <ol>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                     <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
@@ -1813,7 +1813,7 @@
                   </ol>
                 </li>
                 <li>
-                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <p><a def-id="queuing"></a> to run the following steps:</p>
                   <ol>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
                     <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
@@ -1924,7 +1924,7 @@
                   </ol>
                 </li>
                 <li>
-                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <p><a def-id="queuing"></a> to run the following steps:</p>
                   <ol>
                     <li>
                       <dl class="switch">
@@ -1989,7 +1989,7 @@
                   <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
                 <li>
-                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <p><a def-id="queuing"></a> to run the following steps:</p>
                   <ol>
                     <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
                     <li>
@@ -2065,7 +2065,7 @@
                   </ol>
                 </li>
                 <li>
-                  <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
+                  <p><a def-id="queuing"></a> to run the following steps:</p>
                   <ol>
                     <li>
                       <p>
@@ -2268,7 +2268,7 @@ interface MediaKeyMessageEvent : Event {
           <ol>
             <li><p>Let the <var>session</var> be the specified <a>MediaKeySession</a> object.</p></li>
             <li>
-              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="message"></a> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
+              <p><a def-id="queuing"></a> to create an event named <a def-id="message"></a> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
               <p>The event interface <a>MediaKeyMessageEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="message-event-messagetype-attribute"></a> = the specified <var>message type</var><br><br>
@@ -2303,8 +2303,8 @@ interface MediaKeyMessageEvent : Event {
                 This replacement is atomic from a script perspective. That is, script MUST NOT ever see a partially populated sequence.
               </p>
             </li>
-            <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keystatuseschange"></a> at the <var>session</var>.</p></li>
-            <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
+            <li><p><a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="keystatuseschange"></a> at the <var>session</var>.</p></li>
+            <li><p><a def-id="queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
             </li>
           </ol>
         </section>
@@ -2373,7 +2373,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
             <li>
               <p>
-                If <var>cdm</var> has an outgoing message that has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has an outgoing message that has not yet been sent, then <a def-id="queuing"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2391,7 +2391,7 @@ interface MediaKeyMessageEvent : Event {
             <li>
               <p>
                 If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys,
-                then <a def-id="queue-a-task"></a> to execute the following steps:
+                then <a def-id="queuing"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2409,7 +2409,7 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a def-id="queuing"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2426,12 +2426,12 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has closed <var>session</var>, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> has closed <var>session</var>, then <a def-id="queuing"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
             <li>
               <p>
-                If <var>cdm</var> had become unavailable, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> had become unavailable, then <a def-id="queuing"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
           </ol>
@@ -2644,7 +2644,7 @@ interface MediaKeyMessageEvent : Event {
                         <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                       </ol>
                     </li>
-                    <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on the media element.</p>
+                    <li><p><a def-id="queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on the media element.</p>
                     </li>
                   </ol>
                 </li>
@@ -2768,7 +2768,7 @@ interface MediaEncryptedEvent : Event {
               <p class="note">While the media element may allow loading of "Optionally-blockable Content" [[MIXED-CONTENT]], the user agent MUST NOT expose Initialization Data from such media data to the application.</p>
             </li>
             <li>
-              <p><a def-id="Queue-a-task"></a> to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>media element</var>.</p>
+              <p><a def-id="queuing"></a> to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>media element</var>.</p>
               <p>The event interface <a>MediaEncryptedEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br><br>
@@ -2847,7 +2847,7 @@ interface MediaEncryptedEvent : Event {
                         <a>MediaKeySession</a> object containing that key and let <var>block key</var> be that key.</p>
                           <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
                         </li>
-                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.</p></li>
+                        <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queuing"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.</p></li>
                         <li><p>If <var>block key</var> is not null, run the following steps:</p>
                           <ol>
                             <li><p>Use the <var>cdm</var> to decrypt <var>block</var> using <var>block key</var>.</p></li>
@@ -2949,7 +2949,7 @@ interface MediaEncryptedEvent : Event {
                 </dd>
               </dl>                  
             </li>
-            <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
+            <li><p><a def-id="queue-a-task-to-fire-an-event-named"></a> <a def-id="waitingforkey"></a> at the <var>media element</var>.</p></li>
             <li><p>Suspend playback.</p></li>
           </ol>
         </section>
