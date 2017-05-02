@@ -362,7 +362,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
       }
     }
   </style>
-  <title>ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</title>
+  <title>ISO Common Encryption ('cenc' and 'cbcs') Protection Schemes for ISO Base Media File Format Stream Format</title>
 
 
 
@@ -471,7 +471,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
     <p>
       <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
     </p>
-    <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption ('cenc') Protection Scheme for ISO Base Media File Format Stream Format</h1>
+    <h1 class="title p-name" id="title" property="dcterms:title">ISO Common Encryption ('cenc' and 'cbcs') Protection Schemes for ISO Base Media File Format Stream Format</h1>
     <h2 id="w3c-editor-s-draft-09-august-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-08-09">09 August 2016</time></h2>
     <dl>
       <dt>This version:</dt>
@@ -515,10 +515,10 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
   <section id="abstract" class="introductory" property="dc:abstract">
     <h2 id="h-abstract" resource="#h-abstract"><span property="xhv:role" resource="xhv:heading">Abstract</span></h2>
-    <p>This specification defines the stream format for using ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that uses the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite><a class="bibref" href="#bib-ENCRYPTED-MEDIA">ENCRYPTED-MEDIA</a></cite>].</p>
+    <p>This specification defines the stream format for using ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that uses ISO Common Encryption ('cenc' or 'cbcs') protection schemes [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite><a class="bibref" href="#bib-ENCRYPTED-MEDIA">ENCRYPTED-MEDIA</a></cite>].</p>
     <div class="note">
       <div class="note-title marker" aria-level="3" role="heading" id="h-note1"><span>Note</span></div>
-      <p class="">Although the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] associated with this format's MIME type/subtype strings supports multiple protection schemes, when used with Encrypted Media Extensions, these strings refer specifically to content encrypted and packaged using the 'cenc' protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].
+      <p class="">Although the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] associated with this format's MIME type/subtype strings supports multiple protection schemes, when used with Encrypted Media Extensions, these strings refer specifically to content encrypted and packaged using either 'cenc' or 'cbcs' protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>].
       </p>
     </div>
   </section>
@@ -575,15 +575,17 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   <section id="stream-format" typeof="bibo:Chapter" resource="#stream-format" property="bibo:hasPart">
     <!--OddPage-->
     <h2 id="h-stream-format" resource="#h-stream-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">1. </span>Stream Format</span></h2>
-    <p>ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that is encrypted using the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] <em class="rfc2119" title="SHALL">SHALL</em> be encrypted at the sample level with AES-128 CTR encryption (Section 9 of [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]). This protection method enables multiple Key Systems to decrypt the same media content.</p>
+    <p>ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that is encrypted using the ISO Common Encryption ('cenc') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] <em class="rfc2119" title="SHALL">SHALL</em> be encrypted at the sample level with AES-128 CTR (Section 9 of [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]).</p>
+    <p>ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>] content that is encrypted using the ISO Common Encryption ('cbcs') protection scheme [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>] <em class="rfc2119" title="SHALL">SHALL</em> be encrypted at the sample level with AES-128 CBC (Section 10 of [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]).</p>
+    <p>These protection methods enable multiple Key Systems to decrypt the same media content.</p>
     <p>Each key is identified by a <a href="../../index.html#decryption-key-id">key ID</a> and each encrypted sample is associated with the key ID of the key needed to decrypt it. This association is signaled either through the specification of a default key ID in the track encryption box ('tenc') or by assigning the sample to a Sample Group, the definition of which specifies a key ID. Streams may contain a mixture of encrypted and unencrypted samples.</p>
   </section>
 
   <section id="detect-format" typeof="bibo:Chapter" resource="#detect-format" property="bibo:hasPart">
     <!--OddPage-->
     <h2 id="h-detect-format" resource="#h-detect-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">2. </span>Detection</span></h2>
-    <p>For a stream determined to be in the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>], this ISO Common Encryption ('cenc') Protection Scheme may be detected as follows.</p>
-    <p>Protection scheme signaling conforms with [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of <code>'cenc'</code>. [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]</p>
+    <p>For a stream determined to be in the ISO Base Media File Format [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>], these ISO Common Encryption ('cenc' or 'cbcs') Protection Schemes may be detected as follows.</p>
+    <p>Protection scheme signaling conforms with [<cite><a class="bibref" href="#bib-ISOBMFF">ISOBMFF</a></cite>]. When protection has been applied, the stream type will be transformed to 'encv' for video or 'enca' for audio, with a Protection Scheme Information Box ('sinf') added to the sample entry in the Sample Description Box ('stsd'). The Protection Scheme Information Box ('sinf') will contain a Scheme Type Box ('schm') with a scheme_type field set to a value of <code>'cenc'</code> or <code>'cbcs'</code>. [<cite><a class="bibref" href="#bib-CENC">CENC</a></cite>]</p>
   </section>
 
   <section id="detect-encrypted-blocks" typeof="bibo:Chapter" resource="#detect-encrypted-blocks" property="bibo:hasPart">
