@@ -314,10 +314,10 @@
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
     'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
-    'queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
-    'queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
-    'queuing': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
-    'queuing': { func: queue_helper, fragment: '', link_text: 'queue a task',  },
+    'Queue-a-task-to-fire-an-event-named': { func: queue_and_fire_helper, fragment: '', link_text: 'Queue a task',  },
+    'Queue-a-task-to-run-algorithm': { func: queue_and_run_helper, fragment: '', link_text: 'Queue a task',  },
+    'Queue-a-task': { func: queue_helper, fragment: '', link_text: 'Queue a task',  },
+    'queue-a-task': { func: queue_helper, fragment: '', link_text: 'queue a task',  },
 
     'constructing-events': { func: dom_helper, fragment: 'constructing-events', link_text: 'Constructing events', },
     'document-concept': { func: dom_helper, fragment: 'concept-document', link_text: 'Document', },
