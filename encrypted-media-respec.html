@@ -199,15 +199,6 @@
         <dt id="cdm">Content Decryption Module (CDM)</dt>
         <dd>
           <p>Content Decryption Module (CDM) is the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
-          <p class="note">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
-          This is transparent to the API and application.</p>
-
-          <p>All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
-            The CDM MUST NOT make direct out-of band network requests.
-            All messages and communication other than those described in <a href="#direct-individualization">Direct Individualization</a> MUST be passed through the application via the APIs defined in this specification.
-            Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
-            This includes all license exchange messages.
-          </p>
         </dd>
 
         <dt id="key-system">Key System</dt>
@@ -3025,6 +3016,53 @@ interface MediaEncryptedEvent : Event {
       <h3>Implementation Requirements</h3>
       <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm"></a> and server - that may not be explicitly addressed in the algorithms.</p>
 
+	    <section id="cdm-constraint-requirements">
+        <h3>CDM Constraints</h3>
+        <p>
+          User agent implementers MUST ensure that CDMs do not access any information, storage or system capabilities that are not reasonably required for playback of protected media using the features of this specification. 
+          Specifically, the CDM SHALL NOT:
+        </p>
+        <ul>
+          <li>
+            <p>
+              Access network resources, either local or remote, except via the user agent, or as part of the user agent, as explicitly permitted by this specification.
+            </p>
+          </li>
+          <li>
+            <p>
+              Access storage (disk or memory), except where reasonably required for playback of protected media using the features of this specification.
+            </p>
+          </li>
+          <li>
+            <p>
+              Access user data other than CDM state and persistent data.
+            </p>
+          </li>
+          <li>
+            <p>
+              Access hardware components or devices, except where reasonably required for playback of protected media using the features of this specification.
+            </p>
+          </li>
+        </ul>
+        <p>
+          User Agent implementers may use various techniques to meet the above requirements. For example, a User Agent implementer also implementing their own CDM may include the above as design requirements for that component. 
+          A User Agent implementer making use of a third party CDM may ensure that it executes in a constrained environment (e.g., "sandbox") without access to the prohibited information and components.
+        </p>
+      </section>  
+
+	    <section id="messaging-requirements">
+        <h3>Messaging</h3>
+        <p>
+          All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
+          The CDM MUST NOT make direct out-of band network requests.
+          All messages and communication other than those described in <a href="#direct-individualization">Direct Individualization</a> MUST be passed through the application via the APIs defined in this specification.
+          Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
+          This includes all license exchange messages.
+        </p>
+ 
+        <p class="note">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent. This is transparent to the API and application.</p>
+      </section>
+        
       <section id="persistent-state-requirements">
         <h3>Persistent Data</h3>
         <p>
