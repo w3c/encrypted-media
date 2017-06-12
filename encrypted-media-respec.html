@@ -58,7 +58,7 @@
       company: "Microsoft Corporation", companyURL: "https://www.microsoft.com/" },
       ],
 
-	  emeDefGroupName: "encrypted-media",
+    emeDefGroupName: "encrypted-media",
       emeContributors: [
         "Aaron Colwell",
         "Alex Russell",
@@ -87,7 +87,7 @@
         "Travis Leithead",
         "Xiaohan Wang"
       ],
-	  
+
       otherLinks: [{
         key: "Repository",
         data: [{
@@ -196,6 +196,10 @@
         <dt id="cdm">Content Decryption Module (CDM)</dt>
         <dd>
           <p>Content Decryption Module (CDM) is the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
+          <p class="note">
+            Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
+            This is transparent to the API and application.
+          </p>
         </dd>
 
         <dt id="key-system">Key System</dt>
@@ -572,17 +576,17 @@
           In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST NOT be Mixed Content [[!MIXED-CONTENT]].
           </p>
         </dd>
-		
-		<dt id="time">Time</dt>
+
+        <dt id="time">Time</dt>
         <dd>
- 		  <p>Time represents an instant in time with millisecond accuracy.  The instants in time it can represent are the same that can be represented with 
-		  <a class="external" href="https://tc39.github.io/ecma262/#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [[!ECMA-262]]) – 
-		  namely, every millisecond in the 200,000,000 days centered around midnight of 1 January, 1970 UTC, except for any millisecond that is part of an inserted leap second.  Time does not include these added leap milliseconds.
+          <p>Time represents an instant in time with millisecond accuracy.  The instants in time it can represent are the same that can be represented with 
+            <a class="external" href="https://tc39.github.io/ecma262/#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [[!ECMA-262]]) – 
+            namely, every millisecond in the 200,000,000 days centered around midnight of 1 January, 1970 UTC, except for any millisecond that is part of an inserted leap second.  Time does not include these added leap milliseconds.
           </p>    
           <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate.  It should never have the value <code>Infinity</code>.
           </p>    
           <p>Time is intended to be consistent with Unix time.   
-		  </p>
+          </p>
         </dd>
         <dt id="browsing-profile">Browsing Profile</dt>
         <dd>
@@ -3011,9 +3015,12 @@ interface MediaEncryptedEvent : Event {
 
     <section id="implementation-requirements">
       <h3>Implementation Requirements</h3>
-      <p>This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm"></a> and server - that may not be explicitly addressed in the algorithms.</p>
+      <p>
+        This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm"></a> and server(s) - that may not be explicitly addressed in the algorithms.
+        The requirements here and throughout the spec apply to all implementations, regardless of whether the CDM is separate from or a part of the user agent.
+      </p>
 
-	    <section id="cdm-constraint-requirements">
+      <section id="cdm-constraint-requirements">
         <h3>CDM Constraints</h3>
         <p>
           User agent implementers MUST ensure that CDMs do not access any information, storage or system capabilities that are not reasonably required for playback of protected media using the features of this specification. 
@@ -3022,17 +3029,17 @@ interface MediaEncryptedEvent : Event {
         <ul>
           <li>
             <p>
-              Access network resources, either local or remote, except via the user agent, or as part of the user agent, as explicitly permitted by this specification.
+              Access network resources, either local or remote, except via the user agent as explicitly permitted by this specification.
             </p>
           </li>
           <li>
             <p>
-              Access storage (disk or memory), except where reasonably required for playback of protected media using the features of this specification.
+              Access storage (e.g., disk or memory), except where reasonably required for playback of protected media using the features of this specification.
             </p>
           </li>
           <li>
             <p>
-              Access user data other than CDM state and persistent data.
+              Access user data other than CDM state and <a href="#persistent-state-requirements">persistent data</a>.
             </p>
           </li>
           <li>
@@ -3047,8 +3054,8 @@ interface MediaEncryptedEvent : Event {
         </p>
       </section>  
 
-	    <section id="messaging-requirements">
-        <h3>Messaging</h3>
+      <section id="messaging-requirements">
+        <h3>Messages and Communication</h3>
         <p>
           All messages and communication to and from the CDM, such as between the CDM and a license server, MUST be passed through the user agent.
           The CDM MUST NOT make direct out-of band network requests.
@@ -3056,8 +3063,6 @@ interface MediaEncryptedEvent : Event {
           Specifically, all communication that contains application-, <a def-id="origin"></a>-, or content-specific information or is sent to a URL specified by the application or based on its origin, MUST pass through the APIs.
           This includes all license exchange messages.
         </p>
- 
-        <p class="note">Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent. This is transparent to the API and application.</p>
       </section>
         
       <section id="persistent-state-requirements">
