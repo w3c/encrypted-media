@@ -176,7 +176,7 @@
     'records-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'records of license destruction'  },
     'record-of-license-destruction-maybe-plural': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record(s) of license destruction'  },
     'time': { func: term_helper, fragment: 'time', link_text: 'time'  },
-    'valid-media-mime-type': { func: term_helper, fragment: 'valid-media-mime-type', link_text: 'valid-media-mime-type'  },
+    'valid-media-mime-type': { func: term_helper, fragment: 'valid-media-mime-type', link_text: 'valid media MIME type'  },
 
     'requestMediaKeySystemAccess': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess()',  },
     'requestMediaKeySystemAccess-call': { func: idlref_helper, fragment: 'dom-navigator-requestmediakeysystemaccess', link_text: 'requestMediaKeySystemAccess',  },
@@ -289,7 +289,7 @@
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
     'media-crossorigin': { func: code_videoref_helper, fragment: 'element-attrdef-media-crossorigin', link_text: 'crossorigin',  },
     'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
-    'valid-mime-type': { func: infrastructure_helper, fragment: 'valid-mime-type', link_text: 'valid media MIME type',  },
+    'valid-mime-type': { func: infrastructure_helper, fragment: 'valid-mime-type', link_text: 'valid MIME type',  },
     'loading-the-media-resource': { func: videoref_helper, fragment: 'loading-the-media-resource', link_text: 'loading the media resource',  },
     'resource-fetch-algorithm': { func: videoref_helper, fragment: 'resource-fetch-algorithm', link_text: 'resource fetch algorithm',  },
     'current-playback-position': { func: videoref_helper, fragment: 'current-position', link_text: 'current playback position',  },
