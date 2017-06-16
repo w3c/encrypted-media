@@ -810,7 +810,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   </style>
   <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED">
   <link rel="canonical" href="https://www.w3.org/TR/encrypted-media/">
-  <meta name="generator" content="ReSpec 14.0.4">
+  <meta name="generator" content="ReSpec 14.0.6">
   <script id="initialUserConfig" type="application/json">
     {
       "specStatus": "ED",
@@ -1828,16 +1828,17 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           "publisher": "W3C"
         }
       },
-      "publishISODate": "2017-06-16T00:02:34.000Z",
+      "publishISODate": "2017-06-16T00:00:00.000Z",
       "generatedSubtitle": "Editor's Draft 15 June 2017"
     }
   </script>
 </head>
 <body aria-busy="false" class="h-entry" id="respecDocument">
   <div class="head" role="contentinfo" id="respecHeader">
-    <p>
-      <a class="logo" href="https://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
-    </p>
+    <p><a href="https://www.w3.org/" class="logo">
+    <span id="">
+      <img alt="W3C" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72" height="48">
+    </span></a></p>
     <h1 class="title p-name" id="title" property="dcterms:title">Encrypted Media Extensions</h1>
     <h2 id="w3c-editor-s-draft-15-june-2017"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2017-06-15">15 June 2017</time></h2>
     <dl>
@@ -2290,7 +2291,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
         <p>A key is considered to be known to a session if the <a href="#cdm">CDM</a>'s implementation of the session contains any information - specifically the <a href="#decryption-key-id">key ID</a> - about it, regardless of whether the actual <a href="#decryption-key">key</a> is usable or its value is known. Known keys are exposed via the <code><a href="#dom-mediakeysession-keystatuses">keyStatuses</a></code> attribute.
         </p>
 
-        <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <a href="#record-of-license-destruction">record of license destruction</a> is available. Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
+        <p>Keys are considered known even after they become unusable, such as due to <a href="#expiration-time">expiration</a> or if they are removed but a <a href="#record-of-license-destruction">record of license destruction</a> is available. Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
         </p>
 
         <div class="note">
@@ -2683,7 +2684,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
       <dt id="time">Time</dt>
       <dd>
-        <p>Time <em class="rfc2119" title="MUST">MUST</em> be equivalent to that represented in <a class="external" href="https://tc39.github.io/ecma262/#sec-time-values-and-time-range">ECMAScript <span class="estype">Time Values and Time Range</span></a> (ECMA-262, section 20.3.1.1 [<cite><a class="bibref" href="#bib-ECMA-262">ECMA-262</a></cite>]).
+        <p>Time <em class="rfc2119" title="MUST">MUST</em> be equivalent to that represented in <a class="external" href="https://tc39.github.io/ecma262/#sec-time-values-and-time-range">ECMAScript <span class="estype">Time Values and Time Range</span></a> [<cite><a class="bibref" href="#bib-ECMA-262">ECMA-262</a></cite>].
         </p>
         <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate. It should never have the value <code>Infinity</code>.
         </p>
@@ -2693,6 +2694,13 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
             Time generally represents an instant in time with millisecond accuracy; however, that alone is not a sufficient definition. The defined Time Values and Time Range reference adds other important requirements.
           </p>
         </div>
+      </dd>
+
+      <dt id="expiration-time">Expiration Time</dt>
+      <dd>
+        <p>
+          The <a href="#time">time</a> after which key(s) will no longer be <a href="#usable-for-decryption">usable for decryption</a>.
+        </p>
       </dd>
 
       <dt id="browsing-profile">Browsing Profile</dt>
@@ -3954,6 +3962,9 @@ interface <span class="idlInterfaceID">MediaKeys</span> {
                     <p>Let the <var>callable</var> value be false.</p>
                   </li>
                   <li>
+                    <p>Let the <var>closing or closed</var> value be false.</p>
+                  </li>
+                  <li>
                     <p>Let the <var>use distinctive identifier</var> value be this object's <var>use distinctive identifier</var> value.</p>
                   </li>
                   <li>
@@ -4118,7 +4129,7 @@ interface <span class="idlInterfaceID">MediaKeys</span> {
     </h2>
     <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
     <p>
-      A <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object is <dfn id="media-key-session-closed" data-dfn-type="dfn">closed</dfn> if and only if the <a href="#session-closed">Session Closed</a> algorithm has been run.
+      A <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object is <dfn id="media-key-session-closed" data-dfn-type="dfn">closed</dfn> if and only if the object's <code><a href="#dom-mediakeysession-closed">closed</a></code> attribute has been resolved.
     </p>
     <p>
       The User Agent <em class="rfc2119" title="SHALL">SHALL</em> execute the <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm continuously for each <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object that is not <a href="#media-key-session-closed">closed</a>. The <a href="#monitor-cdm">Monitor for CDM Changes</a> algorithm <em class="rfc2119" title="MUST">MUST</em> be run in parallel to the main event loop but not in parallel to other procedures defined in this specification that are also defined to be run in parallel.
@@ -4177,7 +4188,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>The <a href="#session-id">Session ID</a> for this object and the associated key(s) or license(s).</p>
           </dd><dt><dfn data-dfn-for="mediakeysession" data-dfn-type="dfn" id="dom-mediakeysession-expiration" data-idl="" data-title="expiration"><code>expiration</code></dfn> of type <span class="idlAttrType">unrestricted double</span>, readonly       </dt>
           <dd>
-            <p>The <a href="#time">time</a> after which the key(s) in the session will no longer be <a href="#usable-for-decryption">usable for decryption</a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
+            <p>The <a href="#expiration-time">expiration time</a> for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
             <div class="note">
               <div class="note-title marker" aria-level="4" role="heading" id="h-note61"><span>Note</span></div>
               <p class="">This value <em class="rfc2119" title="MAY">MAY</em> change during the session lifetime, such as when an action triggers the start of a window.</p>
@@ -4253,7 +4264,10 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <li>
-                <p>If this object is <a href="#media-key-session-closed">closed</a>, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
+                <p></p>
+              </li>
+              <li>
+                <p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
               </li>
               <li>
                 <p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
@@ -4391,7 +4405,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                         <p>Set the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> attribute to <var>session id</var>.</p>
                       </li>
                       <li>
-                        <p>Let this object's <var>callable</var> value be true.</p>
+                        <p>Set this object's <var>callable</var> value to true.</p>
                       </li>
                       <li>
                         <p>Run the <a href="#queue-message">Queue a "message" Event</a> algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
@@ -4442,7 +4456,10 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <li>
-                <p>If this object is <a href="#media-key-session-closed">closed</a>, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
+                <p></p>
+              </li>
+              <li>
+                <p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
               </li>
               <li>
                 <p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
@@ -4521,7 +4538,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                         <p>Load the <var>session data</var>.</p>
                       </li>
                       <li>
-                        <p>If the <var>session data</var> indicates an expiration time for the session, let <var>expiration time</var> be that expiration time.</p>
+                        <p>If the <var>session data</var> indicates an <a href="#expiration-time">expiration time</a> for the session, let <var>expiration time</var> be that expiration time.</p>
                       </li>
                       <li>
                         <p>If a message needs to be sent, execute the following steps:</p>
@@ -4546,7 +4563,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                         <p>Set the <code><a href="#dom-mediakeysession-sessionid">sessionId</a></code> attribute to <var>sanitized session ID</var>.</p>
                       </li>
                       <li>
-                        <p>Let this object's <var>callable</var> value be true.</p>
+                        <p>Set this object's <var>callable</var> value to true.</p>
                       </li>
                       <li>
                         <p>
@@ -4608,7 +4625,10 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <li>
-                <p>If this object is <a href="#media-key-session-closed">closed</a>, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
+                <p></p>
+              </li>
+              <li>
+                <p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
               </li>
               <li>
                 <p>If this object's <var>callable</var> value is false, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
@@ -4754,7 +4774,7 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
                                 </p>
                               </li>
                               <li>
-                                <p>If the expiration time for the session changed, run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing the new expiration time.</p>
+                                <p>If the <a href="#expiration-time">expiration time</a> for the session changed, run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing the new expiration time.</p>
                               </li>
                               <li>
                                 <p>If any of the preceding steps failed, reject <var>promise</var> with a new <code><a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a></code> whose name is the appropriate <a href="#error-names">error name</a>.</p>
@@ -4795,13 +4815,19 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <li>
-                <p>If this object is <a href="#media-key-session-closed">closed</a>, return a resolved promise.</p>
+                <p></p>
+              </li>
+              <li>
+                <p>If this object's <var>closing or closed</var> value is true, return a resolved promise.</p>
               </li>
               <li>
                 <p>If this object's <var>callable</var> value is false, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
               </li>
               <li>
                 <p>Let <var>promise</var> be a new promise.</p>
+              </li>
+              <li>
+                <p>Set this object's <var>closing or closed</var> value to true.</p>
               </li>
               <li>
                 <p>Run the following steps in parallel:</p>
@@ -4849,7 +4875,10 @@ interface <span class="idlInterfaceID">MediaKeySession</span> : <span class="idl
             <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <li>
-                <p>If this object is <a href="#media-key-session-closed">closed</a>, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
+                <p></p>
+              </li>
+              <li>
+                <p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
               </li>
               <li>
                 <p>If this object's <var>callable</var> value is false, return a promise rejected with an <code><a href="#dfn-InvalidStateError">InvalidStateError</a></code>.</p>
@@ -5077,7 +5106,7 @@ interface <span class="idlInterfaceID">MediaKeyStatusMap</span> {
             <tr>
               <td><dfn data-dfn-for="mediakeystatus" data-dfn-type="dfn" id="dom-mediakeystatus-expired" data-idl="" data-title="expired"><code id="idl-def-MediaKeyStatus.expired">expired</code></dfn></td>
               <td>
-                The key is no longer <a href="#usable-for-decryption">usable for decryption</a> because its expiration time has passed.<br> The time represented by the <code><a href="#dom-mediakeysession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time. All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
+                The key is no longer <a href="#usable-for-decryption">usable for decryption</a> because its <a href="#expiration-time">expiration time</a> has passed.<br> The time represented by the <code><a href="#dom-mediakeysession-expiration">expiration</a></code> attribute <em class="rfc2119" title="MUST">MUST</em> be earlier than the current time. All other keys in the session <em class="rfc2119" title="MUST">MUST</em> have this status.
               </td>
             </tr>
             <tr>
@@ -5362,7 +5391,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
       <section id="update-expiration" typeof="bibo:Chapter" resource="#update-expiration" property="bibo:hasPart">
         <h4 id="h-update-expiration" resource="#h-update-expiration"><span property="xhv:role" resource="xhv:heading"><span class="secno">6.4.3 </span>Update Expiration</span>
         </h4>
-        <p>The Update Expiration algorithm updates the expiration time of a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a>. Requests to run this algorithm include a target <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
+        <p>The Update Expiration algorithm updates the <a href="#expiration-time">expiration time</a> of a <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a>. Requests to run this algorithm include a target <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
         </p>
         <div class="note">
           <div class="note-title marker" aria-level="5" role="heading" id="h-note87"><span>Note</span></div>
@@ -5380,7 +5409,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
             <p>If the new expiration time is not <code>NaN</code>, let <var>expiration time</var> be that expiration time.</p>
           </li>
           <li>
-            <p>Set the <var>session</var>'s <code><a href="#dom-mediakeysession-expiration">expiration</a></code> attribute to <var>expiration time</var>.</p>
+            <p>Set the <var>session</var>'s <code><a href="#dom-mediakeysession-expiration">expiration</a></code> attribute to <var>expiration time</var> expressed as <a href="#time">time</a>.</p>
           </li>
         </ol>
       </section>
@@ -5414,13 +5443,21 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
             <p>Let <var>session</var> be the associated <a href="#idl-def-mediakeysession" class="internalDFN" data-link-type="dfn"><code>MediaKeySession</code></a> object.</p>
           </li>
           <li>
+            <p>Let <var>promise</var> be the <var>session</var>'s <code><a href="#dom-mediakeysession-closed">closed</a></code> attribute.</p>
+          </li>
+          <!-- Avoid a race condition that could cause the algorithms below to be run multiple times. -->
+          <li>
+            <p>If <var>promise</var> is resolved, abort these steps.</p>
+          </li>
+          <!-- Handle the case that this algorithm is reached by a path other than close(). In all cases, the value is set before the algorithms below are run. -->
+          <li>
+            <p>Set the <var>session</var>'s <var>closing or closed</var> value to true.</p>
+          </li>
+          <li>
             <p>Run the <a href="#update-key-statuses">Update Key Statuses</a> algorithm on the <var>session</var>, providing an empty sequence.</p>
           </li>
           <li>
             <p>Run the <a href="#update-expiration">Update Expiration</a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p>
-          </li>
-          <li>
-            <p>Let <var>promise</var> be the <code><a href="#dom-mediakeysession-closed">closed</a></code> attribute of the <var>session</var>.</p>
           </li>
           <li>
             <p>Resolve <var>promise</var>.</p>
@@ -5493,17 +5530,17 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
           </li>
           <li>
             <p>
-              If <var>cdm</var> has changed the expiration time of <var>session</var>, <a href="https://www.w3.org/TR/html51/webappapis.html#queuing">queue a task</a> to execute the following steps:
+              If <var>cdm</var> has changed the <a href="#expiration-time">expiration time</a> of <var>session</var>, <a href="https://www.w3.org/TR/html51/webappapis.html#queuing">queue a task</a> to execute the following steps:
             </p>
             <ol>
               <li>
                 <p>
-                  Let <var>expiration</var> be the new expiration time of <var>session</var>.
+                  Let <var>expiration time</var> be the new expiration time of <var>session</var>.
                 </p>
               </li>
               <li>
                 <p>
-                  Run the <a href="#update-expiration">Update Expiration</a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                  Run the <a href="#update-expiration">Update Expiration</a> algorithm, passing <var>session</var> and <var>expiration time</var>.
                 </p>
               </li>
             </ol>
