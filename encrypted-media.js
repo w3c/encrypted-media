@@ -171,6 +171,7 @@
     'distinctive-identifier': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier'  },
     'distinctive-identifier-maybe-plural': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifier(s)'  },
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
+    'expiration-time': { func: term_helper, fragment: 'expiration-time', link_text: 'expiration time' },
     'browsing-profile': { func: term_helper, fragment: 'browsing-profile', link_text: 'browsing profile' },
     'record-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record of license destruction'  },
     'records-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'records of license destruction'  },
