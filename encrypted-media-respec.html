@@ -579,19 +579,18 @@
 
         <dt id="time">Time</dt>
         <dd>
-          <p>Time represents an instant in time with millisecond accuracy.  The instants in time it can represent are the same that can be represented with 
-            <a class="external" href="https://tc39.github.io/ecma262/#sec-date-objects">ECMAScript <span class="estype">Date</span> objects</a> (ECMA-262, section 20.3 [[!ECMA-262]]) – 
-            namely, every millisecond in the 200,000,000 days centered around midnight of 1 January, 1970 UTC, except for any millisecond that is part of an inserted leap second.  Time does not include these added leap milliseconds.
+          <p>Time MUST be equivalent to that represented in <a class="external" href="https://tc39.github.io/ecma262/#sec-time-values-and-time-range">ECMAScript <span class="estype">Time Values and Time Range</span></a> (ECMA-262, section 20.3.1.1 [[!ECMA-262]]). 
           </p>    
           <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate.  It should never have the value <code>Infinity</code>.
-          </p>    
-          <p>Time is intended to be consistent with Unix time.   
+          <p class="note">
+            Time generally represents an instant in time with millisecond accuracy; however, that alone is not a sufficient definition.  The defined Time Values and Time Range reference adds other important requirements.
           </p>
           <p class="note">
             Temp
           </p>
 
         </dd>
+        
         <dt id="browsing-profile">Browsing Profile</dt>
         <dd>
           <p>
@@ -1824,7 +1823,7 @@
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
                     <li><p>Load the <var>session data</var>.</p></li>
-                    <li><p>If the <var>session data</var> indicates an expiration time for the session, let <var>expiration time</var> be the expiration time in milliseconds since 01 January 1970 UTC.</p></li>
+                    <li><p>If the <var>session data</var> indicates an expiration time for the session, let <var>expiration time</var> be that expiration time.</p></li>
                     <li><p>If a message needs to be sent, execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>message</var> be a message generated based on the <var>session data</var>.</p></li>
@@ -1998,21 +1997,20 @@
           <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
 
           <ol class="method-algorithm">
-            <li><p>Let <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
-            <li><p>If <var>session</var> is <a def-id="media-key-session-closed"></a>, return a resolved promise.</p></li>
-            <li><p>If <var>session</var>'s <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
+            <li><p>If this object is <a def-id="media-key-session-closed"></a>, return a resolved promise.</p></li>
+            <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an <a def-id="InvalidStateError"></a>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
-                <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
+                <li><p>Let <var>cdm</var> be the CDM instance represented by this object's <var>cdm instance</var> value.</p></li>
                 <li>
-                  <p>Use <var>cdm</var> to close the <a href="#key-session">key session</a> associated with <var>session</var>.</p>
+                  <p>Use <var>cdm</var> to close the <a href="#key-session">key session</a> associated with this object.</p>
                   <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
                 </li>
                 <li>
                   <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
                   <ol>
-                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on the <var>session</var>.</p></li>
+                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
@@ -2152,10 +2150,11 @@
             </p>
             <p>
               The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>,
-              where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we
-              define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical
-              order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+              Key IDs are compared as follows:
+              For key IDs <var>A</var> of length <var>m</var> and <var>B</var> of length <var>n</var>, assigned such that <var>m</var> &lt;= <var>n</var>,
+              let <var>A</var> &lt; <var>B</var> if and only if the <var>m</var> octets of <var>A</var> are less in lexicographical
+              order than the first <var>m</var> octets of <var>B</var> or those octets are equal and <var>m</var> &lt; <var>n</var>.
             </p>
           </section>
         </div>
@@ -2340,7 +2339,7 @@ interface MediaKeyMessageEvent : Event {
           <ol>
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
-            <li><p>If the new expiration time is not <code>NaN</code>, let <var>expiration time</var> be the new expiration time in milliseconds since 01 January 1970 UTC.</p></li>
+            <li><p>If the new expiration time is not <code>NaN</code>, let <var>expiration time</var> be that expiration time.</p></li>
             <li><p>Set the <var>session</var>'s <a def-id="expiration"></a> attribute to <var>expiration time</var>.</p></li>
           </ol>
         </section>
@@ -2394,7 +2393,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Let <var>cdm</var> be the CDM instance represented by <var>session</var>'s <var>cdm instance</var> value.</p></li>
             <li>
               <p>
-                If <var>cdm</var> has an outgoing message that has not yet been sent, then <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has an outgoing message that has not yet been sent, <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2412,12 +2411,12 @@ interface MediaKeyMessageEvent : Event {
             <li>
               <p>
                 If <var>cdm</var> has changed the set of keys <a href="#known-key">known</a> to <var>session</var> or the status of one or more of the keys,
-                then <a def-id="queue-a-task"></a> to execute the following steps:
+                <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
                   <p>
-                    Let <var>statuses</var> be a list of Key ID and <a>MediaKeyStatus</a> value pairs containing one pair for each key
+                    Let <var>statuses</var> be a list of key ID and <a>MediaKeyStatus</a> value pairs containing one pair for each key
                     <a href="#known-key">known</a> to <var>session</var>.
                   </p>
                 </li>
@@ -2430,7 +2429,7 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has changed the expiration time of <var>session</var>, then <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has changed the expiration time of <var>session</var>, <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
@@ -2447,12 +2446,12 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has closed <var>session</var>, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> has closed <var>session</var>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
             <li>
               <p>
-                If <var>cdm</var> had become unavailable, then <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> had become unavailable, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
               </p>
             </li>
           </ol>
@@ -2529,8 +2528,9 @@ interface MediaKeyMessageEvent : Event {
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
           A session MAY only be loaded again if all objects that have ever represented it are <a def-id="media-key-session-closed"></a>.
         </p>
-        <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD later remove the stored data using <a def-id="remove"></a>.
-          The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
+        <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD 
+          later remove the stored data by first initiating the removal process using <a def-id="remove"></a> and then ensuring that the removal process, which may involve 
+          message exchange(s), successfully completes. The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
         </p>
         <p>See <a href="#security"></a> and <a href="#privacy"></a> for additional considerations when supporting persistent storage.</p>
       </section>
@@ -3020,7 +3020,7 @@ interface MediaEncryptedEvent : Event {
         <h3>Media Element Restrictions</h3>
         <p>Media data processed by a CDM MAY be unavailable through web platform APIs in the usual way (for example using the CanvasRenderingContext2D drawImage() method and the AudioContext MediaElementAudioSourceNode).
         This specification does not define conditions for such non-availability of media data, however, if media data is not available to through such APIs then they MAY behave as if no media data was present at all.</p>
-        <p>Where media rendering is not performed by the UA, for example in the case of a hardware-based media pipeline, then the full set of HTML rendering capabilities, for example CSS Transforms, MAY be unavailable. One likely restriction is that
+        <p>Where media rendering is not performed by the UA, for example in the case of a hardware-based media pipeline, the full set of HTML rendering capabilities, for example CSS Transforms, MAY be unavailable. One likely restriction is that
         video media MAY be constrained to appear only in rectangular regions with sides parallel to the edges of the window and with normal orientation.</p>
       </section>
     </section>
@@ -3916,7 +3916,7 @@ interface MediaEncryptedEvent : Event {
           <p>Key Systems may access or create persistent or semi-persistent identifier(s) for a device or user of a device.
             In some cases these identifiers may be bound to a specific device in a secure manner.
             If these identifiers are present in Key System messages, then devices and/or users may be tracked.
-            If the mitigations below are not applied this could include both tracking of users / devices over time and associating multiple users of a given device.
+            If the mitigations below are not applied, this could include both tracking of users / devices over time and associating multiple users of a given device.
           </p>
 
           <p>It is important to note that such identifiers, especially those that are non-clearable, non-<a def-id="origin"></a>-specific, or <a href="#permanent-identifier">permanent</a>, exceed the tracking impact of existing techniques such as cookies [[COOKIES]] or session identifiers embedded in URLs.</p>
