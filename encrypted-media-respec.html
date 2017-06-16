@@ -288,7 +288,7 @@
             Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to expiration or if they are removed but a <a def-id="record-of-license-destruction"></a> is available.
+          <p>Keys are considered known even after they become unusable, such as due to <a def-id="expiration-time">expiration</a> or if they are removed but a <a def-id="record-of-license-destruction"></a> is available.
             Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
@@ -579,14 +579,22 @@
 
         <dt id="time">Time</dt>
         <dd>
-          <p>Time MUST be equivalent to that represented in <a class="external" href="https://tc39.github.io/ecma262/#sec-time-values-and-time-range">ECMAScript <span class="estype">Time Values and Time Range</span></a> (ECMA-262, section 20.3.1.1 [[!ECMA-262]]). 
+          <p>Time MUST be equivalent to that represented in <a class="external" href="https://tc39.github.io/ecma262/#sec-time-values-and-time-range">ECMAScript <span class="estype">Time Values and Time Range</span></a> [[!ECMA-262]]. 
           </p>    
           <p>Time will equal <code>NaN</code> if no such time exists or if the time is indeterminate.  It should never have the value <code>Infinity</code>.
+          </p>
           <p class="note">
             Time generally represents an instant in time with millisecond accuracy; however, that alone is not a sufficient definition.  The defined Time Values and Time Range reference adds other important requirements.
           </p>
         </dd>
-        
+
+        <dt id="expiration-time">Expiration Time</dt>
+        <dd>
+          <p>
+            The <a def-id="time">time</a> after which key(s) will no longer be <a def-id="usable-for-decryption"></a>.
+          </p>
+        </dd>
+
         <dt id="browsing-profile">Browsing Profile</dt>
         <dd>
           <p>
@@ -1634,7 +1642,7 @@
 };</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>sessionId</code></dfn> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly       </dt><dd>
           <p>The <a def-id="session-id"></a> for this object and the associated key(s) or license(s).</p>
         </dd><dt><dfn><code>expiration</code></dfn> of type <span class="idlAttrType"><a>unrestricted double</a></span>, readonly       </dt><dd>
-          <p>The <a def-id="time">time</a> after which the key(s) in the session will no longer be <a def-id="usable-for-decryption"></a>, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
+          <p>The <a def-id="expiration-time"></a> for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
         </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;<a>void</a>&gt;</span>, readonly       </dt><dd>
           <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
@@ -1819,7 +1827,7 @@
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
                     <li><p>Load the <var>session data</var>.</p></li>
-                    <li><p>If the <var>session data</var> indicates an expiration time for the session, let <var>expiration time</var> be that expiration time.</p></li>
+                    <li><p>If the <var>session data</var> indicates an <a def-id="expiration-time"></a> for the session, let <var>expiration time</var> be that expiration time.</p></li>
                     <li><p>If a message needs to be sent, execute the following steps:</p>
                       <ol>
                         <li><p>Let <var>message</var> be a message generated based on the <var>session data</var>.</p></li>
@@ -1962,7 +1970,7 @@
                               </p>
                             </li>
                             <li>
-                              <p>If the expiration time for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p>
+                              <p>If the <a def-id="expiration-time"></a> for the session changed, run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing the new expiration time.</p>
                             </li>
                             <li>
                               <p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p>
@@ -2168,7 +2176,7 @@
             The CDM is certain the key is currently <a def-id="usable-for-decryption"></a>.<br>
             Keys that <em>may not</em> currently be <a def-id="usable-for-decryption"></a> MUST NOT have this status.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.expired">expired</code></dfn></td><td>
-            The key is no longer <a def-id="usable-for-decryption"></a> because its expiration time has passed.<br>
+            The key is no longer <a def-id="usable-for-decryption"></a> because its <a def-id="expiration-time"></a> has passed.<br>
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.released">released</code></dfn></td><td>
@@ -2328,7 +2336,7 @@ interface MediaKeyMessageEvent : Event {
 
         <section id="update-expiration">
           <h4>Update Expiration</h4>
-          <p>The Update Expiration algorithm updates the expiration time of a <a>MediaKeySession</a>.
+          <p>The Update Expiration algorithm updates the <a def-id="expiration-time"></a> of a <a>MediaKeySession</a>.
           Requests to run this algorithm include a target <a>MediaKeySession</a> object and the new expiration time, which may be <code>NaN</code>.
           </p>
           <p class="note">The algorithm is always run in a task.</p>
@@ -2337,7 +2345,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Let the <var>session</var> be the associated <a>MediaKeySession</a> object.</p></li>
             <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
             <li><p>If the new expiration time is not <code>NaN</code>, let <var>expiration time</var> be that expiration time.</p></li>
-            <li><p>Set the <var>session</var>'s <a def-id="expiration"></a> attribute to <var>expiration time</var>.</p></li>
+            <li><p>Set the <var>session</var>'s <a def-id="expiration"></a> attribute to <var>expiration time</var> expressed as <a href="#time">time</a>.</p></li>
           </ol>
         </section>
       
@@ -2430,17 +2438,17 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has changed the expiration time of <var>session</var>, <a def-id="queue-a-task"></a> to execute the following steps:
+                If <var>cdm</var> has changed the <a def-id="expiration-time"></a> of <var>session</var>, <a def-id="queue-a-task"></a> to execute the following steps:
               </p>
               <ol>
                 <li>
                   <p>
-                    Let <var>expiration</var> be the new expiration time of <var>session</var>.
+                    Let <var>expiration time</var> be the new expiration time of <var>session</var>.
                   </p>
                 </li>
                 <li>
                   <p>
-                    Run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration</var>.
+                    Run the <a def-id="update-expiration-algorithm"></a> algorithm, passing <var>session</var> and <var>expiration time</var>.
                   </p>
                 </li>
               </ol>
