@@ -1828,7 +1828,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           "publisher": "W3C"
         }
       },
-      "publishISODate": "2017-06-15T19:12:37.000Z",
+      "publishISODate": "2017-06-16T00:02:34.000Z",
       "generatedSubtitle": "Editor's Draft 15 June 2017"
     }
   </script>
@@ -2707,6 +2707,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           </p>
         </div>
       </dd>
+      <dt id="valid-media-mime-type">Valid Media MIME Type</dt>
+      <dd>
+        <p>
+          A valid media MIME type is a media <a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#mime-types">MIME type</a> that is also a <a href="https://www.w3.org/TR/html51/infrastructure.html#valid-mime-type">valid MIME type</a> [<cite><a class="bibref" href="#bib-HTML51">HTML51</a></cite>]. When a MIME type includes parameters, such as `"codecs"` [<cite><a class="bibref" href="#bib-RFC6381">RFC6381</a></cite>], such parameters <em class="rfc2119" title="MUST">MUST</em> also be valid per the relevant specification.
+        </p>
+        <p>
+          When used with the features defined in this specification, MIME type strings <em class="rfc2119" title="SHOULD">SHOULD</em> explicitly specify codecs and codec constraints (e.g., per [<cite><a class="bibref" href="#bib-RFC6381">RFC6381</a></cite>]) unless these are normatively implied by the container.
+        </p>
+      </dd>
     </dl>
   </section>
 
@@ -3271,7 +3280,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
                 </li>
                 <!-- Invalid input. -->
                 <li>
-                  <p>If <var>content type</var> is an invalid or unrecognized MIME type, continue to the next iteration.</p>
+                  <p>If <var>content type</var> is not a <a href="#valid-media-mime-type">valid media MIME type</a> or is unrecognized, continue to the next iteration.</p>
                 </li>
                 <li>
                   <p>Let <var>container</var> be the container type specified by <var>content type</var>.</p>
@@ -3637,7 +3646,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
           <dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability"><dt><dfn data-dfn-for="mediakeysystemmediacapability" data-dfn-type="dfn" id="dom-mediakeysystemmediacapability-contenttype" data-idl="" data-title="contentType"><code>contentType</code></dfn> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt>
             <dd>
               <p>
-                The type of the <a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#media-resource">media resource</a>. Its value must be a <a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#mime-types">valid MIME type</a> [<cite><a class="bibref" href="#bib-HTML51">HTML51</a></cite>]. The codecs parameter, which certain MIME types define, might be necessary to specify exactly how the resource is encoded. [<cite><a class="bibref" href="#bib-RFC6381">RFC6381</a></cite>] The empty string is invalid.
+                The type of the <a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#media-resource">media resource</a>. Its value must be a <a href="#valid-media-mime-type">valid media MIME type</a>. The empty string is invalid.
               </p>
             </dd><dt><dfn data-dfn-for="mediakeysystemmediacapability" data-dfn-type="dfn" id="dom-mediakeysystemmediacapability-robustness" data-idl="" data-title="robustness"><code>robustness</code></dfn> of type <span class="idlMemberType">DOMString</span>, defaulting to <code>""</code></dt>
             <dd>
@@ -5037,7 +5046,7 @@ interface <span class="idlInterfaceID">MediaKeyStatusMap</span> {
             This interface has <code>entries</code>, <code>keys</code>, <code>values</code>, <code>forEach</code> and <code>@@iterator</code> methods brought by <code>iterable</code>.
           </p>
           <p>
-            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a href="#decryption-key-id">key ID</a> and associated <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> value for all <a href="#known-key">known keys</a>, sorted by <a href="#decryption-key-id">key ID</a>, where for Key IDs <var>A</var> and <var>B</var>, of lengths <var>n</var> and <var>m</var> respectively, with <var>n</var> &lt;= <var>m</var>, then we define <var>A</var> &lt; <var>B</var> if and only if the <var>n</var> octets of <var>A</var> are less in lexicographical order than the first <var>n</var> octets of <var>B</var> or those octets are equal and <var>n</var> &lt; <var>m</var>.
+            The value pairs to iterate over are a snapshot of the set of pairs formed from the <a href="#decryption-key-id">key ID</a> and associated <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> value for all <a href="#known-key">known keys</a>, sorted by <a href="#decryption-key-id">key ID</a>. Key IDs are compared as follows: For key IDs <var>A</var> of length <var>m</var> and <var>B</var> of length <var>n</var>, assigned such that <var>m</var> &lt;= <var>n</var>, let <var>A</var> &lt; <var>B</var> if and only if the <var>m</var> octets of <var>A</var> are less in lexicographical order than the first <var>m</var> octets of <var>B</var> or those octets are equal and <var>m</var> &lt; <var>n</var>.
           </p>
         </section>
       </div>
@@ -5471,7 +5480,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaKeyMessageEvent" href="#
             <ol>
               <li>
                 <p>
-                  Let <var>statuses</var> be a list of Key ID and <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> value pairs containing one pair for each key
+                  Let <var>statuses</var> be a list of key ID and <a href="#idl-def-mediakeystatus" class="internalDFN" data-link-type="dfn"><code>MediaKeyStatus</code></a> value pairs containing one pair for each key
                   <a href="#known-key">known</a> to <var>session</var>.
                 </p>
               </li>
@@ -6845,7 +6854,7 @@ interface <span class="idlInterfaceID"><a data-lt="MediaEncryptedEvent" href="#d
     <section id="media-requirements" typeof="bibo:Chapter" resource="#media-requirements" property="bibo:hasPart">
       <h3 id="h-media-requirements" resource="#h-media-requirements"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.9 </span>Supported Media</span>
       </h3>
-      <p>This section defines properties of content (<a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#media-resource">media resources</a>) supported by implementations of this specification.</p>
+      <p>This section defines properties of content (<a href="https://www.w3.org/TR/html51/semantics-embedded-content.html#media-resource">media resource</a>) supported by implementations of this specification.</p>
 
       <section id="unencrypted-container" typeof="bibo:Chapter" resource="#unencrypted-container" property="bibo:hasPart">
         <h4 id="h-unencrypted-container" resource="#h-unencrypted-container"><span property="xhv:role" resource="xhv:heading"><span class="secno">8.9.1 </span>Unencrypted Container</span>
