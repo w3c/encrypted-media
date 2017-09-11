@@ -569,7 +569,7 @@
     // THIS MUST BE LAST.
     // Check for duplicate ids.
     $("[id]").each(function () {
-      var elements = $("[id='" + this.id + "']");
+      var elements = $('[id="' + this.id.replace(/"/g,'\\"') + '"]');
       if (elements.length != 1) {
         console.error("id '" + this.id + "' is used for " + elements.length + " elements. This instance: ", this);
       }
