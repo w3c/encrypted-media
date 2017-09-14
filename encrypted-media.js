@@ -439,6 +439,32 @@
    $("a[def-id]").each(function () {
        $(this).addClass('externalDFN');
      });
+     preElementMediaProcessor();
+  }
+
+  // The JS highlighter in respec removes all element before doing the highlight,
+  // so we need to replace the a element before the highlighter get there
+  function preElementMediaProcessor() {
+    var doc = document;
+    $("pre.example a[def-id]").each(function () {
+      var $ant = $(this);
+      var def_id = $ant.attr('def-id');
+      var info = definitionInfo[def_id];
+      if (info) {
+        var text = info.link_text;
+
+        var element_text = this.innerHTML;
+        if (element_text) {
+          text = element_text;
+        }
+        var span = doc.createElement("span");
+        span.innerHTML = text;
+        this.parentNode.replaceChild(span, this);
+
+      } else {
+        console.log("Found def-id '" + def_id + "' but it does not correspond to anything");
+      }
+    });
   }
 
   function encryptedMediaPostProcessor() {
@@ -569,7 +595,7 @@
     // THIS MUST BE LAST.
     // Check for duplicate ids.
     $("[id]").each(function () {
-      var elements = $("[id='" + this.id + "']");
+      var elements = $('[id="' + this.id.replace(/"/g,'\\"') + '"]');
       if (elements.length != 1) {
         console.error("id '" + this.id + "' is used for " + elements.length + " elements. This instance: ", this);
       }
