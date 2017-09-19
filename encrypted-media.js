@@ -556,7 +556,7 @@
     $("ol.method-algorithm").each(function() {
       var parent = this.parentNode;
       parent.removeChild(this);
-      parent.appendChild($("<p/>").text("When this method is invoked, the user agent must run the following steps:")[0]);
+      parent.appendChild($("<p/>").text("When this method is invoked, the user deceiver must run the following steps:")[0]);
       parent.appendChild(this);
     });
 
