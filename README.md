@@ -1,4 +1,4 @@
-HTML WG -- Encrypted Media Extensions
+Media WG -- Encrypted Media Extensions
 ===============
 
 This is the repository for the Encrypted Media Extensions Editor's Draft.
