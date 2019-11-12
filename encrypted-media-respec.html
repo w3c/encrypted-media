@@ -1051,6 +1051,7 @@ partial interface Navigator {
               <li><p>For each <var>requested media capability</var> in <var>requested media capabilities</var>:</p>
                 <ol>
                   <li><p>Let <var>content type</var> be <var>requested media capability</var>'s <a def-id="capability-contentType"></a> member.</p></li>
+                  <li><p>Let <var>encryption scheme</var> be <var>requested media capability</var>’s <a def-id="capability-encryptionScheme"></a> member.</p></li>
                   <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>content type</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
                   <li><p>If <var>content type</var> is not a <a def-id="valid-media-mime-type"></a> or is unrecognized, continue to the next iteration.</p></li>
@@ -1085,8 +1086,9 @@ partial interface Navigator {
                   <li><p>If <var>content type</var> is not strictly a <var>audio/video type</var>, continue to the next iteration.</p>
                     <p class="note">For example, if <var>audio/video type</var> is Video and the top-level type is not "video" or <var>media types</var> contains non-video codecs.</p>
                   </li>
+                  <li><p>If <var>encryption scheme</var> is non-null and is not recognized or not supported by <var>implementation</var>, continue to the next iteration.</p></li>
                   <li><p>If <var>robustness</var> is not the empty string and contains an unrecognized value or a value not supported by <var>implementation</var>, continue to the next iteration. String comparison is case-sensitive.</p></li>
-                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>robustness</var> and <var>local accumulated configuration</var> in combination with <var>restrictions</var>:</p>
+                  <li><p>If the user agent and <var>implementation</var> definitely support playback of encrypted <a def-id="media-data"></a> for the combination of <var>container</var>, <var>media types</var>, <var>encryption scheme</var>, <var>robustness</var> and <var>local accumulated configuration</var> in combination with <var>restrictions</var>:</p>
                     <p class="note"><var>requested media capability</var> (content type and robustness) must be supported when used together with all previously added requested media capabilities.</p>
                     <ol>
                       <li>
@@ -1324,30 +1326,79 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
 
       <section>
         <h3><dfn>MediaKeySystemMediaCapability</dfn> dictionary</h3>
-        <div><pre class="idl">dictionary MediaKeySystemMediaCapability {
+        <div>
+          <pre class="idl">dictionary MediaKeySystemMediaCapability {
              DOMString contentType = "";
+             DOMString? encryptionScheme = null;
              DOMString robustness = "";
-};</pre><section><h2>Dictionary <a class="idlType">MediaKeySystemMediaCapability</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability"><dt><dfn><code>contentType</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt><dd>
-            <p>
-              The type of the <a def-id="media-resource"></a>.
-              Its value must be a <a def-id="valid-media-mime-type"></a>.
-              The empty string is invalid.
-            </p>
-          </dd><dt><dfn><code>robustness</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt><dd>
-            <p>
-              The robustness level associated with the content type.
-              The empty string indicates that any ability to decrypt and decode the content type is acceptable.
-            </p>
-            <div class="note">
-            <p>
-              Implementations MUST configure the CDM to support at least the robustness levels specified in the configuration of the MediaKeySystemAccess object used to create the MediaKeys object.
-              Exact configuration of the CDM is implementation-specific, and implementations MAY configure the CDM to use the highest robustness level in the configuration even if a higher robustness level is available.
-              If only the empty string is specified, implementations MAY be configured to use the lowest robustness level the implementation supports.
-            </p>
-            <p>
-              Applications SHOULD specify the robustness level(s) they require to avoid unexpected client incompatibilities.
-            </p>
-          </div></dd></dl></section></div>
+          };</pre>
+        <section>
+          <h2>Dictionary <a class="idlType">MediaKeySystemMediaCapability</a> Members</h2>
+          <dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability">
+            <dt><dfn><code>contentType</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt>
+            <dd>
+              <p>
+                The type of the <a def-id="media-resource"></a>.
+                Its value must be a <a def-id="valid-media-mime-type"></a>.
+                The empty string is invalid.
+              </p>
+            </dd>
+            <dt><dfn><code>encryptionScheme</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>null</code></dt>
+            <dd>
+              <p>
+                The encryption scheme associated with the content type.
+                A value which is null or not present indicates to the user agent
+                that no specific encryption scheme is required by the
+                application, and therefore any encryption scheme is acceptable.
+              </p>
+              <div class="note">
+                <p>
+                  Applications that are aware of this field SHOULD specify the
+                  encryption schemes they require, since different encryption
+                  schemes are generally incompatible with one another. It is
+                  unrealistic for an application to be accepting of "any"
+                  encryption scheme, but the default of null and the
+                  interpretation of null as "any" provide backward
+                  compatibility for unaware applications and a path to a
+                  polyfill for older user agents.
+                </p>
+              </div>
+              <div class="note">
+                <p>
+                  Well-known values for encryptionScheme are:
+                  <ul>
+                    <li><dfn id="scheme-cenc"><code>cenc</code></dfn>:
+                      The "cenc" mode, defined in ISO 23001-7:2016, section 4.2a. AES-CTR mode full sample and video NAL subsample encryption.
+                    </li>
+                    <li><dfn id="scheme-cbcs"><code>cbcs</code></dfn>:
+                      The "cbcs" mode, defined in ISO 23001-7:2016, section 4.2d. AES-CBC mode partial video NAL pattern encryption.
+                    </li>
+                    <li><dfn id="scheme-cbcs-restricted"><code>cbcs-restricted</code></dfn>:
+                      The same as "cbcs" mode, but with a specific pattern of 10% for video and 100% for audio.
+                    </li>
+                  </ul>
+                </p>
+              </div>
+            </dd>
+            <dt><dfn><code>robustness</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt>
+            <dd>
+              <p>
+                The robustness level associated with the content type.
+                The empty string indicates that any ability to decrypt and decode the content type is acceptable.
+              </p>
+              <div class="note">
+                <p>
+                  Implementations MUST configure the CDM to support at least the robustness levels specified in the configuration of the MediaKeySystemAccess object used to create the MediaKeys object.
+                  Exact configuration of the CDM is implementation-specific, and implementations MAY configure the CDM to use the highest robustness level in the configuration even if a higher robustness level is available.
+                  If only the empty string is specified, implementations MAY be configured to use the lowest robustness level the implementation supports.
+                </p>
+                <p>
+                  Applications SHOULD specify the robustness level(s) they require to avoid unexpected client incompatibilities.
+                </p>
+              </div>
+            </dd>
+          </dl>
+        </section></div>
 
         <p>In order for the capability represented by this object to be considered supported, <a def-id="capability-contentType"></a> MUST NOT be the empty string and its entire value, including all codecs, MUST be supported with <a def-id="capability-robustness"></a>.</p>
         <p class="note">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p>
@@ -1381,6 +1432,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
               </p>
               <p class="note">
                 This results in a new object being created and initialized from <var>configuration</var> each time this method is called.
+              </p>
+              <p class="note">
+                If <a def-id="capability-encryptionScheme"></a> was not given by the application, the accumulated <var>configuration</var> MUST still contain a <a def-id="capability-encryptionScheme"></a> field with a value of <code>null</code>, so that polyfills can detect the user agent's support for the field without specifying specific values.
               </p>
             </li>
           </ol>
@@ -3523,6 +3577,7 @@ interface MediaEncryptedEvent : Event {
             <li>
               <p><a>MediaKeySystemConfiguration</a>:</p>
               <ol>
+                <li><p><a def-id="capability-encryptionScheme"></a>: Implementations MUST support the <a def-id="scheme-cenc"></a> scheme, and MAY support other schemes.</p></li>
                 <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
                 <li><p><a def-id="option-distinctiveIdentifier"></a>: <a def-id="requirement-required"></a> is not supported.</p></li>
                 <li><p><a def-id="option-persistentState"></a>: Not <a def-id="requirement-required"></a> unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>

@@ -185,9 +185,14 @@
     'get-supported-configuration-algorithm': { func: term_helper, fragment: 'get-supported-configuration', link_text: 'Get Supported Configuration',  },
     'get-supported-configuration-and-consent-algorithm': { func: term_helper, fragment: 'get-supported-configuration-and-consent', link_text: 'Get Supported Configuration and Consent',  },
     'get-supported-capabilities-for-audio-video-type-algorithm': { func: term_helper, fragment: 'get-supported-capabilities-for-audio-video-type', link_text: 'Get Supported Capabilities for Audio/Video Type',  },
+
     'requirement-required': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.required', link_text: '"required"',  },
     'requirement-optional': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.optional', link_text: '"optional"',  },
     'requirement-not-allowed': { func: idlref_helper, fragment: 'idl-def-MediaKeysRequirement.not-allowed', link_text: '"not-allowed"',  },
+
+    'scheme-cenc': { func: idlref_helper, fragment: 'scheme-cenc', link_text: '"cenc"',  },
+    'scheme-cbcs': { func: idlref_helper, fragment: 'scheme-cbcs', link_text: '"cbcs"',  },
+    'scheme-cbcs-restricted': { func: idlref_helper, fragment: 'scheme-cbcs-restricted', link_text: '"cbcs-restricted"',  },
 
     'option-label': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-label', link_text: 'label',  },
     'option-initDataTypes': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-initdatatypes', link_text: 'initDataTypes',  },
@@ -198,6 +203,7 @@
     'option-sessionTypes': { func: idlref_helper, fragment: 'dom-mediakeysystemconfiguration-sessiontypes', link_text: 'sessionTypes',  },
 
     'capability-contentType' : { func: idlref_helper, fragment: 'dom-mediakeysystemmediacapability-contenttype', link_text: 'contentType',  },
+    'capability-encryptionScheme' : { func: idlref_helper, fragment: 'dom-mediakeysystemmediacapability-encryptionscheme', link_text: 'encryptionScheme',  },
     'capability-robustness' : { func: idlref_helper, fragment: 'dom-mediakeysystemmediacapability-robustness', link_text: 'robustness',  },
 
     'keySystem-attribute': { func: idlref_helper, fragment: 'dom-mediakeysystemaccess-keysystem', link_text: 'keySystem',  },
