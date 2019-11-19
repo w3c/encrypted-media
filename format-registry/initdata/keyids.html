@@ -1,6 +1,25 @@
-<!DOCTYPE html><html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="ReSpec 24.34.1"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><style>/* --- EXAMPLES --- */
-span.example-title {
-    text-transform: none;
+<!DOCTYPE html>
+<html lang="en" dir="ltr" typeof="bibo:Document " prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#">
+<head><meta lang="" property="dc:language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>"keyids" Initialization Data Format</title>
+    
+    
+    
+    <!-- script to register bugs -->
+    <!-- Disabled unless/until it supports GitHub issues.
+    <script src="https://w3c.github.io/webcomponents/assets/scripts/bug-assist.js"></script>
+    <meta name="bug.product" content="HTML WG">
+    <meta name="bug.component" content="Encrypted Media Extensions">
+    -->
+
+    <style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;
 }
 aside.example, div.example, div.illegal-example {
     padding: 0.5em;
@@ -23,24 +42,46 @@ aside.example div.example {
     border-color: #999;
     background: #fff;
 }
-aside.example div.example span.example-title {
+aside.example div.example div.example-title {
     color: #999;
 }
 </style><style>/* --- ISSUES/NOTES --- */
-.issue-label {
-    text-transform: initial;
+div.issue-title, div.note-title , div.ednote-title, div.warning-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
 }
-
-.warning > p:first-child { margin-top: 0 }
-.warning {
+div.issue-title { color: #e05252; }
+div.note-title, div.ednote-title { color: #2b2; }
+div.warning-title { color: #f22; }
+div.issue-title span, div.note-title span, div.ednote-title span, div.warning-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue, div.ednote, div.warning {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .ednote > p:first-child, .issue > p:first-child, .warning > p:first-child { margin-top: 0 }
+.issue, .note, .ednote, .warning {
     padding: .5em;
     border-left-width: .5em;
     border-left-style: solid;
 }
-span.warning { padding: .1em .5em .15em; }
+div.issue, div.note , div.ednote,  div.warning {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.ednote, span.issue, span.warning { padding: .1em .5em .15em; }
 
-.issue.closed span.issue-number {
-    text-decoration: line-through;
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note, .ednote {
+    border-color: #52e052;
+    background: #e9fbe9;
 }
 
 .warning {
@@ -52,10 +93,12 @@ span.warning { padding: .1em .5em .15em; }
 
 .warning-title:before{
     content: "⚠"; /*U+26A0 WARNING SIGN*/
-    font-size: 1.3em;
+    font-size: 3em;
     float: left;
+    height: 100%;
     padding-right: .3em;
-    margin-top: -0.3em;
+    vertical-align: top;
+    margin-top: -0.5em;
 }
 
 li.task-list-item {
@@ -66,515 +109,148 @@ input.task-list-item-checkbox {
     margin: 0 0.35em 0.25em -1.6em;
     vertical-align: middle;
 }
-
-.issue a.respec-gh-label {
-  padding: 5px;
-  margin: 0 2px 0 2px;
-  font-size: 10px;
-  text-transform: none;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 4px;
-  position: relative;
-  bottom: 2px;
-  border: none;
-}
-
-.issue a.respec-label-dark {
-  color: #fff;
-  background-color: #000;
-}
-
-.issue a.respec-label-light {
-  color: #000;
-  background-color: #fff;
-}
-</style>
-    
-    <title>"keyids" Initialization Data Format</title>
-    <style id="respec-mainstyle">/*****************************************************************
+</style><link rel="stylesheet" href="../../eme.css">
+  <style>/*****************************************************************
  * ReSpec 3 CSS
  * Robin Berjon - http://berjon.com/
  *****************************************************************/
 
-@keyframes pop {
-  0% {
-    transform: scale(1, 1);
-  }
-  25% {
-    transform: scale(1.25, 1.25);
-    opacity: 0.75;
-  }
-  100% {
-    transform: scale(1, 1);
-  }
-}
-
-/* Override code highlighter background */
-.hljs {
-  background: transparent !important;
-}
-
 /* --- INLINES --- */
-h1 abbr,
-h2 abbr,
-h3 abbr,
-h4 abbr,
-h5 abbr,
-h6 abbr,
-a abbr {
-  border: none;
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
 }
 
 dfn {
-  font-weight: bold;
+    font-weight:    bold;
 }
 
 a.internalDFN {
-  color: inherit;
-  border-bottom: 1px solid #99c;
-  text-decoration: none;
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
 }
 
 a.externalDFN {
-  color: inherit;
-  border-bottom: 1px dotted #ccc;
-  text-decoration: none;
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
 }
 
 a.bibref {
-  text-decoration: none;
-}
-
-.respec-offending-element:target {
-  animation: pop 0.25s ease-in-out 0s 1;
-}
-
-.respec-offending-element,
-a[href].respec-offending-element {
-  text-decoration: red wavy underline;
-}
-@supports not (text-decoration: red wavy underline) {
-  .respec-offending-element:not(pre) {
-    display: inline-block;
-  }
-  .respec-offending-element {
-    /* Red squiggly line */
-    background: url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=)
-      bottom repeat-x;
-  }
-}
-
-#references :target {
-  background: #eaf3ff;
-  animation: pop 0.4s ease-in-out 0s 1;
+    text-decoration:    none;
 }
 
 cite .bibref {
-  font-style: normal;
+    font-style: normal;
 }
 
 code {
-  color: #c83500;
-}
-
-th code {
-  color: inherit;
-}
-
-a[href].orcid {
-    padding-left: 4px;
-    padding-right: 4px;
-}
-
-a[href].orcid > svg {
-    margin-bottom: -2px;
+    color:  #C83500;
 }
 
 /* --- TOC --- */
-
-.toc a,
-.tof a {
-  text-decoration: none;
+.toc a, .tof a {
+    text-decoration:    none;
 }
 
-a .secno,
-a .figno {
-  color: #000;
+a .secno, a .figno {
+    color:  #000;
 }
 
-ul.tof,
-ol.tof {
-  list-style: none outside none;
+ul.tof, ol.tof {
+    list-style: none outside none;
 }
 
 .caption {
-  margin-top: 0.5em;
-  font-style: italic;
+    margin-top: 0.5em;
+    font-style:   italic;
 }
 
 /* --- TABLE --- */
-
 table.simple {
-  border-spacing: 0;
-  border-collapse: collapse;
-  border-bottom: 3px solid #005a9c;
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
 }
 
 .simple th {
-  background: #005a9c;
-  color: #fff;
-  padding: 3px 5px;
-  text-align: left;
-}
-
-.simple th a {
-  color: #fff;
-  padding: 3px 5px;
-  text-align: left;
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
 }
 
 .simple th[scope="row"] {
-  background: inherit;
-  color: inherit;
-  border-top: 1px solid #ddd;
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
 }
 
 .simple td {
-  padding: 3px 10px;
-  border-top: 1px solid #ddd;
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
 }
 
 .simple tr:nth-child(even) {
-  background: #f0f6ff;
+    background: #f0f6ff;
 }
 
 /* --- DL --- */
-
 .section dd > p:first-child {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .section dd > p:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .section dd {
-  margin-bottom: 1em;
+    margin-bottom:  1em;
 }
 
-.section dl.attrs dd,
-.section dl.eldef dd {
-  margin-bottom: 0;
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
 }
 
-#issue-summary > ul,
-.respec-dfn-list {
-  column-count: 2;
-}
-
-#issue-summary li,
-.respec-dfn-list li {
-  list-style: none;
-}
-
-details.respec-tests-details {
-  margin-left: 1em;
-  display: inline-block;
-  vertical-align: top;
-}
-
-details.respec-tests-details > * {
-  padding-right: 2em;
-}
-
-details.respec-tests-details[open] {
-  z-index: 999999;
-  position: absolute;
-  border: thin solid #cad3e2;
-  border-radius: 0.3em;
-  background-color: white;
-  padding-bottom: 0.5em;
-}
-
-details.respec-tests-details[open] > summary {
-  border-bottom: thin solid #cad3e2;
-  padding-left: 1em;
-  margin-bottom: 1em;
-  line-height: 2em;
-}
-
-details.respec-tests-details > ul {
-  width: 100%;
-  margin-top: -0.3em;
-}
-
-details.respec-tests-details > li {
-  padding-left: 1em;
-}
-
-a[href].self-link:hover {
-  opacity: 1;
-  text-decoration: none;
-  background-color: transparent;
-}
-
-h2,
-h3,
-h4,
-h5,
-h6 {
-  position: relative;
-}
-
-aside.example .marker > a.self-link {
-  color: inherit;
-}
-
-h2 > a.self-link,
-h3 > a.self-link,
-h4 > a.self-link,
-h5 > a.self-link,
-h6 > a.self-link {
-  border: none;
-  color: inherit;
-  font-size: 83%;
-  height: 2em;
-  left: -1.6em;
-  opacity: 0.5;
-  position: absolute;
-  text-align: center;
-  text-decoration: none;
-  top: 0;
-  transition: opacity 0.2s;
-  width: 2em;
-}
-
-h2 > a.self-link::before,
-h3 > a.self-link::before,
-h4 > a.self-link::before,
-h5 > a.self-link::before,
-h6 > a.self-link::before {
-  content: "§";
-  display: block;
-}
-
-@media (max-width: 767px) {
-  dd {
-    margin-left: 0;
-  }
-
-  /* Don't position self-link in headings off-screen */
-  h2 > a.self-link,
-  h3 > a.self-link,
-  h4 > a.self-link,
-  h5 > a.self-link,
-  h6 > a.self-link {
-    left: auto;
-    top: auto;
-  }
+.respec-hidden {
+    display: none;
 }
 
 @media print {
-  .removeOnSave {
-    display: none;
-  }
+    .removeOnSave {
+        display: none;
+    }
 }
-</style>
-    
-    
-    
-    
-
-  <link rel="canonical" href="https://www.w3.org/TR/eme-initdata-keyids/"><style>/*
-
-github.com style (c) Vasily Polovnyov <vast@whiteants.net>
-
-*/
-
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  color: #333;
-  background: #f8f8f8;
-}
-
-.hljs-comment,
-.hljs-quote {
-  color: #998;
-  font-style: italic;
-}
-
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-subst {
-  color: #333;
-  font-weight: bold;
-}
-
-.hljs-number,
-.hljs-literal,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-tag .hljs-attr {
-  color: #008080;
-}
-
-.hljs-string,
-.hljs-doctag {
-  color: #d14;
-}
-
-.hljs-title,
-.hljs-section,
-.hljs-selector-id {
-  color: #900;
-  font-weight: bold;
-}
-
-.hljs-subst {
-  font-weight: normal;
-}
-
-.hljs-type,
-.hljs-class .hljs-title {
-  color: #458;
-  font-weight: bold;
-}
-
-.hljs-tag,
-.hljs-name,
-.hljs-attribute {
-  color: #000080;
-  font-weight: normal;
-}
-
-.hljs-regexp,
-.hljs-link {
-  color: #009926;
-}
-
-.hljs-symbol,
-.hljs-bullet {
-  color: #990073;
-}
-
-.hljs-built_in,
-.hljs-builtin-name {
-  color: #0086b3;
-}
-
-.hljs-meta {
-  color: #999;
-  font-weight: bold;
-}
-
-.hljs-deletion {
-  background: #fdd;
-}
-
-.hljs-addition {
-  background: #dfd;
-}
-
-.hljs-emphasis {
-  font-style: italic;
-}
-
-.hljs-strong {
-  font-weight: bold;
-}
-</style><style>var {
-  position: relative;
-  cursor: pointer;
-}
-
-var[data-type]::before,
-var[data-type]::after {
-  position: absolute;
-  left: 50%;
-  top: -6px;
-  opacity: 0;
-  transition: opacity 0.4s;
-  pointer-events: none;
-}
-
-/* the triangle or arrow or caret or whatever */
-var[data-type]::before {
-  content: "";
-  transform: translateX(-50%);
-  border-width: 4px 6px 0 6px;
-  border-style: solid;
-  border-color: transparent;
-  border-top-color: #000;
-}
-
-/* actual text */
-var[data-type]::after {
-  content: attr(data-type);
-  transform: translateX(-50%) translateY(-100%);
-  background: #000;
-  text-align: center;
-  /* additional styling */
-  font-family: "Dank Mono", "Fira Code", monospace;
-  font-style: normal;
-  padding: 6px;
-  border-radius: 3px;
-  color: #daca88;
-  text-indent: 0;
-  font-weight: normal;
-}
-
-var[data-type]:hover::after,
-var[data-type]:hover::before {
-  opacity: 1;
-}
-</style><script id="initialUserConfig" type="application/json">{
+</style><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--><script id="initialUserConfig" type="application/json">{
   "specStatus": "ED",
-  "shortName": "eme-initdata-keyids",
+  "shortName": "encrypted-media",
   "edDraftURI": "https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html",
   "editors": [
     {
-      "name": "Joey Parrish",
-      "w3cid": "105371",
-      "company": "Google Inc.",
-      "companyURL": "https://www.google.com/"
-    },
-    {
-      "name": "Greg Freedman",
-      "company": "Netflix Inc.",
-      "companyURL": "https://www.netflix.com/"
-    }
-  ],
-  "formerEditors": [
-    {
-      "name": "Mark Watson",
-      "note": "Until September 2019",
-      "w3cid": "46379",
-      "company": "Netflix Inc.",
-      "companyURL": "https://www.netflix.com/"
-    },
-    {
       "name": "David Dorwin",
-      "note": "Until September 2017",
-      "w3cid": "52505",
+      "url": "",
       "company": "Google Inc.",
       "companyURL": "https://www.google.com/"
-    },
-    {
-      "name": "Jerry Smith",
-      "note": "Until September 2017",
-      "w3cid": "60176",
-      "company": "Microsoft Corporation",
-      "companyURL": "https://www.microsoft.com/"
     },
     {
       "name": "Adrian Bateman",
-      "note": "Until May 2014",
-      "w3cid": "42763",
+      "url": "",
       "company": "Microsoft Corporation",
       "companyURL": "https://www.microsoft.com/"
+    },
+    {
+      "name": "Mark Watson",
+      "url": "",
+      "company": "Netflix Inc.",
+      "companyURL": "https://www.netflix.com/"
     }
   ],
   "otherLinks": [
@@ -588,10 +264,10 @@ var[data-type]:hover::before {
     "encrypted-media",
     "eme-references-from-registry"
   ],
-  "wg": "Media Working Group",
-  "wgURI": "https://www.w3.org/media-wg/",
-  "wgPublicList": "public-media-wg",
-  "wgPatentURI": "https://www.w3.org/2004/01/pp-impl/115198/status",
+  "wg": "HTML Working Group",
+  "wgURI": "http://www.w3.org/html/wg/",
+  "wgPublicList": "public-html-media",
+  "wgPatentURI": "https://www.w3.org/2004/01/pp-impl/40318/status",
   "noIDLIn": true,
   "scheme": "https",
   "preProcess": [
@@ -601,152 +277,151 @@ var[data-type]:hover::before {
   "postProcess": [
     null
   ],
-  "publishISODate": "2019-11-15T00:00:00.000Z",
-  "generatedSubtitle": "Editor's Draft 15 November 2019"
-}</script><meta name="description" content="This specification defines the &quot;keyids&quot; Initialization Data format for use with the Encrypted Media Extensions [ENCRYPTED-MEDIA]."><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED"></head>
-  <body class="h-entry informative"><div class="head">
-      <a class="logo" href="https://www.w3.org/"><img alt="W3C" width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C"></a> <h1 id="title" class="title p-name">"keyids" Initialization Data Format</h1>
-      
-      <h2>
-        W3C Editor's Draft
-        <time class="dt-published" datetime="2019-11-15">15 November 2019</time>
-      </h2>
-      <dl>
-        <dt>This version:</dt><dd>
-                <a class="u-url" href="https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html">https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html</a>
-              </dd><dt>Latest published version:</dt><dd>
-                <a href="https://www.w3.org/TR/eme-initdata-keyids/">https://www.w3.org/TR/eme-initdata-keyids/</a>
-              </dd>
-        <dt>Latest editor's draft:</dt><dd><a href="https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html">https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html</a></dd>
-        
-        
-        
-        
-        
-        
-        <dt>Editors:</dt>
-        <dd class="p-author h-card vcard" data-editor-id="105371"><span class="p-name fn">Joey Parrish</span>
-            (<a class="p-org org h-org h-card" href="https://www.google.com/">Google Inc.</a>)
-          </dd><dd class="p-author h-card vcard"><span class="p-name fn">Greg Freedman</span>
-            (<a class="p-org org h-org h-card" href="https://www.netflix.com/">Netflix Inc.</a>)
-          </dd>
-        <dt>
-                Former editors:
-              </dt><dd class="p-author h-card vcard" data-editor-id="46379"><span class="p-name fn">Mark Watson</span>
-            (<a class="p-org org h-org h-card" href="https://www.netflix.com/">Netflix Inc.</a>)
-           (Until September 2019)</dd><dd class="p-author h-card vcard" data-editor-id="52505"><span class="p-name fn">David Dorwin</span>
-            (<a class="p-org org h-org h-card" href="https://www.google.com/">Google Inc.</a>)
-           (Until September 2017)</dd><dd class="p-author h-card vcard" data-editor-id="60176"><span class="p-name fn">Jerry Smith</span>
-            (<a class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a>)
-           (Until September 2017)</dd><dd class="p-author h-card vcard" data-editor-id="42763"><span class="p-name fn">Adrian Bateman</span>
-            (<a class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a>)
-           (Until May 2014)</dd>
-        
-        <dt>Repository:</dt><dd>
-      <a href="https://github.com/w3c/encrypted-media/">https://github.com/w3c/encrypted-media/</a>
-    </dd>
-      </dl>
-      
-      
-      
+  "localBiblio": {
+    "EME-INITDATA-REGISTRY": {
+      "title": "Encrypted Media Extensions Initialization Data Format Registry",
+      "href": "../initdata/",
+      "authors": [
+        "David Dorwin",
+        "Adrian Bateman",
+        "Mark Watson"
+      ],
+      "publisher": "W3C"
+    },
+    "EME-STREAM-REGISTRY": {
+      "title": "Encrypted Media Extensions Stream Format Registry",
+      "href": "../stream/",
+      "authors": [
+        "David Dorwin",
+        "Adrian Bateman",
+        "Mark Watson"
+      ],
+      "publisher": "W3C"
+    }
+  }
+}</script></head>
+  <body class="h-entry toc-inline" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+            <a class="logo" href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" alt="W3C"></a>
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">"keyids" Initialization Data Format</h1>
+  <h2 id="w3c-editor-s-draft-25-april-2016"><abbr title="World Wide Web Consortium">W3C</abbr> Editor's Draft <time property="dcterms:issued" class="dt-published" datetime="2016-04-25">25 April 2016</time></h2>
+  <dl>
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html">https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/encrypted-media/">http://www.w3.org/TR/encrypted-media/</a></dd>
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html">https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html</a></dd>
+    <dt>Editors:</dt>
+    <dd class="p-author h-card vcard" property="bibo:editor" resource="_:editor0"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">David Dorwin</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.google.com/">Google Inc.</a></span>
+<span property="rdf:rest" resource="_:editor1"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor1"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Adrian Bateman</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.microsoft.com/">Microsoft Corporation</a></span>
+<span property="rdf:rest" resource="_:editor2"></span>
+</dd>
+<dd class="p-author h-card vcard" resource="_:editor2"><span property="rdf:first" typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Mark Watson</span>, <a property="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.netflix.com/">Netflix Inc.</a></span>
+<span property="rdf:rest" resource="rdf:nil"></span>
+</dd>
+
+          <dt>Repository:</dt>
+                <dd>
+                  <a href="https://github.com/w3c/encrypted-media/">https://github.com/w3c/encrypted-media/</a>
+                </dd>
+  </dl>
       <p class="copyright">
-      <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
-      ©
-      2019
-      
-      <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
-      <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>,
-      <a href="https://ev.buaa.edu.cn/">Beihang</a>). 
-      W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
-      <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a rel="license" href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">permissive document license</a> rules
-      apply.
-    </p>
-      <hr title="Separator for header">
-    </div>
-    <section id="abstract" class="introductory"><h2>Abstract</h2>
-      <p>This specification defines the <code>"keyids"</code> <a href="../../index.html#initialization-data">Initialization Data</a> format for use with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite class="respec-offending-element" title="Normative references in informative sections are not allowed. Remove '!' from the start of the reference `[[!ENCRYPTED-MEDIA]]`" id="respec-offender-normative-references-in-informative-sections-are-not-allowed-remove-from-the-start-of-the-reference-encrypted-media"><a class="bibref" href="#bib-encrypted-media" title="Encrypted Media Extensions" data-link-type="biblio">ENCRYPTED-MEDIA</a></cite>].</p>
-      <div class="note" role="note" id="issue-container-generatedID"><div role="heading" class="note-title marker" id="h-note" aria-level="3"><span>Note</span></div><p class="">It defines a stream format-independent format for specifying a list of <a href="../../index.html#decryption-key-id">key ID</a>(s).
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2016
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>). 
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+            <a rel="license" href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
+        rules apply.
+      </p>
+  <hr title="Separator for header">
+</div>
+    <section id="abstract" class="introductory" property="dc:abstract"><h2 id="h-abstract" resource="#h-abstract"><span property="xhv:role" resource="xhv:heading">Abstract</span></h2>
+      <p>This specification defines the <code>"keyids"</code> <a href="../../index.html#initialization-data">Initialization Data</a> format for use with the <a href="../../index.html#">Encrypted Media Extensions</a> [<cite><a class="bibref" href="#bib-ENCRYPTED-MEDIA">ENCRYPTED-MEDIA</a></cite>].</p>
+      <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note1"><span>Note</span></div><p class="">It defines a stream format-independent format for specifying a list of <a href="../../index.html#decryption-key-id">key ID</a>(s).
       This type can be used by applications to directly provide information necessary to generate a license request without using media data or constructing container-specific formats.
       </p></div>
-    </section>
-
-    <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision of this technical report can be found in the <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at https://www.w3.org/TR/.</em></p>
+    </section><section id="sotd" class="introductory"><h2 id="h-sotd" resource="#h-sotd"><span property="xhv:role" resource="xhv:heading">Status of This Document</span></h2>
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at http://www.w3.org/TR/.</em>
+        </p>
+          
       <p>The working group maintains <a href="https://github.com/w3c/encrypted-media/issues">a list of all bug reports that the editors have not yet tried to address</a>.</p>
       <p>Implementors should be aware that this specification is not stable. <strong>Implementors who are not taking part in the discussions are likely to find the specification changing out from under them in incompatible ways.</strong> Vendors interested in implementing this specification before it eventually reaches the Candidate Recommendation stage should join the mailing list mentioned below and take part in the discussions.</p>
-    <p>
-      This document was published by the <a href="https://www.w3.org/media-wg/">Media Working Group</a> as an
-      Editor's Draft.
-      
-    </p><p>
-      
-      Comments regarding this document are welcome.
-            Please send them to
-            <a href="mailto:public-media-wg@w3.org">public-media-wg@w3.org</a>
-            (<a href="https://lists.w3.org/Archives/Public/public-media-wg/">archives</a>).
+    
+          <p>
+            This document was published by the <a href="http://www.w3.org/html/wg/">HTML Working Group</a> as an Editor's Draft.
+              If you wish to make comments regarding this document, please send them to
+              <a href="mailto:public-html-media@w3.org">public-html-media@w3.org</a>
+              (<a href="mailto:public-html-media-request@w3.org?subject=subscribe">subscribe</a>,
+              <a href="http://lists.w3.org/Archives/Public/public-html-media/">archives</a>).
+            
+              All comments are welcome.
+          </p>
+            <p>
+              Publication as an Editor's Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
+              Membership. This is a draft document and may be updated, replaced or obsoleted by other
+              documents at any time. It is inappropriate to cite this document as other than work in
+              progress.
+            </p>
+          <p>
+              This document was produced by
+              a group
+               operating under the
+              <a id="sotd_patent" property="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
+              Policy</a>.
+                <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="https://www.w3.org/2004/01/pp-impl/40318/status" rel="disclosure">public list of any patent
+                disclosures</a>
+              made in connection with the deliverables of
+              the group; that page also includes
+              instructions for disclosing a patent. An individual who has actual knowledge of a patent
+              which the individual believes contains
+              <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+              Claim(s)</a> must disclose the information in accordance with
+              <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+              6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          </p>
+            <p>This document is governed by the <a id="w3c_process_revision" href="http://www.w3.org/2015/Process-20150901/">1 September 2015 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+            </p>
           
-    </p><p>
-      Publication as an Editor's Draft does not imply endorsement by the
-      <abbr title="World Wide Web Consortium">W3C</abbr> Membership. This is a draft document and may be updated, replaced or
-      obsoleted by other documents at any time. It is inappropriate to cite this
-      document as other than work in progress.
-    </p><p>
-      
-        This document was produced by a group
-        operating under the
-        <a href="https://www.w3.org/Consortium/Patent-Policy/"><abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
-       
-      
-                  <abbr title="World Wide Web Consortium">W3C</abbr> maintains a
-                  <a rel="disclosure" href="https://www.w3.org/2004/01/pp-impl/115198/status">public list of any patent disclosures</a>
-            made in connection with the deliverables of
-            the group; that page also includes
-            instructions for disclosing a patent. An individual who has actual
-            knowledge of a patent which the individual believes contains
-            <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential Claim(s)</a>
-            must disclose the information in accordance with
-            <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
-          
-      
-    </p><p>
-                  This document is governed by the
-                  <a id="w3c_process_revision" href="https://www.w3.org/2019/Process-20190301/">1 March 2019 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
-                </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#format"><bdi class="secno">1. </bdi>Format</a></li><li class="tocline"><a class="tocxref" href="#example"><bdi class="secno">2. </bdi>Example</a></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">A. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">A.1 </bdi>Normative references</a></li></ol></li></ol></nav>
+</section><nav id="toc"><h2 class="introductory" id="table-of-contents" resource="#table-of-contents"><span property="xhv:role" resource="xhv:heading">Table of Contents</span></h2><ul class="toc" role="directory"><li class="tocline"><a href="#format" class="tocxref"><span class="secno">1. </span>Format</a></li><li class="tocline"><a href="#example" class="tocxref"><span class="secno">2. </span>Example</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li></ul></li></ul></nav>
 
-    <section id="format">
-      <h2 id="x1-format"><bdi class="secno">1. </bdi>Format<a class="self-link" aria-label="§" href="#format"></a></h2>
-      <p>The format is a JSON object, encoded in UTF-8 as specified in the Encoding specification [<cite class="respec-offending-element" title="Normative references in informative sections are not allowed. Remove '!' from the start of the reference `[[!encoding]]`" id="respec-offender-normative-references-in-informative-sections-are-not-allowed-remove-from-the-start-of-the-reference-encoding"><a class="bibref" href="#bib-encoding" title="Encoding Standard" data-link-type="biblio">encoding</a></cite>], containing the following member:</p>
+    
+
+    <section id="format" typeof="bibo:Chapter" resource="#format" property="bibo:hasPart">
+      <!--OddPage--><h2 id="h-format" resource="#h-format"><span property="xhv:role" resource="xhv:heading"><span class="secno">1. </span>Format</span></h2>
+      <p>The format is a JSON object, encoded in UTF-8 as specified in the Encoding specification [<cite><a class="bibref" href="#bib-encoding">encoding</a></cite>], containing the following member:</p>
       <dl>
         <dt>"kids"</dt>
         <dd>An array of <a href="../../index.html#decryption-key-id">key ID</a>(s). Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
       </dl>
 
-      <div class="note" role="note" id="issue-container-generatedID-0"><div role="heading" class="note-title marker" id="h-note-0" aria-level="3"><span>Note</span></div><p class="">See <a href="../../index.html#using-base64url">Using base64url</a>.</p></div>
-      <div class="note" role="note" id="issue-container-generatedID-1"><div role="heading" class="note-title marker" id="h-note-1" aria-level="3"><span>Note</span></div><p class="">Applications may encode the JSON string using the <a href="https://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a> [<cite><a class="bibref" href="#bib-encoding" title="Encoding Standard" data-link-type="biblio">encoding</a></cite>]</p></div>
+      <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note2"><span>Note</span></div><p class="">See <a href="../../index.html#using-base64url">Using base64url</a>.</p></div>
+      <div class="note"><div class="note-title marker" aria-level="3" role="heading" id="h-note3"><span>Note</span></div><p class="">Applications may encode the JSON string using the <a href="http://www.w3.org/TR/encoding/#interface-textencoder">TextEncoder interface</a> [<cite><a class="bibref" href="#bib-encoding">encoding</a></cite>]</p></div>
     </section>
 
-    <section class="informative" id="example">
-      <h2 id="x2-example"><bdi class="secno">2. </bdi>Example<a class="self-link" aria-label="§" href="#example"></a></h2><p><em>This section is non-normative.</em></p>
+    <section class="informative" id="example" typeof="bibo:Chapter" resource="#example" property="bibo:hasPart">
+      <!--OddPage--><h2 id="h-example" resource="#h-example"><span property="xhv:role" resource="xhv:heading"><span class="secno">2. </span>Example</span></h2><p><em>This section is non-normative.</em></p>
       <p>The following example will generate a license request for two <a href="../../index.html#decryption-key-id">key ID</a>(s). (Line breaks are for readability only.)</p>
-        <div class="example" id="example-1">
-          <div class="marker">
-      <a class="self-link" href="#example-1">Example<bdi> 1</bdi></a>
-    </div> <pre aria-busy="false"><code class="hljs json">{
-  <span class="hljs-attr">"kids"</span>:
+        <div class="example"><div class="example-title marker"><span>Example 1</span></div><pre class="">{
+  "kids":
     [
-     <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>,
-     <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span>
+     "LwVHf8JLtPrv2GUXFW2v_A",
+     "0DdtU9od-Bh5L3xbv0Xf_A"
     ],
-}</code></pre>
-        </div>
+}</pre></div>
     </section>
 
   
 
-<section id="references" class="appendix">
-      <h2 id="a-references"><bdi class="secno">A. </bdi>References<a class="self-link" aria-label="§" href="#references"></a></h2>
-      
-    <section id="normative-references">
-        <h3 id="a-1-normative-references"><bdi class="secno">A.1 </bdi>Normative references<a class="self-link" aria-label="§" href="#normative-references"></a></h3>
-      <dl class="bibliography">
-        <dt id="bib-encoding">[encoding]</dt><dd><a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Anne van Kesteren.  WHATWG. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a></dd><dt id="bib-encrypted-media">[ENCRYPTED-MEDIA]</dt><dd><a href="https://www.w3.org/TR/encrypted-media/"><cite>Encrypted Media Extensions</cite></a>. David Dorwin; Jerry Smith; Mark Watson; Adrian Bateman.  W3C. 18 September 2017. W3C Recommendation. URL: <a href="https://www.w3.org/TR/encrypted-media/">https://www.w3.org/TR/encrypted-media/</a></dd>
-      </dl></section></section><p role="navigation" id="back-to-top"><a href="#title"><abbr title="Back to Top">↑</abbr></a></p><script src="https://www.w3.org/scripts/TR/2016/fixup.js"></script></body></html>
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" property="bibo:hasPart"><!--OddPage--><h2 id="h-references" resource="#h-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A. </span>References</span></h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" property="bibo:hasPart"><h3 id="h-normative-references" resource="#h-normative-references"><span property="xhv:role" resource="xhv:heading"><span class="secno">A.1 </span>Normative references</span></h3><dl class="bibliography" resource=""><dt id="bib-ENCRYPTED-MEDIA">[ENCRYPTED-MEDIA]</dt><dd>David Dorwin; Jerry Smith; Mark Watson; Adrian Bateman. W3C. <a href="http://www.w3.org/TR/encrypted-media/" property="dc:requires"><cite>Encrypted Media Extensions</cite></a>. 21 April 2016. W3C Working Draft. URL: <a href="http://www.w3.org/TR/encrypted-media/" property="dc:requires">http://www.w3.org/TR/encrypted-media/</a>
+</dd><dt id="bib-encoding">[encoding]</dt><dd>Anne van Kesteren; Joshua Bell; Addison Phillips. W3C. <a href="http://www.w3.org/TR/encoding/" property="dc:requires"><cite>Encoding</cite></a>. 20 October 2015. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/encoding/" property="dc:requires">http://www.w3.org/TR/encoding/</a>
+</dd></dl></section></section><p role="navigation" id="back-to-top"><a href="#toc"><abbr title="Back to Top">↑</abbr></a></p><script async="" defer="" src="https://www.w3.org/scripts/TR/2016/fixup.js"></script></body></html>
