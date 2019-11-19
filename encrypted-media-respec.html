@@ -636,16 +636,14 @@
 
       <section>
         <h3>Feature Policy Integration</h3>
-      <p>
-        <a def-id="requestMediaKeySystemAccess"></a> is a <a data-cite="!FEATURE-POLICY#policy-controlled-feature">policy-controlled feature</a>.
-      </p>
-      <p>
-        The <a data-cite="!FEATURE-POLICY#feature-name">feature name</a> for <a def-id="requestMediaKeySystemAccess"></a> is <dfn><code>encrypted-media</code></dfn>.
-      </p>
-      <p>
-        The <a data-cite="!FEATURE-POLICY#default-allowlist">default allowlist</a> for <a def-id="requestMediaKeySystemAccess"></a> is <code>["self"]</code>.
-      </p>
-    </section>
+        <p>
+          <a def-id="requestMediaKeySystemAccess"></a> is a <a
+          data-cite="!FEATURE-POLICY#policy-controlled-feature">policy-controlled feature</a>
+          identified by the string <dfn><code>encrypted-media</code></dfn>.  Its <a
+          data-cite="!FEATURE-POLICY#default-allowlist">default allowlist</a> is <code>'self'</code>
+          [[!FEATURE-POLICY]].
+        </p>
+      </section>
 
       <section>
         <h3><dfn>Navigator</dfn> Extension: <code>requestMediaKeySystemAccess()</code></h3>
@@ -673,14 +671,18 @@ partial interface Navigator {
               </p>
             </div> 
 
-            
-
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
-              <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
-              <li><p>If <var>document</var> is not <a data-cite="!HTML#allowed-to-use">allowed to use</a> the <a data-cite="!FEATURE-POLICY#policy-controlled-feature">policy-controlled feature</a> named <a>encrypted-media</a>, return a promise rejected with a newly created <a def-id="NotSupportedError"></a>.</p></li>
+
+              <li><p>If the <a data-cite="!FEATURE-POLICY#responsible-document">responsible
+              document</a> is not <a data-cite="!FEATURE-POLICY#allowed-to-use">allowed to use</a>
+              the <a><code>encrypted-media</code></a> feature, then throw a "<a
+              data-cite="!WEBIDL#securityerror">SecurityError</a>" <a
+              data-cite="!WEBIDL#dfn-DOMException">DOMException</a> and abort these steps.</p></li>
+
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
+              <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
               <li><p>Let <var>origin</var> be the <a def-id="origin"></a> of <var>document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps in parallel:</p>

@@ -778,15 +778,15 @@ var[data-type]:hover::before {
   "postProcess": [
     null
   ],
-  "publishISODate": "2019-11-18T00:00:00.000Z",
-  "generatedSubtitle": "Editor's Draft 18 November 2019"
+  "publishISODate": "2019-11-19T00:00:00.000Z",
+  "generatedSubtitle": "Editor's Draft 19 November 2019"
 }</script><meta name="description" content="This proposal extends HTMLMediaElement [HTML] providing APIs to control playback of encrypted content."><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED"></head>
   <body data-cite="WebIDL HTML" class="h-entry"><div class="head">
       <a class="logo" href="https://www.w3.org/"><img alt="W3C" width="72" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C"></a> <h1 id="title" class="title p-name">Encrypted Media Extensions</h1>
       
       <h2>
         W3C Editor's Draft
-        <time class="dt-published" datetime="2019-11-18">18 November 2019</time>
+        <time class="dt-published" datetime="2019-11-19">19 November 2019</time>
       </h2>
       <dl>
         <dt>This version:</dt><dd>
@@ -1371,16 +1371,12 @@ var[data-type]:hover::before {
 
       <section id="feature-policy-integration">
         <h3 id="x3-1-feature-policy-integration"><bdi class="secno">3.1 </bdi>Feature Policy Integration<a class="self-link" aria-label="§" href="#feature-policy-integration"></a></h3>
-      <p>
-        <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> is a <a href="https://www.w3.org/TR/feature-policy-1/#policy-controlled-feature">policy-controlled feature</a>.
-      </p>
-      <p>
-        The <a href="https://www.w3.org/TR/feature-policy-1/#feature-name">feature name</a> for <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> is <dfn data-dfn-type="dfn" id="dfn-encrypted-media"><code>encrypted-media</code></dfn>.
-      </p>
-      <p>
-        The <a href="https://www.w3.org/TR/feature-policy-1/#default-allowlist">default allowlist</a> for <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> is <code>["self"]</code>.
-      </p>
-    </section>
+        <p>
+          <code><a href="#dom-navigator-requestmediakeysystemaccess">requestMediaKeySystemAccess()</a></code> is a <a href="https://www.w3.org/TR/feature-policy-1/#policy-controlled-feature">policy-controlled feature</a>
+          identified by the string <dfn data-dfn-type="dfn" id="dfn-encrypted-media"><code>encrypted-media</code></dfn>.  Its <a href="https://www.w3.org/TR/feature-policy-1/#default-allowlist">default allowlist</a> is <code>'self'</code>
+          [<cite><a class="bibref" href="#bib-feature-policy" title="Feature Policy" data-link-type="biblio">FEATURE-POLICY</a></cite>].
+        </p>
+      </section>
 
       <section id="navigator-extension-requestmediakeysystemaccess">
         <h3 id="x3-2-navigator-extension-requestmediakeysystemaccess"><bdi class="secno">3.2 </bdi><dfn data-dfn-type="dfn" id="dom-navigator" data-idl="interface" data-title="Navigator"><code>Navigator</code></dfn> Extension: <code>requestMediaKeySystemAccess()</code><a class="self-link" aria-label="§" href="#navigator-extension-requestmediakeysystemaccess"></a></h3>
@@ -1409,8 +1405,6 @@ partial interface <a class="internalDFN idlID" data-link-for="" data-link-type="
             </div></div> 
 
             
-
-            
           <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keySystem</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
                 The <a href="#key-system">Key System</a> for which access is being requested.
               </td></tr><tr><td class="prmName">supportedConfigurations</td><td class="prmType"><code>sequence&lt;MediaKeySystemConfiguration&gt;</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
@@ -1418,8 +1412,12 @@ partial interface <a class="internalDFN idlID" data-link-for="" data-link-type="
                 The first element with a satisfiable configuration will be used.
               </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;MediaKeySystemAccess&gt;</code></div><p>When this method is invoked, the user agent must run the following steps:</p><ol class="method-algorithm">
               
+
+              <li><p>If the <a href="https://www.w3.org/TR/feature-policy-1/#responsible-document">responsible
+              document</a> is not <a href="https://www.w3.org/TR/feature-policy-1/#allowed-to-use">allowed to use</a>
+              the <a href="#dfn-encrypted-media" class="internalDFN" data-link-type="dfn"><code><code>encrypted-media</code></code></a> feature, then throw a "<a href="https://heycam.github.io/webidl/#securityerror">SecurityError</a>" <a href="https://heycam.github.io/webidl/#dfn-DOMException">DOMException</a> and abort these steps.</p></li>
+
               <li><p>Let <var>document</var> be the calling context's <a href="https://www.w3.org/TR/dom/#concept-document">Document</a>.</p></li>
-              <li><p>If <var>document</var> is not <a href="https://html.spec.whatwg.org/multipage/#allowed-to-use">allowed to use</a> the <a href="https://www.w3.org/TR/feature-policy-1/#policy-controlled-feature">policy-controlled feature</a> named <a href="#dfn-encrypted-media" class="internalDFN" data-link-type="dfn"><code>encrypted-media</code></a>, return a promise rejected with a newly created <code><a href="#dfn-NotSupportedError">NotSupportedError</a></code>.</p></li>
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created <code><a href="#dfn-TypeError">TypeError</a></code>.</p></li>
               <li><p>Let <var>origin</var> be the <a href="https://www.w3.org/TR/html51/browsers.html#concept-cross-origin">origin</a> of <var>document</var>.</p></li>
