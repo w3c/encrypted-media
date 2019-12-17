@@ -173,9 +173,14 @@
     'distinctive-identifiers': { func: term_helper, fragment: 'distinctive-identifier', link_text: 'Distinctive Identifiers'  },
     'expiration-time': { func: term_helper, fragment: 'expiration-time', link_text: 'expiration time' },
     'browsing-profile': { func: term_helper, fragment: 'browsing-profile', link_text: 'browsing profile' },
+    'record-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record of key usage'  },
+    'records-of-key-usage': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'records of key usage'  },
+    'record-of-key-usage-maybe-plural': { func: term_helper, fragment: 'record-of-key-usage', link_text: 'record(s) of key usage'  },
     'record-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record of license destruction'  },
     'records-of-license-destruction': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'records of license destruction'  },
     'record-of-license-destruction-maybe-plural': { func: term_helper, fragment: 'record-of-license-destruction', link_text: 'record(s) of license destruction'  },
+    'first-decryption-time': { func: term_helper, fragment: 'first-decryption-time', link_text: 'first decryption time'  },
+    'latest-decryption-time': { func: term_helper, fragment: 'latest-decryption-time', link_text: 'latest decryption time'  },
     'time': { func: term_helper, fragment: 'time', link_text: 'time'  },
     'valid-media-mime-type': { func: term_helper, fragment: 'valid-media-mime-type', link_text: 'valid media MIME type'  },
 
@@ -212,6 +217,8 @@
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
+    'persistent-usage-record-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-usage-record', link_text: '"persistent-usage-record"',  },
+    'key-usage-accuracy': { func: var_helper, fragment: 'key-usage-accuracy', link_text: 'key usage accuracy' },
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
     'cdm-unavailable-algorithm': { func: term_helper, fragment: 'cdm-unavailable', link_text: 'CDM Unavailable',  },
 
@@ -253,6 +260,7 @@
     'update-expiration-algorithm': { func: term_helper, fragment: 'update-expiration', link_text: 'Update Expiration',  },
     'resume-playback-algorithm': { func: term_helper, fragment: 'resume-playback', link_text: 'Attempt to Resume Playback If Necessary',  },
     'wait-for-key-algorithm': { func: term_helper, fragment: 'wait-for-key', link_text: 'Wait for Key',  },
+    'media-key-session-destroyed-algorithm' : { func: term_helper, fragment: 'media-key-session-destroyed', link_text: 'MediaKeySession destroyed',  },
 
     'media-key-session-closed' : { func: term_helper, fragment: 'media-key-session-closed', link_text: 'closed', },
 
