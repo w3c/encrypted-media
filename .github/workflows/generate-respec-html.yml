@@ -9,19 +9,14 @@ jobs:
     steps:
       - name: Get Source
         uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
-          python-version: '3.x'
-      - name: Install Selenium for Python
-        run: python -m pip install --upgrade pip selenium==3.141.0
-      - name: Install ChromeDriver
-        uses: nanasess/setup-chromedriver@v1.0.3
-      - name: Debug Info
+          node-version: '14'
+      - name: Install Respec
         run: |
-          google-chrome --version
-          chromedriver --version
-          python3 --version
+          echo '{}' > package.json
+          npm install respec
       - name: Prepare Build Folder
         run: |
           rm -rf build
@@ -29,14 +24,14 @@ jobs:
           mkdir -p build/format-registry/stream
       - name: Generate HTML
         run: |
-          ./generate-respec-html.py encrypted-media-respec.html > build/index.html
-          ./generate-respec-html.py format-registry/initdata/cenc-respec.html > build/format-registry/initdata/cenc.html
-          ./generate-respec-html.py format-registry/initdata/index-respec.html > build/format-registry/initdata/index.html
-          ./generate-respec-html.py format-registry/initdata/keyids-respec.html > build/format-registry/initdata/keyids.html
-          ./generate-respec-html.py format-registry/initdata/webm-respec.html > build/format-registry/initdata/webm.html
-          ./generate-respec-html.py format-registry/stream/index-respec.html > build/format-registry/stream/index.html
-          ./generate-respec-html.py format-registry/stream/mp4-respec.html > build/format-registry/stream/mp4.html
-          ./generate-respec-html.py format-registry/stream/webm-respec.html > build/format-registry/stream/webm.html
+          npx respec2html encrypted-media-respec.html -o build/index.html
+          npx respec2html format-registry/initdata/cenc-respec.html -o build/format-registry/initdata/cenc.html
+          npx respec2html format-registry/initdata/index-respec.html -o build/format-registry/initdata/index.html
+          npx respec2html format-registry/initdata/keyids-respec.html -o build/format-registry/initdata/keyids.html
+          npx respec2html format-registry/initdata/webm-respec.html -o build/format-registry/initdata/webm.html
+          npx respec2html format-registry/stream/index-respec.html -o build/format-registry/stream/index.html
+          npx respec2html format-registry/stream/mp4-respec.html -o build/format-registry/stream/mp4.html
+          npx respec2html format-registry/stream/webm-respec.html -o build/format-registry/stream/webm.html
       - name: Update MarkDown Files
         run: |
           cp LICENSE.md README.md build/
