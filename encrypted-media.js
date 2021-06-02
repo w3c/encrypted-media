@@ -221,6 +221,13 @@
 
     'statusmap-size': { func: idlref_helper, fragment: 'dom-mediakeystatusmap-size', link_text: 'size',  },
 
+    'reason-unknown': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-unknown', link_text: '"unknown"',  },
+    'reason-closed-by-application': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-closed-by-application', link_text: '"closed-by-application"',  },
+    'reason-persistent-license-released': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-persistent-license-released', link_text: '"persistent-license-released"',  },
+    'reason-cdm-unavailable': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-cdm-unavailable', link_text: '"cdm-unavailable"',  },
+    'reason-hardware-context-reset': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-hardware-context-reset', link_text: '"hardware-context-reset"',  },
+    'reason-resource-evicted': { func: idlref_helper, fragment: 'dom-mediakeysessionclosedreason-resource-evicted', link_text: '"resource-evicted"',  },
+
     'sessionId': { func: idlref_helper, fragment: 'dom-mediakeysession-sessionid', link_text: 'sessionId',  },
     'expiration': { func: idlref_helper, fragment: 'dom-mediakeysession-expiration', link_text: 'expiration',  },
     'closed': { func: idlref_helper, fragment: 'dom-mediakeysession-closed', link_text: 'closed',  },
