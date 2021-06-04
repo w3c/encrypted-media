@@ -1669,7 +1669,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-cdm-unavailable"></a>.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
             </li>
           </ol>
         </section>
@@ -1733,30 +1733,33 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
 <div><pre class="idl">enum MediaKeySessionClosedReason {
-    "unknown",
+    "internal-error",
     "closed-by-application",
-    "persistent-license-released",
-    "cdm-unavailable",
+    "release-acknowledged",
     "hardware-context-reset",
     "resource-evicted"
 };</pre>
 <p>
 The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 </p>
-<table class="simple" data-dfn-for="MediaKeySessionClosedReason" data-link-for="MediaKeySessionClosedReason"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.unknown">unknown</code></dfn></td><td>
-            The session was closed for a reason not covered by any other value.
+<table class="simple" data-dfn-for="MediaKeySessionClosedReason" data-link-for="MediaKeySessionClosedReason"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.unknown">internal-error</code></dfn></td><td>
+            The session was closed because of an unrecoverable error in the CDM.
+            <div class="note">
+              <p>
+                When this occurs, applications should not expect to be able to create new sessions on this <a>MediaKeys</a> instance.
+              </p>
+            </div>
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.closed-by-application">closed-by-application</code></dfn></td><td>
             The session was closed by the application calling the <a def-id="close"></a> method of the session explicitly.
-          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.persistent-license-released">persistent-license-released</code></dfn></td><td>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.release-acknowledged">release-acknowledged</code></dfn></td><td>
             The session was closed because the CDM received a <a def-id="record-of-license-destruction"></a> acknowledgement.
-          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.cdm-unavailable">cdm-unavailable</code></dfn></td><td>
-            The session was closed because the CDM became unavailable and the <a def-id="cdm-unavailable-algorithm"></a> algorithm was run.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.hardware-context-reset">hardware-context-reset</code></dfn></td><td>
-            The session was closed because the CDM's original hardware context was reset.  This could occur for many reasons, including device hibernation, monitor configuration change.
+            The session was closed because the CDM's original hardware context was reset.
             <div class="note">
               <p>
                 This could occur for many reasons, including device hibernation, monitor configuration change, etc.
                 The exact reasons for a hardware context reset are implementation-dependent.
+                When this occurs, applications should expect to be able to create new sessions on this <a>MediaKeys</a> instance.
               </p>
             </div>
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.resource-evicted">resource-evicted</code></dfn></td><td>
@@ -2098,7 +2101,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                       <dl class="switch">
                         <dt>If <var>session closed</var> is true:</dt>
                         <dd>
-                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-persistent-license-released"></a>.</p>
+                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-release-acknowledged"></a>.</p>
                         </dd>
                         <dt>Otherwise:</dt>
                         <dd>
