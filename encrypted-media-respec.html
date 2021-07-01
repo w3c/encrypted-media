@@ -1389,7 +1389,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
               </div>
               <div class="note">
                 <p>
-                  NOTE: The empty string is distinct from null or not present,
+                  The empty string is distinct from null or not present,
                   and so would be treated as an unrecognized encryption scheme.
                 </p>
               </div>
@@ -1669,7 +1669,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
             </li>
           </ol>
         </section>
@@ -1732,13 +1732,49 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[WEBIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
+<div><pre class="idl">enum MediaKeySessionClosedReason {
+    "internal-error",
+    "closed-by-application",
+    "release-acknowledged",
+    "hardware-context-reset",
+    "resource-evicted"
+};</pre>
+<p>
+The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
+</p>
+<table class="simple" data-dfn-for="MediaKeySessionClosedReason" data-link-for="MediaKeySessionClosedReason"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.unknown">internal-error</code></dfn></td><td>
+            The session was closed because of an unrecoverable error in the CDM.
+            When this occurs, applications MUST NOT create new sessions on this <a>MediaKeys</a> instance.
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.closed-by-application">closed-by-application</code></dfn></td><td>
+            The session was closed by the application calling the <a def-id="close"></a> method of the session explicitly.
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.release-acknowledged">release-acknowledged</code></dfn></td><td>
+            The session was closed because the CDM received a <a def-id="record-of-license-destruction"></a> acknowledgement.
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.hardware-context-reset">hardware-context-reset</code></dfn></td><td>
+            The session was closed because the CDM's original hardware context was reset.
+            When this occurs, the User Agent MUST allow the application to create new sessions on this <a>MediaKeys</a> instance.
+            <div class="note">
+              <p>
+                This could occur for many reasons, including device hibernation, monitor configuration change, etc.
+                The exact reasons for a hardware context reset are implementation-dependent.
+              </p>
+            </div>
+          </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.resource-evicted">resource-evicted</code></dfn></td><td>
+            The session was closed because the system needed to reclaim resources to allow the creation of other sessions.
+            <div class="note">
+              <p>
+                This would imply that the application is running into a device-specific limit on session resources.
+                If the closed session is still needed for some reason, the application developer should consider some strategy to reduce the number of sessions needed or proactively close unneeded sessions.
+              </p>
+            </div>
+          </td></tr></tbody></table></div>
+
       <div><pre class="idl">[Exposed=Window, SecureContext] interface MediaKeySession : EventTarget {
-    readonly        attribute DOMString           sessionId;
-    readonly        attribute unrestricted double expiration;
-    readonly        attribute Promise&lt;undefined&gt;       closed;
-    readonly        attribute MediaKeyStatusMap   keyStatuses;
-                    attribute EventHandler        onkeystatuseschange;
-                    attribute EventHandler        onmessage;
+    readonly        attribute DOMString                            sessionId;
+    readonly        attribute unrestricted double                  expiration;
+    readonly        attribute Promise&lt;MediaKeySessionClosedReason&gt; closed;
+    readonly        attribute MediaKeyStatusMap                    keyStatuses;
+                    attribute EventHandler                         onkeystatuseschange;
+                    attribute EventHandler                         onmessage;
     Promise&lt;undefined&gt;    generateRequest (DOMString initDataType, BufferSource initData);
     Promise&lt;boolean&gt; load (DOMString sessionId);
     Promise&lt;undefined&gt;    update (BufferSource response);
@@ -1750,7 +1786,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         </dd><dt><dfn><code>expiration</code></dfn> of type <span class="idlAttrType">{{unrestricted double}}</span>, readonly       </dt><dd>
           <p>The <a def-id="expiration-time"></a> for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
-        </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{undefined}}&gt;</span>, readonly       </dt><dd>
+        </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{MediaKeySessionClosedReason}}&gt;</span>, readonly       </dt><dd>
           <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt><dfn><code>keyStatuses</code></dfn> of type <span class="idlAttrType"><a>MediaKeyStatusMap</a></span>, readonly       </dt><dd>
@@ -2061,7 +2097,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                       <dl class="switch">
                         <dt>If <var>session closed</var> is true:</dt>
                         <dd>
-                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p>
+                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-release-acknowledged"></a>.</p>
                         </dd>
                         <dt>Otherwise:</dt>
                         <dd>
@@ -2105,7 +2141,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
               It MUST NOT contain executable code.
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>close</code></dfn></dt><dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
-          <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved when the session is closed.</p>
+          <p class="note">The returned promise is resolved when the request has been processed, and the <a def-id="closed"></a> attribute promise is resolved with <a def-id="reason-closed-by-application"></a> when the session is closed.</p>
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a resolved promise.</p></li>
@@ -2122,7 +2158,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 <li>
                   <p><a def-id="Queue-a-task"></a> to run the following steps:</p>
                   <ol>
-                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object.</p></li>
+                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-closed-by-application"></a>.</p></li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
@@ -2468,7 +2504,10 @@ interface MediaKeyMessageEvent : Event {
 
         <section id="session-closed">
           <h4>Session Closed</h4>
-          <p>The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">key session</a> has been closed by the <a def-id="cdm"></a>.</p>
+          <p>
+            The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">key session</a> has been closed by the <a def-id="cdm"></a>.
+            Requests to run this algorithm include a target <a>MediaKeySession</a> object and a <a>MediaKeySessionClosedReason</a>.
+          </p>
           <p class="note">The algorithm is always run in a task.</p>
           <p>
             When a session is closed, the license(s) and key(s) associated with it are no longer available to
@@ -2496,7 +2535,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>Set the <var>session</var>'s <var>closing or closed</var> value to true.</p></li>
             <li><p>Run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing an empty sequence.</p></li>
             <li><p>Run the <a def-id="update-expiration-algorithm"></a> algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
-            <li><p>Resolve <var>promise</var>.</p></li>
+            <li><p>Resolve <var>promise</var> with the provided reason.</p></li>
           </ol>
         </section>
         <section id="monitor-cdm">
@@ -2572,12 +2611,12 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has closed <var>session</var>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> has closed <var>session</var>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var> with an appropriate <a>MediaKeySessionClosedReason</a> value.
               </p>
             </li>
             <li>
               <p>
-                If <var>cdm</var> had become unavailable, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var>.
+                If <var>cdm</var> has become unavailable, <a def-id="queue-a-task"></a> to run the <a def-id="cdm-unavailable-algorithm"></a> algorithm.
               </p>
             </li>
           </ol>
@@ -4537,7 +4576,9 @@ interface MediaEncryptedEvent : Event {
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.addEventListener('<a def-id="keystatuseschange"></a>', handlekeyStatusesChange, false);
     keySession.<a def-id="closed"></a>.then(
-      console.log.bind(console, 'Session closed')
+      function(reason) {
+        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
+      }.bind(keySession)
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).catch(
       console.error.bind(console, 'Unable to create or initialize key session')
@@ -4629,8 +4670,8 @@ interface MediaEncryptedEvent : Event {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
-      function() {
-        console.log('Session ' + this.<a def-id="sessionId"></a> + ' closed');
+      function(reason) {
+        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
       }.bind(keySession)
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).then(
@@ -4647,7 +4688,9 @@ interface MediaEncryptedEvent : Event {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
-      console.log.bind(console, 'Session closed')
+      function(reason) {
+        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
+      }.bind(keySession)
     );
     keySession.<a def-id="load-call"></a>(sessionId).then(
       function(loaded) {
