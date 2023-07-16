@@ -324,8 +324,8 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
-    'present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'present', },
-    'not-present-dictionary-member': { func: webidl_helper, fragment: 'dfn-present', link_text: 'not present', },
+    'present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'present', },
+    'not-present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'not present', },
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
     'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
@@ -409,7 +409,7 @@
           EME_spec_url = prefix + file;
           groupBaseURLs[x] = EME_spec_url;
           // Refer to the Web IDL Editor’s Draft from Editor’s Drafts of this spec.
-          IDL_spec_url = "https://heycam.github.io/webidl/";
+          IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
       }
     }
 
