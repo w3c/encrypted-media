@@ -1,8 +1,8 @@
 (function() {
   var EME_spec_url = "https://www.w3.org/TR/encrypted-media/";
-  var HTML_spec_url = "https://www.w3.org/TR/html51/semantics-embedded-content.html";
-  var DOM_spec_url = "https://www.w3.org/TR/dom/";
-  var IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
+  var HTML_spec_url = "https://html.spec.whatwg.org/multipage/media.html";
+  var DOM_spec_url = "https://dom.spec.whatwg.org/";
+  var IDL_spec_url = "https://webidl.spec.whatwg.org/";
 
   function url_helper(doc, url) {
     if (url[0] == "#" && doc.emeDefGroupName != window.respecConfig.emeDefGroupName) {
@@ -32,19 +32,19 @@
   }
 
   function encodingapi_helper(doc, df, id, text) {
-    link_helper(doc, df, 'https://www.w3.org/TR/encoding/#' + id, text);
+    link_helper(doc, df, 'https://encoding.spec.whatwg.org/#' + id, text);
   }
 
   function webappapis_helper(doc, df, id, text) {
-    link_helper(doc, df, 'https://www.w3.org/TR/html51/webappapis.html#' + id, text);
+    link_helper(doc, df, 'https://html.spec.whatwg.org/multipage/webappapis.html#' + id, text);
   }
 
   function infrastructure_helper(doc, df, id, text) {
-    link_helper(doc, df, 'https://www.w3.org/TR/html51/infrastructure.html#' + id, text);
+    link_helper(doc, df, 'https://html.spec.whatwg.org/multipage/infrastructure.html#' + id, text);
   }
 
   function browsers_helper(doc, df, id, text) {
-    link_helper(doc, df, 'https://www.w3.org/TR/html51/browsers.html#' + id, text);
+    link_helper(doc, df, 'https://html.spec.whatwg.org/multipage/browsers.html#' + id, text);
   }
 
   function mixedcontent_helper(doc, df, id, text) {
@@ -408,8 +408,6 @@
           var prefix = is_registry_file ? "../../" : "";
           EME_spec_url = prefix + file;
           groupBaseURLs[x] = EME_spec_url;
-          // Refer to the Web IDL Editor’s Draft from Editor’s Drafts of this spec.
-          IDL_spec_url = "https://webidl.spec.whatwg.org/";
       }
     }
 
