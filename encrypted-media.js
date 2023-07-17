@@ -409,7 +409,7 @@
           EME_spec_url = prefix + file;
           groupBaseURLs[x] = EME_spec_url;
           // Refer to the Web IDL Editor’s Draft from Editor’s Drafts of this spec.
-          IDL_spec_url = "https://www.w3.org/TR/WebIDL-1/";
+          IDL_spec_url = "https://webidl.spec.whatwg.org/";
       }
     }
 
