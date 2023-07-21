@@ -51,6 +51,10 @@
     link_helper(doc, df, 'https://www.w3.org/TR/mixed-content/#' + id, text);
   }
 
+  function mime_type_helper(doc, df, id, text) {
+    link_helper(doc, df, 'https://mimesniff.spec.whatwg.org/#' + id, text);
+  }
+
   function term_helper(doc, df, id, text) {
     link_helper(doc, df, url_helper(doc, '#' + id), text);
   }
@@ -297,26 +301,26 @@
     'eventdfn': { func: eventdfn_helper, fragment: '', link_text: '', },
     'event': { func: code_dom_helper, fragment: 'event', link_text: 'Event', },
 
-    'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement-htmlmediaelement', link_text: 'HTMLMediaElement',  },
+    'htmlmediaelement': { func: code_videoref_helper, fragment: 'htmlmediaelement', link_text: 'HTMLMediaElement',  },
     'media-data': { func: videoref_helper, fragment: 'media-data', link_text: 'media data',  },
     'media-resource': { func: videoref_helper, fragment: 'media-resource', link_text: 'media resource',  },
-    'media-crossorigin': { func: code_videoref_helper, fragment: 'element-attrdef-media-crossorigin', link_text: 'crossorigin',  },
+    'media-crossorigin': { func: code_videoref_helper, fragment: 'dom-media-crossorigin', link_text: 'crossorigin',  },
     'mime-types': { func: videoref_helper, fragment: 'mime-types', link_text: 'MIME types',  },
-    'valid-mime-type': { func: infrastructure_helper, fragment: 'valid-mime-type', link_text: 'valid MIME type',  },
+    'valid-mime-type': { func: mime_type_helper, fragment: 'valid-mime-type', link_text: 'valid MIME type',  },
     'loading-the-media-resource': { func: videoref_helper, fragment: 'loading-the-media-resource', link_text: 'loading the media resource',  },
-    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'resource-fetch-algorithm', link_text: 'resource fetch algorithm',  },
-    'current-playback-position': { func: videoref_helper, fragment: 'current-position', link_text: 'current playback position',  },
+    'resource-fetch-algorithm': { func: videoref_helper, fragment: 'concept-media-load-resource', link_text: 'resource fetch algorithm',  },
+    'current-playback-position': { func: videoref_helper, fragment: 'current-playback-position', link_text: 'current playback position',  },
     'blocked-media-element': { func: videoref_helper, fragment: 'blocked-media-element', link_text: 'blocked media element',  },
     'potentially-playing': { func: videoref_helper, fragment: 'potentially-playing', link_text: 'potentially playing',  },
     'direction-of-playback': { func: videoref_helper, fragment: 'direction-of-playback', link_text: 'direction of playback',  },
     'seeking': { func: videoref_helper, fragment: 'seeking', link_text: 'seeking',  },
-    'readystate': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-readystate', link_text: 'readyState',  },
+    'readystate': { func: code_videoref_helper, fragment: 'dom-media-readystate', link_text: 'readyState',  },
     'ready-states': { func: code_videoref_helper, fragment: 'ready-states', link_text: 'Ready States',  },
-    'have-metadata': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_metadata', link_text: 'HAVE_METADATA',  },
-    'have-current-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
-    'have-future-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
-    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-htmlmediaelement-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
-    'canplaythrough': { func: code_videoref_helper, fragment: 'eventdef-media-canplaythrough', link_text: 'canplaythrough',  },
+    'have-metadata': { func: code_videoref_helper, fragment: 'dom-media-have_metadata', link_text: 'HAVE_METADATA',  },
+    'have-current-data': { func: code_videoref_helper, fragment: 'dom-media-have_current_data', link_text: 'HAVE_CURRENT_DATA',  },
+    'have-future-data': { func: code_videoref_helper, fragment: 'dom-media-have_future_data', link_text: 'HAVE_FUTURE_DATA',  },
+    'have-enough-data': { func: code_videoref_helper, fragment: 'dom-media-have_enough_data', link_text: 'HAVE_ENOUGH_DATA',  },
+    'canplaythrough': { func: code_videoref_helper, fragment: 'event-media-canplaythrough', link_text: 'canplaythrough',  },
     'timed-text-tracks': { func: code_videoref_helper, fragment: 'timed-text-tracks', link_text: 'timed text tracks',  },
 
     'media-data-is-corrupted': { func: videoref_helper, fragment: 'fatal-decode-error', link_text: 'media data is corrupted',  },
