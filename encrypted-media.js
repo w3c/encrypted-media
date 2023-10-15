@@ -216,6 +216,7 @@
 
     'temporary-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.temporary', link_text: '"temporary"',  },
     'persistent-license-session': { func: idlref_helper, fragment: 'idl-def-MediaKeySessionType.persistent-license', link_text: '"persistent-license"',  },
+    'dom-mediakeyspolicy-minhdcpversion': { func: idlref_helper, fragment: 'dom-mediakeyspolicy-minhdcpversion', link_text: "minHdcpVersion"},
     'is-persistent-session-type-algorithm': { func: term_helper, fragment: 'is-persistent-session-type', link_text: 'Is persistent session type?',  },
     'cdm-unavailable-algorithm': { func: term_helper, fragment: 'cdm-unavailable', link_text: 'CDM Unavailable',  },
 
@@ -328,6 +329,7 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
+    'dictionary-member': { func: webidl_helper, fragment: '#dfn-dictionary-member', link_text: 'member', },
     'present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'present', },
     'not-present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'not present', },
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
