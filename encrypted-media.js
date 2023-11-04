@@ -3,6 +3,7 @@
   var HTML_spec_url = "https://html.spec.whatwg.org/multipage/media.html";
   var DOM_spec_url = "https://dom.spec.whatwg.org/";
   var IDL_spec_url = "https://webidl.spec.whatwg.org/";
+  var INFRA_spec_url = "https://infra.spec.whatwg.org/";
 
   function url_helper(doc, url) {
     if (url[0] == "#" && doc.emeDefGroupName != window.respecConfig.emeDefGroupName) {
@@ -73,6 +74,10 @@
 
   function code_dom_helper(doc, df, id, text) {
     df.appendChild($("<code/>").wrapInner($("<a/>").attr({href: DOM_spec_url + "#" + id}).text(text))[0]);
+  }
+
+  function infra_helper(doc, df, id, text) {
+    link_helper(doc, df, INFRA_spec_url + '#' + id, text);
   }
 
   function webidl_helper(doc, df, id, text) {
@@ -329,9 +334,9 @@
     'new-domexception-named': { func: new_domexception_helper, fragment: '', },
     'domexception': { func: domexception_helper, fragment: '', },
     'domexception-names': { func: webidl_helper, fragment: 'idl-DOMException-error-names', link_text: '', },
-    'dictionary-member': { func: webidl_helper, fragment: '#dfn-dictionary-member', link_text: 'member', },
-    'present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'present', },
-    'not-present-dictionary-member': { func: webidl_helper, fragment: 'map-exists', link_text: 'not present', },
+    'dictionary-member': { func: webidl_helper, fragment: 'dfn-dictionary-member', link_text: 'member', },
+    'present-dictionary-member': { func: infra_helper, fragment: 'map-exists', link_text: 'present', },
+    'not-present-dictionary-member': { func: infra_helper, fragment: 'map-exists', link_text: 'not present', },
     'simple-exception': { func: webidl_helper, fragment: 'dfn-simple-exception', link_text: 'simple exception', },
     'throw': { func: webidl_helper, fragment: 'dfn-throw', link_text: 'throw', },
 
