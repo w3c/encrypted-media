@@ -1650,7 +1650,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                       <code>MediaKeysPolicy</code>
                     </td>
                     <td class="prmNullFalse">
-                      <span role="img" aria-label="True">✔</span>
+                      <span role="img" aria-label="False">✘</span>
                     </td>
                     <td class="prmOptFalse">
                       <span role="img" aria-label="True">✔</span>
@@ -4845,6 +4845,23 @@ interface MediaEncryptedEvent : Event {
 
 &lt;video id='v' src='foo.webm' autoplay&gt;&lt;/video&gt;
 </pre>
+      </section>
+
+      <section id="example-getStatusForPolicy">
+        <h3>Pre-fetch Media With HDCP Policy</h3>
+        <p class="exampledescription">If some media will have an HDCP policy in the license, an application can check for that version before pre-fetching.</p>
+
+        <pre class="example highlight">
+          const status = await video.mediaKeys.getStatusForPolicy({
+            minHdcpVersion: '1.4'
+          });
+          
+          if (status === 'usable') {
+            // Pre-fetch HD content.
+          } else {  // 'output-restricted'
+            // Pre-fetch SD content.
+          }
+        </pre>
       </section>
     </section>
 
