@@ -1564,13 +1564,20 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         </td></tr>
       </tbody></table></div>
 
-      <div><pre class="idl">[Exposed=Window, SecureContext] interface MediaKeys {
-    MediaKeySession  createSession (optional MediaKeySessionType sessionType = "temporary");
-    Promise&lt;boolean&gt; setServerCertificate (BufferSource serverCertificate);
-};</pre><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeys" data-link-for="MediaKeys"><dt><dfn><code>createSession</code></dfn></dt><dd>
+      <div>
+        <pre class="idl">
+          [Exposed=Window, SecureContext] interface MediaKeys {
+              MediaKeySession  createSession (optional MediaKeySessionType sessionType = "temporary");
+              Promise&lt;MediaKeyStatus&gt; getStatusForPolicy (optional MediaKeysPolicy policy = {});
+              Promise&lt;boolean&gt; setServerCertificate (BufferSource serverCertificate);
+          };
+        </pre>
+
+        <section id="">
+          <h2>Methods</h2>
+          <dl class="methods" data-dfn-for="MediaKeys" data-link-for="MediaKeys">
+            <dt><dfn><code>createSession</code></dfn></dt><dd>
           <p>Returns a new <a>MediaKeySession</a> object.</p>
-
-
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, <a def-id="throw"></a> [[WEBIDL]] a <a def-id="NotSupportedError"></a>.</p>
@@ -1604,14 +1611,94 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionType</td><td class="prmType"><code>MediaKeySessionType = "temporary"</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc">
               The type of session to create. The session type affects the behavior of the returned object.
-            </td></tr></tbody></table><div><em>Return type: </em><code>MediaKeySession</code></div></dd><dt><dfn><code>setServerCertificate</code></dfn></dt><dd>
+            </td></tr></tbody></table><div><em>Return type: </em><code>MediaKeySession</code></div></dd>
+            <dt><dfn><code>getStatusForPolicy</code></dfn></dt>
+            <dd>
+              <p id="status-for-policy">Returns the <a>MediaKeyStatus</a> for a given <a>MediaKeysPolicy</a>.</p>
+
+              <ol class="method-algorithm">
+                <li>If <var>policy</var> has no <a def-id="present-dictionary-member"></a> <a def-id="dictionary-member">members</a>, return a promise rejected with a newly created <a def-id="TypeError"></a>.</li>
+                <li><p>Let <var>promise</var> be a new promise.</p>
+                  <ol>
+                    <li><p>For each <a def-id="dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
+                      <ol>
+                        <li><p>If the CDM cannot determine the <a>MediaKeyStatus</a> for <a def-id="dictionary-member">member</a>, then reject <var>promise</var> with <a def-id="NotSupportedError"></a> and abort these steps.</p></li>
+                      </ol>
+                    </li>
+                    <li><p>For each <a def-id="dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
+                      <ol>
+                        <li><p>If the CDM would block presentation of decrypted media data for <a def-id="dictionary-member">member</a>, then resolve <var>promise</var> with <a def-id="status-output-restricted"></a>.</p></li>
+                      </ol>
+                    </li>
+                    <li><p>Resolve <var>promise</var> with <a def-id="status-usable"></a>.</p></li>
+                  </ol>
+                </li>
+                <li><p>Return <var>promise</var>.</p></li>
+              </ol>
+              <table class="parameters">
+                <tbody>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Nullable</th>
+                    <th>Optional</th>
+                    <th>Description</th>
+                  </tr>
+                  <tr>
+                    <td class="prmName">policy</td>
+                    <td class="prmType">
+                      <code>MediaKeysPolicy</code>
+                    </td>
+                    <td class="prmNullFalse">
+                      <span role="img" aria-label="False">✘</span>
+                    </td>
+                    <td class="prmOptFalse">
+                      <span role="img" aria-label="True">✔</span>
+                    </td>
+                    <td class="prmDesc">A set of policy requirements</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div><em>Return type: </em><code>Promise&lt;MediaKeyStatus&gt;</code></div>
+
+              <div>
+                <pre class="idl">
+                  dictionary MediaKeysPolicy {
+                      HDCPVersion minHdcpVersion;
+                  };
+                </pre>
+                <p>The <a>MediaKeysPolicy</a> dictionary is an object consisting of only optional properties. Each property represents a
+                  policy requirement. A policy is said to be fulfilled if the CDM would allow presentation of decrypted
+                  media data based on all of the requirements.</p>
+              </div>
+              <div>
+                <pre class="idl">
+                  enum HDCPVersion {
+                      "1.0",
+                      "1.1",
+                      "1.2",
+                      "1.3",
+                      "1.4",
+                      "2.0",
+                      "2.1",
+                      "2.2",
+                      "2.3",
+                  };
+                </pre>
+                <p>The HDCP Policy is represented by <a def-id="dom-mediakeyspolicy-minhdcpversion">minHdcpVersion</a>. When set, the policy requirement will be fulfilled if the system
+                  supports <a def-id="dom-mediakeyspolicy-minhdcpversion">minHdcpVersion</a> on the current display.</p>
+                  <p class="note">The determination of HDCP status should be done in the same way that the CDM would enforce such a
+                    restriction during playback. In this way, application developers can get a reasonable hint to allow them to
+                    optimize what content they fetch to start playback.</p>
+                </div>
+            </dd>
+
+            <dt><dfn><code>setServerCertificate</code></dfn></dt><dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
           <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the <a def-id="queue-message-algorithm"></a> algorithm.</p>
           <p class="note">This method allows an application to proactively provide a server certificate to implementations that support it to avoid the additional round trip should the CDM request it.
             It is intended as an optimization, and applications are not required to use it.
           </p>
-
-
 
           <ol class="method-algorithm">
             <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
@@ -1639,7 +1726,11 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
               The server certificate.
               The contents are <a def-id="keysystem"></a>-specific.
               It MUST NOT contain executable code.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd></dl></section></div>
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div>
+          </dd>
+          </dl>
+        </section>
+      </div>
 
       <section id="">
         <h3>Algorithms</h3>
@@ -4754,6 +4845,23 @@ interface MediaEncryptedEvent : Event {
 
 &lt;video id='v' src='foo.webm' autoplay&gt;&lt;/video&gt;
 </pre>
+      </section>
+
+      <section id="example-getStatusForPolicy">
+        <h3>Pre-fetch Media With HDCP Policy</h3>
+        <p class="exampledescription">If some media will have an HDCP policy in the license, an application can check for that version before pre-fetching.</p>
+
+        <pre class="example highlight">
+          const status = await video.mediaKeys.getStatusForPolicy({
+            minHdcpVersion: '1.4'
+          });
+          
+          if (status === 'usable') {
+            // Pre-fetch HD content.
+          } else {  // 'output-restricted'
+            // Pre-fetch SD content.
+          }
+        </pre>
       </section>
     </section>
 
