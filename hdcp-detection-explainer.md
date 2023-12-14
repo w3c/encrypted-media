@@ -31,12 +31,14 @@ hypothetical key associated with an HDCP policy, without the need to create a
 MediaKeySession or fetch a real license. It does not require the MediaKeys to be
 attached to any HTMLMediaElement, either.
 
-If HDCP is available at the specified version, the promise should return
-a MediaKeyStatus of "usable". Otherwise, the promise should return
-a MediaKeyStatus of "output-restricted".  The determination of HDCP status
-should be done in the same way that the CDM would enforce such a restriction
-during playback.  In this way, application developers can get a reasonable hint
-to allow them to optimize what content they fetch to start playback.
+If the CDM cannot determine the MediaKeyStatus, e.g. the current HDCP level is
+not available, then reject promise with `NotSupportedError`. If HDCP is available
+at the specified version, the promise should return a MediaKeyStatus of "usable".
+Otherwise, the promise should return a MediaKeyStatus of "output-restricted".
+The determination of HDCP status should be done in the same way that the CDM
+would enforce such a restriction during playback.  In this way, application
+developers can get a reasonable hint to allow them to optimize what content they
+fetch to start playback.
 
 A MediaKeyStatus value of "status-pending" must never be returned. Implementers
 must give decisive actionable return values for developers to make decisions
