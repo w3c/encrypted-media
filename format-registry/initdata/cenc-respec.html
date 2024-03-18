@@ -3,8 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>"cenc" Initialization Data Format</title>
-    <script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>
-    <script src="../../encrypted-media.js" class="remove"></script>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
     <script class="remove">
     var respecConfig = {
       // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
@@ -16,11 +15,6 @@
       // if there a publicly available Editor's Draft, this is the link
       edDraftURI: "https://w3c.github.io/encrypted-media/format-registry/initdata/cenc.html",
 
-      // if this is a LCWD, uncomment and set the end of its review period
-      // lcEnd: "2009-08-05",
-
-      // editors, add as many as you like
-      // only "name" is required
       editors: [
         { name: "Joey Parrish", w3cid: "105371",
           company: "Google Inc.", companyURL: "https://www.google.com/" },
@@ -39,21 +33,8 @@
           company: "Microsoft Corporation", companyURL: "https://www.microsoft.com/" },
       ],
 
-      otherLinks: [
-        { key: "Repository", href: "https://github.com/w3c/encrypted-media/" },
-      ],
-
-      emeDefGroupName: "cenc-format",
-      emeUnusedGroupNameExcludeList: [
-        "encrypted-media",
-        "eme-references-from-registry",
-      ],
-
-      // name of the WG
-      wg: "Media Working Group",
-
-      // URI of the public WG page
-      wgURI: "https://www.w3.org/media-wg/",
+      group: "media",
+      github: "w3c/encrypted-media",
 
       // name (without the @w3c.org) of the public mailing to which comments are due
       wgPublicList: "public-media-wg",
@@ -65,22 +46,6 @@
       // Team Contact.
       wgPatentURI: "https://www.w3.org/2004/01/pp-impl/115198/status",
 
-      noIDLIn: true,
-
-      scheme: "https",
-
-      // Empty definitions for objects declared in the document are here to
-      // prevent error messages from being displayed for references to these objects.
-      definitionMap: {},
-
-      preProcess: [ encryptedMediaPreProcessor ],
-
-      // Empty definitions for objects declared in the document are here to
-      // prevent error messages from being displayed for references to these objects.
-      definitionMap: {},
-
-      postProcess: [ encryptedMediaPostProcessor ],
-
       localBiblio: {
         "CENC": {
           title: "ISO/IEC 23001-7:2016, Information technology — MPEG systems technologies — Part 7: Common encryption in ISO base media file format files",
@@ -89,6 +54,8 @@
           publisher: "ISO/IEC",
         },
       },
+
+      xref: ["encrypted-media"]
     };
     </script>
     <!-- script to register bugs -->
@@ -102,13 +69,14 @@
   <body>
     <!-- TODO: Use styles for ISO boxes like the MSE registry. -->
     <section id="abstract">
-      <p>This specification defines the <code>"cenc"</code> <a def-id="initialization-data"></a> format for use with the <a def-id="eme-spec"></a> [[!ENCRYPTED-MEDIA]].
-        This format is commonly used with the <a def-id="stream-registry-mp4"></a> [[EME-STREAM-REGISTRY]].
+      <p>This specification defines the <code>"cenc"</code> [=initialization data=] format for use with the [[[ENCRYPTED-MEDIA]]] [[ENCRYPTED-MEDIA]].
+        This format is commonly used with the [[[EME-STREAM-MP4]]] [[EME-STREAM-REGISTRY]].
       </p>
       <p>This specification also defines a common SystemID and PSSH box format for use with Encrypted Media Extensions.</p>
-      <p class="note">This format's <a def-id="initialization-data-type"></a> string <code>"cenc"</code> refers to the [[CENC]] spec that defines the PSSH boxes that comprise the format.
+      <p class="note">This format's [=initialization data type=] string <code>"cenc"</code> refers to the [[CENC]] spec that defines the PSSH boxes that comprise the format.
         It does not relate to or imply a stream format, including the use of the 'cenc' protection scheme.
-        Stream formats are indicated by the content types as defined in <a def-id="stream-registry"></a> [[EME-STREAM-REGISTRY]].
+        Stream formats are indicated by the content types as defined in the [[[EME-STREAM-REGISTRY]]] [[EME-STREAM-REGISTRY]].
+      </p>
     </section>
 
     <section id="sotd">
@@ -116,11 +84,11 @@
 
     <section id="format">
       <h2>Format</h2>
-      <p>The format is one or more concatenated Protection System Specific Header ('pssh') boxes [[!CENC]], each for a unique SystemID.
+      <p>The format is one or more concatenated Protection System Specific Header ('pssh') boxes [[CENC]], each for a unique SystemID.
         One of the concatenated 'pssh' boxes SHOULD use the <a href="#common-system">Common SystemID and PSSH Box Format</a>.
       </p>
 
-      <p class="note">[[!CENC]] also specifies storage of a 'pssh' box base64-encoded in an XML element of the form <code>&lt;cenc:pssh (base64 'pssh')&gt;</code>.
+      <p class="note">[[CENC]] also specifies storage of a 'pssh' box base64-encoded in an XML element of the form <code>&lt;cenc:pssh (base64 'pssh')&gt;</code>.
         For example, [[MPEGDASH]] manifests may provide 'pssh' boxes in this format, each contained in a ContentProtection Descriptor element identified by a SystemID.
         These 'pssh' boxes may be decoded and concatenated by an application to provide equivalent Initialization Data to that stored in movie or movie fragment boxes.
       </p>
@@ -128,7 +96,7 @@
 
     <section id="processing">
       <h2>Processing</h2>
-      <p>When such Initialization Data is provided by the application, an implementation (the user agent and/or CDM) MUST :</p>
+      <p>When such Initialization Data is provided by the application, an implementation (the user agent and/or CDM) MUST:</p>
       <ol>
         <li><p>Examine the series of 'pssh' boxes to find the <em>first</em> 'pssh' box that the CDM instance supports. This includes checking the SystemID, box version, and system-specific values.</p></li>
         <li><p>If no such supported box is found, the provided data SHALL be considered "not supported by the CDM."</p></li>
@@ -137,7 +105,7 @@
 
     <section id="clear-key">
       <h3>Use with Clear Key</h3>
-      <p>When Initialization data is provided with <var>initDataType</var> <code>"cenc"</code>, <a def-id="clear-key"></a> implementations MUST look for and use the PSSH box with the <a href="#common-system">Common SystemID</a>.</p>
+      <p>When Initialization data is provided with <var>initDataType</var> <code>"cenc"</code>, <a data-cite="encrypted-media#clear-key">Clear Key</a> implementations MUST look for and use the PSSH box with the <a href="#common-system">Common SystemID</a>.</p>
     </section>
 
     <section id="common-system">
@@ -149,19 +117,19 @@
         Use of this SystemID is RECOMMENDED for applications, packagers, and implementors.
         Use of other SystemIDs with the Encrypted Media Extensions APIs is discouraged.
         'pssh' box(es) for this SystemID SHOULD be included in all new or repackaged content so that the content can be used with any compliant Key System.
-        For existing content, applications may alternatively obtain a 'pssh' box containing this SystemID or another Initialization Data Type (e.g., <a def-id="initdata-registry-keyids"></a>  [[EME-STREAM-REGISTRY]]) from another source.
+        For existing content, applications may alternatively obtain a 'pssh' box containing this SystemID or another Initialization Data Type (e.g., [[[EME-INITDATA-KEYIDS]]] [[EME-STREAM-REGISTRY]]) from another source.
       </p>
       <p class="note">Implementations MAY support other SystemIDs for backwards compatibility with existing streams.</p>
 
       <section id="common-system-definition">
         <h3>Definition</h3>
         <p>The SystemID is <code>1077efec-c0b2-4d02-ace3-3c1e52e2fb4b</code>.</p>
-        <p>The PSSH box format is as follows. It follows version 1 of the 'pssh' box as defined in [[!CENC]].</p>
+        <p>The PSSH box format is as follows. It follows version 1 of the 'pssh' box as defined in [[CENC]].</p>
         <dl>
           <dt>version</dt>
           <dd><code>1</code></dd>
           <dt>KID and KID_count</dt>
-          <dd>The <a def-id="key-id"></a>(s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
+          <dd>The [=Decryption key ID|key ID=](s) represented by the PSSH box. For example, those key ID(s) used by the Movie ('moov') or Movie Fragment ('moof').</dd>
           <dt>Data and DataSize</dt>
           <dd>Reserved for future use. DataSize SHALL be set to <code>0</code> when constructing this box. When processing, if dataSize is non-zero the Data field SHALL be ignored.</dd>
         </dl>
@@ -184,6 +152,9 @@ var pssh = [
 ];
 </pre>
       </section>
+    </section>
 
+    <section id="conformance">
+    </section>
   </body>
 </html>
