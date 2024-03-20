@@ -152,7 +152,7 @@
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that <a>MediaKeys</a> object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, CDM instances, and media elements MUST NOT access the key session or use its key(s).
-          Key sessions and the keys they contain are no longer <a def-id="usable-for-decryption"></a> once the session has been closed, including when the <a>MediaKeySession</a> object is destroyed.
+          Key sessions and the keys they contain are no longer [=usable for decryption=] once the session has been closed, including when the <a>MediaKeySession</a> object is destroyed.
           </p>
           <p>
             All license(s) and key(s) associated with a Key Session which have not been explicitly stored MUST be destroyed when the Key Session is closed.
@@ -188,7 +188,7 @@
           </p>
         </dd>
 
-        <dt id="usable-for-decryption">Usable For Decryption</dt>
+        <dt id="usable-for-decryption"><dfn>Usable For Decryption</dfn></dt>
         <dd>
           <p>A key is considered usable for decryption if the CDM is certain the key is currently usable to decrypt one or more blocks of [=HTMLMediaElement/media data=].</p>
           <p class="note">For example, a key is not usable for decryption if its license has expired.  Even if its license has not expired, a key is not usable for decryption if other conditions (e.g., output protection) for its use are not currently satisfied.</p>
@@ -513,7 +513,7 @@
         <dt id="expiration-time">Expiration Time</dt>
         <dd>
           <p>
-            The <a def-id="time">time</a> after which key(s) will no longer be <a def-id="usable-for-decryption"></a>.
+            The <a def-id="time">time</a> after which key(s) will no longer be [=usable for decryption=].
           </p>
         </dd>
 
@@ -2313,10 +2313,10 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 <p>The <dfn>MediaKeyStatus</dfn> enumeration is defined as follows:
 </p>
   <table class="simple" data-dfn-for="MediaKeyStatus" data-link-for="MediaKeyStatus"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.usable">usable</code></dfn></td><td>
-            The CDM is certain the key is currently <a def-id="usable-for-decryption"></a>.<br>
-            Keys that <em>may not</em> currently be <a def-id="usable-for-decryption"></a> MUST NOT have this status.
+            The CDM is certain the key is currently [=usable for decryption=].<br>
+            Keys that <em>may not</em> currently be [=usable for decryption=] MUST NOT have this status.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.expired">expired</code></dfn></td><td>
-            The key is no longer <a def-id="usable-for-decryption"></a> because its <a def-id="expiration-time"></a> has passed.<br>
+            The key is no longer [=usable for decryption=] because its <a def-id="expiration-time"></a> has passed.<br>
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.released">released</code></dfn></td><td>
@@ -2336,13 +2336,13 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             Support for downscaling is OPTIONAL.
             Applications SHOULD NOT rely on downscaling to ensure uninterrupted playback when output requirements cannot be met.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.usable-in-future">usable-in-future</code></dfn></td><td>
-            The key is not yet <a def-id="usable-for-decryption"></a> because the start time is in the future.
+            The key is not yet [=usable for decryption=] because the start time is in the future.
             The key will become usable when its start time is reached.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.status-pending">status-pending</code></dfn></td><td>
             The status of the key is not yet known and is being determined.
             The status will be updated with the actual status when it has been determined.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.internal-error">internal-error</code></dfn></td><td>
-            The key is not currently <a def-id="usable-for-decryption"></a> because of an error in the CDM unrelated to the other values.
+            The key is not currently [=usable for decryption=] because of an error in the CDM unrelated to the other values.
             This value is not actionable by the application.
           </td></tr></tbody></table>
       </section>
@@ -3025,9 +3025,9 @@ interface MediaEncryptedEvent : Event {
                       <ol>
                         <li><p>Let <var>available keys</var> be the union of keys in sessions that were created by the <var>media keys</var>.</p></li>
                         <li><p>Let <var>block key</var> be null.</p></li>
-                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a def-id="usable-for-decryption"></a>, let <var>session</var> be a
+                        <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is [=usable for decryption=], let <var>session</var> be a
                         <a>MediaKeySession</a> object containing that key and let <var>block key</var> be that key.</p>
-                          <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is [=Key System=]-dependent.</p>
+                          <p class="note">If multiple sessions contain a key that is [=usable for decryption=] for the <var>block key ID</var>, which session and key to use is [=Key System=]-dependent.</p>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.</p></li>
                         <li><p>If <var>block key</var> is not null, run the following steps:</p>
@@ -3074,7 +3074,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
-              <p class="note">This step is reached when there is no key that is <a def-id="usable-for-decryption"></a> for <var>block</var>.</p>
+              <p class="note">This step is reached when there is no key that is [=usable for decryption=] for <var>block</var>.</p>
               <div class="note">
                 <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, such as, all complete video frames), it will run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
                 <p>That algorithm is not run directly here in order to allow implementations to decrypt and decode media data ahead of the ahead of the current playback position without affecting the visible behavior.</p>
@@ -3139,7 +3139,7 @@ interface MediaEncryptedEvent : Event {
         <section id="resume-playback">
           <h4>Attempt to Resume Playback If Necessary</h4>
           <p>
-            The Attempt to Resume Playback If Necessary algorithm resumes playback if the media element is blocked waiting for a key and necessary key is currently <a def-id="usable-for-decryption"></a>
+            The Attempt to Resume Playback If Necessary algorithm resumes playback if the media element is blocked waiting for a key and necessary key is currently [=usable for decryption=]
             Requests to run this algorithm include a target {{HTMLMediaElement}} object.
           </p>
           <p>The following steps are run:</p>
