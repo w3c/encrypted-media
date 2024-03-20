@@ -357,7 +357,7 @@
               A Distinctive Identifier is a value, including in opaque or encrypted form, for which it is possible for any entity external to the client to correlate or associate values beyond what a user may expect on the web platform (e.g., cookies and other site data).
               For example, values that are <a href="#associable-by-entity">associable by an entity other than the application</a> across
               a) <a def-id="origin">origins</a>,
-              b) <a def-id="browsing-profile">browsing profiles</a>,
+              b) [=browsing profiles=],
               or c) browsing sessions even after the user has attempted to protect his or her privacy by clearing browsing data
               or values for which it is not easy for a user to break such association.
               In particular, a value is a Distinctive Identifier if it is possible for a <a href="#associable-by-entity">central server, such as an individualization server, to associate</a> values across origins, such as because the <a href="#individualization">individualization</a> requests contained a common value, or because values provided in individualization requests are <a href="#associable-by-entity">associable by such server</a> even after attempts to clear browsing data.
@@ -517,7 +517,7 @@
           </p>
         </dd>
 
-        <dt id="browsing-profile">Browsing Profile</dt>
+        <dt id="browsing-profile"><dfn>Browsing Profile</dfn></dt>
         <dd>
           <p>
             A User Agent on a given machine may support execution in a variety of different contexts or modes or temporary states that are expected to behave independently
@@ -1680,7 +1680,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         </p>
 
         <p>Persisted data MUST always be stored such that only the [=origin=] of this object's <a def-id="document-concept"></a> can access it.
-          In addition, the data MUST only be accessible by the current <a def-id="browsing-profile"></a>; other browsing profiles, user agents, and applications MUST NOT be able to access the stored data.
+          In addition, the data MUST only be accessible by the current [=browsing profile=]; other browsing profiles, user agents, and applications MUST NOT be able to access the stored data.
           See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
         </p>
 
@@ -3244,8 +3244,8 @@ interface MediaEncryptedEvent : Event {
         </p>
         <section id="use-origin-specific-key-system-storage">
           <h3>Use origin-specific and browsing profile-specific Key System storage</h3>
-          <p>Persistent Data that might impact messages or behavior in an application- or license server-visible way MUST be stored in an [=origin=]-specific and <a def-id="browsing-profile"></a>-specific way and MUST NOT leak to or from private browsing sessions.
-                Specifically but not exhaustively, session data, licenses, keys and per-origin identifiers MUST be stored per-[=origin=] and per-<a def-id="browsing-profile"></a>.
+          <p>Persistent Data that might impact messages or behavior in an application- or license server-visible way MUST be stored in an [=origin=]-specific and [=browsing profile=]-specific way and MUST NOT leak to or from private browsing sessions.
+                Specifically but not exhaustively, session data, licenses, keys and per-origin identifiers MUST be stored per-[=origin=] and per-[=browsing profile=].
           </p>
           <p>
                 See <a def-id="session-storage"></a>.
@@ -3289,7 +3289,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>
-                Allow users to clear Persistent Data on a per-[=origin=] and per-<a def-id="browsing-profile"></a> basis, particularly as part of a "Forget about this site" feature that forgets cookies [[COOKIES]], databases, etc. associated with a particular site.
+                Allow users to clear Persistent Data on a per-[=origin=] and per-[=browsing profile=] basis, particularly as part of a "Forget about this site" feature that forgets cookies [[COOKIES]], databases, etc. associated with a particular site.
               </p>
             </li>
             <li>
@@ -3331,9 +3331,9 @@ interface MediaEncryptedEvent : Event {
           <h3>Use Per-Origin Per-Profile Values</h3>
           <!-- Issue #101 may affect this text. -->
           <p>
-            All <a href="#distinctive-value">distinctive values</a> exposed to or inferable by the application MUST be unique per [=origin=] and <a def-id="browsing-profile"></a>.
+            All <a href="#distinctive-value">distinctive values</a> exposed to or inferable by the application MUST be unique per [=origin=] and [=browsing profile=].
             That is, the value(s) used for one [=origin=] using the APIs defined in this specification MUST be different from those used for any other origin using the APIs,
-            and value(s) used in one <a def-id="browsing-profile"></a> MUST be different from those used for any other profile, regardless of origin.
+            and value(s) used in one [=browsing profile=] MUST be different from those used for any other profile, regardless of origin.
             Such values MUST NOT leak to or from private browsing sessions.
           </p>
           <p>
@@ -3452,7 +3452,7 @@ interface MediaEncryptedEvent : Event {
         <section id="per-origin-per-profile-identifiers">
           <h3>Use Per-Origin Per-Profile Identifiers</h3>
           <p>
-            All identifiers except <a def-id="distinctive-permanent-identifiers"></a> MUST be unique per [=origin=] and <a def-id="browsing-profile"></a>.
+            All identifiers except <a def-id="distinctive-permanent-identifiers"></a> MUST be unique per [=origin=] and [=browsing profile=].
             See <a href="#per-origin-per-profile-values"></a>.
           </p>
           <div class="note">
@@ -3464,7 +3464,7 @@ interface MediaEncryptedEvent : Event {
         <section id="non-associable-identifiers">
           <h3>Use Non-Associable Identifiers</h3>
           <p>
-            All identifiers, including [=Distinctive Identifiers=], exposed by the implementation to applications, even in encrypted form, MUST be <a def-id="non-associable-by-application">non-associable by application(s)</a> across <a def-id="origin">origins</a>, <a def-id="browsing-profile">browsing profiles</a>, and <a href="#allow-identifiers-cleared">clearing of identifiers</a>.
+            All identifiers, including [=Distinctive Identifiers=], exposed by the implementation to applications, even in encrypted form, MUST be <a def-id="non-associable-by-application">non-associable by application(s)</a> across <a def-id="origin">origins</a>, [=browsing profiles=], and <a href="#allow-identifiers-cleared">clearing of identifiers</a>.
           </p>
           <p class="note">
             For all such identifiers, it MUST NOT be possible for one or more applications, including related license or other servers to achieve such correlation or association.
@@ -3938,7 +3938,7 @@ interface MediaEncryptedEvent : Event {
             <dd>
               <p>User agents SHOULD ensure that users are fully informed and/or give explicit consent before a Key System that presents security concerns that are greater than other user agent features (e.g., DOM content) may be accessed by an [=origin=].
               </p>
-              <p>Such mechanisms MUST be per [=origin=] to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
+              <p>Such mechanisms MUST be per [=origin=] to avoid valid uses enabling subsequent malicious access and MUST be per [=browsing profile=].
               </p>
               <p class="note">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.
                 See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
@@ -4012,7 +4012,7 @@ interface MediaEncryptedEvent : Event {
           <p>CDMs, especially those implemented outside the user agent, may not have the same fundamental isolations as the web platform.
             It is important that steps be taken to avoid information leakage, especially across origins.
             This includes both in-memory and stored data.
-            Failure to do so could lead to information leakage to/from private browsing sessions, across <a def-id="browsing-profile">browsing profiles</a> (including across operating system user accounts) and even across different browsers or applications.
+            Failure to do so could lead to information leakage to/from private browsing sessions, across [=browsing profiles=] (including across operating system user accounts) and even across different browsers or applications.
           </p>
         </section>
         <section>
@@ -4059,7 +4059,7 @@ interface MediaEncryptedEvent : Event {
         <section class="informative">
           <h4>Concerns</h4>
           <p>A third-party host (or any entity, such as an advertiser, capable of getting content distributed to multiple sites) could use a [=Distinctive Identifier=] or persistent data, including licenses, keys, key IDs, or 
-            <a def-id="records-of-license-destruction"></a>, stored by or on behalf of the [=CDM=] to track a user across multiple sessions (including across <a def-id="origin">origins</a> and <a def-id="browsing-profile">browsing profiles</a>), building a profile of the user's activities or interests.  Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
+            <a def-id="records-of-license-destruction"></a>, stored by or on behalf of the [=CDM=] to track a user across multiple sessions (including across <a def-id="origin">origins</a> and [=browsing profiles=]), building a profile of the user's activities or interests.  Such tracking would undermine the privacy protections provided by the rest of the web platform and could, for example, enable highly-targeted advertising not otherwise possible.
             In conjunction with a site that is aware of the user's real identity (for example, a content provider or e-commerce site that requires authenticated credentials), this could allow oppressive groups to target individuals with greater accuracy than in a world with purely anonymous web usage.
           </p>
 
@@ -4070,7 +4070,7 @@ interface MediaEncryptedEvent : Event {
             <li><p>Origins visited (via stored or in-memory data, permissions, etc.)</p></li>
             <li><p>Content viewed (via stored or in-memory licenses, keys, key IDs, <a def-id="records-of-license-destruction"></a>, etc.)</p></li>
           </ul>
-          <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and associated <a def-id="browsing-profile"></a> storage), often in the CDM.</p>
+          <p>This specification presents a specific concern because such information is commonly stored outside the user agent (and associated [=browsing profile=] storage), often in the CDM.</p>
 
           <p>Since the content of licenses and <a def-id="records-of-license-destruction"></a> are Key System-specific and since key IDs may contain any value, these data items could be abused to store user-identifying information.</p>
 
@@ -4157,7 +4157,7 @@ interface MediaEncryptedEvent : Event {
               <!-- Issue #101 may affect this text. -->
               <p>
                 For all <a href="#distinctive-value">distinctive values</a> exposed to the application,
-                implementations MUST use a different <a def-id="non-associable-by-application"></a> value for each [=origin=] and <a def-id="browsing-profile"></a>.
+                implementations MUST use a different <a def-id="non-associable-by-application"></a> value for each [=origin=] and [=browsing profile=].
                 See <a href="#per-origin-per-profile-values"></a>.
               </p>
               <p>
@@ -4168,9 +4168,9 @@ interface MediaEncryptedEvent : Event {
 
             <dt>Use origin-specific and browsing profile-specific Key System storage</dt>
             <dd>
-              <p>Any data used by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be partitioned by [=origin=] and <a def-id="browsing-profile"></a> and MUST NOT leak to or from private browsing sessions.
+              <p>Any data used by the CDM that might impact messages or behavior in an application- or license server-visible way MUST be partitioned by [=origin=] and [=browsing profile=] and MUST NOT leak to or from private browsing sessions.
                 This includes both in-memory and persisted data.
-                Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers MUST be partitioned per-[=origin=] and per-<a def-id="browsing-profile"></a>.
+                Specifically but not exhaustively, session data, licenses, keys, and per-origin identifiers MUST be partitioned per-[=origin=] and per-[=browsing profile=].
                 See <a href="#use-origin-specific-key-system-storage"></a> and <a href="#per-origin-per-profile-values"></a>.
               </p>
             </dd>
@@ -4204,7 +4204,7 @@ interface MediaEncryptedEvent : Event {
             <dd>
               <p>User agents MUST ensure that users are fully informed and/or give explicit consent before <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.
               </p>
-              <p>Such mechanisms MUST be per [=origin=] to avoid valid uses enabling subsequent malicious access and MUST be per <a def-id="browsing-profile"></a>.
+              <p>Such mechanisms MUST be per [=origin=] to avoid valid uses enabling subsequent malicious access and MUST be per [=browsing profile=].
               </p>
               <p class="note">The restriction of the APIs defined in this specification to secure contexts ensures that a <a href="#network-attacks">network attacker</a> cannot exploit permissions granted to an unauthenticated origin.
                 See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
@@ -4248,7 +4248,7 @@ interface MediaEncryptedEvent : Event {
             Potentially, this could reveal information about a user to another user of the same device, including potentially the <a def-id="origin">origins</a> that have used a particular Key System (i.e., sites visited) or even the content that has been decrypted using a Key System.
           </p>
           <p>If information stored by one origin affects the operation of the Key System for another origin, then potentially the sites visited or content viewed by a user on one site may be revealed to another, potentially malicious, site.</p>
-          <p>If information stored for one <a def-id="browsing-profile"></a> on the client device affects the operation of the Key System for other <a def-id="browsing-profile">browsing profiles</a>, or browsers, then potentially the sites visited or content viewed in one may be revealed by or correlatable with another <a def-id="browsing-profile">browsing profile</a>, even including for different operating system user accounts or browsers.</p>
+          <p>If information stored for one [=browsing profile=] on the client device affects the operation of the Key System for other [=browsing profiles=], or browsers, then potentially the sites visited or content viewed in one may be revealed by or correlatable with another <a def-id="browsing-profile">browsing profile</a>, even including for different operating system user accounts or browsers.</p>
         </section>
         <section>
           <h4>Mitigations</h4>
