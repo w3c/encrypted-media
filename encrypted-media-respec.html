@@ -157,7 +157,7 @@
           <p>
             All license(s) and key(s) associated with a Key Session which have not been explicitly stored MUST be destroyed when the Key Session is closed.
           </p>
-          <p><a def-id="key-id">Key IDs</a> MUST be unique within a session.</p>
+          <p>[=key IDs=] MUST be unique within a session.</p>
         </dd>
 
         <dt id="session-id">Session ID</dt>
@@ -176,7 +176,7 @@
         <dt id="decryption-key">Key</dt>
         <dd>
           <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within [=HTMLMediaElement/media data=].
-          Each such key is uniquely identified by a <a def-id="key-id"></a>.
+          Each such key is uniquely identified by a [=key ID=].
           A key is associated with the <a href="#key-session">session</a> used to provide it to the [=CDM=]. (The same key may be present in multiple sessions.)
           Such keys MUST only be provided to the CDM via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
           </p>
@@ -206,7 +206,7 @@
 
         <dt id="known-key">Known Key</dt>
         <dd>
-          <p>A key is considered to be known to a session if the [=CDM=]'s implementation of the session contains any information - specifically the <a def-id="key-id"></a> - about it, regardless of whether the actual <a href="#decryption-key">key</a> is usable or its value is known.
+          <p>A key is considered to be known to a session if the [=CDM=]'s implementation of the session contains any information - specifically the [=key ID=] - about it, regardless of whether the actual <a href="#decryption-key">key</a> is usable or its value is known.
             Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
           </p>
 
@@ -219,7 +219,7 @@
 
         <dt id="license">License</dt>
         <dd>
-          <p>A license is key system-specific state information that includes one or more <a href="#decryption-key">key(s)</a> - each associated with a <a def-id="key-id"></a> - and potentially other information about key usage.</p>
+          <p>A license is key system-specific state information that includes one or more <a href="#decryption-key">key(s)</a> - each associated with a [=key ID=] - and potentially other information about key usage.</p>
         </dd>
 
         <dt id="initialization-data"><dfn class="export">Initialization Data</dfn></dt>
@@ -1784,7 +1784,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt><dfn><code>keyStatuses</code></dfn> of type <span class="idlAttrType"><a>MediaKeyStatusMap</a></span>, readonly       </dt><dd>
-          <p>A reference to a read-only map of <a def-id="key-id">key IDs</a> <a href="#known-key">known</a> to the session to the current status of the associated key.
+          <p>A reference to a read-only map of [=key IDs=] <a href="#known-key">known</a> to the session to the current status of the associated key.
            Each entry MUST have a unique key ID.
          </p>
           <p class="note">The map entries and their values may be updated whenever the event loop spins.
@@ -1981,7 +1981,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     <li><p>Set this object's <var>callable</var> value to true.</p></li>
                     <li>
                       <p>
-                        If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                        If the loaded session contains information about any keys (there are <a href="#known-key">known keys</a>), run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each key's [=key ID=] along with the appropriate <a>MediaKeyStatus</a>.
                       </p>
                       <p>Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
                         Once the additional processing for one or more keys has completed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm again with the actual status(es).
@@ -2099,7 +2099,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                           <ol>
                             <li>
                               <p>
-                                If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's <a def-id="key-id"></a> along with the appropriate <a>MediaKeyStatus</a>.
+                                If the set of keys <a href="#known-key">known</a> to the CDM for this object changed or the status of any key(s) changed, run the <a def-id="update-key-statuses-algorithm"></a> algorithm on the <var>session</var>, providing each known key's [=key ID=] along with the appropriate <a>MediaKeyStatus</a>.
                               </p>
                               <p>
                                 Should additional processing be necessary to determine with certainty the status of a key, use <a def-id="status-status-pending"></a>.
@@ -2251,7 +2251,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 
       <section>
         <h2><dfn>MediaKeyStatusMap</dfn> Interface</h2>
-        <p>The MediaKeyStatusMap object is a read-only map of <a def-id="key-id">key IDs</a> to the current status of the associated key.</p>
+        <p>The MediaKeyStatusMap object is a read-only map of [=key IDs=] to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be <a def-id="status-output-downscaled"></a> or <a def-id="status-output-restricted"></a>, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
         <pre class="idl">[Exposed=Window, SecureContext] interface MediaKeyStatusMap {
@@ -2275,14 +2275,14 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               <dd>
                 <p>Returns <code>true</code> if the status of the key identified by <var>keyId</var> is known.</p>
 
-                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The <a def-id="key-id"></a> of the key.</td></tr></tbody></table>
+                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The [=key ID=] of the key.</td></tr></tbody></table>
                 <div><em>Return type: </em><code>boolean</code></div>
               </dd>
               <dt><dfn><code>get</code></dfn></dt>
               <dd>
                 <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var> or <code>undefined</code> if the status of the key identified by <var>keyId</var> is not known.</p>
 
-                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The <a def-id="key-id"></a> of the key.</td></tr></tbody></table>
+                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The [=key ID=] of the key.</td></tr></tbody></table>
                 <div><em>Return type: </em><code>any</code></div>
               </dd>
             </dl>
@@ -2291,8 +2291,8 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               brought by <dfn data-dfn-for="MediaKeyStatusMap" data-link-for="MediaKeyStatusMap">iterable</dfn> (see WebIDL, <a href='https://www.w3.org/TR/WebIDL-1/#idl-iterable'>3.2.7 Iterable declarations</a>).
             </p>
             <p>
-              The value pairs to iterate over are a snapshot of the set of pairs formed from the <a def-id="key-id"></a> and
-              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by <a def-id="key-id"></a>.
+              The value pairs to iterate over are a snapshot of the set of pairs formed from the [=key ID=] and
+              associated <a>MediaKeyStatus</a> value for all <a href="#known-key">known keys</a>, sorted by [=key ID=].
               Key IDs are compared as follows:
               For key IDs <var>A</var> of length <var>m</var> and <var>B</var> of length <var>n</var>, assigned such that <var>m</var> &lt;= <var>n</var>,
               let <var>A</var> &lt; <var>B</var> if and only if the <var>m</var> octets of <var>A</var> are less in lexicographical
@@ -2452,7 +2452,7 @@ interface MediaKeyMessageEvent : Event {
         <section id="update-key-statuses">
           <h4>Update Key Statuses</h4>
           <p>The Update Key Statuses algorithm updates the set of <a href="#known-key">known</a> keys for a <a>MediaKeySession</a> or the status of one or more of the keys.
-          Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of <a def-id="key-id"></a> and associated <a>MediaKeyStatus</a> pairs.
+          Requests to run this algorithm include a target <a>MediaKeySession</a> object and a sequence of [=key ID=] and associated <a>MediaKeyStatus</a> pairs.
           </p>
           <p class="note">The algorithm is always run in a task.</p>
           <p>The following steps are run:</p>
@@ -3720,7 +3720,7 @@ interface MediaEncryptedEvent : Event {
           <p>The format is a JSON object containing the following members:</p>
           <dl>
             <dt>"kids"</dt>
-            <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+            <dd>An array of [=key IDs=]. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
             <dt>"type"</dt>
             <dd>The requested <a>MediaKeySessionType</a></dd>
           </dl>
@@ -3757,7 +3757,7 @@ interface MediaEncryptedEvent : Event {
             <dt>"k" (key value)</dt>
             <dd>The base64url encoding of the octet sequence containing the symmetric <a href="#decryption-key">key</a> value</dd>
             <dt>"kid" (key ID)</dt>
-            <dd>The base64url encoding of the octet sequence containing the <a def-id="key-id"></a> value</dd>
+            <dd>The base64url encoding of the octet sequence containing the [=key ID=] value</dd>
           </dl>
 
           <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a>MediaKeySessionType</a> values.
@@ -3793,7 +3793,7 @@ interface MediaEncryptedEvent : Event {
           </p>
           <dl>
             <dt>"kids"</dt>
-            <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+            <dd>An array of [=key IDs=]. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
           </dl>
           <p>When contained in the ArrayBuffer <a def-id="message-event-message-attribute"></a> attribute of a <a>MediaKeyMessageEvent</a> object, the JSON string is encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
             Applications MAY decode the contents of the ArrayBuffer to a JSON string using the <a def-id="interface-textdecoder"></a> [[ENCODING]].
@@ -3819,7 +3819,7 @@ interface MediaEncryptedEvent : Event {
           <p>The format is a JSON object containing the following members:</p>
           <dl>
             <dt>"kids"</dt>
-            <dd>An array of <a def-id="key-id">key IDs</a>. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+            <dd>An array of [=key IDs=]. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
           </dl>
 
           <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var>response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
