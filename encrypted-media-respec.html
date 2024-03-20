@@ -96,8 +96,8 @@
       </p>
       <p>
         Implementers should pay attention to the mitigations for the security and privacy threats and concerns described in this specification.
-        In particular, the specification requirements for security and privacy cannot be met without knowledge of the security and privacy properties of the <a def-id="keysystem"></a> and its implementation(s).
-        <a href="#implementation-requirements"></a> contains security and privacy provisions related to the integration and use of underlying <a def-id="keysystem"></a> implementations.
+        In particular, the specification requirements for security and privacy cannot be met without knowledge of the security and privacy properties of the [=Key System=] and its implementation(s).
+        <a href="#implementation-requirements"></a> contains security and privacy provisions related to the integration and use of underlying [=Key System=] implementations.
         <a href="#security"></a> focuses on external threats, such as input data or network attacks.
         <a href="#privacy"></a> focuses on the handling of user-specific information and providing users with adequate control over their own privacy.
       </p>
@@ -117,14 +117,14 @@
       <dl>
         <dt id="cdm">Content Decryption Module (CDM)</dt>
         <dd>
-          <p>Content Decryption Module (CDM) is the client component that provides the functionality, including decryption, for one or more <a def-id="keysystems"></a>.</p>
+          <p>Content Decryption Module (CDM) is the client component that provides the functionality, including decryption, for one or more [=Key Systems=].</p>
           <p class="note">
             Implementations may or may not separate the implementations of CDMs or treat them as separate from the user agent.
             This is transparent to the API and application.
           </p>
         </dd>
 
-        <dt id="key-system">Key System</dt>
+        <dt id="key-system"><dfn>Key System</dfn></dt>
         <dd>
           <p>A Key System is a generic term for a decryption mechanism and/or content protection provider.
           Key System strings provide unique identification of a Key System.
@@ -225,7 +225,7 @@
         <dt id="initialization-data"><dfn class="export" data-export="">Initialization Data</dfn></dt>
         <dd>
           <p class="note">
-          <a def-id="keysystems"></a> usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
+          [=Key Systems=] usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
           This block could be a simple key or content ID or a more complex structure containing such information.
           It SHOULD always allow unique identification of the <a href="#decryption-key">key(s)</a> needed to decrypt the content.
           This initialization information MAY be obtained in some application-specific way or provided with the <a def-id="media-data"></a>.
@@ -570,7 +570,7 @@ partial interface Navigator {
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
             This method should only be called when the author intends to create and use a <a>MediaKeys</a> object with the provided configuration.
             </p>
-            <p>Requests access to the specified <a def-id="keysystem"></a>.
+            <p>Requests access to the specified [=Key System=]</a>.
               When <code>supportedConfigurations</code> is specified, the configuration specified by at least one of its elements must be supported.
               The resulting <a>MediaKeySystemAccess</a> will correspond to the first such element.
             </p>
@@ -603,7 +603,7 @@ partial interface Navigator {
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps in parallel:</p>
                 <ol>
-                  <li><p>If <var>keySystem</var> is not one of the <a def-id="keysystems"></a> supported by the user agent, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+                  <li><p>If <var>keySystem</var> is not one of the [=Key Systems=] supported by the user agent, reject <var>promise</var> with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
                   <li><p>Let <var>implementation</var> be the implementation of <var>keySystem</var>.</p></li>
                   <li><p>For each value in <code>supportedConfigurations</code>:</p>
                     <ol>
@@ -632,7 +632,7 @@ partial interface Navigator {
               <li><p>Return <var>promise</var>.</p></li>
             </ol>
           <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keySystem</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-                The <a def-id="keysystem"></a> for which access is being requested.
+                The [=Key System=] for which access is being requested.
               </td></tr><tr><td class="prmName">supportedConfigurations</td><td class="prmType"><code>sequence&lt;MediaKeySystemConfiguration&gt;</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
                 A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
                 The first element with a satisfiable configuration will be used.
@@ -643,7 +643,7 @@ partial interface Navigator {
 
           <section>
             <h5>Get Supported Configuration</h5>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
+            <p>Given a [=Key Systems=] implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>, and <var>origin</var>, this algorithm returns a supported configuration or <code>NotSupported</code> as appropriate.</p>
             <p class="note">Unrecognized dictionary members in <var>candidate configuration</var> are ignored per [[WEBIDL]] and will never reach this algorithm. Thus, they cannot be considered as part of the configuration.
             </p>
             <div class="note">
@@ -695,7 +695,7 @@ partial interface Navigator {
           </section>
           <section>
             <h5>Get Supported Configuration and Consent</h5>
-            <p>Given a <a def-id="keysystems"></a> implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>,
+            <p>Given a [=Key Systems=] implementation <var>implementation</var>, <a>MediaKeySystemConfiguration</a> <var>candidate configuration</var>,
               <var>restrictions</var> and <var>origin</var>, this algorithm returns a supported configuration, <code>NotSupported</code>, or <code>ConsentDenied</code> as appropriate and, in the <code>ConsentDenied</code> case, <var>restrictions</var>.
             </p>
             <ol>
@@ -1133,7 +1133,6 @@ partial interface Navigator {
                       <var>accumulated configuration</var>'s <a def-id="option-distinctiveIdentifier"></a> member is <a def-id="requirement-required"></a>.
                     </p>
                     <div class="note">
-
                       <p>User consent to use <var>accumulated configuration</var> is specific to the <var>origin</var> and may be limited to configurations sharing certain properties with <var>accumulated configuration</var>.</p>
                     </div>
                   </li>
@@ -1236,9 +1235,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </dd><dt><dfn><code>persistentState</code></dfn> of type <span class="idlMemberType"><a>MediaKeysRequirement</a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
             <p>The CDM MUST NOT persist any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a> when this member is <a def-id="requirement-not-allowed"></a>.</p>
-            <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers (<a def-id="distinctive-identifiers"></a>) controlled by the <a def-id="keysystem"></a> implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
+            <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers (<a def-id="distinctive-identifiers"></a>) controlled by the [=Key System=] implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
-            <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is <a def-id="keysystem"></a> implementation-specific and may vary by feature used.</p>
+            <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is [=Key System=] implementation-specific and may vary by feature used.</p>
             <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess"></a>.</p>
           </dd><dt><dfn><code>sessionTypes</code></dfn> of type <span class="idlMemberType">sequence&lt;{{DOMString}}&gt;</span></dt><dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
@@ -1349,19 +1348,19 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
 
     <section>
       <h2><dfn>MediaKeySystemAccess</dfn> Interface</h2>
-      <p>The MediaKeySystemAccess object provides access to a <a def-id="keysystem"></a>.</p>
+      <p>The MediaKeySystemAccess object provides access to a [=Key System=].</p>
 
       <pre class="idl">[Exposed=Window, SecureContext] interface MediaKeySystemAccess {
     readonly        attribute DOMString keySystem;
     MediaKeySystemConfiguration getConfiguration ();
     Promise&lt;MediaKeys&gt;          createMediaKeys ();
 };</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>keySystem</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-          Identifies the <a def-id="keysystem"></a> being used.
+          Identifies the [=Key System=] being used.
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>getConfiguration</code></dfn></dt><dd>
           <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
           </p>
           <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable <a>MediaKeySystemConfiguration</a> configuration passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
-            It does not contain values capabilities not specified in that single configuration (other than implied defaults) and thus may not reflect all capabilities of the <a def-id="keysystem"></a> implementation.
+            It does not contain values capabilities not specified in that single configuration (other than implied defaults) and thus may not reflect all capabilities of the [=Key System=] implementation.
             All values in the configuration may be used in any combination.
             Members of type <a>MediaKeysRequirement</a> reflect whether the capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
           </p>
@@ -1399,9 +1398,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                     member is <a def-id="requirement-required"></a> and <code>false</code> otherwise.
                   <p>
                 </li>
-                <li><p>Load and initialize the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
-                <li><p>Let <var>instance</var> be a new instance of the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value.</p></li>
-                <li><p>Initialize <var>instance</var> to enable, disable and/or select <a def-id="keysystem"></a> features using <var>configuration</var>.</p></li>
+                <li><p>Load and initialize the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value if necessary.</p></li>
+                <li><p>Let <var>instance</var> be a new instance of the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value.</p></li>
+                <li><p>Initialize <var>instance</var> to enable, disable and/or select [=Key System=] features using <var>configuration</var>.</p></li>
                 <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.</p></li>
                 <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or <a def-id="origin"></a> of this object's <a def-id="document-concept"></a>.</p></li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
@@ -1453,7 +1452,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
             A <a def-id="record-of-license-destruction"></a> SHALL be persisted when the license and key(s) it contains are destroyed.
-            The <dfn id="record-of-license-destruction">record of license destruction</dfn> is a <a def-id="keysystem"></a>-specific attestation that the license and key(s) it contains are no longer usable by the client.
+            The <dfn id="record-of-license-destruction">record of license destruction</dfn> is a [=Key System=]-specific attestation that the license and key(s) it contains are no longer usable by the client.
             Support for this session type is OPTIONAL.
           </p>
           <p>
@@ -1604,7 +1603,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </p>
 
           <ol class="method-algorithm">
-            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
+            <li><p>If the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
             <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new a newly created <a def-id="TypeError"></a>.</p></li>
 
             <li><p>Let <var>certificate</var> be a copy of the contents of the <var>serverCertificate</var> parameter.</p></li>
@@ -1627,7 +1626,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">serverCertificate</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
               The server certificate.
-              The contents are <a def-id="keysystem"></a>-specific.
+              The contents are [=Key System=]-specific.
               It MUST NOT contain executable code.
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div>
           </dd>
@@ -1817,7 +1816,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>initDataType</var> is the empty string, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
             <li><p>If <var>initData</var> is an empty array, return a promise rejected with a newly created <a def-id="TypeError"></a>.</p></li>
-            <li><p>If the <a def-id="keysystem"></a> implementation represented by this object's <var>cdm implementation</var> value does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
+            <li><p>If the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value does not support <var>initDataType</var> as an <a def-id="initialization-data-type"></a>, return a promise rejected with a <a def-id="NotSupportedError"></a>. String comparison is case-sensitive.</p></li>
             <li><p>Let <var>init data</var> be a copy of the contents of the <var>initData</var> parameter.</p></li>
             <li><p>Let <var>session type</var> be this object's <var>session type</var>.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -2050,7 +2049,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                           <p>See also <a def-id="session-storage"></a>.</p>
                           <p>State information, including keys, for each session MUST be stored in such a way that closing one session does not affect the observable state in other session(s), even if they contain overlapping key IDs.</p>
                           <p class="note">When <var>sanitized response</var> contains key(s) and/or related data, <var>cdm</var> will likely store (in memory) the key and related data indexed by key ID.</p>
-                          <p class="note">The replacement algorithm within a session is <a def-id="keysystem"></a>-dependent.</p>
+                          <p class="note">The replacement algorithm within a session is [=Key System=]-dependent.</p>
                           <p class="note">It is RECOMMENDED that CDM implementations support a standard and reasonably high minimum number of keys per <a>MediaKeySession</a> object, including a standard replacement algorithm, and a standard and reasonably high minimum number of <a>MediaKeySession</a> objects.
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (e.g., adaptive streams, various audio and video tracks) using different keys.
                           </p>
@@ -2132,7 +2131,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">response</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
               A message to be provided to the CDM.
-              The contents are <a def-id="keysystem"></a>-specific.
+              The contents are [=Key System=]-specific.
               It MUST NOT contain executable code.
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>close</code></dfn></dt><dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
@@ -3028,7 +3027,7 @@ interface MediaEncryptedEvent : Event {
                         <li><p>Let <var>block key</var> be null.</p></li>
                         <li><p>If any of the <var>available keys</var> corresponds to the <var>block key ID</var> and is <a def-id="usable-for-decryption"></a>, let <var>session</var> be a
                         <a>MediaKeySession</a> object containing that key and let <var>block key</var> be that key.</p>
-                          <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is <a def-id="keysystem"></a>-dependent.</p>
+                          <p class="note">If multiple sessions contain a key that is <a def-id="usable-for-decryption"></a> for the <var>block key ID</var>, which session and key to use is [=Key System=]-dependent.</p>
                         </li>
                         <li><p>If the status of any of the <var>available keys</var> changed as the result of running the preceding step, <a def-id="queue-a-task"></a> to run the <a def-id="update-key-statuses-algorithm"></a> algorithm on each affected <var>session</var>, providing all <a def-id="key-id">key ID(s)</a> in the session along with the appropriate <a>MediaKeyStatus</a> value(s) for each.</p></li>
                         <li><p>If <var>block key</var> is not null, run the following steps:</p>
@@ -3191,7 +3190,7 @@ interface MediaEncryptedEvent : Event {
     <section id="implementation-requirements">
       <h3>Implementation Requirements</h3>
       <p>
-        This section defines implementation requirements - for both user agents and <a def-id="keysystems"></a>, including the <a def-id="cdm"></a> and server(s) - that may not be explicitly addressed in the algorithms.
+        This section defines implementation requirements - for both user agents and [=Key Systems=], including the <a def-id="cdm"></a> and server(s) - that may not be explicitly addressed in the algorithms.
         The requirements here and throughout the spec apply to all implementations, regardless of whether the CDM is separate from or a part of the user agent.
       </p>
 
@@ -3640,7 +3639,7 @@ interface MediaEncryptedEvent : Event {
 
       <section id="clear-key">
         <h3>Clear Key</h3>
-        <p>The <code>"org.w3.clearkey"</code> <a def-id="keysystem"></a> uses plain-text clear (unencrypted) key(s) to decrypt the source.
+        <p>The <code>"org.w3.clearkey"</code> [=Key System=] uses plain-text clear (unencrypted) key(s) to decrypt the source.
         No additional client-side content protection is required.
         This Key System is described below.
         </p>
@@ -4372,7 +4371,7 @@ interface MediaEncryptedEvent : Event {
 
       <section id="example-selecting-key-system">
         <h3>Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
-        <p class="exampledescription">This example selects a supported <a def-id="keysystem"></a> using the <a def-id="requestMediaKeySystemAccess"></a> method then uses
+        <p class="exampledescription">This example selects a supported [=Key System=] using the <a def-id="requestMediaKeySystemAccess"></a> method then uses
         the <a def-id="initialization-data"></a> from the <a def-id="media-data"></a> to generate the license request and send it to the appropriate license server.
         One of the supported key systems uses a serverCertificate, which is provided proactively.
         </p>
