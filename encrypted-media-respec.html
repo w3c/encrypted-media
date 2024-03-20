@@ -148,7 +148,7 @@
         <dd>
           <p>A Key Session, or simply Session, provides a context for message exchange with the [=CDM=] as a result of which key(s) are made available to the CDM.
           Sessions are embodied as <a>MediaKeySession</a> objects.
-          Each Key session is associated with a single instance of <a def-id="initialization-data"></a> provided in the <a def-id="generateRequest"></a> call.
+          Each Key session is associated with a single instance of [=Initialization Data=] provided in the <a def-id="generateRequest"></a> call.
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that <a>MediaKeys</a> object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, CDM instances, and media elements MUST NOT access the key session or use its key(s).
@@ -198,7 +198,7 @@
         <dd>
           <p>A <a href="#decryption-key">key</a> is associated with a key ID that is a sequence of octets and which uniquely identifies the key.
           The container specifies the ID of the key that can decrypt a block or set of blocks within the <a def-id="media-data"></a>.
-          <a def-id="initialization-data"></a> MAY contain key ID(s) to identify the keys that are needed to decrypt the media data.
+          [=Initialization Data=] MAY contain key ID(s) to identify the keys that are needed to decrypt the media data.
           However, there is no requirement that Initialization Data contain any or all key IDs used in the <a def-id="media-data"></a> or <a def-id="media-resource"></a>.
           <a href="#license">Licenses</a> provided to the [=CDM=] associate each key with a key ID so the CDM can select the appropriate key when decrypting an encrypted block of media data.
           </p>
@@ -222,7 +222,7 @@
           <p>A license is key system-specific state information that includes one or more <a href="#decryption-key">key(s)</a> - each associated with a <a def-id="key-id"></a> - and potentially other information about key usage.</p>
         </dd>
 
-        <dt id="initialization-data"><dfn class="export" data-export="">Initialization Data</dfn></dt>
+        <dt id="initialization-data"><dfn class="export">Initialization Data</dfn></dt>
         <dd>
           <p class="note">
           [=Key Systems=] usually require a block of initialization data containing information about the stream to be decrypted before they can construct a license request message.
@@ -486,7 +486,7 @@
         <dt id="cross-origin">Cross Origin Limitations</dt>
         <dd>
           <p>During playback, embedded media data is exposed to script in the embedding <a def-id="origin"></a>.
-          In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST be <a def-id="cors-same-origin"></a> with the embedding page.
+          In order for the API to provide [=Initialization Data=] in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST be <a def-id="cors-same-origin"></a> with the embedding page.
           If <a def-id="media-data"></a> is cross-origin with the embedding document, authors SHOULD use the <a def-id="media-crossorigin"></a> attribute
           on the {{HTMLMediaElement}} and CORS headers on the <a def-id="media-data"></a> response to make it <a def-id="cors-same-origin"></a>.
           </p>
@@ -495,7 +495,7 @@
         <dt id="mixed-content">Mixed Content Limitations</dt>
         <dd>
           <p>During playback, embedded media data is exposed to script in the embedding <a def-id="origin"></a>.
-          In order for the API to provide <a def-id="initialization-data"></a> in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST NOT be Mixed Content [[MIXED-CONTENT]].
+          In order for the API to provide [=Initialization Data=] in the <a def-id="encrypted"></a> event, <a def-id="media-data"></a> MUST NOT be Mixed Content [[MIXED-CONTENT]].
           </p>
         </dd>
 
@@ -1824,10 +1824,10 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               <ol>
                 <li><p>If the <var>init data</var> is not valid for <var>initDataType</var>, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
                 <li><p>Let <var>sanitized init data</var> be a validated and sanitized version of <var>init data</var>.</p>
-                  <p>The user agent MUST thoroughly validate the <a def-id="initialization-data"></a> before passing it to the CDM.
+                  <p>The user agent MUST thoroughly validate the [=Initialization Data=] before passing it to the CDM.
                     This includes verifying that the length and values of fields are reasonable, verifying that values are within reasonable limits, and stripping irrelevant, unsupported, or unknown data or fields.
-                    It is RECOMMENDED that user agents pre-parse, sanitize, and/or generate a fully sanitized version of the <a def-id="initialization-data"></a>.
-                    If the <a def-id="initialization-data"></a> format specified by <var>initDataType</var> supports multiple entries, the user agent SHOULD remove entries that are not needed by the CDM. The user agent MUST NOT re-order entries within the <a def-id="initialization-data"></a>.
+                    It is RECOMMENDED that user agents pre-parse, sanitize, and/or generate a fully sanitized version of the [=Initialization Data=].
+                    If the [=Initialization Data=] format specified by <var>initDataType</var> supports multiple entries, the user agent SHOULD remove entries that are not needed by the CDM. The user agent MUST NOT re-order entries within the [=Initialization Data=].
                   </p>
                 </li>
                 <li><p>If the preceding step failed, reject <var>promise</var> with a newly created <a def-id="TypeError"></a>.</p></li>
@@ -1924,7 +1924,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">initDataType</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
               The <a def-id="initialization-data-type"></a> of the <var>initData</var>.
             </td></tr><tr><td class="prmName">initData</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              <a def-id="initialization-data"></a>
+              [=Initialization Data=]
             </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>load</code></dfn></dt><dd>
           <p>Loads the data stored for the specified session into this object.</p>
 
@@ -2733,16 +2733,16 @@ interface MediaKeyMessageEvent : Event {
         <li>
           <p>When the user agent is ready to begin playback and has encountered an indication that the <a def-id="media-data"></a> may contain encrypted blocks during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a href="#media-may-contain-encrypted-blocks">Media Data May Contain Encrypted Blocks</a> algorithm.</p>
           <p class="note">
-            For some container formats, such indication is separate from <a def-id="initialization-data"></a>.
+            For some container formats, such indication is separate from [=Initialization Data=].
           </p>
           <p class="note">
             The algorithm is to be run after parsing the relevant container data, including running the <a def-id="initdata-encountered-algorithm"></a> algorithm, but before decoding starts.
           </p>
         </li>
         <li>
-          <p>When the user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
+          <p>When the user agent encounters [=Initialization Data=] in the <a def-id="media-data"></a> during the <a def-id="resource-fetch-algorithm"></a>, the user agent SHALL run the <a def-id="initdata-encountered-algorithm"></a> algorithm.</p>
           <p class="note">
-            Some container formats may support encrypted media data that does not contain <a def-id="initialization-data"></a> and thus support media data that does not trigger this algorithm.
+            Some container formats may support encrypted media data that does not contain [=Initialization Data=] and thus support media data that does not trigger this algorithm.
           </p>
         </li>
         <li>
@@ -2853,9 +2853,9 @@ interface MediaEncryptedEvent : Event {
 };</pre><section><h2>Constructors</h2><dl class="constructors" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>MediaEncryptedEvent</code></dfn></dt><dd>
 
           <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaEncryptedEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-            Indicates the <a def-id="initialization-data-type"></a> of the <a def-id="initialization-data"></a> contained in the <a def-id="encrypted-event-initdata-attribute"></a> attribute.
+            Indicates the <a def-id="initialization-data-type"></a> of the [=Initialization Data=] contained in the <a def-id="encrypted-event-initdata-attribute"></a> attribute.
           </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlAttrType">{{ArrayBuffer}}</span>, readonly       , nullable</dt><dd>
-            The <a def-id="initialization-data"></a> for the event.
+            The [=Initialization Data=] for the event.
           </dd></dl></section>
 
         <section>
@@ -2866,7 +2866,7 @@ interface MediaEncryptedEvent : Event {
 };</pre><section><h2>Dictionary <a class="idlType">MediaEncryptedEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaEncryptedEventInit" data-link-for="MediaEncryptedEventInit"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt><dd>
               The <a def-id="initialization-data-type"></a>.
             </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlMemberType">{{ArrayBuffer}}</span>, nullable, defaulting to <code>null</code></dt><dd>
-              The <a def-id="initialization-data"></a>.
+              The [=Initialization Data=].
             </dd></dl></section>
         </section>
       </section>
@@ -2887,7 +2887,7 @@ interface MediaEncryptedEvent : Event {
             <tr>
               <td><a def-id="eventdfn">encrypted</a></td>
               <td><a>MediaEncryptedEvent</a></td>
-              <td>The user agent encounters <a def-id="initialization-data"></a> in the <a def-id="media-data"></a>.</td>
+              <td>The user agent encounters [=Initialization Data=] in the <a def-id="media-data"></a>.</td>
               <td>The element's <a def-id="readystate"></a> is equal to or greater than  <a def-id="have-metadata"></a>.
               <p class="note">It is possible that the element is playing or has played.</p>
               </td>
@@ -2933,7 +2933,7 @@ interface MediaEncryptedEvent : Event {
         <section id="initdata-encountered">
           <h4><dfn class="export" data-export="">Initialization Data Encountered</dfn></h4>
           <p>
-            The Initialization Data Encountered algorithm queues an <a def-id="encrypted"></a> event for <a def-id="initialization-data"></a> encountered in the <a def-id="media-data"></a>.
+            The Initialization Data Encountered algorithm queues an <a def-id="encrypted"></a> event for [=Initialization Data=] encountered in the <a def-id="media-data"></a>.
             Requests to run this algorithm include a target {{HTMLMediaElement}} object.
           </p>
           <p>The following steps are run:</p>
@@ -3582,9 +3582,9 @@ interface MediaEncryptedEvent : Event {
 
         <section>
           <h4>Support Extraction From Media Data</h4>
-          <p>For any supported <a def-id="initialization-data-type"></a> that may appear in a supported container, the user agents MUST support <a href="#initdata-encountered">extracting</a> that type of <a def-id="initialization-data"></a> from each such supported container.</p>
+          <p>For any supported <a def-id="initialization-data-type"></a> that may appear in a supported container, the user agents MUST support <a href="#initdata-encountered">extracting</a> that type of [=Initialization Data=] from each such supported container.</p>
           <p class="note">In other words, indicating support for an <a def-id="initialization-data-type"></a> implies both CDM support for generating license requests and, for container-specific types, user agent support for extracting it from the container.
-            This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported <a def-id="initialization-data"></a> from <em>any</em> supported content type.
+            This does <strong>not</strong> mean that implementations must be able to parse <em>any</em> supported [=Initialization Data=] from <em>any</em> supported content type.
           </p>
         </section>
       </section>
@@ -3706,7 +3706,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>
-                <a def-id="initialization-data"></a>: Implementations MAY support any combination of registered Initialization Data Types [[EME-INITDATA-REGISTRY]].
+                [=Initialization Data=]: Implementations MAY support any combination of registered Initialization Data Types [[EME-INITDATA-REGISTRY]].
                 Implementations SHOULD support the <code>"keyids"</code> type [[EME-INITDATA-KEYIDS]] and other types appropriate for content types supported by the user agent.
               </p>
             </li>
@@ -3854,14 +3854,14 @@ interface MediaEncryptedEvent : Event {
 
       <section id="input-data-security">
         <h3>Input Data Attacks and Vulnerabilities</h3>
-        <p>User Agent and Key System implementations MUST consider <a def-id="media-data"></a>, <a def-id="initialization-data"></a>, data passed to <a def-id="update"></a>, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
+        <p>User Agent and Key System implementations MUST consider <a def-id="media-data"></a>, [=Initialization Data=], data passed to <a def-id="update"></a>, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
           They MUST use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
           User Agents SHOULD validate data before passing it to the CDM.
         </p>
         <p class="note">Such validation is especially important if the CDM does not run in the same (sandboxed) context as, for example, the DOM.</p>
 
         <p>Implementations MUST NOT return active content or passive content that affects program control flow to the application.</p>
-        <p class="note">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the <a def-id="initialization-data"></a> passed to <a def-id="generateRequest"></a>.
+        <p class="note">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the [=Initialization Data=] passed to <a def-id="generateRequest"></a>.
           Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the <a def-id="message"></a> event can be used by the application to select among a set of URLs if applicable.
         </p>
       </section>
@@ -4372,7 +4372,7 @@ interface MediaEncryptedEvent : Event {
       <section id="example-selecting-key-system">
         <h3>Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
         <p class="exampledescription">This example selects a supported [=Key System=] using the <a def-id="requestMediaKeySystemAccess"></a> method then uses
-        the <a def-id="initialization-data"></a> from the <a def-id="media-data"></a> to generate the license request and send it to the appropriate license server.
+        the [=Initialization Data=] from the <a def-id="media-data"></a> to generate the license request and send it to the appropriate license server.
         One of the supported key systems uses a serverCertificate, which is provided proactively.
         </p>
 
@@ -4512,7 +4512,7 @@ interface MediaEncryptedEvent : Event {
       <section id="example-mediakeys-before-source">
         <h3>Create MediaKeys Before Loading Media</h3>
         <p class="exampledescription">Initialization is much simpler if encrypted events do not need to be handled during MediaKeys initialization.
-        This can be accomplished either by providing the <a def-id="initialization-data"></a> in other ways or setting the source after the MediaKeys object has been created.
+        This can be accomplished either by providing the [=Initialization Data=] in other ways or setting the source after the MediaKeys object has been created.
         This example does the latter.
         </p>
 
