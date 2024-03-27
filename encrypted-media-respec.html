@@ -1661,7 +1661,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not [=closed=], <a def-id="queue-a-task"></a> to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
             </li>
           </ol>
         </section>
@@ -1694,17 +1694,17 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <h2><dfn>MediaKeySession</dfn> Interface</h2>
       <p>The MediaKeySession object represents a <a href="#key-session">key session</a>.</p>
       <p>
-        A <a>MediaKeySession</a> object is <dfn id="media-key-session-closed">closed</dfn> if and only if the object's <a def-id="closed"></a> attribute has been resolved.
+        A <a>MediaKeySession</a> object is <dfn>closed</dfn> if and only if the object's <a def-id="closed"></a> attribute has been resolved.
       </p>
       <p>
         The User Agent SHALL execute the <a def-id="monitor-cdm-algorithm"></a> algorithm continuously for each <a>MediaKeySession</a> object
-        that is not <a def-id="media-key-session-closed"></a>.
+        that is not [=closed=].
         The <a def-id="monitor-cdm-algorithm"></a> algorithm MUST be run in parallel to the main event loop but not in parallel to other procedures defined
         in this specification that are also defined to be run in parallel.
       </p>
       <p>
         A <a>MediaKeySession</a> object SHALL NOT be destroyed and SHALL continue to receive events if it is
-        not <a def-id="media-key-session-closed"></a> and the <a>MediaKeys</a> object that created it remains accessible.
+        not [=closed=] and the <a>MediaKeys</a> object that created it remains accessible.
         Otherwise, a <a>MediaKeySession</a> object that is no longer accessible SHALL NOT receive further
         events and MAY be destroyed.
       </p>
@@ -1713,7 +1713,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         objects and all <a>MediaKeySession</a> objects associated with the CDM instance are destroyed.
       </p>
       <p>
-        If a <a>MediaKeySession</a> object is not <a def-id="media-key-session-closed"></a> when it becomes inaccessible to the page, the CDM SHALL close the <a href="#key-session">key session</a> associated with the object.
+        If a <a>MediaKeySession</a> object is not [=closed=] when it becomes inaccessible to the page, the CDM SHALL close the <a href="#key-session">key session</a> associated with the object.
       </p>
       <p class="note">Closing the key session results in the destruction of any license(s) and key(s) that have not been explicitly stored.</p>
       <p class="note">
@@ -1779,7 +1779,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>The [=expiration time=] for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
         </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{MediaKeySessionClosedReason}}&gt;</span>, readonly       </dt><dd>
-          <p>Signals when the object becomes <a def-id="media-key-session-closed"></a> as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
+          <p>Signals when the object becomes [=closed=] as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt><dfn><code>keyStatuses</code></dfn> of type <span class="idlAttrType"><a>MediaKeyStatusMap</a></span>, readonly       </dt><dd>
           <p>A reference to a read-only map of [=key IDs=] <a href="#known-key">known</a> to the session to the current status of the associated key.
@@ -1944,7 +1944,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                   </p>
                 </li>
                 <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created {{TypeError}}.</p></li>
-                <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
+                <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1957,7 +1957,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created {{TypeError}}.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is a <a>MediaKeySession</a> object that is not <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a> and that
+                    <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in any <a def-id="document-concept"></a> and that
                     represents the <var>session data</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
@@ -2681,9 +2681,9 @@ interface MediaKeyMessageEvent : Event {
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
-        <a def-id="media-key-session-closed"></a> in any <a def-id="document-concept"></a>.
+        [=closed=] in any <a def-id="document-concept"></a>.
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
-          A session MAY only be loaded again if all objects that have ever represented it are <a def-id="media-key-session-closed"></a>.
+          A session MAY only be loaded again if all objects that have ever represented it are [=closed=].
         </p>
         <p>An application that creates a session using a type for which the <a def-id="is-persistent-session-type-algorithm"></a> algorithm returns <code>true</code> SHOULD
           later remove the stored data by first initiating the removal process using <a def-id="remove"></a> and then ensuring that the removal process, which may involve
@@ -3012,7 +3012,7 @@ interface MediaEncryptedEvent : Event {
                     </li>
                   </ol>
                 </li>
-                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> that is not <a def-id="media-key-session-closed"></a>, run the following steps:</p>
+                <li><p>If there is at least one <a>MediaKeySession</a> created by the <var>media keys</var> that is not [=closed=], run the following steps:</p>
                   <p class="note">This check ensures the <var>cdm</var> has finished loading and is a prerequisite for a matching key being available.</p>
                   <ol>
                     <li><p>Let <var>block</var> be the first entry in the <var>media element</var>'s <var>encrypted block queue</var>.</p></li>
