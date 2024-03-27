@@ -61,7 +61,7 @@
         },
       },
 
-      xref: ["html"]
+      xref: ["dom", "html"]
     };
     </script>
     <link rel="stylesheet" href="eme.css"/>
@@ -594,7 +594,7 @@ partial interface Navigator {
 
               <li><p>If <var>keySystem</var> is the empty string, return a promise rejected with a newly created {{TypeError}}.</p></li>
               <li><p>If <var>supportedConfigurations</var> is empty, return a promise rejected with a newly created {{TypeError}}.</p></li>
-              <li><p>Let <var>document</var> be the calling context's <a def-id="document-concept"></a>.</p></li>
+              <li><p>Let <var>document</var> be the calling context's [=document=].</p></li>
               <li><p>Let <var>origin</var> be the [=origin=] of <var>document</var>.</p></li>
               <li><p>Let <var>promise</var> be a new promise.</p></li>
               <li><p>Run the following steps in parallel:</p>
@@ -1230,7 +1230,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </p>
           </dd><dt><dfn><code>persistentState</code></dfn> of type <span class="idlMemberType"><a>MediaKeysRequirement</a></span>, defaulting to <code>"optional"</code></dt><dd>
             Whether the ability to persist state is required. This includes session data and any other type of state.
-            <p>The CDM MUST NOT persist any state related to the application or [=origin=] of this object's <a def-id="document-concept"></a> when this member is <a def-id="requirement-not-allowed"></a>.</p>
+            <p>The CDM MUST NOT persist any state related to the application or [=origin=] of this object's [=document=] when this member is <a def-id="requirement-not-allowed"></a>.</p>
             <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers ([=Distinctive Identifiers=]) controlled by the [=Key System=] implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
             <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is [=Key System=] implementation-specific and may vary by feature used.</p>
@@ -1398,7 +1398,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 <li><p>Let <var>instance</var> be a new instance of the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value.</p></li>
                 <li><p>Initialize <var>instance</var> to enable, disable and/or select [=Key System=] features using <var>configuration</var>.</p></li>
                 <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.</p></li>
-                <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or [=origin=] of this object's <a def-id="document-concept"></a>.</p></li>
+                <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or [=origin=] of this object's [=document=].</p></li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                 <li><p>Let <var>media keys</var> be a new <a>MediaKeys</a> object, and initialize it as follows:</p>
                   <ol>
@@ -1679,7 +1679,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           MAY persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
         </p>
 
-        <p>Persisted data MUST always be stored such that only the [=origin=] of this object's <a def-id="document-concept"></a> can access it.
+        <p>Persisted data MUST always be stored such that only the [=origin=] of this object's [=document=] can access it.
           In addition, the data MUST only be accessible by the current [=browsing profile=]; other browsing profiles, user agents, and applications MUST NOT be able to access the stored data.
           See <a href="#privacy-storedinfo">Information Stored on User Devices</a>.
         </p>
@@ -1852,7 +1852,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     </li>
 
                     <li><p>Let <var>session id</var> be a unique [=Session ID=] string.</p>
-                      <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the [=origin=] of this object's <a def-id="document-concept"></a> over time, including across Documents and browsing sessions.</p>
+                      <p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the [=origin=] of this object's [=document=] over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li>
                       <dl class="switch">
@@ -1934,7 +1934,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a newly created {{TypeError}}.</p></li>
             <li><p>If the result of running the <a def-id="is-persistent-session-type-algorithm"></a> algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created {{TypeError}}.</p></li>
-            <li><p>Let <var>origin</var> be the [=origin=] of this object's <a def-id="document-concept"></a>.</p></li>
+            <li><p>Let <var>origin</var> be the [=origin=] of this object's [=document=].</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
               <ol>
@@ -1944,7 +1944,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                   </p>
                 </li>
                 <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created {{TypeError}}.</p></li>
-                <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in this object's <a def-id="document-concept"></a> whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
+                <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in this object's [=document=] whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1957,7 +1957,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     <li><p>If the stored session's <var>session type</var> is not the same as the current <a>MediaKeySession</a> <var>session type</var>, reject <var>promise</var> with a newly created {{TypeError}}.</p></li>
                     <li><p>Let <var>session data</var> be the data stored for the <var>sanitized session ID</var> in the <var>origin</var>.
                     This MUST NOT include data from other origin(s) or that is not associated with an origin.</p></li>
-                    <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in any <a def-id="document-concept"></a> and that
+                    <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in any [=document=] and that
                     represents the <var>session data</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
                       <p class="note">In other words, do not create a session if a non-closed persistent session already exists for this <var>sanitized session ID</var> in any browsing context.</p>
                     </li>
@@ -2039,7 +2039,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             <dd>Process <var>sanitized response</var>, not storing any session data.</dd>
                             <dt>If <var>sessionType</var> is <a def-id="persistent-license-session"></a> and <var>sanitized response</var> contains a persistable license</dt>
                             <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>.
-                              Such data MUST be stored such that only the [=origin=] of this object's <a def-id="document-concept"></a> can access it.
+                              Such data MUST be stored such that only the [=origin=] of this object's [=document=] can access it.
                             </dd>
                             <dt>Otherwise</dt>
                             <dd><p>Reject <var>promise</var> with a newly created {{TypeError}}.</p></dd>
@@ -2681,7 +2681,7 @@ interface MediaKeyMessageEvent : Event {
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
-        [=closed=] in any <a def-id="document-concept"></a>.
+        [=closed=] in any [=document=].
           In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
           A session MAY only be loaded again if all objects that have ever represented it are [=closed=].
         </p>
@@ -3961,7 +3961,7 @@ interface MediaEncryptedEvent : Event {
         <section>
           <h4>Mitigations</h4>
           <p>User agents that <a href="#security-consent">inform the user or require consent</a>, including for security and/or <a href="#privacy-consent">privacy reasons</a>,
-            SHOULD base the UI and persistence of consent on the combination of [=origin=] of the top-level <a def-id="document-concept"></a> and the [=origin=] using the APIs defined in this specification.
+            SHOULD base the UI and persistence of consent on the combination of [=origin=] of the top-level [=document=] and the [=origin=] using the APIs defined in this specification.
             This ensures that users are informed of the main document making the request and that persisting a permission for one (legitimate) combination does not inadvertently allow malicious use to go undetected.
           </p>
           <p>Authors SHOULD prevent other entities from hosting their applications in <code>iframe</code>s.
@@ -4195,7 +4195,7 @@ interface MediaEncryptedEvent : Event {
             <dt>Block third-party access</dt>
             <dd>
               <!-- Issue #101 may affect this text. -->
-              <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the [=origin=] of the top-level <a def-id="document-concept"></a> of the browsing context.
+              <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the [=origin=] of the top-level [=document=] of the browsing context.
                 For example, <a def-id="requestMediaKeySystemAccess"></a> may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
               </p>
             </dd>
