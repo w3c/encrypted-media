@@ -210,7 +210,7 @@
             Known keys are exposed via the <a def-id="keyStatuses"></a> attribute.
           </p>
 
-          <p>Keys are considered known even after they become unusable, such as due to [=expiration=] or if they are removed but a <a def-id="record-of-license-destruction"></a> is available.
+          <p>Keys are considered known even after they become unusable, such as due to [=expiration=] or if they are removed but a [=record of license destruction=] is available.
             Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
@@ -1447,14 +1447,14 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         <tr><td><dfn><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></dfn></td><td>
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
-            A <a def-id="record-of-license-destruction"></a> SHALL be persisted when the license and key(s) it contains are destroyed.
-            The <dfn id="record-of-license-destruction">record of license destruction</dfn> is a [=Key System=]-specific attestation that the license and key(s) it contains are no longer usable by the client.
+            A [=record of license destruction=] SHALL be persisted when the license and key(s) it contains are destroyed.
+            The <dfn>record of license destruction</dfn> is a [=Key System=]-specific attestation that the license and key(s) it contains are no longer usable by the client.
             Support for this session type is OPTIONAL.
           </p>
           <p>
             Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of <a def-id="requirement-required"></a>.
             The session MUST be loadable via its [=Session ID=] once <a def-id="update"></a> is called successfully.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the <a def-id="record-of-license-destruction"></a> will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
+            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
           </p>
           <p>
             The application is responsible for ensuring that data persisted for such sessions is removed when the application no longer needs it.
@@ -1738,7 +1738,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.closed-by-application">closed-by-application</code></dfn></td><td>
             The session was closed by the application calling the <a def-id="close"></a> method of the session explicitly.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.release-acknowledged">release-acknowledged</code></dfn></td><td>
-            The session was closed because the CDM received a <a def-id="record-of-license-destruction"></a> acknowledgement.
+            The session was closed because the CDM received a [=record of license destruction=] acknowledgement.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeySessionClosedReason.hardware-context-reset">hardware-context-reset</code></dfn></td><td>
             The session was closed because the CDM's original hardware context was reset.
             When this occurs, the User Agent MUST allow the application to create new sessions on this <a>MediaKeys</a> instance.
@@ -2050,14 +2050,14 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (e.g., adaptive streams, various audio and video tracks) using different keys.
                           </p>
                         </dd>
-                        <dt>If <var>sanitized response</var> contains a <a def-id="record-of-license-destruction"></a> acknowledgement and <var>sessionType</var> is <a def-id="persistent-license-session"></a></dt>
+                        <dt>If <var>sanitized response</var> contains a [=record of license destruction=] acknowledgement and <var>sessionType</var> is <a def-id="persistent-license-session"></a></dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
                             <li>
                               <p>
                                 Close the <a href="#key-session">key session</a> and clear <em>all</em> stored session data associated with this object,
-                                including the <a def-id="sessionId"></a> and <a def-id="record-of-license-destruction"></a>.
+                                including the <a def-id="sessionId"></a> and [=record of license destruction=].
                               </p>
                               <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
@@ -2200,7 +2200,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                               <ol>
                                 <li>
                                   <p>
-                                    Let <var>record of license destruction</var> be a <a def-id="record-of-license-destruction"></a> for the license represented by this object.
+                                    Let <var>record of license destruction</var> be a [=record of license destruction=] for the license represented by this object.
                                   </p>
                                 </li>
                                 <li>
@@ -2316,7 +2316,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             The time represented by the <a def-id="expiration"></a> attribute MUST be earlier than the current time.
             All other keys in the session MUST have this status.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.released">released</code></dfn></td><td>
-            The key itself is no longer available to the CDM, but information about the key, such as a <a def-id="record-of-license-destruction"></a>, is available.
+            The key itself is no longer available to the CDM, but information about the key, such as a [=record of license destruction=], is available.
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeyStatus.output-restricted">output-restricted</code></dfn></td><td>
             There are output restrictions associated with the key that cannot currently be met.
             Media data decrypted with this key may be blocked from presentation, if necessary according to
@@ -2355,7 +2355,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
     "individualization-request"
 };</pre>
 <p>The <dfn>MediaKeyMessageType</dfn> is defined as follows:</p>
-  <table class="simple" data-dfn-for="MediaKeyMessageType" data-link-for="MediaKeyMessageType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></dfn></td><td>The message contains a request for a new license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></dfn></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></dfn></td><td>The message contains a <a def-id="record-of-license-destruction"></a>.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></dfn></td><td>
+  <table class="simple" data-dfn-for="MediaKeyMessageType" data-link-for="MediaKeyMessageType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></dfn></td><td>The message contains a request for a new license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></dfn></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></dfn></td><td>The message contains a [=record of license destruction=].</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></dfn></td><td>
             The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br>
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and MUST NOT be [=Distinctive Permanent Identifier(s)=].
           </td></tr></tbody></table>
@@ -2675,7 +2675,7 @@ interface MediaKeyMessageEvent : Event {
           Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
         </p>
-        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a <a def-id="record-of-license-destruction"></a> acknowledgement.
+        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a [=record of license destruction=] acknowledgement.
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
@@ -3796,7 +3796,7 @@ interface MediaEncryptedEvent : Event {
           </p>
 
           <section id="clear-key-release-format-example-1" class="informative">
-            <h5>Example message reflecting a <a def-id="record-of-license-destruction"></a></h5>
+            <h5>Example message reflecting a [=record of license destruction=]</h5>
             <p>
               The following example is a license release for a <a def-id="persistent-license-session"></a> session that contained two keys.
               (Line breaks are for readability only.)
