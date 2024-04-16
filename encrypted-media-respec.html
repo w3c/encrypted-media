@@ -2473,7 +2473,7 @@ interface MediaKeyMessageEvent : Event {
               </p>
             </li>
             <li><p><a def-id="Queue-a-task-to-fire-an-event-named"></a> <a def-id="keystatuseschange"></a> at the <var>session</var>.</p></li>
-            <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on each of the media element(s) whose <a def-id="mediaKeys-attribute"></a> attribute is the MediaKeys object that created the <var>session</var>.</p>
+            <li><p><a def-id="Queue-a-task-to-run-algorithm"></a> <a def-id="resume-playback-algorithm"></a> algorithm on each of the media element(s) whose {{HTMLMediaElement/mediaKeys}} attribute is the MediaKeys object that created the <var>session</var>.</p>
             </li>
           </ol>
         </section>
@@ -2785,7 +2785,7 @@ interface MediaKeyMessageEvent : Event {
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
             <li><p>If this object's <var>attaching media keys</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
-            <li><p>If <var>mediaKeys</var> and the <a def-id="mediaKeys-attribute"></a> attribute are the same object, return a resolved promise.</p></li>
+            <li><p>If <var>mediaKeys</var> and the {{HTMLMediaElement/mediaKeys}} attribute are the same object, return a resolved promise.</p></li>
             <li><p>Let this object's <var>attaching media keys</var> value be true.</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -2803,13 +2803,13 @@ interface MediaKeyMessageEvent : Event {
                     then let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a {{QuotaExceededError}}.
                   </p>
                 </li>
-                <li><p>If the <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
+                <li><p>If the {{HTMLMediaElement/mediaKeys}} attribute is not null, run the following steps:</p>
                   <ol>
                     <li><p>If the user agent or CDM do not support removing the association, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with a {{NotSupportedError}}.</p></li>
                     <li><p>If the association cannot currently be removed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with an {{InvalidStateError}}.</p>
                       <p class="note">For example, some implementations may not allow removal during playback.</p>
                     </li>
-                    <li><p>Stop using the CDM instance represented by the <a def-id="mediaKeys-attribute"></a> attribute to decrypt [=HTMLMediaElement/media data=] and remove the association with the media element.</p></li>
+                    <li><p>Stop using the CDM instance represented by the {{HTMLMediaElement/mediaKeys}} attribute to decrypt [=HTMLMediaElement/media data=] and remove the association with the media element.</p></li>
                     <li><p>If the preceding step failed, let this object's <var>attaching media keys</var> value be false and reject <var>promise</var> with <a def-id="appropriate-error-name"></a>.</p></li>
                   </ol>
                 </li>
@@ -2818,7 +2818,7 @@ interface MediaKeyMessageEvent : Event {
                     <li><p>Associate the CDM instance represented by <var>mediaKeys</var> with the media element for decrypting [=HTMLMediaElement/media data=].</p></li>
                     <li><p>If the preceding step failed, run the following steps:</p>
                       <ol>
-                        <li><p>Set the <a def-id="mediaKeys-attribute"></a> attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
+                        <li><p>Set the {{HTMLMediaElement/mediaKeys}} attribute to null.</p></li><!-- In case it was previously not null since the previous association has been removed. -->
                         <li><p>Let this object's <var>attaching media keys</var> value be false.</p></li>
                         <li><p>Reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
                       </ol>
@@ -2827,7 +2827,7 @@ interface MediaKeyMessageEvent : Event {
                     </li>
                   </ol>
                 </li>
-                <li><p>Set the <a def-id="mediaKeys-attribute"></a> attribute to <var>mediaKeys</var>.</p></li>
+                <li><p>Set the {{HTMLMediaElement/mediaKeys}} attribute to <var>mediaKeys</var>.</p></li>
                 <li><p>Let this object's <var>attaching media keys</var> value be false.</p></li>
                 <li><p>Resolve <var>promise</var>.</p></li>
               </ol>
@@ -2916,7 +2916,7 @@ interface MediaEncryptedEvent : Event {
           <ol>
             <li><p>Let the <var>media element</var> be the specified {{HTMLMediaElement}} object.</p></li>
             <li>
-              <p>If the <var>media element</var>'s <a def-id="mediaKeys-attribute"></a> attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted [=HTMLMediaElement/media data=], run the following steps:</p>
+              <p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted [=HTMLMediaElement/media data=], run the following steps:</p>
               <p class="note">These steps may be reached when the application provides [=HTMLMediaElement/media data=] before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
                 Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
               </p>
@@ -2993,7 +2993,7 @@ interface MediaEncryptedEvent : Event {
           <ol>
             <li><p>Let the <var>media element</var> be the specified {{HTMLMediaElement}} object.</p></li>
             <li><p>If the <var>media element</var>'s <var>encrypted block queue</var> is empty, abort these steps.</p></li>
-            <li><p>If the <var>media element</var>'s <a def-id="mediaKeys-attribute"></a> attribute is not null, run the following steps:</p>
+            <li><p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is not null, run the following steps:</p>
               <ol>
                 <li><p>Let <var>media keys</var> be the <a>MediaKeys</a> object referenced by that attribute.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by <var>media keys</var>'s <var>cdm instance</var> value.</p></li>
@@ -4025,7 +4025,7 @@ interface MediaEncryptedEvent : Event {
             <li>
               <p>
                 Session data is not shared with media elements not associated with the MediaKeys object that created the session.
-                Among other things, this means a session's keys MUST not be used to decrypt content loaded by a media element whose <a def-id="mediaKeys-attribute"></a> attribute is not that MediaKeys object.
+                Among other things, this means a session's keys MUST not be used to decrypt content loaded by a media element whose {{HTMLMediaElement/mediaKeys}} attribute is not that MediaKeys object.
               </p>
             </li>
             <li><p>MediaKeys objects and the underlying implementation do not expose information outside the [=origin=].</p></li>
