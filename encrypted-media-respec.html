@@ -552,20 +552,25 @@
       <section>
         <h3>Permissions Policy Integration</h3>
         <p>
-          <a def-id="requestMediaKeySystemAccess"></a> is a [=policy-controlled feature=]
+          {{Navigator/requestMediaKeySystemAccess()}} is a [=policy-controlled feature=]
           identified by the string <dfn><code>encrypted-media</code></dfn>.  Its
           [=policy-controlled feature/default allowlist=] is <code>'self'</code>
           [[!PERMISSIONS-POLICY]].
         </p>
       </section>
 
-      <section>
+      <section data-dfn-for="Navigator">
         <h3><dfn>Navigator</dfn> Extension: <code>requestMediaKeySystemAccess()</code></h3>
 
-        <pre class="idl">[Exposed=Window]
-partial interface Navigator {
-    [SecureContext] Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess (DOMString keySystem, sequence&lt;MediaKeySystemConfiguration&gt; supportedConfigurations);
-};</pre><section><h2>Methods</h2><dl class="methods" data-dfn-for="Navigator" data-link-for="Navigator"><dt><dfn><code>requestMediaKeySystemAccess</code></dfn></dt><dd>
+        <pre class="idl">
+          [Exposed=Window]
+          partial interface Navigator {
+            [SecureContext] Promise&lt;MediaKeySystemAccess&gt; requestMediaKeySystemAccess (DOMString keySystem, sequence&lt;MediaKeySystemConfiguration&gt; supportedConfigurations);
+          };
+        </pre>
+        <section>
+          <h2>Methods</h2>
+          <dl class="methods"><dt><dfn><code>requestMediaKeySystemAccess()</code></dfn></dt><dd>
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
             This method should only be called when the author intends to create and use a <a>MediaKeys</a> object with the provided configuration.
             </p>
@@ -632,7 +637,9 @@ partial interface Navigator {
               </td></tr><tr><td class="prmName">supportedConfigurations</td><td class="prmType"><code>sequence&lt;MediaKeySystemConfiguration&gt;</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
                 A sequence of <a>MediaKeySystemConfiguration</a> configurations to try in order.
                 The first element with a satisfiable configuration will be used.
-              </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;MediaKeySystemAccess&gt;</code></div></dd></dl></section>
+              </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;MediaKeySystemAccess&gt;</code></div></dd>
+          </dl>
+        </section>
 
         <section>
           <h4>Algorithms</h4>
@@ -655,7 +662,7 @@ partial interface Navigator {
               that is both supported and has user consent (or does not need consent).
               </p>
               <p>
-              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the <a def-id="requestMediaKeySystemAccess"></a>
+              User Agents should reuse earlier consent responses, when appropriate, at least for the duration of the {{Navigator/requestMediaKeySystemAccess()}}
               algorithm in order to avoid repeated requests to the user for similar configurations.
               </p>
               <p>
@@ -1175,21 +1182,21 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
 </p>
 <table class="simple" data-dfn-for="MediaKeysRequirement" data-link-for="MediaKeysRequirement"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.required">required</code></dfn></td><td>
             <dl>
-              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dt>When used in a call to {{Navigator/requestMediaKeySystemAccess()}}</dt>
               <dd>The returned object MUST support this feature.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>CDM instances created by the object MAY use this feature.</dd>
             </dl>
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.optional">optional</code></dfn></td><td>
             <dl>
-              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dt>When used in a call to {{Navigator/requestMediaKeySystemAccess()}}</dt>
               <dd>The returned object MAY support and use this feature.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>This value cannot and MUST NOT be present in such an object.</dd>
             </dl>
           </td></tr><tr><td><dfn><code id="idl-def-MediaKeysRequirement.not-allowed">not-allowed</code></dfn></td><td>
             <dl>
-              <dt>When used in a call to <a def-id="requestMediaKeySystemAccess"></a></dt>
+              <dt>When used in a call to {{Navigator/requestMediaKeySystemAccess()}}</dt>
               <dd>The returned object MUST function without using this feature and MUST NOT use it at any time.</dd>
               <dt>When returned by a <a>MediaKeySystemAccess</a> object</dt>
               <dd>CDM instances created by the object MUST NOT use this feature.</dd>
@@ -1234,16 +1241,16 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers ([=Distinctive Identifiers=]) controlled by the [=Key System=] implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
             <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
             <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is [=Key System=] implementation-specific and may vary by feature used.</p>
-            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to <a def-id="requirement-required"></a> when calling <a def-id="requestMediaKeySystemAccess"></a>.</p>
+            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to <a def-id="requirement-required"></a> when calling {{Navigator/requestMediaKeySystemAccess()}}.</p>
           </dd><dt><dfn><code>sessionTypes</code></dfn> of type <span class="idlMemberType">sequence&lt;{{DOMString}}&gt;</span></dt><dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
-            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[WEBIDL]] when the dictionary is passed to <a def-id="requestMediaKeySystemAccess"></a>, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[WEBIDL]] when the dictionary is passed to {{Navigator/requestMediaKeySystemAccess()}}, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
           </dd></dl>
 
         <p>Implementations SHOULD NOT add members to this dictionary.
           Should member(s) be added, they MUST be of type <a>MediaKeysRequirement</a>, and it is RECOMMENDED that they have default values of <a def-id="requirement-optional"></a> to support the widest range of application and client combinations.
         </p>
-        <p class="note">Dictionary members not recognized by a user agent implementation are ignored per [[WEBIDL]] and will not be considered in the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
+        <p class="note">Dictionary members not recognized by a user agent implementation are ignored per [[WEBIDL]] and will not be considered in the {{Navigator/requestMediaKeySystemAccess()}} algorithm.
           Should an application use non-standard dictionary member(s), it MUST NOT rely on user agent implementations rejecting a configuration that includes such dictionary members.
         </p>
         <p>This dictionary MUST NOT be used to pass state or data to the CDM.</p>
@@ -1353,9 +1360,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
 };</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>keySystem</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
           Identifies the [=Key System=] being used.
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>getConfiguration</code></dfn></dt><dd>
-          <p>Returns the supported combination of configuration options selected by the <a def-id="requestMediaKeySystemAccess"></a> algorithm.
+          <p>Returns the supported combination of configuration options selected by the {{Navigator/requestMediaKeySystemAccess()}} algorithm.
           </p>
-          <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable <a>MediaKeySystemConfiguration</a> configuration passed to the <a def-id="requestMediaKeySystemAccess"></a> call that returned the promise that was resolved with this object.
+          <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable <a>MediaKeySystemConfiguration</a> configuration passed to the {{Navigator/requestMediaKeySystemAccess()}} call that returned the promise that was resolved with this object.
             It does not contain values capabilities not specified in that single configuration (other than implied defaults) and thus may not reflect all capabilities of the [=Key System=] implementation.
             All values in the configuration may be used in any combination.
             Members of type <a>MediaKeysRequirement</a> reflect whether the capability is required for any combination. They will not have the value <a def-id="requirement-optional"></a>.
@@ -3406,7 +3413,7 @@ interface MediaEncryptedEvent : Event {
               <div class="note">
                 <p>
                   When supported, applications can select for this mode using <a def-id="option-distinctiveIdentifier"></a> = <a def-id="requirement-not-allowed"></a>.
-                  Selecting such an option may affect the results of the <a def-id="requestMediaKeySystemAccess"></a> call and/or the license requests that are generated from subsequently generated sessions.
+                  Selecting such an option may affect the results of the {{Navigator/requestMediaKeySystemAccess()}} call and/or the license requests that are generated from subsequently generated sessions.
                 </p>
                 <p>
                   Providing the user access to select or choose this implementation capability may allow the user to access content while maintaining a higher degree of privacy.
@@ -3575,7 +3582,7 @@ interface MediaEncryptedEvent : Event {
         <section>
           <h4>Licenses Generated are Independent of Content Type</h4>
           <p>Implementations SHOULD allow licenses generated with any [=Initialization Data Type=] they support to be used with any content type.</p>
-          <p class="note">Otherwise, the <a def-id="requestMediaKeySystemAccess"></a> algorithm might, for example, reject a <a>MediaKeySystemConfiguration</a> because one of the <a def-id="option-initDataTypes"></a> is not supported with one of the <a def-id="option-videoCapabilities"></a>.</p>
+          <p class="note">Otherwise, the {{Navigator/requestMediaKeySystemAccess()}} algorithm might, for example, reject a <a>MediaKeySystemConfiguration</a> because one of the <a def-id="option-initDataTypes"></a> is not supported with one of the <a def-id="option-videoCapabilities"></a>.</p>
         </section>
 
         <section>
@@ -4196,7 +4203,7 @@ interface MediaEncryptedEvent : Event {
             <dd>
               <!-- Issue #101 may affect this text. -->
               <p>User agents MAY restrict access to Key Systems and/or features to scripts originating at the [=origin=] of the top-level [=document=] of the browsing context.
-                For example, <a def-id="requestMediaKeySystemAccess"></a> may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
+                For example, {{Navigator/requestMediaKeySystemAccess()}} may deny requests for certain configurations for pages from other origins running in <code>iframe</code>s.
               </p>
             </dd>
 
@@ -4369,7 +4376,7 @@ interface MediaEncryptedEvent : Event {
 
       <section id="example-selecting-key-system">
         <h3>Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</h3>
-        <p class="exampledescription">This example selects a supported [=Key System=] using the <a def-id="requestMediaKeySystemAccess"></a> method then uses
+        <p class="exampledescription">This example selects a supported [=Key System=] using the {{Navigator/requestMediaKeySystemAccess()}} method then uses
         the [=Initialization Data=] from the [=HTMLMediaElement/media data=] to generate the license request and send it to the appropriate license server.
         One of the supported key systems uses a serverCertificate, which is provided proactively.
         </p>
