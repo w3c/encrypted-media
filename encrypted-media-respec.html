@@ -1465,7 +1465,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>
             Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of {{MediaKeysRequirement/"required"}}.
             The session MUST be loadable via its [=Session ID=] once <a def-id="update"></a> is called successfully.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-release"></a> containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
+            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
           </p>
           <p>
             The application is responsible for ensuring that data persisted for such sessions is removed when the application no longer needs it.
@@ -1814,7 +1814,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>Event handler for the <a def-id="message"></a> event.</p>
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest</code></dfn></dt><dd>
           <p>Generates a license request based on the <var>initData</var>.
-            A <a def-id="message"></a> of type <a def-id="message-type-license-request"></a> or <a def-id="message-type-individualization-request"></a> will always be queued if the algorithm succeeds and the promise is resolved.
+            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
 
 
@@ -1883,7 +1883,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             </li>
                             <li>
                               <p>
-                                Let <var>message type</var> be <a def-id="message-type-license-request"></a>.
+                                Let <var>message type</var> be {{MediaKeyMessageType/"license-request"}}.
                               </p>
                             </li>
                           </ol>
@@ -1903,7 +1903,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             </li>
                             <li>
                               <p>
-                                Let <var>message type</var> reflect the type of <var>message</var>, either <a def-id="message-type-license-request"></a> or <a def-id="message-type-individualization-request"></a>.
+                                Let <var>message type</var> reflect the type of <var>message</var>, either {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}}.
                               </p>
                             </li>
                           </ol>
@@ -2244,7 +2244,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     </li>
                     <li><p>Run the [=Update Expiration=] algorithm on the <var>session</var>, providing <code>NaN</code>.</p></li>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Let <var>message type</var> be <a def-id="message-type-license-release"></a>.</p></li>
+                    <li><p>Let <var>message type</var> be {{MediaKeyMessageType/"license-release"}}.</p></li>
                     <li><p>If <var>message</var> is not <code>null</code>, run the [=Queue a "message" Event=] algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p></li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
@@ -2363,14 +2363,16 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
         <p>The MediaKeyMessageEvent object is used for the <a def-id="message"></a> event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[DOM]].</p>
 
-        <pre class="idl">enum MediaKeyMessageType {
-    "license-request",
-    "license-renewal",
-    "license-release",
-    "individualization-request"
-};</pre>
+        <pre class="idl">
+          enum MediaKeyMessageType {
+            "license-request",
+            "license-renewal",
+            "license-release",
+            "individualization-request"
+          };
+        </pre>
 <p>The <dfn>MediaKeyMessageType</dfn> is defined as follows:</p>
-  <table class="simple" data-dfn-for="MediaKeyMessageType" data-link-for="MediaKeyMessageType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-request">license-request</code></dfn></td><td>The message contains a request for a new license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-renewal">license-renewal</code></dfn></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.license-release">license-release</code></dfn></td><td>The message contains a [=record of license destruction=].</td></tr><tr><td><dfn><code id="idl-def-MediaKeyMessageType.individualization-request">individualization-request</code></dfn></td><td>
+  <table class="simple" data-dfn-for="MediaKeyMessageType" data-link-for="MediaKeyMessageType"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code>license-request</code></dfn></td><td>The message contains a request for a new license.</td></tr><tr><td><dfn><code>license-renewal</code></dfn></td><td>The message contains a request to renew an existing license.</td></tr><tr><td><dfn><code>license-release</code></dfn></td><td>The message contains a [=record of license destruction=].</td></tr><tr><td><dfn><code>individualization-request</code></dfn></td><td>
             The message contains a request for <a href="#app-assisted-individualization">App-Assisted Individualization</a> (or re-individualization).<br>
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and MUST NOT be [=Distinctive Permanent Identifier(s)=].
           </td></tr></tbody></table>
@@ -3551,7 +3553,7 @@ interface MediaEncryptedEvent : Event {
           <p>For such individualization, all message exchanges:</p>
           <ul>
             <li><p>MUST be passed to or through the application via the APIs defined in this specification.</p></li>
-            <li><p>SHALL use the message type <a def-id="message-type-individualization-request"></a> for all related <a def-id="message"></a> events.</p></li>
+            <li><p>SHALL use the message type MediaKeyMessageType/"individualization-request"}} for all related <a def-id="message"></a> events.</p></li>
             <li><p>MUST NOT be performed by the user agent.</p></li>
             <li><p>MUST NOT be performed directly by the CDM.</p></li>
             <li><p>MUST NOT contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.</p></li>
@@ -4600,7 +4602,7 @@ interface MediaEncryptedEvent : Event {
 
   function sendMessage(type, message, keySession) {
     var url = licenseUrl;
-    if (type == <a def-id="message-type-license-renewal"></a>)
+    if (type == "license-renewal")
       url = renewalUrl;
     xmlhttp = new XMLHttpRequest();
     xmlhttp.keySession = keySession;
