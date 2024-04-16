@@ -2748,7 +2748,7 @@ interface MediaKeyMessageEvent : Event {
           <p class="note">The above step provides flexibility for user agent implementations to perform decryption at any time after an encrypted block is encountered before it is needed for playback.</p>
         </li>
         <li>
-          <p>When one of the following occurs while the <var>decryption blocked waiting for key</var> value is <code>true</code>, the user agent SHALL run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+          <p>When one of the following occurs while the <var>decryption blocked waiting for key</var> value is <code>true</code>, the user agent SHALL run the [=Wait for Key=] algorithm.</p>
           <ul>
             <li><p>The user agent cannot advance the <a def-id="current-playback-position"></a> in the <a def-id="direction-of-playback"></a>.</p></li>
             <li>
@@ -2921,7 +2921,7 @@ interface MediaEncryptedEvent : Event {
                 Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
               </p>
               <ol>
-                <li><p>Run the <a def-id="wait-for-key-algorithm"></a> algorithm on the <var>media element</var>.</p></li>
+                <li><p>Run the [=Wait for Key=] algorithm on the <var>media element</var>.</p></li>
                 <li><p>Wait for a signal to resume playback.</p></li>
               </ol>
             </li>
@@ -3074,7 +3074,7 @@ interface MediaEncryptedEvent : Event {
               <p>Set the <var>media element</var>'s <var>decryption blocked waiting for key</var> value to <code>true</code>.</p>
               <p class="note">This step is reached when there is no key that is [=usable for decryption=] for <var>block</var>.</p>
               <div class="note">
-                <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, such as, all complete video frames), it will run the <a def-id="wait-for-key-algorithm"></a> algorithm.</p>
+                <p>Once the user agent has rendered the blocks preceding the block that cannot be decrypted (as much as it can, such as, all complete video frames), it will run the [=Wait for Key=] algorithm.</p>
                 <p>That algorithm is not run directly here in order to allow implementations to decrypt and decode media data ahead of the ahead of the current playback position without affecting the visible behavior.</p>
             </li>
           </ol>
@@ -3098,7 +3098,7 @@ interface MediaEncryptedEvent : Event {
         </section>
 
         <section id="wait-for-key">
-          <h4>Wait for Key</h4>
+          <h4><dfn>Wait for Key</dfn></h4>
           <p>
             The Wait for Key algorithm queues a <a def-id="waitingforkey"></a> event and updates {{HTMLMediaElement/readyState}}.
             It should only be called when the {{HTMLMediaElement}} object is [=media element/potentially playing=] and its {{HTMLMediaElement/readyState}} is equal to {{HTMLMediaElement/HAVE_FUTURE_DATA}} or greater.
