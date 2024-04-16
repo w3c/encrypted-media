@@ -984,7 +984,7 @@
               <li><p>Let <var>supported media capabilities</var> be an empty sequence of <a>MediaKeySystemMediaCapability</a> dictionaries.</p></li>
               <li><p>For each <var>requested media capability</var> in <var>requested media capabilities</var>:</p>
                 <ol>
-                  <li><p>Let <var>content type</var> be <var>requested media capability</var>'s <a def-id="capability-contentType"></a> member.</p></li>
+                  <li><p>Let <var>content type</var> be <var>requested media capability</var>'s {{MediaKeySystemMediaCapability/contentType}} member.</p></li>
                   <li><p>Let <var>encryption scheme</var> be <var>requested media capability</var>’s <a def-id="capability-encryptionScheme"></a> member.</p></li>
                   <li><p>Let <var>robustness</var> be <var>requested media capability</var>'s <a def-id="capability-robustness"></a> member.</p></li>
                   <li><p>If <var>content type</var> is the empty string, return <code>null</code>.</p></li><!-- Invalid input. -->
@@ -1261,11 +1261,13 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
 
       <section>
         <h3><dfn>MediaKeySystemMediaCapability</dfn> dictionary</h3>
-          <pre class="idl">dictionary MediaKeySystemMediaCapability {
-             DOMString contentType = "";
-             DOMString? encryptionScheme = null;
-             DOMString robustness = "";
-          };</pre>
+          <pre class="idl">
+            dictionary MediaKeySystemMediaCapability {
+              DOMString contentType = "";
+              DOMString? encryptionScheme = null;
+              DOMString robustness = "";
+            };
+          </pre>
         <section>
           <h2>Dictionary <a class="idlType">MediaKeySystemMediaCapability</a> Members</h2>
           <dl class="dictionary-members" data-dfn-for="MediaKeySystemMediaCapability" data-link-for="MediaKeySystemMediaCapability">
@@ -1345,7 +1347,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </dl>
         </section>
 
-        <p>In order for the capability represented by this object to be considered supported, <a def-id="capability-contentType"></a> MUST NOT be the empty string and its entire value, including all codecs, MUST be supported with <a def-id="capability-robustness"></a>.</p>
+        <p>In order for the capability represented by this object to be considered supported, {{MediaKeySystemMediaCapability/contentType}} MUST NOT be the empty string and its entire value, including all codecs, MUST be supported with <a def-id="capability-robustness"></a>.</p>
         <p class="note">If any of a set of codecs is acceptable, use a separate instances of this dictionary for each codec.</p>
       </section>
     </section>
@@ -4338,7 +4340,7 @@ interface MediaEncryptedEvent : Event {
     if (!video.<a def-id="mediaKeys-attribute"></a>) {
       navigator.<a def-id="requestMediaKeySystemAccess-call"></a>('org.w3.clearkey', [
         { <a def-id="option-initDataTypes"></a>: ['webm'],
-          <a def-id="option-videoCapabilities"></a>: [{ <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp8"' }] }
+          <a def-id="option-videoCapabilities"></a>: [{ contentType: 'video/webm; codecs="vp8"' }] }
       ]).then(
         function(keySystemAccess) {
           var promise =  keySystemAccess.<a def-id="createMediaKeys-call"></a>();
@@ -4400,27 +4402,27 @@ interface MediaEncryptedEvent : Event {
     someSystemOptions = [
      { <a def-id="option-initDataTypes"></a>: ['keyids', 'webm'],
        <a def-id="option-audioCapabilities"></a>: [
-         { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="opus"' },
-         { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="vorbis"' }
+         { contentType: 'audio/webm; codecs="opus"' },
+         { contentType: 'audio/webm; codecs="vorbis"' }
        ],
        <a def-id="option-videoCapabilities"></a>: [
-         { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp9"' },
-         { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp8"' }
+         { contentType: 'video/webm; codecs="vp9"' },
+         { contentType: 'video/webm; codecs="vp8"' }
        ]
      }
     ];
     clearKeyOptions = [
      { <a def-id="option-initDataTypes"></a>: ['keyids', 'webm'],
        <a def-id="option-audioCapabilities"></a>: [
-         { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="opus"' },
-         { <a def-id="capability-contentType"></a>: 'audio/webm; codecs="vorbis"' }
+         { contentType: 'audio/webm; codecs="opus"' },
+         { contentType: 'audio/webm; codecs="vorbis"' }
        ],
        <a def-id="option-videoCapabilities"></a>: [
-         { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp9"',
+         { contentType: 'video/webm; codecs="vp9"',
            <a def-id="capability-robustness"></a>: 'foo' },
-         { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp9"',
+         { contentType: 'video/webm; codecs="vp9"',
            <a def-id="capability-robustness"></a>: 'bar' },
-         { <a def-id="capability-contentType"></a>: 'video/webm; codecs="vp8"',
+         { contentType: 'video/webm; codecs="vp8"',
            <a def-id="capability-robustness"></a>: 'bar' },
        ]
      }
@@ -4444,8 +4446,8 @@ interface MediaEncryptedEvent : Event {
         navigator.<a def-id="requestMediaKeySystemAccess-call"></a>('org.w3.clearkey', clearKeyOptions).then(
           function(keySystemAccess) {
             // Not shown:
-            // 1. Use keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0].<a def-id="capability-contentType"></a>
-            //    and keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-videoCapabilities"></a>[0].<a def-id="capability-contentType"></a>
+            // 1. Use keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-audioCapabilities"></a>[0].contentType
+            //    and keySystemAccess.<a def-id="getConfiguration"></a>.<a def-id="option-videoCapabilities"></a>[0].contentType
             //    to retrieve appropriate stream(s).
             // 2. Set video.src.
 
