@@ -1661,7 +1661,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>The following step is run:</p>
           <ol>
             <li>
-              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not [=closed=], [=queue a task=] to run the <a def-id="session-closed-algorithm"></a> algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
+              <p>For each <a>MediaKeySession</a> created by the <var>media keys</var> that is not [=closed=], [=queue a task=] to run the [=Session Closed=] algorithm on the session with reason <a def-id="reason-internal-error"></a>.</p>
             </li>
           </ol>
         </section>
@@ -1779,7 +1779,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>The [=expiration time=] for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
           <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
         </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{MediaKeySessionClosedReason}}&gt;</span>, readonly       </dt><dd>
-          <p>Signals when the object becomes [=closed=] as a result of the <a def-id="session-closed-algorithm"></a> algorithm being run.
+          <p>Signals when the object becomes [=closed=] as a result of the [=Session Closed=] algorithm being run.
           This promise can only be fulfilled and is never rejected.</p>
         </dd><dt><dfn><code>keyStatuses</code></dfn> of type <span class="idlAttrType"><a>MediaKeyStatusMap</a></span>, readonly       </dt><dd>
           <p>A reference to a read-only map of [=key IDs=] <a href="#known-key">known</a> to the session to the current status of the associated key.
@@ -2089,7 +2089,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                       <dl class="switch">
                         <dt>If <var>session closed</var> is true:</dt>
                         <dd>
-                          <p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-release-acknowledged"></a>.</p>
+                          <p>Run the [=Session Closed=] algorithm on this object with reason <a def-id="reason-release-acknowledged"></a>.</p>
                         </dd>
                         <dt>Otherwise:</dt>
                         <dd>
@@ -2150,7 +2150,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                 <li>
                   <p>[=Queue a task=] to run the following steps:</p>
                   <ol>
-                    <li><p>Run the <a def-id="session-closed-algorithm"></a> algorithm on this object with reason <a def-id="reason-closed-by-application"></a>.</p></li>
+                    <li><p>Run the [=Session Closed=] algorithm on this object with reason <a def-id="reason-closed-by-application"></a>.</p></li>
                     <li>
                       <p>Resolve <var>promise</var>.</p>
                       <p class="note">Since promise handlers are queued as microtasks, these will be executed ahead of any events queued by the preceding steps.</p>
@@ -2494,7 +2494,7 @@ interface MediaKeyMessageEvent : Event {
         </section>
 
         <section id="session-closed">
-          <h4>Session Closed</h4>
+          <h4><dfn>Session Closed</dfn></h4>
           <p>
             The Session Closed algorithm updates the <a>MediaKeySession</a> state after a <a href="#key-session">key session</a> has been closed by the [=CDM=].
             Requests to run this algorithm include a target <a>MediaKeySession</a> object and a <a>MediaKeySessionClosedReason</a>.
@@ -2602,7 +2602,7 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li>
               <p>
-                If <var>cdm</var> has closed <var>session</var>, [=queue a task=] to run the <a def-id="session-closed-algorithm"></a> algorithm on <var>session</var> with an appropriate <a>MediaKeySessionClosedReason</a> value.
+                If <var>cdm</var> has closed <var>session</var>, [=queue a task=] to run the [=Session Closed=] algorithm on <var>session</var> with an appropriate <a>MediaKeySessionClosedReason</a> value.
               </p>
             </li>
             <li>
