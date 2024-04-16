@@ -1495,7 +1495,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>If the implementation does not support <a>MediaKeySession</a> operations in the current state, [=exception/throw=]
  [[WEBIDL]] an {{InvalidStateError}}.</p>
-              <p class="note">Some implementations are unable to execute <a>MediaKeySession</a> algorithms until this <a>MediaKeys</a> object is associated with a media element using <a def-id="setMediaKeys"></a>.
+              <p class="note">Some implementations are unable to execute <a>MediaKeySession</a> algorithms until this <a>MediaKeys</a> object is associated with a media element using {{HTMLMediaElement/setMediaKeys()}}.
               This step enables applications to detect this uncommon behavior before attempting to perform such operations.
               </p>
             </li>
@@ -2780,19 +2780,21 @@ interface MediaKeyMessageEvent : Event {
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[WEBIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <pre class="idl">[Exposed=Window] partial interface HTMLMediaElement {
-    [SecureContext] readonly        attribute MediaKeys?   mediaKeys;
-                                    attribute EventHandler onencrypted;
-                                    attribute EventHandler onwaitingforkey;
-    [SecureContext] Promise&lt;undefined&gt; setMediaKeys (MediaKeys? mediaKeys);
-};
-</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --></span>, readonly       , nullable</dt><dd>
+      <pre class="idl">
+        [Exposed=Window] partial interface HTMLMediaElement {
+          [SecureContext] readonly        attribute MediaKeys?   mediaKeys;
+                                          attribute EventHandler onencrypted;
+                                          attribute EventHandler onwaitingforkey;
+          [SecureContext] Promise&lt;undefined&gt; setMediaKeys (MediaKeys? mediaKeys);
+        };
+      </pre>
+      <section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --></span>, readonly       , nullable</dt><dd>
           <p>The <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> being used when decrypting encrypted [=HTMLMediaElement/media data=] for this media element.</p>
         </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the <a def-id="encrypted"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the <a def-id="waitingforkey"></a> event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys</code></dfn></dt><dd>
+        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys()</code></dfn></dt><dd>
           <p>Provides the <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> to use when decrypting media data during playback.</p>
 
           <p class="note">Support for clearing or replacing the associated <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
@@ -2932,8 +2934,8 @@ interface MediaEncryptedEvent : Event {
             <li><p>Let the <var>media element</var> be the specified {{HTMLMediaElement}} object.</p></li>
             <li>
               <p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted [=HTMLMediaElement/media data=], run the following steps:</p>
-              <p class="note">These steps may be reached when the application provides [=HTMLMediaElement/media data=] before calling <a def-id="setMediaKeys"></a> to provide a <a>MediaKeys</a> object.
-                Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to <a def-id="setMediaKeys"></a>.
+              <p class="note">These steps may be reached when the application provides [=HTMLMediaElement/media data=] before calling {{HTMLMediaElement/setMediaKeys()}} to provide a <a>MediaKeys</a> object.
+                Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to {{HTMLMediaElement/setMediaKeys()}}.
               </p>
               <ol>
                 <li><p>Run the [=Wait for Key=] algorithm on the <var>media element</var>.</p></li>
@@ -3672,7 +3674,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li><p>The {{MediaKeySessionType/"persistent-license"}} <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
-            <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one {{HTMLMediaElement}}.</p></li>
+            <li><p>The {{HTMLMediaElement/setMediaKeys()}} method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one {{HTMLMediaElement}}.</p></li>
           </ul>
         </section>
 
@@ -4345,7 +4347,7 @@ interface MediaEncryptedEvent : Event {
           );
           promise.then(
             function(createdMediaKeys) {
-              return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+              return video.setMediaKeys(createdMediaKeys);
             }
           ).catch(
             console.error.bind(console, 'Unable to set MediaKeys')
@@ -4475,7 +4477,7 @@ interface MediaEncryptedEvent : Event {
           }
           video.pendingSessionData = [];
 
-          return video.<a def-id="setMediaKeys-call"></a>(createdMediaKeys);
+          return video.setMediaKeys(createdMediaKeys);
         }
       ).catch(
         console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
@@ -4550,7 +4552,7 @@ interface MediaEncryptedEvent : Event {
       video.src = 'foo.webm';
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+      return video.setMediaKeys(mediaKeys);
     }
   ).catch(
     console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
@@ -4645,7 +4647,7 @@ interface MediaEncryptedEvent : Event {
       video.src = 'foo.webm';
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+      return video.setMediaKeys(mediaKeys);
     }
   ).catch(
     console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
@@ -4749,7 +4751,7 @@ interface MediaEncryptedEvent : Event {
       var video = document.getElementById("v");
       if (serverCertificate)
         mediaKeys.<a def-id="setServerCertificate-call"></a>(serverCertificate);
-      return video.<a def-id="setMediaKeys-call"></a>(mediaKeys);
+      return video.setMediaKeys(mediaKeys);
     }
   ).catch(
     console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
