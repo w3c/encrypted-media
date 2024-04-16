@@ -833,7 +833,7 @@
                   </dd>
                   <dt>Otherwise</dt>
                   <dd>
-                    <p>Let <var>session types</var> be <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+                    <p>Let <var>session types</var> be <code>[ {{MediaKeySessionType/"temporary"}} ]</code>.</p>
                   </dd>
                 </dl>
               </li>
@@ -1241,12 +1241,12 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             Whether the ability to persist state is required. This includes session data and any other type of state.
             <p>The CDM MUST NOT persist any state related to the application or [=origin=] of this object's [=document=] when this member is {{MediaKeysRequirement/"not-allowed"}}</a>.</p>
             <p class="note">For the purposes of this member, persistent state does not include persistent unique identifiers ([=Distinctive Identifiers=]) controlled by the [=Key System=] implementation. <a def-id="option-distinctiveIdentifier"></a> independently reflects this requirement.</p>
-            <p>Only <a def-id="temporary-session"></a> sessions may be created when persistent state is not supported.</p>
-            <p class="note">For <a def-id="temporary-session"></a> sessions, the need and ability to store state is [=Key System=] implementation-specific and may vary by feature used.</p>
-            <p class="note">Applications intending to create non-<a def-id="temporary-session"></a> sessions, should set this member to {{MediaKeysRequirement/"required"}} when calling {{Navigator/requestMediaKeySystemAccess()}}.</p>
+            <p>Only {{MediaKeySessionType/"temporary"}} sessions may be created when persistent state is not supported.</p>
+            <p class="note">For {{MediaKeySessionType/"temporary"}} sessions, the need and ability to store state is [=Key System=] implementation-specific and may vary by feature used.</p>
+            <p class="note">Applications intending to create non-{{MediaKeySessionType/"temporary"}} sessions, should set this member to {{MediaKeysRequirement/"required"}} when calling {{Navigator/requestMediaKeySystemAccess()}}.</p>
           </dd><dt><dfn><code>sessionTypes</code></dfn> of type <span class="idlMemberType">sequence&lt;{{DOMString}}&gt;</span></dt><dd>
             A list of <a>MediaKeySessionType</a>s that must be supported. All values must be supported.
-            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[WEBIDL]] when the dictionary is passed to {{Navigator/requestMediaKeySystemAccess()}}, the dictionary will be treated as if this member is set to <code>[ <a def-id="temporary-session"></a> ]</code>.</p>
+            <p>If this member is <a def-id="not-present-dictionary-member"></a> [[WEBIDL]] when the dictionary is passed to {{Navigator/requestMediaKeySystemAccess()}}, the dictionary will be treated as if this member is set to <code>[ {{MediaKeySessionType/"temporary"}} ]</code>.</p>
           </dd></dl>
 
         <p>Implementations SHOULD NOT add members to this dictionary.
@@ -1437,14 +1437,16 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[WEBIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
 
-      <pre class="idl">enum MediaKeySessionType {
-    "temporary",
-    "persistent-license"
-};</pre>
+      <pre class="idl">
+        enum MediaKeySessionType {
+          "temporary",
+          "persistent-license"
+        };
+      </pre>
    <p>The <dfn>MediaKeySessionType</dfn> enumeration is defined as follows:</p>
       <table class="simple" data-dfn-for="MediaKeySessionType" data-link-for="MediaKeySessionType"><tbody>
         <tr><th colspan="2">Enumeration description</th></tr>
-        <tr><td><dfn><code id="idl-def-MediaKeySessionType.temporary">temporary</code></dfn></td><td>
+        <tr><td><dfn><code>temporary</code></dfn></td><td>
           <p>
             A session for which the license, key(s) and record of or data related to the session are not persisted.
           </p>
@@ -1453,7 +1455,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             Support for this session type is REQUIRED.
           </p>
         </td></tr>
-        <tr><td><dfn><code id="idl-def-MediaKeySessionType.persistent-license">persistent-license</code></dfn></td><td>
+        <tr><td><dfn><code>persistent-license</code></dfn></td><td>
           <p>
             A session for which the license (and potentially other data related to the session) will be persisted.
             A [=record of license destruction=] SHALL be persisted when the license and key(s) it contains are destroyed.
@@ -1652,9 +1654,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             <li><p>Let the <var>session type</var> be the specified <a>MediaKeySessionType</a> value.</p></li>
             <li><p>Follow the steps for the value of <var>session type</var> from the following list:</p>
               <dl class="switch">
-                <dt><a def-id="temporary-session"></a></dt>
+                <dt>{{MediaKeySessionType/"temporary"}}</dt>
                 <dd>Return <code>false</code>.</dd>
-                <dt><a def-id="persistent-license-session"></a></dt>
+                <dt>{{MediaKeySessionType/"persistent-license"}}</dt>
                 <dd>Return <code>true</code>.</dd>
               </dl>
             </li>
@@ -1848,12 +1850,12 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     <li><p>If the <var>sanitized init data</var> is not supported by the <var>cdm</var>, reject <var>promise</var> with a {{NotSupportedError}}.</p></li>
                     <li><p>Follow the steps for the value of <var>session type</var> from the following list:</p>
                       <dl class="switch">
-                        <dt><a def-id="temporary-session"></a></dt>
+                        <dt>{{MediaKeySessionType/"temporary"}}</dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a temporary non-persistable license.</p>
                           <p class="note">The returned license must not be persistable or require persisting information related to it.</p>
                         </dd>
-                        <dt><a def-id="persistent-license-session"></a></dt>
+                        <dt>{{MediaKeySessionType/"persistent-license"}}</dt>
                         <dd>
                           <p>Let <var>requested license type</var> be a persistable license.</p>
                         </dd>
@@ -2044,9 +2046,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                           <p class="note">This includes an initial license, an updated license, and a license renewal message.</p>
                           <p>Process <var>sanitized response</var>, following the stipulation for the first matching condition from the following list:</p>
                           <dl class="switch">
-                            <dt>If <var>sessionType</var> is <a def-id="temporary-session"></a> and <var>sanitized response</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
+                            <dt>If <var>sessionType</var> is {{MediaKeySessionType/"temporary"}} and <var>sanitized response</var> does not specify that session data, including any license, key(s), or similar session data it contains, should be stored</dt>
                             <dd>Process <var>sanitized response</var>, not storing any session data.</dd>
-                            <dt>If <var>sessionType</var> is <a def-id="persistent-license-session"></a> and <var>sanitized response</var> contains a persistable license</dt>
+                            <dt>If <var>sessionType</var> is {{MediaKeySessionType/"persistent-license"}} and <var>sanitized response</var> contains a persistable license</dt>
                             <dd>Process <var>sanitized response</var>, storing the license/key(s) and related session data contained in <var>sanitized response</var>.
                               Such data MUST be stored such that only the [=origin=] of this object's [=document=] can access it.
                             </dd>
@@ -2061,7 +2063,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             This enables a reasonable number of key rotation algorithms to be implemented across user agents and may reduce the likelihood of playback interruptions in use cases that involve various streams in the same element (e.g., adaptive streams, various audio and video tracks) using different keys.
                           </p>
                         </dd>
-                        <dt>If <var>sanitized response</var> contains a [=record of license destruction=] acknowledgement and <var>sessionType</var> is <a def-id="persistent-license-session"></a></dt>
+                        <dt>If <var>sanitized response</var> contains a [=record of license destruction=] acknowledgement and <var>sessionType</var> is {{MediaKeySessionType/"persistent-license"}}</dt>
                         <dd>
                           <p>Run the following steps:</p>
                           <ol>
@@ -2202,11 +2204,11 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                         </li>
                         <li><p>Follow the steps for the value of this object's <var>session type</var> from the following list:</p>
                           <dl class="switch">
-                            <dt><a def-id="temporary-session"></a></dt>
+                            <dt>{{MediaKeySessionType/"temporary"}}</dt>
                             <dd>
                               <p>Continue with the following steps.</p>
                             </dd>
-                            <dt><a def-id="persistent-license-session"></a></dt>
+                            <dt>{{MediaKeySessionType/"persistent-license"}}</dt>
                             <dd>
                               <ol>
                                 <li>
@@ -2641,7 +2643,7 @@ interface MediaKeyMessageEvent : Event {
                 The parameter is empty.<br>
                 Invalid initialization data.<br>
                 Invalid response format.<br>
-                A persistent license was provided for a <a def-id="temporary-session"></a> session.
+                A persistent license was provided for a {{MediaKeySessionType/"temporary"}} session.
               </td>
             </tr>
             <tr>
@@ -3405,7 +3407,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>Implementations SHOULD only <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> when necessary to enforce the policies related to the specific CDM instance and session.</p>
-              <p class="note">For example, <a def-id="temporary-session"></a> and <a def-id="persistent-license-session"></a> sessions may have different requirements.</p>
+              <p class="note">For example, {{MediaKeySessionType/"temporary"}} and {{MediaKeySessionType/"persistent-license"}} sessions may have different requirements.</p>
             </li>
             <li>
               <p>
@@ -3661,10 +3663,10 @@ interface MediaEncryptedEvent : Event {
                 <li><p><a def-id="capability-encryptionScheme"></a>: Implementations MUST support the <a def-id="scheme-cenc"></a> scheme, and MAY support other schemes.</p></li>
                 <li><p><a def-id="capability-robustness"></a>: Only the empty string is supported.</p></li>
                 <li><p><a def-id="option-distinctiveIdentifier"></a>: {{MediaKeysRequirement/"required"}} is not supported.</p></li>
-                <li><p><a def-id="option-persistentState"></a>: Not {{MediaKeysRequirement/"required"}} unless the application intends to create non-<a def-id="temporary-session"></a> sessions, if supported.</p></li>
+                <li><p><a def-id="option-persistentState"></a>: Not {{MediaKeysRequirement/"required"}} unless the application intends to create non-{{MediaKeySessionType/"temporary"}} sessions, if supported.</p></li>
               </ol>
             </li>
-            <li><p>The <a def-id="persistent-license-session"></a> <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
+            <li><p>The {{MediaKeySessionType/"persistent-license"}} <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
             <li><p>The <a def-id="setServerCertificate"></a> method: Not supported.</p></li>
             <li><p>The <a def-id="setMediaKeys"></a> method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one {{HTMLMediaElement}}.</p></li>
           </ul>
@@ -3701,7 +3703,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>
-                For sessions of type <a def-id="persistent-license-session"></a>, in the <a def-id="remove"></a> algorithm, the <var>message</var> reflecting
+                For sessions of type {{MediaKeySessionType/"persistent-license"}}, in the <a def-id="remove"></a> algorithm, the <var>message</var> reflecting
                 the <var>record of license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
               </p>
             </li>
@@ -3745,7 +3747,7 @@ interface MediaEncryptedEvent : Event {
      "LwVHf8JLtPrv2GUXFW2v_A",
      "0DdtU9od-Bh5L3xbv0Xf_A"
     ],
-  "type":<a def-id="temporary-session"></a>
+  "type":"temporary"
 }
 </pre>
           </section>
@@ -3768,7 +3770,7 @@ interface MediaEncryptedEvent : Event {
           </dl>
 
           <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a>MediaKeySessionType</a> values.
-            If not specified, the default value of <a def-id="temporary-session"></a> is used.
+            If not specified, the default value of {{MediaKeySessionType/"temporary"}} is used.
             The <a def-id="update"></a> algorithm compares this value to the <var>sessionType</var>.
           </p>
 
@@ -3786,7 +3788,7 @@ interface MediaEncryptedEvent : Event {
       "k": "tQ0bJVWb6b0KPL6KtZIy_A",
       "kid": "LwVHf8JLtPrv2GUXFW2v_A"
     }],
-  "type": <a def-id="temporary-session"></a>
+  "type": {{MediaKeySessionType/"temporary"}}
 }</pre>
           </section>
         </section>
@@ -3796,7 +3798,7 @@ interface MediaEncryptedEvent : Event {
           <h4>License Release Format</h4>
           <p>This section describes the format of the license release message to be provided via the <a def-id="message-event-message-attribute"></a> attribute of the <a def-id="message"></a> event.</p>
           <p>
-            The format is a JSON object. For sessions of type <a def-id="persistent-license-session"></a>, the object shall contain the following member:
+            The format is a JSON object. For sessions of type {{MediaKeySessionType/"persistent-license"}}, the object shall contain the following member:
           </p>
           <dl>
             <dt>"kids"</dt>
@@ -3809,7 +3811,7 @@ interface MediaEncryptedEvent : Event {
           <section id="clear-key-release-format-example-1" class="informative">
             <h5>Example message reflecting a [=record of license destruction=]</h5>
             <p>
-              The following example is a license release for a <a def-id="persistent-license-session"></a> session that contained two keys.
+              The following example is a license release for a {{MediaKeySessionType/"persistent-license"}} session that contained two keys.
               (Line breaks are for readability only.)
             </p>
             <pre class="example highlight">{
@@ -4667,7 +4669,7 @@ interface MediaEncryptedEvent : Event {
 
   // Called if the application does not have a stored sessionId for the media resource.
   function makeNewRequest(mediaKeys, initDataType, initData) {
-    var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
+    var keySession = mediaKeys.<a def-id="createSession-call"></a>("persistent-license");
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
@@ -4685,7 +4687,7 @@ interface MediaEncryptedEvent : Event {
 
   // Called if the application has a stored sessionId for the media resource.
   function loadStoredSession(mediaKeys, sessionId) {
-    var keySession = mediaKeys.<a def-id="createSession-call"></a>(<a def-id="persistent-license-session"></a>);
+    var keySession = mediaKeys.<a def-id="createSession-call"></a>("persistent-license");
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
