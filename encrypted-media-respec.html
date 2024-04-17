@@ -1467,7 +1467,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>
             Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of {{MediaKeysRequirement/"required"}}.
             The session MUST be loadable via its [=Session ID=] once {{MediaKeySession/update()}} is called successfully.
-            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
+            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when {{MediaKeySession/remove()}} is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
           </p>
           <p>
             The application is responsible for ensuring that data persisted for such sessions is removed when the application no longer needs it.
@@ -2170,7 +2170,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>remove</code></dfn></dt><dd>
+        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>remove()</code></dfn></dt><dd>
           <p>
             Removes all license(s) and key(s) associated with the session.
             For <a href="#is-persistent-session-type">persistent session types</a>, other session data will be cleared as defined for each session type once a release message acknowledgment is processed by {{MediaKeySession/update()}}.
@@ -2699,7 +2699,7 @@ interface MediaKeyMessageEvent : Event {
           A session MAY only be loaded again if all objects that have ever represented it are [=closed=].
         </p>
         <p>An application that creates a session using a type for which the [=is persistent session type?=] algorithm returns <code>true</code> SHOULD
-          later remove the stored data by first initiating the removal process using <a def-id="remove"></a> and then ensuring that the removal process, which may involve
+          later remove the stored data by first initiating the removal process using {{MediaKeySession/remove()}} and then ensuring that the removal process, which may involve
           message exchange(s), successfully completes. The CDM MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
         </p>
         <p>See <a href="#security"></a> and <a href="#privacy"></a> for additional considerations when supporting persistent storage.</p>
@@ -3707,14 +3707,14 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>
-                For sessions of type {{MediaKeySessionType/"persistent-license"}}, in the <a def-id="remove"></a> algorithm, the <var>message</var> reflecting
+                For sessions of type {{MediaKeySessionType/"persistent-license"}}, in the {{MediaKeySession/remove()}} algorithm, the <var>message</var> reflecting
                 the <var>record of license destruction</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-release-format">License Release Format</a>.
               </p>
             </li>
             <li>
               <p>
                 The {{MediaKeySession/keyStatuses}} attribute method initially contains all key IDs that have been provided via {{MediaKeySession/update()}}, with status {{MediaKeyStatus/"usable"}}.
-                When the <a def-id="remove"></a> algorithm is executed, the {{MediaKeySession/keyStatuses}} attribute will be set to an empty list.
+                When the {{MediaKeySession/remove()}} algorithm is executed, the {{MediaKeySession/keyStatuses}} attribute will be set to an empty list.
               </p>
             </li>
             <li>
