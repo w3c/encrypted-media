@@ -1503,7 +1503,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>Let <var>session</var> be a new <a>MediaKeySession</a> object, and initialize it as follows:</p>
               <ol>
-                <li><p>Let the <a def-id="sessionId"></a> attribute be the empty string.</p></li>
+                <li><p>Let the {{MediaKeySession/sessionId}} attribute be the empty string.</p></li>
                 <li><p>Let the {{MediaKeySession/expiration}} attribute be <code>NaN</code>.</p></li>
                 <li><p>Let the {{MediaKeySession/closed}} attribute be a new promise.</p></li>
                 <li><p>Let <var>key status</var> be a new empty <a>MediaKeyStatusMap</a> object, and initialize it as follows:</p>
@@ -1919,7 +1919,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                   <ol>
                     <li><p>If any of the preceding steps failed due to a lack of resources, reject <var>promise</var> with {{QuotaExceededError}}.</p></li>
                     <li><p>If any of the preceding steps failed for any other reason, reject <var>promise</var> with <a def-id="new-domexception-named"></a> <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>session id</var>.</p></li>
+                    <li><p>Set the {{MediaKeySession/sessionId}} attribute to <var>session id</var>.</p></li>
                     <li><p>Set this object's <var>callable</var> value to true.</p></li>
                     <li><p>Run the [=Queue a "message" Event=] algorithm on the <var>session</var>, providing <var>message type</var> and <var>message</var>.</p>
                     <li>
@@ -1955,7 +1955,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                   </p>
                 </li>
                 <li><p>If the preceding step failed, or if <var>sanitized session ID</var> is empty, reject <var>promise</var> with a newly created {{TypeError}}.</p></li>
-                <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in this object's [=document=] whose <a def-id="sessionId"></a> attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
+                <li><p>If there is a <a>MediaKeySession</a> object that is not [=closed=] in this object's [=document=] whose {{MediaKeySession/sessionId}} attribute is <var>sanitized session ID</var>, reject <var>promise</var> with a {{QuotaExceededError}}.</p>
                   <p class="note">In other words, do not create a session if a non-closed session, regardless of type, already exists for this <var>sanitized session ID</var> in this browsing context.</p>
                 </li>
                 <li><p>Let <var>expiration time</var> be <code>NaN</code>.</p></li>
@@ -1986,7 +1986,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                   <p>[=Queue a task=] to run the following steps:</p>
                   <ol>
                     <li><p>If any of the preceding steps failed, reject <var>promise</var> with a <a def-id="appropriate-error-name"></a>.</p></li>
-                    <li><p>Set the <a def-id="sessionId"></a> attribute to <var>sanitized session ID</var>.</p></li>
+                    <li><p>Set the {{MediaKeySession/sessionId}} attribute to <var>sanitized session ID</var>.</p></li>
                     <li><p>Set this object's <var>callable</var> value to true.</p></li>
                     <li>
                       <p>
@@ -2068,9 +2068,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                             <li>
                               <p>
                                 Close the <a href="#key-session">key session</a> and clear <em>all</em> stored session data associated with this object,
-                                including the <a def-id="sessionId"></a> and [=record of license destruction=].
+                                including the {{MediaKeySession/sessionId}} and [=record of license destruction=].
                               </p>
-                              <p class="note">A subsequent call to {{MediaKeySession/load()}} with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
+                              <p class="note">A subsequent call to {{MediaKeySession/load()}} with the value of this object's {{MediaKeySession/sessionId}} would fail because there is no data stored for that session ID.</p>
                             </li>
                             <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
@@ -3687,7 +3687,7 @@ interface MediaEncryptedEvent : Event {
                 <li><p>The "type" member value is the value of the <var>sessionType</var> parameter.</p></li>
               </ul>
             </li>
-            <li><p>The <a def-id="sessionId"></a> attribute is a numerical value representable by a 32-bit integer.</p></li>
+            <li><p>The {{MediaKeySession/sessionId}} attribute is a numerical value representable by a 32-bit integer.</p></li>
             <li><p>The {{MediaKeySession/expiration}} attribute is always <code>NaN</code>.</p></li>
             <li><p>In the {{MediaKeySession/update()}} algorithm:</p>
               <ul>
@@ -4583,7 +4583,7 @@ interface MediaEncryptedEvent : Event {
     keySession.addEventListener('<a def-id="keystatuseschange"></a>', handlekeyStatusesChange, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
-        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
+        console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).catch(
@@ -4677,12 +4677,12 @@ interface MediaEncryptedEvent : Event {
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
-        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
+        console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
     );
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).then(
       function() {
-        // Store this.<a def-id="sessionId"></a> in the application.
+        // Store this.sessionId in the application.
       }.bind(keySession)
     ).catch(
       console.error.bind(console, 'Unable to request a persistent license')
@@ -4695,7 +4695,7 @@ interface MediaEncryptedEvent : Event {
     keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
-        console.log('Session', this.<a def-id="sessionId"></a>, 'closed, reason', reason);
+        console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
     );
     keySession.<a def-id="load-call"></a>(sessionId).then(
@@ -4722,8 +4722,8 @@ interface MediaEncryptedEvent : Event {
   function removeStoredSession(keySession) {
     keySession.<a def-id="remove-call"></a>().then(
       function() {
-        console.log('Session ' + this.<a def-id="sessionId"></a> + ' removed');
-        // The application should remove its record of this.<a def-id="sessionId"></a>.
+        console.log('Session ' + this.sessionId + ' removed');
+        // The application should remove its record of this.sessionId.
       }.bind(keySession)
     ).catch(
       console.error.bind(console, 'Failed to remove the session')
