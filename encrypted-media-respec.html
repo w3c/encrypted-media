@@ -178,7 +178,7 @@
           <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within [=HTMLMediaElement/media data=].
           Each such key is uniquely identified by a [=key ID=].
           A key is associated with the <a href="#key-session">session</a> used to provide it to the [=CDM=]. (The same key may be present in multiple sessions.)
-          Such keys MUST only be provided to the CDM via an <a def-id="update"></a> call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
+          Such keys MUST only be provided to the CDM via an {{MediaKeySession/update()}} call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
           </p>
 
           <p class="note">Authors SHOULD encrypt each set of stream(s) that requires enforcement of a meaningfully different policy with a distinct key (and key ID).
@@ -214,7 +214,7 @@
             Keys only become unknown when they are explicitly removed from a session and any license release message is acknowledged.
           </p>
 
-          <p class="note">For example, a key could become unknown if an <a def-id="update"></a> call provides a new license that does not include the key and includes instructions to replace the license(s) that previously contained the key.</p>
+          <p class="note">For example, a key could become unknown if an {{MediaKeySession/update()}} call provides a new license that does not include the key and includes instructions to replace the license(s) that previously contained the key.</p>
         </dd>
 
         <dt id="license">License</dt>
@@ -1466,8 +1466,8 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           </p>
           <p>
             Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of {{MediaKeysRequirement/"required"}}.
-            The session MUST be loadable via its [=Session ID=] once <a def-id="update"></a> is called successfully.
-            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to <a def-id="update"></a>.
+            The session MUST be loadable via its [=Session ID=] once {{MediaKeySession/update()}} is called successfully.
+            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when <a def-id="remove"></a> is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
           </p>
           <p>
             The application is responsible for ensuring that data persisted for such sessions is removed when the application no longer needs it.
@@ -1800,8 +1800,8 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
          </p>
           <p class="note">The map entries and their values may be updated whenever the event loop spins.
             The map MUST NOT ever be inconsistent or partially updated, but it may change between accesses if the event loop spins in between the accesses.
-            Key IDs may be added as the result of a <a def-id="load"></a> or <a def-id="update"></a> call.
-            Key IDs may be removed as the result of a <a def-id="update"></a> call that removes knowledge of existing keys (or replaces the existing set of keys with a new set).
+            Key IDs may be added as the result of a <a def-id="load"></a> or {{MediaKeySession/update()}} call.
+            Key IDs may be removed as the result of a {{MediaKeySession/update()}} call that removes knowledge of existing keys (or replaces the existing set of keys with a new set).
             Key IDs MUST NOT be removed because they became unusable, such as due to expiration. Instead, such keys MUST be given an appropriate status, such as {{MediaKeyStatus/"expired"}}.
           </p>
           <p class="note">
@@ -1899,7 +1899,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                                 for the <var>requested license type</var> can be generated based on the <var>sanitized init data</var>.
                               </p>
                               <p>
-                                In a subsequent call to <a def-id="update"></a> the CDM MUST generate a license request for the <var>requested license type</var>
+                                In a subsequent call to {{MediaKeySession/update()}} the CDM MUST generate a license request for the <var>requested license type</var>
                                 based on the <var>sanitized init data</var>, which is interpreted per <var>initDataType</var>.
                               </p>
                             </li>
@@ -2013,10 +2013,8 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           </ol>
         <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionId</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
               The [=Session ID=] of the session to load.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd><dt><dfn><code>update</code></dfn></dt><dd>
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd><dt><dfn><code>update()</code></dfn></dt><dd>
           <p>Provides messages, including licenses, to the CDM.</p>
-
-
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2177,7 +2175,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
         <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>remove</code></dfn></dt><dd>
           <p>
             Removes all license(s) and key(s) associated with the session.
-            For <a href="#is-persistent-session-type">persistent session types</a>, other session data will be cleared as defined for each session type once a release message acknowledgment is processed by <a def-id="update"></a>.
+            For <a href="#is-persistent-session-type">persistent session types</a>, other session data will be cleared as defined for each session type once a release message acknowledgment is processed by {{MediaKeySession/update()}}.
           </p>
 
           <ol class="method-algorithm">
@@ -2551,7 +2549,7 @@ interface MediaKeyMessageEvent : Event {
           <p>
             The Monitor for CDM State Changes algorithm executes steps required when various aspects of CDM state change.
           </p>
-          <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, <a def-id="update"></a> may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
+          <p class="note">This algorithm only applies to CDM state changes that are not covered by other algorithms.  For example, {{MediaKeySession/update()}} may result in messages, key status changes and/or expiration changes, but those are all handled within that algorithm.</p>
           <p class="note">The algorithm is always run in parallel to the main event loop.</p>
           <p>
             The following steps are run:
@@ -2690,11 +2688,11 @@ interface MediaKeyMessageEvent : Event {
           This includes license(s), key(s), [=record(s) of license destruction=], and the [=Session ID=].
         </p>
         <p>The remainder of this section applies to session types for which the [=is persistent session type?=] algorithm returns <code>true</code>.</p>
-        <p>The CDM SHOULD NOT store session data, including the Session ID, until <a def-id="update"></a> is called the first time.
+        <p>The CDM SHOULD NOT store session data, including the Session ID, until {{MediaKeySession/update()}} is called the first time.
           Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
         </p>
-        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in <a def-id="update"></a> when processing a [=record of license destruction=] acknowledgement.
+        <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in {{MediaKeySession/update()}} when processing a [=record of license destruction=] acknowledgement.
           See <a href="#persistent-state-requirements">Persistent Data</a>.
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
@@ -3446,7 +3444,7 @@ interface MediaEncryptedEvent : Event {
             <p>Identifiers may be exposed in the following ways:</p>
             <ul>
               <li><p>To the application via a <a def-id="message"></a> event.</p></li>
-              <li><p>In a message from a server, such as one that is passed to <a def-id="update"></a>.</p></li>
+              <li><p>In a message from a server, such as one that is passed to {{MediaKeySession/update()}}.</p></li>
               <li><p>As part of <a href="#individualization">individualization</a>.</p></li>
             </ul>
           </div>
@@ -3693,7 +3691,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li><p>The <a def-id="sessionId"></a> attribute is a numerical value representable by a 32-bit integer.</p></li>
             <li><p>The <a def-id="expiration"></a> attribute is always <code>NaN</code>.</p></li>
-            <li><p>In the <a def-id="update"></a> algorithm:</p>
+            <li><p>In the {{MediaKeySession/update()}} algorithm:</p>
               <ul>
                 <li>
                   <p>
@@ -3717,7 +3715,7 @@ interface MediaEncryptedEvent : Event {
             </li>
             <li>
               <p>
-                The {{MediaKeySession/keyStatuses}} attribute method initially contains all key IDs that have been provided via <a def-id="update"></a>, with status {{MediaKeyStatus/"usable"}}.
+                The {{MediaKeySession/keyStatuses}} attribute method initially contains all key IDs that have been provided via {{MediaKeySession/update()}}, with status {{MediaKeyStatus/"usable"}}.
                 When the <a def-id="remove"></a> algorithm is executed, the {{MediaKeySession/keyStatuses}} attribute will be set to an empty list.
               </p>
             </li>
@@ -3763,7 +3761,7 @@ interface MediaEncryptedEvent : Event {
 
         <section id="clear-key-license-format">
           <h4>License Format</h4>
-          <p>This section describes the format of the license to be provided via the <var>response</var> parameter of the <a def-id="update"></a> method.</p>
+          <p>This section describes the format of the license to be provided via the <var>response</var> parameter of the {{MediaKeySession/update()}} method.</p>
 
           <p>The format is a JSON Web Key (JWK) Set containing representation of the symmetric key to be used for decryption, as defined in the JSON Web Key (JWK) specification [[RFC7517]].</p>
 
@@ -3779,10 +3777,10 @@ interface MediaEncryptedEvent : Event {
 
           <p>The JSON object MAY have an optional "type" member value, which MUST be one of the <a>MediaKeySessionType</a> values.
             If not specified, the default value of {{MediaKeySessionType/"temporary"}} is used.
-            The <a def-id="update"></a> algorithm compares this value to the <var>sessionType</var>.
+            The {{MediaKeySession/update()}} algorithm compares this value to the <var>sessionType</var>.
           </p>
 
-          <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var>response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
+          <p>When passed to the {{MediaKeySession/update()}} method as the ArrayBuffer <var>response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
             Applications MAY encode the JSON string using the <a def-id="interface-textencoder"></a> [[ENCODING]].
           </p>
 
@@ -3831,7 +3829,7 @@ interface MediaEncryptedEvent : Event {
 
         <section id="clear-key-release-ack-format">
           <h4>License Release Acknowledgement Format</h4>
-          <p>This section describes the format of the license release acknowledgement provided via the <var>response</var> parameter of the <a def-id="update"></a> method.</p>
+          <p>This section describes the format of the license release acknowledgement provided via the <var>response</var> parameter of the {{MediaKeySession/update()}} method.</p>
 
           <p>The format is a JSON object containing the following members:</p>
           <dl>
@@ -3839,7 +3837,7 @@ interface MediaEncryptedEvent : Event {
             <dd>An array of [=key IDs=]. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
           </dl>
 
-          <p>When passed to the <a def-id="update"></a> method as the ArrayBuffer <var>response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
+          <p>When passed to the {{MediaKeySession/update()}} method as the ArrayBuffer <var>response</var> parameter, the JSON string MUST be encoded in UTF-8 as specified in the Encoding specification [[ENCODING]].
             Applications MAY encode the JSON string using the <a def-id="interface-textencoder"></a> [[ENCODING]].
           </p>
 
@@ -3871,7 +3869,7 @@ interface MediaEncryptedEvent : Event {
 
       <section id="input-data-security">
         <h3>Input Data Attacks and Vulnerabilities</h3>
-        <p>User Agent and Key System implementations MUST consider [=HTMLMediaElement/media data=], [=Initialization Data=], data passed to <a def-id="update"></a>, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
+        <p>User Agent and Key System implementations MUST consider [=HTMLMediaElement/media data=], [=Initialization Data=], data passed to {{MediaKeySession/update()}}, licenses, key data, and all other data provided by the application as untrusted content and potential attack vectors.
           They MUST use appropriate safeguards to mitigate any associated threats and take care to safely parse, decrypt, etc. such data.
           User Agents SHOULD validate data before passing it to the CDM.
         </p>
@@ -4312,7 +4310,7 @@ interface MediaEncryptedEvent : Event {
           The APIs defined in this specification are only supported on secure origins, protecting information discussed in previous sections.
           Identifiers are additionally encrypted as specified in <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
         </p>
-        <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM, including but is not limited to all data passed from <a def-id="message"></a> events and to <a def-id="update"></a>.</p>
+        <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM, including but is not limited to all data passed from <a def-id="message"></a> events and to {{MediaKeySession/update()}}.</p>
         <p>All user agents MUST properly handle Mixed Content [[MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
       </section>
 
@@ -4568,7 +4566,7 @@ interface MediaEncryptedEvent : Event {
       <section id="example-using-all-events">
         <h3>Using All Events</h3>
         <p class="exampledescription">This is a more complete example showing all events being used.</p>
-        <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the <a def-id="update"></a> call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
+        <p class="exampledescription">Note that <code>handleMessage()</code> could be called multiple times, including in response to the {{MediaKeySession/update()}} call if multiple round trips are required and for any other reason the Key System might need to send a message.</p>
 
         <pre class="example highlight">&lt;script&gt;
   var licenseUrl;
