@@ -148,7 +148,7 @@
         <dd>
           <p>A Key Session, or simply Session, provides a context for message exchange with the [=CDM=] as a result of which key(s) are made available to the CDM.
           Sessions are embodied as <a>MediaKeySession</a> objects.
-          Each Key session is associated with a single instance of [=Initialization Data=] provided in the <a def-id="generateRequest"></a> call.
+          Each Key session is associated with a single instance of [=Initialization Data=] provided in the {{MediaKeySession/generateRequest()}} call.
           </p>
           <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that <a>MediaKeys</a> object may access key(s) associated with the session.
           Other <a>MediaKeys</a> objects, CDM instances, and media elements MUST NOT access the key session or use its key(s).
@@ -250,7 +250,7 @@
           <p>
           When the user agent encounters Initialization Data in the [=HTMLMediaElement/media data=], it provides that Initialization Data to the application in the <a def-id="encrypted-event-initdata-attribute"></a> attribute of the <a def-id="encrypted"></a> event.
           The user agent MUST NOT store the Initialization Data or use its <em>content</em> at the time it is encountered.
-          The application provides Initialization Data to the CDM via <a def-id="generateRequest"></a>.
+          The application provides Initialization Data to the CDM via {{MediaKeySession/generateRequest()}}.
           The user agent MUST NOT provide Initialization Data to the CDM by other means.
           </p>
 
@@ -1814,7 +1814,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>Event handler for the <a def-id="keystatuseschange"></a> event.</p>
         </dd><dt><dfn><code>onmessage</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the <a def-id="message"></a> event.</p>
-        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest</code></dfn></dt><dd>
+        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest()</code></dfn></dt><dd>
           <p>Generates a license request based on the <var>initData</var>.
             A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
@@ -2687,7 +2687,7 @@ interface MediaKeyMessageEvent : Event {
         </p>
         <p>The remainder of this section applies to session types for which the [=is persistent session type?=] algorithm returns <code>true</code>.</p>
         <p>The CDM SHOULD NOT store session data, including the Session ID, until {{MediaKeySession/update()}} is called the first time.
-          Specifically, the CDM SHOULD NOT store session data during the <a def-id="generateRequest"></a> algorithm.
+          Specifically, the CDM SHOULD NOT store session data during the {{MediaKeySession/generateRequest()}} algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
         </p>
         <p><em>All</em> data associated with a session MUST be cleared when the session is cleared, such as in {{MediaKeySession/update()}} when processing a [=record of license destruction=] acknowledgement.
@@ -2695,7 +2695,7 @@ interface MediaKeyMessageEvent : Event {
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
         [=closed=] in any [=document=].
-          In other words, {{MediaKeySession/load()}} MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via {{MediaKeySession/load()}}.
+          In other words, {{MediaKeySession/load()}} MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via {{MediaKeySession/generateRequest()}} is still active or it has been loaded into another object via {{MediaKeySession/load()}}.
           A session MAY only be loaded again if all objects that have ever represented it are [=closed=].
         </p>
         <p>An application that creates a session using a type for which the [=is persistent session type?=] algorithm returns <code>true</code> SHOULD
@@ -3680,7 +3680,7 @@ interface MediaEncryptedEvent : Event {
           <h4>Behavior</h4>
           <p>The following describe how Clear Key implements key system-specific behaviors:</p>
           <ul>
-            <li><p>In the <a def-id="generateRequest"></a> algorithm:</p>
+            <li><p>In the {{MediaKeySession/generateRequest()}} algorithm:</p>
               <ul>
                 <li><p>The generated <var>message</var> is a JSON object encoded in UTF-8 as described in <a href="#clear-key-request-format">License Request Format</a>.</p></li>
                 <li><p>The request is generated by extracting the key IDs from the <var>sanitized init data</var>.</p></li>
@@ -3874,7 +3874,7 @@ interface MediaEncryptedEvent : Event {
         <p class="note">Such validation is especially important if the CDM does not run in the same (sandboxed) context as, for example, the DOM.</p>
 
         <p>Implementations MUST NOT return active content or passive content that affects program control flow to the application.</p>
-        <p class="note">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the [=Initialization Data=] passed to <a def-id="generateRequest"></a>.
+        <p class="note">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the [=Initialization Data=] passed to {{MediaKeySession/generateRequest()}}.
           Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the <a def-id="message"></a> event can be used by the application to select among a set of URLs if applicable.
         </p>
       </section>
