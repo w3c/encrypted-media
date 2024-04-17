@@ -178,7 +178,7 @@
           <p>Unless otherwise stated, key refers to a decryption key that can be used to decrypt blocks within [=HTMLMediaElement/media data=].
           Each such key is uniquely identified by a [=key ID=].
           A key is associated with the <a href="#key-session">session</a> used to provide it to the [=CDM=]. (The same key may be present in multiple sessions.)
-          Such keys MUST only be provided to the CDM via an {{MediaKeySession/update()}} call. (They may later be loaded by <a def-id="load"></a> as part of the stored session data.)
+          Such keys MUST only be provided to the CDM via an {{MediaKeySession/update()}} call. (They may later be loaded by {{MediaKeySession/load()}} as part of the stored session data.)
           </p>
 
           <p class="note">Authors SHOULD encrypt each set of stream(s) that requires enforcement of a meaningfully different policy with a distinct key (and key ID).
@@ -1800,7 +1800,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
          </p>
           <p class="note">The map entries and their values may be updated whenever the event loop spins.
             The map MUST NOT ever be inconsistent or partially updated, but it may change between accesses if the event loop spins in between the accesses.
-            Key IDs may be added as the result of a <a def-id="load"></a> or {{MediaKeySession/update()}} call.
+            Key IDs may be added as the result of a {{MediaKeySession/load()}} or {{MediaKeySession/update()}} call.
             Key IDs may be removed as the result of a {{MediaKeySession/update()}} call that removes knowledge of existing keys (or replaces the existing set of keys with a new set).
             Key IDs MUST NOT be removed because they became unusable, such as due to expiration. Instead, such keys MUST be given an appropriate status, such as {{MediaKeyStatus/"expired"}}.
           </p>
@@ -1936,10 +1936,8 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               The [=Initialization Data Type=] of the <var>initData</var>.
             </td></tr><tr><td class="prmName">initData</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
               [=Initialization Data=]
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>load</code></dfn></dt><dd>
+            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>load()</code></dfn></dt><dd>
           <p>Loads the data stored for the specified session into this object.</p>
-
-
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2072,7 +2070,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                                 Close the <a href="#key-session">key session</a> and clear <em>all</em> stored session data associated with this object,
                                 including the <a def-id="sessionId"></a> and [=record of license destruction=].
                               </p>
-                              <p class="note">A subsequent call to <a def-id="load"></a> with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
+                              <p class="note">A subsequent call to {{MediaKeySession/load()}} with the value of this object's <a def-id="sessionId"></a> would fail because there is no data stored for that session ID.</p>
                             </li>
                             <li><p>Set <var>session closed</var> to true.</p></li>
                           </ol>
@@ -2697,7 +2695,7 @@ interface MediaKeyMessageEvent : Event {
         </p>
         <p>The CDM MUST ensure that data for a given session is only present in one <a>MediaKeySession</a> object that is not
         [=closed=] in any [=document=].
-          In other words, <a def-id="load"></a> MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via <a def-id="load"></a>.
+          In other words, {{MediaKeySession/load()}} MUST fail when there is already a <a>MediaKeySession</a> representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via <a def-id="generateRequest"></a> is still active or it has been loaded into another object via {{MediaKeySession/load()}}.
           A session MAY only be loaded again if all objects that have ever represented it are [=closed=].
         </p>
         <p>An application that creates a session using a type for which the [=is persistent session type?=] algorithm returns <code>true</code> SHOULD
