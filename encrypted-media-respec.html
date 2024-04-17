@@ -1467,7 +1467,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <p>
             Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of {{MediaKeysRequirement/"required"}}.
             The session MUST be loadable via its [=Session ID=] once {{MediaKeySession/update()}} is called successfully.
-            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when {{MediaKeySession/remove()}} is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
+            A {{message}} of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when {{MediaKeySession/remove()}} is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
           </p>
           <p>
             The application is responsible for ensuring that data persisted for such sessions is removed when the application no longer needs it.
@@ -1813,10 +1813,10 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
         </dd><dt><dfn><code>onkeystatuseschange</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the {{keystatuseschange}} event.</p>
         </dd><dt><dfn><code>onmessage</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
-          <p>Event handler for the <a def-id="message"></a> event.</p>
+          <p>Event handler for the {{message}} event.</p>
         </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest()</code></dfn></dt><dd>
           <p>Generates a license request based on the <var>initData</var>.
-            A <a def-id="message"></a> of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
+            A {{message}} of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
 
 
@@ -2077,7 +2077,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                         </dd>
                         <dt>Otherwise</dt>
                         <dd>Process <var>sanitized response</var>, not storing any session data.
-                          <p class="note">For example, <var>sanitized response</var> may contain information that will be used to generate another <a def-id="message"></a> event.
+                          <p class="note">For example, <var>sanitized response</var> may contain information that will be used to generate another {{message}} event.
                             In this case, there is no need to verify the contents against the <var>sessionType</var>.
                           </p>
                         </dd>
@@ -2358,7 +2358,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 
       <section>
         <h3><a>MediaKeyMessageEvent</a></h3>
-        <p>The MediaKeyMessageEvent object is used for the <a def-id="message"></a> event.</p>
+        <p>The MediaKeyMessageEvent object is used for the {{message}} event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[DOM]].</p>
 
         <pre class="idl">
@@ -2426,7 +2426,7 @@ interface MediaKeyMessageEvent : Event {
               <td>There has been a change in the keys in the session or their status.</td>
             </tr>
             <tr>
-              <td><a def-id="eventdfn">message</a></td>
+              <td><dfn><code>message</code></dfn></td>
               <td><a>MediaKeyMessageEvent</a></td>
               <td>The CDM has generated a message for the session.</td>
             </tr>
@@ -2450,7 +2450,7 @@ interface MediaKeyMessageEvent : Event {
           <ol>
             <li><p>Let the <var>session</var> be the specified <a>MediaKeySession</a> object.</p></li>
             <li>
-              <p>[=Queue a task=] to create an event named <a def-id="message"></a> that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
+              <p>[=Queue a task=] to create an event named {{message}} that does not bubble and is not cancellable using the <a>MediaKeyMessageEvent</a> interface with its <var>type</var> attribute set to <code>message</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>session</var>.</p>
               <p>The event interface <a>MediaKeyMessageEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
                 <a def-id="message-event-messagetype-attribute"></a> = the specified <var>message type</var><br><br>
@@ -3446,7 +3446,7 @@ interface MediaKeyMessageEvent : Event {
           <div class="note">
             <p>Identifiers may be exposed in the following ways:</p>
             <ul>
-              <li><p>To the application via a <a def-id="message"></a> event.</p></li>
+              <li><p>To the application via a {{message}} event.</p></li>
               <li><p>In a message from a server, such as one that is passed to {{MediaKeySession/update()}}.</p></li>
               <li><p>As part of <a href="#individualization">individualization</a>.</p></li>
             </ul>
@@ -3558,7 +3558,7 @@ interface MediaKeyMessageEvent : Event {
           <p>For such individualization, all message exchanges:</p>
           <ul>
             <li><p>MUST be passed to or through the application via the APIs defined in this specification.</p></li>
-            <li><p>SHALL use the message type MediaKeyMessageType/"individualization-request"}} for all related <a def-id="message"></a> events.</p></li>
+            <li><p>SHALL use the message type MediaKeyMessageType/"individualization-request"}} for all related {{message}} events.</p></li>
             <li><p>MUST NOT be performed by the user agent.</p></li>
             <li><p>MUST NOT be performed directly by the CDM.</p></li>
             <li><p>MUST NOT contain or otherwise <a href="#uses-distinctive-permanent-identifiers">use Distinctive Permanent Identifier(s)</a>.</p></li>
@@ -3733,7 +3733,7 @@ interface MediaKeyMessageEvent : Event {
 
         <section id="clear-key-request-format">
           <h4>License Request Format</h4>
-          <p>This section describes the format of the license request provided to the application via the <a def-id="message-event-message-attribute"></a> attribute of the <a def-id="message"></a> event.</p>
+          <p>This section describes the format of the license request provided to the application via the <a def-id="message-event-message-attribute"></a> attribute of the {{message}} event.</p>
 
           <p>The format is a JSON object containing the following members:</p>
           <dl>
@@ -3805,7 +3805,7 @@ interface MediaKeyMessageEvent : Event {
         <section id="clear-key-release-format">
 
           <h4>License Release Format</h4>
-          <p>This section describes the format of the license release message to be provided via the <a def-id="message-event-message-attribute"></a> attribute of the <a def-id="message"></a> event.</p>
+          <p>This section describes the format of the license release message to be provided via the <a def-id="message-event-message-attribute"></a> attribute of the {{message}} event.</p>
           <p>
             The format is a JSON object. For sessions of type {{MediaKeySessionType/"persistent-license"}}, the object shall contain the following member:
           </p>
@@ -3880,7 +3880,7 @@ interface MediaKeyMessageEvent : Event {
 
         <p>Implementations MUST NOT return active content or passive content that affects program control flow to the application.</p>
         <p class="note">For example, it is not safe to expose URLs or other information that may have come from media data, such as is the case for the [=Initialization Data=] passed to {{MediaKeySession/generateRequest()}}.
-          Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the <a def-id="message"></a> event can be used by the application to select among a set of URLs if applicable.
+          Applications must determine the URLs to use. The <a def-id="message-event-messagetype-attribute"></a> attribute of the {{message}} event can be used by the application to select among a set of URLs if applicable.
         </p>
       </section>
 
@@ -4313,7 +4313,7 @@ interface MediaKeyMessageEvent : Event {
           The APIs defined in this specification are only supported on secure origins, protecting information discussed in previous sections.
           Identifiers are additionally encrypted as specified in <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
         </p>
-        <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM, including but is not limited to all data passed from <a def-id="message"></a> events and to {{MediaKeySession/update()}}.</p>
+        <p>Applications, including the servers they use, SHOULD use secure transport for all traffic involving or containing data or messages from the CDM, including but is not limited to all data passed from {{message}} events and to {{MediaKeySession/update()}}.</p>
         <p>All user agents MUST properly handle Mixed Content [[MIXED-CONTENT]] to avoid exposure to insecure content or transport when the user agent or application wish to enforce secure origin and transport.</p>
       </section>
 
@@ -4360,7 +4360,7 @@ interface MediaKeyMessageEvent : Event {
               var te = new TextEncoder();
               var initData = te.encode( '{"kids":["LwVHf8JLtPrv2GUXFW2v_A"]}');
               var keySession = createdMediaKeys.<a def-id="createSession-call"></a>();
-              keySession.addEventListener("<a def-id="message"></a>", handleMessage, false);
+              keySession.addEventListener("message", handleMessage, false);
               return keySession.<a def-id="generateRequest-call"></a>('keyids', initData);
             }
           ).catch(
@@ -4499,7 +4499,7 @@ interface MediaKeyMessageEvent : Event {
 
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>();
-    keySession.addEventListener("<a def-id="message"></a>", licenseRequestReady, false);
+    keySession.addEventListener("message", licenseRequestReady, false);
     keySession.<a def-id="generateRequest-call"></a>(initDataType, initData).catch(
       console.error.bind(console, 'Unable to create or initialize key session')
     );
@@ -4584,7 +4584,7 @@ interface MediaKeyMessageEvent : Event {
   // This replaces the implementation in the previous example.
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>();
-    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
+    keySession.addEventListener('message', handleMessage, false);
     keySession.addEventListener('keystatuseschange', handlekeyStatusesChange, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
@@ -4679,7 +4679,7 @@ interface MediaKeyMessageEvent : Event {
   // Called if the application does not have a stored sessionId for the media resource.
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>("persistent-license");
-    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
+    keySession.addEventListener('message', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
         console.log('Session', this.sessionId, 'closed, reason', reason);
@@ -4697,7 +4697,7 @@ interface MediaKeyMessageEvent : Event {
   // Called if the application has a stored sessionId for the media resource.
   function loadStoredSession(mediaKeys, sessionId) {
     var keySession = mediaKeys.<a def-id="createSession-call"></a>("persistent-license");
-    keySession.addEventListener('<a def-id="message"></a>', handleMessage, false);
+    keySession.addEventListener('message', handleMessage, false);
     keySession.<a def-id="closed"></a>.then(
       function(reason) {
         console.log('Session', this.sessionId, 'closed, reason', reason);
