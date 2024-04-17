@@ -248,7 +248,7 @@
           </p>
 
           <p>
-          When the user agent encounters Initialization Data in the [=HTMLMediaElement/media data=], it provides that Initialization Data to the application in the <a def-id="encrypted-event-initdata-attribute"></a> attribute of the <a def-id="encrypted"></a> event.
+          When the user agent encounters Initialization Data in the [=HTMLMediaElement/media data=], it provides that Initialization Data to the application in the {{MediaEncryptedEvent/initData}} attribute of the <a def-id="encrypted"></a> event.
           The user agent MUST NOT store the Initialization Data or use its <em>content</em> at the time it is encountered.
           The application provides Initialization Data to the CDM via {{MediaKeySession/generateRequest()}}.
           The user agent MUST NOT provide Initialization Data to the CDM by other means.
@@ -2858,15 +2858,20 @@ interface MediaKeyMessageEvent : Event {
         <p>The MediaEncryptedEvent object is used for the <a def-id="encrypted"></a> event.</p>
         <p>Events are constructed as defined in <a def-id="constructing-events"></a> [[DOM]].</p>
 
-        <pre class="idl">[Exposed=Window]
-interface MediaEncryptedEvent : Event {
-    constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict = {});
-    readonly        attribute DOMString    initDataType;
-    readonly        attribute ArrayBuffer? initData;
-};</pre><section><h2>Constructors</h2><dl class="constructors" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>MediaEncryptedEvent</code></dfn></dt><dd>
+        <pre class="idl">
+          [Exposed=Window]
+          interface MediaEncryptedEvent : Event {
+              constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict = {});
+              readonly        attribute DOMString    initDataType;
+              readonly        attribute ArrayBuffer? initData;
+          };
+        </pre>
+        <section>
+          <h2>Constructors</h2>
+          <dl class="constructors" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>MediaEncryptedEvent</code></dfn></dt><dd>
 
           <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaEncryptedEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-            Indicates the [=Initialization Data Type=] of the [=Initialization Data=] contained in the <a def-id="encrypted-event-initdata-attribute"></a> attribute.
+            Indicates the [=Initialization Data Type=] of the [=Initialization Data=] contained in the {{MediaEncryptedEvent/initData}} attribute.
           </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlAttrType">{{ArrayBuffer}}</span>, readonly       , nullable</dt><dd>
             The [=Initialization Data=] for the event.
           </dd></dl></section>
@@ -2966,11 +2971,11 @@ interface MediaEncryptedEvent : Event {
               <p>[=Queue a task=] to create an event named <a def-id="encrypted"></a> that does not bubble and is not cancellable using the <a>MediaEncryptedEvent</a> interface with its <var>type</var> attribute set to <code>encrypted</code> and its <var>isTrusted</var> attribute initialized to <code>true</code>, and dispatch it at the <var>media element</var>.</p>
               <p>The event interface <a>MediaEncryptedEvent</a> has:</p>
               <ul style="list-style-type:none"><li>
-                <a def-id="encrypted-event-initdatatype-attribute"></a> = <var>initDataType</var><br><br>
-                <a def-id="encrypted-event-initdata-attribute"></a> = <var>initData</var>
+                {{MediaEncryptedEvent/initDataType}} = <var>initDataType</var><br><br>
+                {{MediaEncryptedEvent/initData}} = <var>initData</var>
               </li></ul>
               <p class="note">{{HTMLMediaElement/readyState}} is <em>not</em> changed and no algorithms are aborted. This event merely provides information.</p>
-              <p class="note">The <a def-id="encrypted-event-initdata-attribute"></a> attribute will be null if the media data is <em>not</em> [=CORS-same-origin=] or is <a href="#mixed-content">mixed content</a>.
+              <p class="note">The {{MediaEncryptedEvent/initData}} attribute will be null if the media data is <em>not</em> [=CORS-same-origin=] or is <a href="#mixed-content">mixed content</a>.
                 Applications may retrieve the Initialization Data from an alternate source.
               </p>
             </li>
@@ -4481,7 +4486,7 @@ interface MediaEncryptedEvent : Event {
         console.error.bind(console, 'Failed to create and initialize a MediaKeys object')
       );
     }
-    addSession(video, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
+    addSession(video, event.initDataType, event.initData);
   }
 
   function addSession(video, initDataType, initData) {
@@ -4540,7 +4545,7 @@ interface MediaEncryptedEvent : Event {
   function licenseRequestReady(event) { ... }
 
   function handleInitData(event) {
-    makeNewRequest(mediaKeys, event.<a def-id="encrypted-event-initdatatype-attribute"></a>, event.<a def-id="encrypted-event-initdata-attribute"></a>);
+    makeNewRequest(mediaKeys, event.initDataType, event.initData);
   }
 
   createSupportedKeySystem().then(
