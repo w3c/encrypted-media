@@ -793,7 +793,7 @@
               </li>
               <li>
                 <p>
-                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s <a def-id="option-persistentState"></a> member.
+                  Let <var>persistent state requirement</var> be equal to the value of <var>candidate configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} member.
                 </p>
               </li>
               <li>
@@ -822,7 +822,7 @@
               </li>
               <li>
                 <p>
-                  Set the <a def-id="option-persistentState"></a> member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
+                  Set the {{MediaKeySystemConfiguration/persistentState}} member of <var>accumulated configuration</var> to equal the value of <var>persistent state requirement</var>.
                 </p>
               </li>
               <li><p>Follow the steps for the first matching condition from the following list:</p>
@@ -842,13 +842,13 @@
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
                     <p>
-                      If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is {{MediaKeysRequirement/"not-allowed"}}</a> and the [=is persistent session type?=] algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
+                      If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"not-allowed"}}</a> and the [=is persistent session type?=] algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
                     </p>
                   </li>
                   <li>
                     <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var> for other reasons, return <code>NotSupported</code>.</p>
                   </li>
-                  <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is {{MediaKeysRequirement/"optional"}} and the result of running the [=is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to {{MediaKeysRequirement/"required"}}.</p></li>
+                  <li><p>If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"optional"}} and the result of running the [=is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value to {{MediaKeysRequirement/"required"}}.</p></li>
                 </ol>
               </li>
               <li><p>Set the <a def-id="option-sessionTypes"></a> member of <var>accumulated configuration</var> to <var>session types</var>.</p></li>
@@ -904,15 +904,15 @@
                 </dl>
               </li>
 
-              <li><p>If <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value is {{MediaKeysRequirement/"optional"}}, follow the steps for the first matching condition from the following list:</p>
+              <li><p>If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"optional"}}, follow the steps for the first matching condition from the following list:</p>
                 <dl class="switch">
                   <dt>If the <var>implementation</var> requires persisting state for any of the combinations in <var>accumulated configuration</var></dt>
                   <dd>
-                    <p>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to {{MediaKeysRequirement/"required"}}.</p>
+                    <p>Change <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value to {{MediaKeysRequirement/"required"}}.</p>
                   </dd>
                   <dt>Otherwise</dt>
                   <dd>
-                    <p>Change <var>accumulated configuration</var>'s <a def-id="option-persistentState"></a> value to {{MediaKeysRequirement/"not-allowed"}}</a>.</p>
+                    <p>Change <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value to {{MediaKeysRequirement/"not-allowed"}}</a>.</p>
                   </dd>
                 </dl>
               </li>
@@ -1401,7 +1401,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 </li>
                 <li>
                   <p>
-                    Let <var>persistent state allowed</var> be <code>true</code> if the value of <var>configuration</var>'s <a def-id="option-persistentState"></a>
+                    Let <var>persistent state allowed</var> be <code>true</code> if the value of <var>configuration</var>'s {{MediaKeySystemConfiguration/persistentState}}
                     member is {{MediaKeysRequirement/"required"}} and <code>false</code> otherwise.
                   <p>
                 </li>
@@ -1465,7 +1465,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             Support for this session type is OPTIONAL.
           </p>
           <p>
-            Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a <a def-id="option-persistentState"></a> value of {{MediaKeysRequirement/"required"}}.
+            Sessions of this type can only be created if the configuration associated with the <a>MediaKeySystemAccess</a> object that created this object has a {{MediaKeySystemConfiguration/persistentState}} value of {{MediaKeysRequirement/"required"}}.
             The session MUST be loadable via its [=Session ID=] once {{MediaKeySession/update()}} is called successfully.
             A {{message}} of type {{MediaKeyMessageType/"license-release"}} containing the [=record of license destruction=] will be generated when {{MediaKeySession/remove()}} is called until the record is acknowledged by a response passed to {{MediaKeySession/update()}}.
           </p>
@@ -3672,7 +3672,7 @@ interface MediaKeyMessageEvent : Event {
                 <li><p><a def-id="capability-encryptionScheme"></a>: Implementations MUST support the <a def-id="scheme-cenc"></a> scheme, and MAY support other schemes.</p></li>
                 <li><p>{{MediaKeySystemMediaCapability/robustness}}: Only the empty string is supported.</p></li>
                 <li><p>{{MediaKeySystemConfiguration/distinctiveIdentifier}}: {{MediaKeysRequirement/"required"}} is not supported.</p></li>
-                <li><p><a def-id="option-persistentState"></a>: Not {{MediaKeysRequirement/"required"}} unless the application intends to create non-{{MediaKeySessionType/"temporary"}} sessions, if supported.</p></li>
+                <li><p>{{MediaKeySystemConfiguration/persistentState}}: Not {{MediaKeysRequirement/"required"}} unless the application intends to create non-{{MediaKeySessionType/"temporary"}} sessions, if supported.</p></li>
               </ol>
             </li>
             <li><p>The {{MediaKeySessionType/"persistent-license"}} <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
@@ -4302,7 +4302,7 @@ interface MediaKeyMessageEvent : Event {
           The privacy concerns discussed in previous sections may be especially concerning for users employing such modes.
         </p>
         <p>User agent implementers that support such mode(s) SHOULD carefully consider whether access to Key Systems should be disabled in these mode(s).
-          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use <a def-id="option-persistentState"></a> or a {{MediaKeySystemConfiguration/distinctiveIdentifier}} (either as part of the CDM implementation or because the application indicated they were {{MediaKeysRequirement/"required"}}).
+          For example, such modes MAY prohibit creation of <a>MediaKeySystemAccess</a> objects that support or use {{MediaKeySystemConfiguration/persistentState}} or a {{MediaKeySystemConfiguration/distinctiveIdentifier}} (either as part of the CDM implementation or because the application indicated they were {{MediaKeysRequirement/"required"}}).
           If implementations do not prohibit such creation, they SHOULD inform the user of the implications and potential consequences for the expected privacy properties of such modes before allowing their use.
         </p>
       </section>
@@ -4671,7 +4671,7 @@ interface MediaKeyMessageEvent : Event {
   var mediaKeys;
 
   // See the previous examples for implementations of these functions.
-  // createSupportedKeySystem() additionally sets <a def-id="option-persistentState"></a>: {{MediaKeysRequirement/"required"}} in each options dictionary.
+  // createSupportedKeySystem() additionally sets persistentState: "required" in each options dictionary.
   function createSupportedKeySystem() { ... }
   function sendMessage(message, keySession) { ... }
   function handleMessage(event) { ... }
