@@ -150,8 +150,8 @@
           Sessions are embodied as {{MediaKeySession}} objects.
           Each Key session is associated with a single instance of [=Initialization Data=] provided in the {{MediaKeySession/generateRequest()}} call.
           </p>
-          <p>Each Key Session is associated with a single <a>MediaKeys</a> object, and only media element(s) associated with that <a>MediaKeys</a> object may access key(s) associated with the session.
-          Other <a>MediaKeys</a> objects, CDM instances, and media elements MUST NOT access the key session or use its key(s).
+          <p>Each Key Session is associated with a single {{MediaKeys}} object, and only media element(s) associated with that {{MediaKeys}} object may access key(s) associated with the session.
+          Other {{MediaKeys}} objects, CDM instances, and media elements MUST NOT access the key session or use its key(s).
           Key sessions and the keys they contain are no longer [=usable for decryption=] once the session has been closed, including when the {{MediaKeySession}} object is destroyed.
           </p>
           <p>
@@ -346,7 +346,7 @@
           </p>
           <p class="note">
             {{MediaKeySystemConfiguration/distinctiveIdentifier}} controls whether Distinctive Permanent Identifiers may be used.
-            Specifically, Distinctive Permanent Identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the <a>MediaKeys</a> object is {{MediaKeysRequirement/"required"}}.
+            Specifically, Distinctive Permanent Identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the {{MediaKeys}} object is {{MediaKeysRequirement/"required"}}.
           </p>
         </dd>
 
@@ -374,7 +374,7 @@
           </div>
           <p class="note">
             {{MediaKeySystemConfiguration/distinctiveIdentifier}} controls whether Distinctive Identifiers may be used.
-            Specifically, Distinctive Identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the <a>MediaKeys</a> object is {{MediaKeysRequirement/"required"}}.
+            Specifically, Distinctive Identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the {{MediaKeys}} object is {{MediaKeysRequirement/"required"}}.
           </p>
           <p>A Distinctive Identifier is a value, piece of data, implication of the possession of a piece of data, or an observable behavior or timing for which all of the following criteria hold:</p>
           <ul>
@@ -479,7 +479,7 @@
           </p>
           <p class="note">
             {{MediaKeySystemConfiguration/distinctiveIdentifier}} controls whether [=Distinctive Identifiers=] and [=Distinctive Permanent Identifiers=] may be used.
-            Specifically, such identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the <a>MediaKeys</a> object is {{MediaKeysRequirement/"required"}}.
+            Specifically, such identifiers may only be used when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the {{MediaKeys}} object is {{MediaKeysRequirement/"required"}}.
           </p>
         </dd>
 
@@ -572,7 +572,7 @@
           <h2>Methods</h2>
           <dl class="methods"><dt><dfn><code>requestMediaKeySystemAccess()</code></dfn></dt><dd>
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
-            This method should only be called when the author intends to create and use a <a>MediaKeys</a> object with the provided configuration.
+            This method should only be called when the author intends to create and use a {{MediaKeys}} object with the provided configuration.
             </p>
             <p>Requests access to the specified [=Key System=]</a>.
               When <code>supportedConfigurations</code> is specified, the configuration specified by at least one of its elements must be supported.
@@ -1386,7 +1386,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
           </ol>
         <div><em>No parameters.</em></div><div><em>Return type: </em><code>MediaKeySystemConfiguration</code></div></dd><dt><dfn><code>createMediaKeys</code></dfn></dt><dd>
-          <p>Creates a new <a>MediaKeys</a> object for <var>keySystem</var>.</p>
+          <p>Creates a new {{MediaKeys}} object for <var>keySystem</var>.</p>
 
           <ol class="method-algorithm">
             <li><p>Let <var>promise</var> be a new promise.</p></li>
@@ -1411,7 +1411,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 <li><p>If <var>use distinctive identifier</var> is <code>false</code>, prevent <var>instance</var> from <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">using Distinctive Identifier(s) and Distinctive Permanent Identifier(s)</a>.</p></li>
                 <li><p>If <var>persistent state allowed</var> is <code>false</code>, prevent <var>instance</var> from persisting any state related to the application or [=origin=] of this object's [=document=].</p></li>
                 <li><p>If any of the preceding steps failed, reject <var>promise</var> with a new {{DOMException}} whose name is the appropriate <a href="#error-names">error name</a>.</p></li>
-                <li><p>Let <var>media keys</var> be a new <a>MediaKeys</a> object, and initialize it as follows:</p>
+                <li><p>Let <var>media keys</var> be a new {{MediaKeys}} object, and initialize it as follows:</p>
                   <ol>
                     <li><p>Let the <var>use distinctive identifier</var> value be <var>use distinctive identifier</var>.</p></li>
                     <li><p>Let the <var>persistent state allowed</var> value be <var>persistent state allowed</var>.</p></li>
@@ -1434,7 +1434,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <p>The MediaKeys object represents a set of keys that an associated {{HTMLMediaElement}} can use for decryption of [=HTMLMediaElement/media data=] during playback.
         It also represents a [=CDM=] instance.
       </p>
-      <p>A <a>MediaKeys</a> object may be destroyed by the user agent when it is no longer accessible</p>
+      <p>A {{MediaKeys}} object may be destroyed by the user agent when it is no longer accessible</p>
       <p class="note">For example, when there are no script references and no attached media element.</p>
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[WEBIDL]] type mapping errors.</p>
       <p>The steps of an algorithm are always aborted when rejecting a promise.</p>
@@ -1497,7 +1497,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>If the implementation does not support {{MediaKeySession}} operations in the current state, [=exception/throw=]
  [[WEBIDL]] an {{InvalidStateError}}.</p>
-              <p class="note">Some implementations are unable to execute {{MediaKeySession}} algorithms until this <a>MediaKeys</a> object is associated with a media element using {{HTMLMediaElement/setMediaKeys()}}.
+              <p class="note">Some implementations are unable to execute {{MediaKeySession}} algorithms until this {{MediaKeys}} object is associated with a media element using {{HTMLMediaElement/setMediaKeys()}}.
               This step enables applications to detect this uncommon behavior before attempting to perform such operations.
               </p>
             </li>
@@ -1668,7 +1668,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         <section id="cdm-unavailable">
           <h4><dfn>CDM Unavailable</dfn></h4>
           <p>
-            The CDM unavailable algorithm is run to close all {{MediaKeySession}} objects associated with a <a>MediaKeys</a> object, <var>media keys</var>
+            The CDM unavailable algorithm is run to close all {{MediaKeySession}} objects associated with a {{MediaKeys}} object, <var>media keys</var>
             when the CDM instance becomes unavailable.
           </p>
           <p>The following step is run:</p>
@@ -1684,11 +1684,11 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         <p>This section describes general requirements related to storage and persistence.</p>
 
         <p>
-          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>false</code> then the object's <var>cdm instance</var>
+          If a {{MediaKeys}} object's <var>persistent state allowed</var> value is <code>false</code> then the object's <var>cdm instance</var>
           SHALL NOT persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
         </p>
         <p>
-          If a <a>MediaKeys</a> object's <var>persistent state allowed</var> value is <code>true</code> then the object's <var>cdm instance</var>
+          If a {{MediaKeys}} object's <var>persistent state allowed</var> value is <code>true</code> then the object's <var>cdm instance</var>
           MAY persist state or access previously persisted state as a result of operations on this object or any sessions that it creates.
         </p>
 
@@ -1717,12 +1717,12 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       </p>
       <p>
         A {{MediaKeySession}} object SHALL NOT be destroyed and SHALL continue to receive events if it is
-        not [=closed=] and the <a>MediaKeys</a> object that created it remains accessible.
+        not [=closed=] and the {{MediaKeys}} object that created it remains accessible.
         Otherwise, a {{MediaKeySession}} object that is no longer accessible SHALL NOT receive further
         events and MAY be destroyed.
       </p>
       <p class="note">
-        The above rule implies that the CDM instance must not be destroyed until all <a>MediaKeys</a>
+        The above rule implies that the CDM instance must not be destroyed until all {{MediaKeys}}
         objects and all {{MediaKeySession}} objects associated with the CDM instance are destroyed.
       </p>
       <p>
@@ -1749,14 +1749,14 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 </p>
 <table class="simple" data-dfn-for="MediaKeySessionClosedReason" data-link-for="MediaKeySessionClosedReason"><tbody><tr><th colspan="2">Enumeration description</th></tr><tr><td><dfn><code>internal-error</code></dfn></td><td>
             The session was closed because of an unrecoverable error in the CDM.
-            When this occurs, applications MUST NOT create new sessions on this <a>MediaKeys</a> instance.
+            When this occurs, applications MUST NOT create new sessions on this {{MediaKeys}} instance.
           </td></tr><tr><td><dfn><code>closed-by-application</code></dfn></td><td>
             The session was closed by the application calling the {{MediaKeySession/close()}} method of the session explicitly.
           </td></tr><tr><td><dfn><code>release-acknowledged</code></dfn></td><td>
             The session was closed because the CDM received a [=record of license destruction=] acknowledgement.
           </td></tr><tr><td><dfn><code>hardware-context-reset</code></dfn></td><td>
             The session was closed because the CDM's original hardware context was reset.
-            When this occurs, the User Agent MUST allow the application to create new sessions on this <a>MediaKeys</a> instance.
+            When this occurs, the User Agent MUST allow the application to create new sessions on this {{MediaKeys}} instance.
             <div class="note">
               <p>
                 This could occur for many reasons, including device hibernation, monitor configuration change, etc.
@@ -2929,16 +2929,16 @@ interface MediaKeyMessageEvent : Event {
         <section id="media-may-contain-encrypted-blocks">
           <h4>Media Data May Contain Encrypted Blocks</h4>
           <p>
-            The Media Data May Contain Encrypted Blocks algorithm pauses playback if the user agent requires specification of a <a>MediaKeys</a> object before playing the media data.
+            The Media Data May Contain Encrypted Blocks algorithm pauses playback if the user agent requires specification of a {{MediaKeys}} object before playing the media data.
             Requests to run this algorithm include a target {{HTMLMediaElement}} object.
           </p>
           <p>The following steps are run:</p>
           <ol>
             <li><p>Let the <var>media element</var> be the specified {{HTMLMediaElement}} object.</p></li>
             <li>
-              <p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is null and the implementation requires specification of a <a>MediaKeys</a> object before decoding potentially-encrypted [=HTMLMediaElement/media data=], run the following steps:</p>
-              <p class="note">These steps may be reached when the application provides [=HTMLMediaElement/media data=] before calling {{HTMLMediaElement/setMediaKeys()}} to provide a <a>MediaKeys</a> object.
-                Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a <a>MediaKeys</a> object to {{HTMLMediaElement/setMediaKeys()}}.
+              <p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is null and the implementation requires specification of a {{MediaKeys}} object before decoding potentially-encrypted [=HTMLMediaElement/media data=], run the following steps:</p>
+              <p class="note">These steps may be reached when the application provides [=HTMLMediaElement/media data=] before calling {{HTMLMediaElement/setMediaKeys()}} to provide a {{MediaKeys}} object.
+                Selecting a [=CDM=] may affect the pipeline and/or decoders used, so some implementations may delay playback of media data that may contain encrypted blocks until a CDM is specified by passing a {{MediaKeys}} object to {{HTMLMediaElement/setMediaKeys()}}.
               </p>
               <ol>
                 <li><p>Run the [=Wait for Key=] algorithm on the <var>media element</var>.</p></li>
@@ -3015,7 +3015,7 @@ interface MediaKeyMessageEvent : Event {
             <li><p>If the <var>media element</var>'s <var>encrypted block queue</var> is empty, abort these steps.</p></li>
             <li><p>If the <var>media element</var>'s {{HTMLMediaElement/mediaKeys}} attribute is not null, run the following steps:</p>
               <ol>
-                <li><p>Let <var>media keys</var> be the <a>MediaKeys</a> object referenced by that attribute.</p></li>
+                <li><p>Let <var>media keys</var> be the {{MediaKeys}} object referenced by that attribute.</p></li>
                 <li><p>Let <var>cdm</var> be the CDM instance represented by <var>media keys</var>'s <var>cdm instance</var> value.</p></li>
                 <li>
                   <p>If <var>cdm</var> is no longer usable for any reason, run the following steps:</p>
@@ -3260,7 +3260,7 @@ interface MediaKeyMessageEvent : Event {
       <section id="persistent-state-requirements">
         <h3>Persistent Data</h3>
         <p>
-          Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the <a>MediaKeys</a> object. Specifically, it includes any identifiers (including [=Distinctive Identifier(s)=]), licenses, keys, key IDs, or [=records of license destruction=] stored by the CDM or by the User Agent on behalf of the CDM.
+          Persistent Data includes all data stored by the CDM, or by the User Agent on behalf of the CDM, that exists after the destruction of the {{MediaKeys}} object. Specifically, it includes any identifiers (including [=Distinctive Identifier(s)=]), licenses, keys, key IDs, or [=records of license destruction=] stored by the CDM or by the User Agent on behalf of the CDM.
         </p>
         <section id="use-origin-specific-key-system-storage">
           <h3>Use origin-specific and browsing profile-specific Key System storage</h3>
@@ -3521,7 +3521,7 @@ interface MediaKeyMessageEvent : Event {
         </p>
         <p class="note">
           {{MediaKeySystemConfiguration/distinctiveIdentifier}} controls whether [=Distinctive Identifiers=] and [=Distinctive Permanent Identifiers=] may be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a>, including for individualization.
-          Specifically, such identifiers may only be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a> when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the <a>MediaKeys</a> object is {{MediaKeysRequirement/"required"}}.
+          Specifically, such identifiers may only be <a href="#uses-distinctive-identifiers-or-distinctive-permanent-identifiers">used</a> when the value of the {{MediaKeySystemConfiguration/distinctiveIdentifier}} member of the {{MediaKeySystemAccess}} used to create the {{MediaKeys}} object is {{MediaKeysRequirement/"required"}}.
         </p>
 
         <section id="direct-individualization">
@@ -3677,7 +3677,7 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li><p>The {{MediaKeySessionType/"persistent-license"}} <a>MediaKeySessionType</a>: Implementations MAY support this type.</p></li>
             <li><p>The {{MediaKeys/setServerCertificate()}} method: Not supported.</p></li>
-            <li><p>The {{HTMLMediaElement/setMediaKeys()}} method: Implementations MAY support associating the <a>MediaKeys</a> object with more than one {{HTMLMediaElement}}.</p></li>
+            <li><p>The {{HTMLMediaElement/setMediaKeys()}} method: Implementations MAY support associating the {{MediaKeys}} object with more than one {{HTMLMediaElement}}.</p></li>
           </ul>
         </section>
 
