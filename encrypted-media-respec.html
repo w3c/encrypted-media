@@ -1722,13 +1722,15 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <p>For methods that return a promise, all errors are reported asynchronously by rejecting the returned Promise. This includes [[WEBIDL]] type mapping errors.</p>
       <p>The following steps of an algorithm are always aborted when rejecting a promise.</p>
 
-<pre class="idl">enum MediaKeySessionClosedReason {
-    "internal-error",
-    "closed-by-application",
-    "release-acknowledged",
-    "hardware-context-reset",
-    "resource-evicted"
-};</pre>
+      <pre class="idl">
+        enum MediaKeySessionClosedReason {
+          "internal-error",
+          "closed-by-application",
+          "release-acknowledged",
+          "hardware-context-reset",
+          "resource-evicted"
+        };
+      </pre>
 <p>
 The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 </p>
@@ -1758,31 +1760,41 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </div>
           </td></tr></tbody></table>
 
-      <pre class="idl">[Exposed=Window, SecureContext] interface MediaKeySession : EventTarget {
-    readonly        attribute DOMString                            sessionId;
-    readonly        attribute unrestricted double                  expiration;
-    readonly        attribute Promise&lt;MediaKeySessionClosedReason&gt; closed;
-    readonly        attribute MediaKeyStatusMap                    keyStatuses;
-                    attribute EventHandler                         onkeystatuseschange;
-                    attribute EventHandler                         onmessage;
-    Promise&lt;undefined&gt;    generateRequest (DOMString initDataType, BufferSource initData);
-    Promise&lt;boolean&gt; load (DOMString sessionId);
-    Promise&lt;undefined&gt;    update (BufferSource response);
-    Promise&lt;undefined&gt;    close ();
-    Promise&lt;undefined&gt;    remove ();
-};
-</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>sessionId</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-          <p>The [=Session ID=] for this object and the associated key(s) or license(s).</p>
-        </dd><dt><dfn><code>expiration</code></dfn> of type <span class="idlAttrType">{{unrestricted double}}</span>, readonly       </dt><dd>
-          <p>The [=expiration time=] for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
-          <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
-        </dd><dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{MediaKeySessionClosedReason}}&gt;</span>, readonly       </dt><dd>
-          <p>Signals when the object becomes [=closed=] as a result of the [=Session Closed=] algorithm being run.
-          This promise can only be fulfilled and is never rejected.</p>
-        </dd><dt><dfn><code>keyStatuses</code></dfn> of type {{MediaKeyStatusMap}}, readonly       </dt><dd>
+      <pre class="idl">
+        [Exposed=Window, SecureContext] interface MediaKeySession : EventTarget {
+          readonly        attribute DOMString                            sessionId;
+          readonly        attribute unrestricted double                  expiration;
+          readonly        attribute Promise&lt;MediaKeySessionClosedReason&gt; closed;
+          readonly        attribute MediaKeyStatusMap                    keyStatuses;
+                          attribute EventHandler                         onkeystatuseschange;
+                          attribute EventHandler                         onmessage;
+          Promise&lt;undefined&gt;    generateRequest (DOMString initDataType, BufferSource initData);
+          Promise&lt;boolean&gt; load (DOMString sessionId);
+          Promise&lt;undefined&gt;    update (BufferSource response);
+          Promise&lt;undefined&gt;    close ();
+          Promise&lt;undefined&gt;    remove ();
+        };
+      </pre>
+      <section>
+        <h2>Attributes</h2>
+        <dl class="attributes" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession">
+          <dt><dfn><code>sessionId</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly</dt>
+          <dd><p>The [=Session ID=] for this object and the associated key(s) or license(s).</p></dd>
+          <dt><dfn><code>expiration</code></dfn> of type <span class="idlAttrType">{{unrestricted double}}</span>, readonly</dt>
+          <dd>
+            <p>The [=expiration time=] for all key(s) in the session, or <code>NaN</code> if no such time exists or if the license explicitly never expires, as determined by the CDM.</p>
+            <p class="note">This value MAY change during the session lifetime, such as when an action triggers the start of a window.</p>
+          </dd>
+          <dt><dfn><code>closed</code></dfn> of type <span class="idlAttrType">Promise&lt;{{MediaKeySessionClosedReason}}&gt;</span>, readonly</dt>
+          <dd>
+            <p>Signals when the object becomes [=closed=] as a result of the [=Session Closed=] algorithm being run.
+            This promise can only be fulfilled and is never rejected.</p>
+          </dd>
+          <dt><dfn><code>keyStatuses</code></dfn> of type {{MediaKeyStatusMap}}, readonly</dt>
+          <dd>
           <p>A reference to a read-only map of [=key IDs=] [=known=] to the session to the current status of the associated key.
            Each entry MUST have a unique key ID.
-         </p>
+          </p>
           <p class="note">The map entries and their values may be updated whenever the event loop spins.
             The map MUST NOT ever be inconsistent or partially updated, but it may change between accesses if the event loop spins in between the accesses.
             Key IDs may be added as the result of a {{MediaKeySession/load()}} or {{MediaKeySession/update()}} call.
@@ -1795,17 +1807,21 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             Whenever a non-empty list is appropriate, such as when the <a href="#key-session">key session</a> represented by this object may contain <a href="#decryption-key">key(s)</a>, populate the map with a single pair containing
             the one-byte key ID <code>0</code> and the {{MediaKeyStatus}} most appropriate for the aggregated status of this object.
           </p>
-        </dd><dt><dfn><code>onkeystatuseschange</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
-          <p>Event handler for the {{keystatuseschange}} event.</p>
-        </dd><dt><dfn><code>onmessage</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
-          <p>Event handler for the {{message}} event.</p>
-        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession"><dt><dfn><code>generateRequest()</code></dfn></dt><dd>
+          </dd>
+          <dt><dfn><code>onkeystatuseschange</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt>
+          <dd><p>Event handler for the {{keystatuseschange}} event.</p></dd>
+          <dt><dfn><code>onmessage</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt>
+          <dd><p>Event handler for the {{message}} event.</p></dd>
+        </dl>
+      </section>
+      <section>
+        <h2>Methods</h2>
+        <dl class="methods" data-dfn-for="MediaKeySession" data-link-for="MediaKeySession">
+          <dt><dfn><code>generateRequest()</code></dfn></dt>
+          <dd>
           <p>Generates a license request based on the <var>initData</var>.
             A {{message}} of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
-
-
-
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -1917,9 +1933,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-      </dd>
-      <dt><dfn><code>load()</code></dfn></dt>
-      <dd>
+          </dd>
+          <dt><dfn><code>load()</code></dfn></dt>
+          <dd>
           <p>Loads the data stored for the specified session into this object.</p>
 
           <ol class="method-algorithm">
@@ -2384,14 +2400,21 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
 
         <section>
           <h4><dfn>MediaKeyMessageEventInit</dfn></h4>
-          <pre class="idl" data-cite="DOM">dictionary MediaKeyMessageEventInit : EventInit {
-             required MediaKeyMessageType messageType;
-             required ArrayBuffer         message;
-};</pre><section><h2>Dictionary <a class="idlType">MediaKeyMessageEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaKeyMessageEventInit" data-link-for="MediaKeyMessageEventInit"><dt><dfn><code>messageType</code></dfn> of type <span class="idlMemberType">{{MediaKeyMessageType}}</span></dt><dd>
-              The type of the message.
-            </dd><dt><dfn><code>message</code></dfn> of type <span class="idlMemberType">{{ArrayBuffer}}</span></dt><dd>
-              The message.
-            </dd></dl></section>
+          <pre class="idl" data-cite="DOM">
+            dictionary MediaKeyMessageEventInit : EventInit {
+              required MediaKeyMessageType messageType;
+              required ArrayBuffer         message;
+            };
+          </pre>
+          <section>
+            <h2>Dictionary <a class="idlType">MediaKeyMessageEventInit</a> Members</h2>
+            <dl class="dictionary-members" data-dfn-for="MediaKeyMessageEventInit" data-link-for="MediaKeyMessageEventInit">
+              <dt><dfn><code>messageType</code></dfn> of type <span class="idlMemberType">{{MediaKeyMessageType}}</span></dt>
+              <dd>The type of the message.</dd>
+              <dt><dfn><code>message</code></dfn> of type <span class="idlMemberType">{{ArrayBuffer}}</span></dt>
+              <dd>The message.</dd>
+            </dl>
+          </section>
         </section>
       </section>
 
@@ -2773,13 +2796,17 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           [SecureContext] Promise&lt;undefined&gt; setMediaKeys (MediaKeys? mediaKeys);
         };
       </pre>
-      <section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType">{{MediaKeys}}</span>, readonly       , nullable</dt><dd>
-          <p>The {{MediaKeys}} being used when decrypting encrypted [=HTMLMediaElement/media data=] for this media element.</p>
-        </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
-          <p>Event handler for the {{encrypted}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
-          <p>Event handler for the {{waitingforkey}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd></dl></section>
+      <section>
+        <h2>Attributes</h2>
+        <dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement">
+          <dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType">{{MediaKeys}}</span>, readonly, nullable</dt>
+          <dd><p>The {{MediaKeys}} being used when decrypting encrypted [=HTMLMediaElement/media data=] for this media element.</p></dd>
+          <dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt>
+          <dd><p>Event handler for the {{encrypted}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p></dd>
+          <dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt>
+          <dd><p>Event handler for the {{waitingforkey}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p></dd>
+        </dl>
+      </section>
         <section>
           <h2>Methods</h2>
           <dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement">
@@ -3750,15 +3777,15 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <section id="clear-key-request-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">{
-  "kids":
-    [
-     "LwVHf8JLtPrv2GUXFW2v_A",
-     "0DdtU9od-Bh5L3xbv0Xf_A"
-    ],
-  "type":"temporary"
-}
-</pre>
+            <pre class="example highlight">
+              {
+                "kids": [
+                  "LwVHf8JLtPrv2GUXFW2v_A",
+                  "0DdtU9od-Bh5L3xbv0Xf_A"
+                ],
+                "type": "temporary"
+              }
+            </pre>
           </section>
         </section>
 
@@ -3790,15 +3817,16 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <section id="clear-key-license-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a JWK Set containing a single symmetric key. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">{
-  "keys":
-    [{
-      "kty": "oct",
-      "k": "tQ0bJVWb6b0KPL6KtZIy_A",
-      "kid": "LwVHf8JLtPrv2GUXFW2v_A"
-    }],
-  "type": "temporary"
-}</pre>
+            <pre class="example highlight">
+              {
+                "keys": [{
+                  "kty": "oct",
+                  "k": "tQ0bJVWb6b0KPL6KtZIy_A",
+                  "kid": "LwVHf8JLtPrv2GUXFW2v_A"
+                }],
+                "type": "temporary"
+              }
+            </pre>
           </section>
         </section>
 
@@ -3823,10 +3851,11 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               The following example is a license release for a {{MediaKeySessionType/"persistent-license"}} session that contained two keys.
               (Line breaks are for readability only.)
             </p>
-            <pre class="example highlight">{
-  "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ]
-}
-</pre>
+            <pre class="example highlight">
+              {
+                "kids": [ "LwVHf8JLtPrv2GUXFW2v_A", "0DdtU9od-Bh5L3xbv0Xf_A" ]
+              }
+            </pre>
           </section>
         </section>
 
@@ -3847,14 +3876,14 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <section id="clear-key-release-ack-format-example" class="informative">
             <h5>Example</h5>
             <p>The following example is a license request for a temporary license for two key IDs. (Line breaks are for readability only.)</p>
-            <pre class="example highlight">{
-  "kids":
-    [
-     "LwVHf8JLtPrv2GUXFW2v_A",
-     "0DdtU9od-Bh5L3xbv0Xf_A"
-    ]
-}
-</pre>
+            <pre class="example highlight">
+              {
+                "kids": [
+                "LwVHf8JLtPrv2GUXFW2v_A",
+                "0DdtU9od-Bh5L3xbv0Xf_A"
+                ]
+              }
+            </pre>
           </section>
         </section>
         <section id="using-base64url" class="informative">
