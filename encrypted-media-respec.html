@@ -591,7 +591,7 @@
                 Implementations MUST meet all related requirements and SHOULD follow related recommendations such that the risks on in an secure context would be similar.
               </p>
             </div>
-
+            <p>When this method is invoked, the user agent must run the following steps:</p>
             <ol class="method-algorithm">
               <!-- TODO: Convert all parameters to use <code>. -->
 
@@ -1382,7 +1382,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             All values in the configuration may be used in any combination.
             Members of type {{MediaKeysRequirement}} reflect whether the capability is required for any combination. They will not have the value {{MediaKeysRequirement/"optional"}}.
           </p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li>
               <p>
@@ -1400,7 +1400,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         <dt><dfn><code>createMediaKeys()</code></dfn></dt>
         <dd>
           <p>Creates a new {{MediaKeys}} object for <var>keySystem</var>.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -1505,6 +1505,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <dd>
           <p>Returns a new {{MediaKeySession}} object.</p>
           <p class="note">The <var>sessionType</var> parameter affects the behavior of the returned object.</p>
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, [=exception/throw=]
  [[WEBIDL]] a {{NotSupportedError}}.</p>
@@ -1541,27 +1542,6 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             <dt><dfn><code>getStatusForPolicy()</code></dfn></dt>
             <dd>
               <p id="status-for-policy">Returns the {{MediaKeyStatus}} for a given {{MediaKeysPolicy}}.</p>
-
-              <ol class="method-algorithm">
-                <li>If <var>policy</var> has no <a data-cite="infra#map-exists">present</a> <a data-cite="webidl#dfn-dictionary-member">members</a>, return a promise rejected with a newly created {{TypeError}}.</li>
-                <li><p>Let <var>promise</var> be a new promise.</p>
-                  <ol>
-                    <li><p>For each <a data-cite="webidl#dfn-dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
-                      <ol>
-                        <li><p>If the CDM cannot determine the {{MediaKeyStatus}} for <a data-cite="webidl#dfn-dictionary-member">member</a>, then reject <var>promise</var> with {{NotSupportedError}} and abort these steps.</p></li>
-                      </ol>
-                    </li>
-                    <li><p>For each <a data-cite="webidl#dfn-dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
-                      <ol>
-                        <li><p>If the CDM would block presentation of decrypted media data for <a data-cite="webidl#dfn-dictionary-member">member</a>, then resolve <var>promise</var> with {{MediaKeyStatus/"output-restricted"}}.</p></li>
-                      </ol>
-                    </li>
-                    <li><p>Resolve <var>promise</var> with {{MediaKeyStatus/"usable"}}.</p></li>
-                  </ol>
-                </li>
-                <li><p>Return <var>promise</var>.</p></li>
-              </ol>
-
               <div>
                 <pre class="idl">
                   dictionary MediaKeysPolicy {
@@ -1592,8 +1572,27 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                     restriction during playback. In this way, application developers can get a reasonable hint to allow them to
                     optimize what content they fetch to start playback.</p>
                 </div>
-            </dd>
-
+                <p>When this method is invoked, the user agent must run the following steps:</p>
+                <ol class="method-algorithm">
+                  <li>If <var>policy</var> has no <a data-cite="infra#map-exists">present</a> <a data-cite="webidl#dfn-dictionary-member">members</a>, return a promise rejected with a newly created {{TypeError}}.</li>
+                  <li><p>Let <var>promise</var> be a new promise.</p>
+                    <ol>
+                      <li><p>For each <a data-cite="webidl#dfn-dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
+                        <ol>
+                          <li><p>If the CDM cannot determine the {{MediaKeyStatus}} for <a data-cite="webidl#dfn-dictionary-member">member</a>, then reject <var>promise</var> with {{NotSupportedError}} and abort these steps.</p></li>
+                        </ol>
+                      </li>
+                      <li><p>For each <a data-cite="webidl#dfn-dictionary-member">member</a> of <var>policy</var>, run the following steps:</p>
+                        <ol>
+                          <li><p>If the CDM would block presentation of decrypted media data for <a data-cite="webidl#dfn-dictionary-member">member</a>, then resolve <var>promise</var> with {{MediaKeyStatus/"output-restricted"}}.</p></li>
+                        </ol>
+                      </li>
+                      <li><p>Resolve <var>promise</var> with {{MediaKeyStatus/"usable"}}.</p></li>
+                    </ol>
+                  </li>
+                  <li><p>Return <var>promise</var>.</p></li>
+                </ol>
+              </dd>
             <dt><dfn><code>setServerCertificate()</code></dfn></dt>
             <dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
@@ -1602,7 +1601,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             It is intended as an optimization, and applications are not required to use it.
           </p>
           <p>The server certificate contents are [=Key System=]-specific. It MUST NOT contain executable code.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
             <li><p>If <var>serverCertificate</var> is an empty array, return a promise rejected with a new a newly created {{TypeError}}.</p></li>
@@ -1822,6 +1821,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>Generates a license request based on the <var>initData</var>.
             A {{message}} of type {{MediaKeyMessageType/"license-request"}} or {{MediaKeyMessageType/"individualization-request"}} will always be queued if the algorithm succeeds and the promise is resolved.
           </p>
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -1937,7 +1937,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <dt><dfn><code>load()</code></dfn></dt>
           <dd>
           <p>Loads the data stored for the specified session into this object.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2013,7 +2013,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <dd>
           <p>Provides messages, including licenses, to the CDM.</p>
           <p>The <var>response</var> parameter contains a message to be provided to the CDM. The contents are [=Key System=]-specific. It MUST NOT contain executable code.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2141,7 +2141,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the {{MediaKeySession/closed}} attribute promise is resolved with {{MediaKeySessionClosedReason/"closed-by-application"}} when the session is closed.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a resolved promise.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2175,7 +2175,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             Removes all license(s) and key(s) associated with the session.
             For <a href="#is-persistent-session-type">persistent session types</a>, other session data will be cleared as defined for each session type once a release message acknowledgment is processed by {{MediaKeySession/update()}}.
           </p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>If this object's <var>callable</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2815,7 +2815,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           <p>Provides the {{MediaKeys}} to use when decrypting media data during playback.</p>
 
           <p class="note">Support for clearing or replacing the associated {{MediaKeys}} object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
-
+          <p>When this method is invoked, the user agent must run the following steps:</p>
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
             <li><p>If this object's <var>attaching media keys</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
