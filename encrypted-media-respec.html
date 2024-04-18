@@ -570,7 +570,9 @@
         </pre>
         <section>
           <h2>Methods</h2>
-          <dl class="methods"><dt><dfn><code>requestMediaKeySystemAccess()</code></dfn></dt><dd>
+          <dl class="methods">
+          <dt><dfn><code>requestMediaKeySystemAccess()</code></dfn></dt>
+          <dd>
             <p class="note">Calling this method may have <em>user-visible effects</em>, including requests for user consent.
             This method should only be called when the author intends to create and use a {{MediaKeys}} object with the provided configuration.
             </p>
@@ -632,12 +634,7 @@
               </li>
               <li><p>Return <var>promise</var>.</p></li>
             </ol>
-          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keySystem</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-                The [=Key System=] for which access is being requested.
-              </td></tr><tr><td class="prmName">supportedConfigurations</td><td class="prmType"><code>sequence&lt;MediaKeySystemConfiguration&gt;</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-                A sequence of {{MediaKeySystemConfiguration}} configurations to try in order.
-                The first element with a satisfiable configuration will be used.
-              </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;MediaKeySystemAccess&gt;</code></div></dd>
+          </dd>
           </dl>
         </section>
 
@@ -1357,13 +1354,25 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
       <h2><dfn>MediaKeySystemAccess</dfn> Interface</h2>
       <p>The MediaKeySystemAccess object provides access to a [=Key System=].</p>
 
-      <pre class="idl">[Exposed=Window, SecureContext] interface MediaKeySystemAccess {
-    readonly        attribute DOMString keySystem;
-    MediaKeySystemConfiguration getConfiguration ();
-    Promise&lt;MediaKeys&gt;          createMediaKeys ();
-};</pre><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>keySystem</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-          Identifies the [=Key System=] being used.
-        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess"><dt><dfn><code>getConfiguration()</code></dfn></dt><dd>
+      <pre class="idl">
+        [Exposed=Window, SecureContext] interface MediaKeySystemAccess {
+          readonly attribute DOMString keySystem;
+          MediaKeySystemConfiguration  getConfiguration ();
+          Promise&lt;MediaKeys&gt;           createMediaKeys ();
+        };
+      </pre>
+      <section>
+        <h2>Attributes</h2>
+        <dl class="attributes" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess">
+          <dt><dfn><code>keySystem</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly</dt>
+          <dd>Identifies the [=Key System=] being used.</dd>
+        </dl>
+      </section>
+      <section>
+        <h2>Methods</h2>
+        <dl class="methods" data-dfn-for="MediaKeySystemAccess" data-link-for="MediaKeySystemAccess">
+          <dt><dfn><code>getConfiguration()</code></dfn></dt>
+          <dd>
           <p>Returns the supported combination of configuration options selected by the {{Navigator/requestMediaKeySystemAccess()}} algorithm.
           </p>
           <p>The returned object is a non-strict subset (plus any implied defaults) of the first satisfiable {{MediaKeySystemConfiguration}} configuration passed to the {{Navigator/requestMediaKeySystemAccess()}} call that returned the promise that was resolved with this object.
@@ -1385,7 +1394,9 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
               </p>
             </li>
           </ol>
-        <div><em>No parameters.</em></div><div><em>Return type: </em><code>MediaKeySystemConfiguration</code></div></dd><dt><dfn><code>createMediaKeys</code></dfn></dt><dd>
+        </dd>
+        <dt><dfn><code>createMediaKeys()</code></dfn></dt>
+        <dd>
           <p>Creates a new {{MediaKeys}} object for <var>keySystem</var>.</p>
 
           <ol class="method-algorithm">
@@ -1425,9 +1436,10 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;MediaKeys&gt;</code></div></dd></dl></section>
+        </dd>
+      </dl>
+      </section>
     </section>
-
 
     <section>
       <h2><dfn>MediaKeys</dfn> Interface</h2>
@@ -1487,9 +1499,10 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
         <section>
           <h2>Methods</h2>
           <dl class="methods" data-dfn-for="MediaKeys" data-link-for="MediaKeys">
-            <dt><dfn><code>createSession</code></dfn></dt><dd>
+          <dt><dfn><code>createSession()</code></dfn></dt>
+          <dd>
           <p>Returns a new {{MediaKeySession}} object.</p>
-
+          <p class="note">The <var>sessionType</var> parameter affects the behavior of the returned object.</p>
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, [=exception/throw=]
  [[WEBIDL]] a {{NotSupportedError}}.</p>
@@ -1522,9 +1535,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>session</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionType</td><td class="prmType"><code>MediaKeySessionType = "temporary"</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc">
-              The type of session to create. The session type affects the behavior of the returned object.
-            </td></tr></tbody></table><div><em>Return type: </em><code>MediaKeySession</code></div></dd>
+          </dd>
             <dt><dfn><code>getStatusForPolicy()</code></dfn></dt>
             <dd>
               <p id="status-for-policy">Returns the <a>MediaKeyStatus</a> for a given <a>MediaKeysPolicy</a>.</p>
@@ -1548,31 +1559,6 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 </li>
                 <li><p>Return <var>promise</var>.</p></li>
               </ol>
-              <table class="parameters">
-                <tbody>
-                  <tr>
-                    <th>Parameter</th>
-                    <th>Type</th>
-                    <th>Nullable</th>
-                    <th>Optional</th>
-                    <th>Description</th>
-                  </tr>
-                  <tr>
-                    <td class="prmName">policy</td>
-                    <td class="prmType">
-                      <code>MediaKeysPolicy</code>
-                    </td>
-                    <td class="prmNullFalse">
-                      <span role="img" aria-label="False">✘</span>
-                    </td>
-                    <td class="prmOptFalse">
-                      <span role="img" aria-label="True">✔</span>
-                    </td>
-                    <td class="prmDesc">A set of policy requirements</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div><em>Return type: </em><code>Promise&lt;MediaKeyStatus&gt;</code></div>
 
               <div>
                 <pre class="idl">
@@ -1606,12 +1592,14 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
                 </div>
             </dd>
 
-            <dt><dfn><code>setServerCertificate()</code></dfn></dt><dd>
+            <dt><dfn><code>setServerCertificate()</code></dfn></dt>
+            <dd>
           <p id="server-certificate">Provides a server certificate to be used to encrypt messages to the license server.</p>
           <p>Key Systems that use such certificates MUST also support requesting the certificate from the server via the [=Queue a "message" Event=] algorithm.</p>
           <p class="note">This method allows an application to proactively provide a server certificate to implementations that support it to avoid the additional round trip should the CDM request it.
             It is intended as an optimization, and applications are not required to use it.
           </p>
+          <p>The server certificate contents are [=Key System=]-specific. It MUST NOT contain executable code.</p>
 
           <ol class="method-algorithm">
             <li><p>If the [=Key System=] implementation represented by this object's <var>cdm implementation</var> value does not support server certificates, return a promise resolved with <code>false</code>.</p></li>
@@ -1635,11 +1623,6 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">serverCertificate</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              The server certificate.
-              The contents are [=Key System=]-specific.
-              It MUST NOT contain executable code.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div>
           </dd>
           </dl>
         </section>
@@ -1932,11 +1915,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">initDataType</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              The [=Initialization Data Type=] of the <var>initData</var>.
-            </td></tr><tr><td class="prmName">initData</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              [=Initialization Data=]
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>load()</code></dfn></dt><dd>
+      </dd>
+      <dt><dfn><code>load()</code></dfn></dt>
+      <dd>
           <p>Loads the data stored for the specified session into this object.</p>
 
           <ol class="method-algorithm">
@@ -2009,10 +1990,11 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sessionId</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              The [=Session ID=] of the session to load.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;boolean&gt;</code></div></dd><dt><dfn><code>update()</code></dfn></dt><dd>
+          </dd>
+          <dt><dfn><code>update()</code></dfn></dt>
+          <dd>
           <p>Provides messages, including licenses, to the CDM.</p>
+          <p>The <var>response</var> parameter contains a message to be provided to the CDM. The contents are [=Key System=]-specific. It MUST NOT contain executable code.</p>
 
           <ol class="method-algorithm">
             <li><p>If this object's <var>closing or closed</var> value is true, return a promise rejected with an {{InvalidStateError}}.</p></li>
@@ -2136,11 +2118,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">response</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              A message to be provided to the CDM.
-              The contents are [=Key System=]-specific.
-              It MUST NOT contain executable code.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>close()</code></dfn></dt><dd>
+          </dd>
+          <dt><dfn><code>close()</code></dfn></dt>
+          <dd>
           <p>Indicates that the application no longer needs the session and the CDM should release any resources associated with the session and close it. Persisted data should not be released or cleared.</p>
           <p class="note">The returned promise is resolved when the request has been processed, and the {{MediaKeySession/closed}} attribute promise is resolved with {{MediaKeySessionClosedReason/"closed-by-application"}} when the session is closed.</p>
 
@@ -2170,7 +2150,9 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd><dt><dfn><code>remove()</code></dfn></dt><dd>
+        </dd>
+        <dt><dfn><code>remove()</code></dfn></dt>
+        <dd>
           <p>
             Removes all license(s) and key(s) associated with the session.
             For <a href="#is-persistent-session-type">persistent session types</a>, other session data will be cleared as defined for each session type once a release message acknowledgment is processed by {{MediaKeySession/update()}}.
@@ -2254,19 +2236,23 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <div><em>No parameters.</em></div><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd></dl></section>
+        </dd>
+        </dl>
+      </section>
 
       <section>
         <h2><dfn>MediaKeyStatusMap</dfn> Interface</h2>
         <p>The MediaKeyStatusMap object is a read-only map of [=key IDs=] to the current status of the associated key.</p>
         <p>A key's status is independent of whether the key is currently being used and of media data.</p>
         <p class="note">For example, if a key has output requirements that cannot currently be met, the key's status should be {{MediaKeyStatus/"output-downscaled"}} or {{MediaKeyStatus/"output-restricted"}}, as appropriate, regardless of whether that key has been or is currently needed to decrypt media data.</p>
-        <pre class="idl">[Exposed=Window, SecureContext] interface MediaKeyStatusMap {
-    iterable&lt;BufferSource,MediaKeyStatus&gt;;
-    readonly        attribute unsigned long size;
-    boolean has (BufferSource keyId);
-    (MediaKeyStatus or undefined)     get (BufferSource keyId);
-};</pre>
+        <pre class="idl">
+          [Exposed=Window, SecureContext] interface MediaKeyStatusMap {
+            iterable&lt;BufferSource,MediaKeyStatus&gt;;
+            readonly        attribute unsigned long size;
+            boolean has (BufferSource keyId);
+            (MediaKeyStatus or undefined)     get (BufferSource keyId);
+          };
+        </pre>
           <section>
             <h2>Attributes</h2>
             <dl class="attributes" data-dfn-for="MediaKeyStatusMap" data-link-for="MediaKeyStatusMap"><dt><dfn><code>size</code></dfn> of type <span class="idlAttrType">{{unsigned long}}</span>, readonly       </dt><dd>
@@ -2281,16 +2267,10 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
               <dt><dfn><code>has</code></dfn></dt>
               <dd>
                 <p>Returns <code>true</code> if the status of the key identified by <var>keyId</var> is known.</p>
-
-                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The [=key ID=] of the key.</td></tr></tbody></table>
-                <div><em>Return type: </em><code>boolean</code></div>
               </dd>
               <dt><dfn><code>get</code></dfn></dt>
               <dd>
                 <p>Returns the <a>MediaKeyStatus</a> of the key identified by <var>keyId</var> or <code>undefined</code> if the status of the key identified by <var>keyId</var> is not known.</p>
-
-                <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keyId</td><td class="prmType"><code>BufferSource</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">The [=key ID=] of the key.</td></tr></tbody></table>
-                <div><em>Return type: </em><code>any</code></div>
               </dd>
             </dl>
             <p>
@@ -2375,24 +2355,29 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             As with all other messages, any identifiers in the message MUST be <a href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and MUST NOT be [=Distinctive Permanent Identifier(s)=].
           </td></tr></tbody></table>
 
-        <pre class="idl">[Exposed=Window, SecureContext]
-interface MediaKeyMessageEvent : Event {
-    constructor(DOMString type, MediaKeyMessageEventInit eventInitDict);
-    readonly        attribute MediaKeyMessageType messageType;
-    readonly        attribute ArrayBuffer         message;
-};</pre><section><h2>Constructors</h2><dl class="constructors" data-dfn-for="MediaKeyMessageEvent" data-link-for="MediaKeyMessageEvent"><dt><dfn><code>MediaKeyMessageEvent</code></dfn></dt><dd>
-
-          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaKeyMessageEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaKeyMessageEvent" data-link-for="MediaKeyMessageEvent"><dt><dfn><code>messageType</code></dfn> of type <span class="idlAttrType"><a>MediaKeyMessageType</a></span>, readonly       </dt><dd>
+        <pre class="idl">
+          [Exposed=Window, SecureContext]
+            interface MediaKeyMessageEvent : Event {
+              constructor(DOMString type, MediaKeyMessageEventInit eventInitDict);
+              readonly        attribute MediaKeyMessageType messageType;
+              readonly        attribute ArrayBuffer         message;
+            };
+          </pre>
+        <section>
+          <h2>Attributes</h2>
+          <dl class="attributes" data-dfn-for="MediaKeyMessageEvent" data-link-for="MediaKeyMessageEvent">
+            <dt><dfn><code>messageType</code></dfn> of type <span class="idlAttrType"><a>MediaKeyMessageType</a></span>, readonly</dt>
+            <dd>
             The type of the message.
             <p>Implementations MUST NOT require applications to handle message types.
               Implementations MUST support applications that do not differentiate messages and MUST NOT require that applications handle message types.
-              Specifically, Key Systems MUST support passing all types of messages to a single URL.
+              Specifically, [=Key Systems=] MUST support passing all types of messages to a single URL.
             </p>
             <p class="note">This attribute allows an application to differentiate messages without parsing the message.
               It is intended to enable optional application and/or server optimizations, but applications are not required to use it.
             </p>
           </dd><dt><dfn><code>message</code></dfn> of type <span class="idlAttrType">{{ArrayBuffer}}</span>, readonly       </dt><dd>
-            The message from the CDM. Messages are Key System-specific.
+            The message from the CDM. Messages are [=Key System=]-specific.
           </dd></dl></section>
 
         <section>
@@ -2786,16 +2771,21 @@ interface MediaKeyMessageEvent : Event {
           [SecureContext] Promise&lt;undefined&gt; setMediaKeys (MediaKeys? mediaKeys);
         };
       </pre>
-      <section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType"><!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --></span>, readonly       , nullable</dt><dd>
-          <p>The <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> being used when decrypting encrypted [=HTMLMediaElement/media data=] for this media element.</p>
+      <section><h2>Attributes</h2><dl class="attributes" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>mediaKeys</code></dfn> of type <span class="idlAttrType">{{MediaKeys}}</span>, readonly       , nullable</dt><dd>
+          <p>The {{MediaKeys}} being used when decrypting encrypted [=HTMLMediaElement/media data=] for this media element.</p>
         </dd><dt><dfn><code>onencrypted</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the {{encrypted}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
         </dd><dt><dfn><code>onwaitingforkey</code></dfn> of type <span class="idlAttrType">{{EventHandler}}</span></dt><dd>
           <p>Event handler for the {{waitingforkey}} event. It MUST be supported by all HTMLMediaElements as both a content attribute and an IDL attribute.</p>
-        </dd></dl></section><section><h2>Methods</h2><dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement"><dt><dfn><code>setMediaKeys()</code></dfn></dt><dd>
-          <p>Provides the <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> to use when decrypting media data during playback.</p>
+        </dd></dl></section>
+        <section>
+          <h2>Methods</h2>
+          <dl class="methods" data-dfn-for="HTMLMediaElement" data-link-for="HTMLMediaElement">
+            <dt><dfn><code>setMediaKeys()</code></dfn></dt>
+            <dd>
+          <p>Provides the {{MediaKeys}} to use when decrypting media data during playback.</p>
 
-          <p class="note">Support for clearing or replacing the associated <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
+          <p class="note">Support for clearing or replacing the associated {{MediaKeys}} object during playback is a quality of implementation issue. In many cases it will result in a bad user experience or rejected promise.</p>
 
           <ol class="method-algorithm">
             <!-- For simplicity and consistency, do not allow multiple pending calls. -->
@@ -2849,9 +2839,9 @@ interface MediaKeyMessageEvent : Event {
             </li>
             <li><p>Return <var>promise</var>.</p></li>
           </ol>
-        <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mediaKeys</td><td class="prmType"><code>MediaKeys</code></td><td class="prmNullTrue"><span role="img" aria-label="True">✔</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc">
-              A <!-- Restore when https://github.com/w3c/respec/issues/893 is fixed. <a> -->MediaKeys<!-- </a> --> object.
-            </td></tr></tbody></table><div><em>Return type: </em><code>Promise&lt;undefined&gt;</code></div></dd></dl></section>
+          </dd>
+        </dl>
+      </section>
 
       <section>
         <h3><a>MediaEncryptedEvent</a></h3>
@@ -2866,26 +2856,34 @@ interface MediaKeyMessageEvent : Event {
               readonly        attribute ArrayBuffer? initData;
           };
         </pre>
-        <section>
-          <h2>Constructors</h2>
-          <dl class="constructors" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>MediaEncryptedEvent</code></dfn></dt><dd>
 
-          <table class="parameters"><tbody><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code>DOMString</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptFalse"><span role="img" aria-label="False">✘</span></td><td class="prmDesc"></td></tr><tr><td class="prmName">eventInitDict</td><td class="prmType"><code>MediaEncryptedEventInit</code></td><td class="prmNullFalse"><span role="img" aria-label="False">✘</span></td><td class="prmOptTrue"><span role="img" aria-label="True">✔</span></td><td class="prmDesc"></td></tr></tbody></table></dd></dl></section><section><h2>Attributes</h2><dl class="attributes" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly       </dt><dd>
-            Indicates the [=Initialization Data Type=] of the [=Initialization Data=] contained in the {{MediaEncryptedEvent/initData}} attribute.
-          </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlAttrType">{{ArrayBuffer}}</span>, readonly       , nullable</dt><dd>
-            The [=Initialization Data=] for the event.
-          </dd></dl></section>
+        <section>
+          <h2>Attributes</h2>
+          <dl class="attributes" data-dfn-for="MediaEncryptedEvent" data-link-for="MediaEncryptedEvent">
+            <dt><dfn><code>initDataType</code></dfn> of type <span class="idlAttrType">{{DOMString}}</span>, readonly</dt>
+            <dd>Indicates the [=Initialization Data Type=] of the [=Initialization Data=] contained in the {{MediaEncryptedEvent/initData}} attribute.</dd>
+            <dt><dfn><code>initData</code></dfn> of type <span class="idlAttrType">{{ArrayBuffer}}</span>, readonly, nullable</dt>
+            <dd>The [=Initialization Data=] for the event.</dd>
+          </dl>
+        </section>
 
         <section>
           <h4><dfn>MediaEncryptedEventInit</dfn></h4>
-          <pre class="idl" data-cite="DOM">dictionary MediaEncryptedEventInit : EventInit {
-             DOMString    initDataType = "";
-             ArrayBuffer? initData = null;
-};</pre><section><h2>Dictionary <a class="idlType">MediaEncryptedEventInit</a> Members</h2><dl class="dictionary-members" data-dfn-for="MediaEncryptedEventInit" data-link-for="MediaEncryptedEventInit"><dt><dfn><code>initDataType</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt><dd>
-              The [=Initialization Data Type=].
-            </dd><dt><dfn><code>initData</code></dfn> of type <span class="idlMemberType">{{ArrayBuffer}}</span>, nullable, defaulting to <code>null</code></dt><dd>
-              The [=Initialization Data=].
-            </dd></dl></section>
+          <pre class="idl" data-cite="DOM">
+            dictionary MediaEncryptedEventInit : EventInit {
+              DOMString    initDataType = "";
+              ArrayBuffer? initData = null;
+            };
+          </pre>
+          <section>
+            <h2>Dictionary <a class="idlType">MediaEncryptedEventInit</a> Members</h2>
+            <dl class="dictionary-members" data-dfn-for="MediaEncryptedEventInit" data-link-for="MediaEncryptedEventInit">
+              <dt><dfn><code>initDataType</code></dfn> of type <span class="idlMemberType">{{DOMString}}</span>, defaulting to <code>""</code></dt>
+              <dd>The [=Initialization Data Type=].</dd>
+              <dt><dfn><code>initData</code></dfn> of type <span class="idlMemberType">{{ArrayBuffer}}</span>, nullable, defaulting to <code>null</code></dt>
+              <dd>The [=Initialization Data=].</dd>
+            </dl>
+          </section>
         </section>
       </section>
 
