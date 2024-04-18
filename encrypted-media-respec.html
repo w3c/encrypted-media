@@ -4523,7 +4523,7 @@ interface MediaKeyMessageEvent : Event {
   }
 &lt;/script&gt;
 
-&lt;video autoplay <a def-id="onencrypted"></a>='handleInitData(event)'&gt;&lt;/video&gt;
+&lt;video autoplay onencrypted='handleInitData(event)'&gt;&lt;/video&gt;
 </pre>
       </section>
 
@@ -4586,7 +4586,7 @@ interface MediaKeyMessageEvent : Event {
     var keySession = mediaKeys.createSession();
     keySession.addEventListener('message', handleMessage, false);
     keySession.addEventListener('keystatuseschange', handlekeyStatusesChange, false);
-    keySession.<a def-id="closed"></a>.then(
+    keySession.closed.then(
       function(reason) {
         console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
@@ -4625,9 +4625,9 @@ interface MediaKeyMessageEvent : Event {
 
   function handlekeyStatusesChange(event) {
     // Evaluate the current state using one of the map-like methods exposed by
-    // event.target.<a def-id="keyStatuses"></a>.
+    // event.target.keyStatuses.
     // For example:
-    event.target.<a def-id="keyStatuses"></a>.forEach(function(status, keyId) {
+    event.target.keyStatuses.forEach(function(status, keyId) {
       switch (status) {
         case "usable":
           break;
@@ -4657,7 +4657,7 @@ interface MediaKeyMessageEvent : Event {
   );
 &lt;/script&gt;
 
-&lt;video id="v" autoplay <a def-id="onencrypted"></a>='handleInitData(event)'&gt;&lt;/video&gt;
+&lt;video id="v" autoplay onencrypted='handleInitData(event)'&gt;&lt;/video&gt;
 </pre>
       </section>
 
@@ -4680,7 +4680,7 @@ interface MediaKeyMessageEvent : Event {
   function makeNewRequest(mediaKeys, initDataType, initData) {
     var keySession = mediaKeys.createSession("persistent-license");
     keySession.addEventListener('message', handleMessage, false);
-    keySession.<a def-id="closed"></a>.then(
+    keySession.closed.then(
       function(reason) {
         console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
@@ -4698,12 +4698,12 @@ interface MediaKeyMessageEvent : Event {
   function loadStoredSession(mediaKeys, sessionId) {
     var keySession = mediaKeys.createSession("persistent-license");
     keySession.addEventListener('message', handleMessage, false);
-    keySession.<a def-id="closed"></a>.then(
+    keySession.closed.then(
       function(reason) {
         console.log('Session', this.sessionId, 'closed, reason', reason);
       }.bind(keySession)
     );
-    keySession.<a def-id="load-call"></a>(sessionId).then(
+    keySession.load(sessionId).then(
       function(loaded) {
         if (!loaded) {
           console.error('No stored session with the ID ' + sessionId + ' was found.');
@@ -4718,14 +4718,14 @@ interface MediaKeyMessageEvent : Event {
 
   // Called when the application wants to stop using the session without removing the stored license.
   function closeSession(keySession) {
-    keySession.<a def-id="close-call"></a>();
+    keySession.close();
   }
 
   // Called when the application wants to remove the stored license.
   // The stored session data has not been completely removed until the promise returned by remove() is fulfilled.
   // The remove() call may initiate a series of messages to/from the server that must be completed before this occurs.
   function removeStoredSession(keySession) {
-    keySession.<a def-id="remove-call"></a>().then(
+    keySession.remove().then(
       function() {
         console.log('Session ' + this.sessionId + ' removed');
         // The application should remove its record of this.sessionId.
