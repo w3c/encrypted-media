@@ -167,7 +167,7 @@
           <p>A new Session ID is generated each time the user agent and [=CDM=] successfully create a new session.</p>
 
           <p>Each Session ID SHALL be unique within the browsing context in which it was created.
-            For session types for which the [=is persistent session type?=] algorithm returns <code>true</code>, Session IDs MUST be unique within the [=origin=] over time, including across browsing sessions.
+            For session types for which the [=Is persistent session type?=] algorithm returns <code>true</code>, Session IDs MUST be unique within the [=origin=] over time, including across browsing sessions.
           </p>
 
           <p class="note">The underlying content protection protocol does not necessarily need to support Session IDs.</p>
@@ -841,13 +841,13 @@
                   <li><p>Let <var>session type</var> be the value.</p></li>
                   <li>
                     <p>
-                      If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"not-allowed"}} and the [=is persistent session type?=] algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
+                      If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"not-allowed"}} and the [=Is persistent session type?=] algorithm returns <code>true</code> for <var>session type</var> return <code>NotSupported</code>.
                     </p>
                   </li>
                   <li>
                     <p>If the <var>implementation</var> does not support <var>session type</var> in combination with <var>accumulated configuration</var> and <var>restrictions</var> for other reasons, return <code>NotSupported</code>.</p>
                   </li>
-                  <li><p>If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"optional"}} and the result of running the [=is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value to {{MediaKeysRequirement/"required"}}.</p></li>
+                  <li><p>If <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value is {{MediaKeysRequirement/"optional"}} and the result of running the [=Is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, change <var>accumulated configuration</var>'s {{MediaKeySystemConfiguration/persistentState}} value to {{MediaKeysRequirement/"required"}}.</p></li>
                 </ol>
               </li>
               <li><p>Set the {{MediaKeySystemConfiguration/sessionTypes}} member of <var>accumulated configuration</var> to <var>session types</var>.</p></li>
@@ -1515,7 +1515,7 @@ The <dfn>MediaKeysRequirement</dfn> enumeration is defined as follows:
           <ol class="method-algorithm">
             <li><p>If this object's <var>supported session types</var> value does not contain <var>sessionType</var>, [=exception/throw=]
  [[WEBIDL]] a {{NotSupportedError}}.</p>
-              <p class="note"><var>sessionType</var> values for which the [=is persistent session type?=] algorithm returns <code>true</code> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
+              <p class="note"><var>sessionType</var> values for which the [=Is persistent session type?=] algorithm returns <code>true</code> will fail if this object's <var>persistent state allowed</var> value is <code>false</code>.</p>
             </li>
             <li><p>If the implementation does not support {{MediaKeySession}} operations in the current state, [=exception/throw=]
  [[WEBIDL]] an {{InvalidStateError}}.</p>
@@ -1877,7 +1877,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
                     </li>
 
                     <li><p>Let <var>session id</var> be a unique [=Session ID=] string.</p>
-                      <p>If the result of running the [=is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the [=origin=] of this object's [=Document=] over time, including across Documents and browsing sessions.</p>
+                      <p>If the result of running the [=Is persistent session type?=] algorithm on <var>session type</var> is <code>true</code>, the ID MUST be unique within the [=origin=] of this object's [=Document=] over time, including across Documents and browsing sessions.</p>
                     </li>
                     <li>
                       <dl class="switch">
@@ -1954,7 +1954,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
             <li><p>If this object's <var>uninitialized</var> value is false, return a promise rejected with an {{InvalidStateError}}.</p></li>
             <li><p>Let this object's <var>uninitialized</var> value be false.</p></li><!-- For simplicity and consistency, this object cannot be reused after any failure. -->
             <li><p>If <var>sessionId</var> is the empty string, return a promise rejected with a newly created {{TypeError}}.</p></li>
-            <li><p>If the result of running the [=is persistent session type?=] algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created {{TypeError}}.</p></li>
+            <li><p>If the result of running the [=Is persistent session type?=] algorithm on this object's <var>session type</var> is <code>false</code>, return a promise rejected with a newly created {{TypeError}}.</p></li>
             <li><p>Let <var>origin</var> be the [=origin=] of this object's [=Document=].</p></li>
             <li><p>Let <var>promise</var> be a new promise.</p></li>
             <li><p>Run the following steps in parallel:</p>
@@ -2728,10 +2728,10 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
         <h3>Session Storage and Persistence</h3>
         <p>This section provides an overview of session storage and persistence that complements the algorithms.</p>
         <p>The following requirements apply in addition to those in [=Storage and Persistence=].</p>
-        <p>If the result of running the [=is persistent session type?=] algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and [=CDM=] MUST NOT persist a record of or data related to the session at any point.
+        <p>If the result of running the [=Is persistent session type?=] algorithm on this object's <var>session type</var> is <code>false</code>, the user agent and [=CDM=] MUST NOT persist a record of or data related to the session at any point.
           This includes license(s), key(s), [=record(s) of license destruction=], and the [=Session ID=].
         </p>
-        <p>The remainder of this section applies to session types for which the [=is persistent session type?=] algorithm returns <code>true</code>.</p>
+        <p>The remainder of this section applies to session types for which the [=Is persistent session type?=] algorithm returns <code>true</code>.</p>
         <p>The [=CDM=] SHOULD NOT store session data, including the Session ID, until {{MediaKeySession/update()}} is called the first time.
           Specifically, the [=CDM=] SHOULD NOT store session data during the {{MediaKeySession/generateRequest()}} algorithm.
           This ensures that the application is aware of the session and knows it needs to eventually remove it.
@@ -2744,7 +2744,7 @@ The <dfn>MediaKeySessionClosedReason</dfn> enumeration is defined as follows:
           In other words, {{MediaKeySession/load()}} MUST fail when there is already a {{MediaKeySession}} representing the session specified by the <var>sessionId</var> parameter, either because the object that created it via {{MediaKeySession/generateRequest()}} is still active or it has been loaded into another object via {{MediaKeySession/load()}}.
           A session MAY only be loaded again if all objects that have ever represented it are [=media key session/closed=].
         </p>
-        <p>An application that creates a session using a type for which the [=is persistent session type?=] algorithm returns <code>true</code> SHOULD
+        <p>An application that creates a session using a type for which the [=Is persistent session type?=] algorithm returns <code>true</code> SHOULD
           later remove the stored data by first initiating the removal process using {{MediaKeySession/remove()}} and then ensuring that the removal process, which may involve
           message exchange(s), successfully completes. The [=CDM=] MAY also remove sessions as appropriate, but applications SHOULD NOT rely on this.
         </p>
