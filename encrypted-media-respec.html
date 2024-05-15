@@ -2978,7 +2978,7 @@
             <div>
               <pre class="idl">
                   dictionary MediaKeysPolicy {
-                      HDCPVersion minHdcpVersion;
+                      DOMString minHdcpVersion;
                   };
                 </pre>
               <p>
@@ -2989,23 +2989,11 @@
               </p>
             </div>
             <div>
-              <pre class="idl">
-                  enum HDCPVersion {
-                      "1.0",
-                      "1.1",
-                      "1.2",
-                      "1.3",
-                      "1.4",
-                      "2.0",
-                      "2.1",
-                      "2.2",
-                      "2.3",
-                  };
-                </pre>
               <p>
-                The HDCP Policy is represented by {{MediaKeysPolicy/minHdcpVersion}}. When set, the
-                policy requirement will be fulfilled if the system supports
-                {{MediaKeysPolicy/minHdcpVersion}} on the current display.
+                The HDCP Policy is represented by {{MediaKeysPolicy/minHdcpVersion}}. If the system
+                can enable the HDCP version specified or higher, then the policy will result in a
+                {{MediaKeyStatus}} of {{MediaKeyStatus/"usable"}}. Implementations MUST support
+                {{MediaKeysPolicy/minHdcpVersion}} values defined in [[EME-HDCP-VERSION-REGISTRY]].
               </p>
               <p class="note">
                 The determination of HDCP status should be done in the same way that the [=CDM=]
@@ -3026,6 +3014,20 @@
                   Let <var>promise</var> be a new promise.
                 </p>
                 <ol>
+                  <li>
+                    <p>
+                      For each [=dictionary member=] of <var>policy</var>, run the following steps:
+                    </p>
+                    <ol>
+                      <li>
+                        <p>
+                          If the key is not a valid {{MediaKeysPolicy}} member or the type of the
+                          value is incorrect, then reject <var>promise</var> with {{TypeError}} and
+                          abort these steps.
+                        </p>
+                      </li>
+                    </ol>
+                  </li>
                   <li>
                     <p>
                       For each [=dictionary member=] of <var>policy</var>, run the following steps:
