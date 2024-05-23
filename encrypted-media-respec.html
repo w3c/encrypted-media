@@ -3218,17 +3218,23 @@
           <p>
             The CDM unavailable algorithm is run to close all {{MediaKeySession}} objects
             associated with a {{MediaKeys}} object, <var>media keys</var> when the [=CDM=] instance
-            becomes unavailable.
+            becomes unavailable. Requests to run this algorithm include a
+            {{MediaKeySessionClosedReason}} value.
           </p>
           <p>
-            The following step is run:
+            The following steps are run:
           </p>
           <ol>
             <li>
               <p>
+                Let the <var>reason</var> be the specified {{MediaKeySessionClosedReason}} value.
+              </p>
+            </li>
+            <li>
+              <p>
                 For each {{MediaKeySession}} created by the <var>media keys</var> that is not
                 [=media key session/closed=], [=queue a task=] to run the [=Session Closed=]
-                algorithm on the session with reason {{MediaKeyStatus/"internal-error"}}.
+                algorithm on the session with the reason <var>reason</var>.
               </p>
             </li>
           </ol>
@@ -5369,8 +5375,16 @@
             </li>
             <li>
               <p>
-                If <var>cdm</var> has become unavailable, [=queue a task=] to run the [=CDM
-                Unavailable=] algorithm.
+                If <var>cdm</var> has become unavailable due to a hardware context reset,
+                [=queue a task=] to run the [=CDM Unavailable=] algorithm with reason
+                {{MediaKeySessionClosedReason/"hardware-context-reset"}}.
+              </p>
+            </li>
+            <li>
+              <p>
+                If <var>cdm</var> has become unavailable for any other reason,
+                [=queue a task=] to run the [=CDM Unavailable=] algorithm with reason
+                {{MediaKeySessionClosedReason/"internal-error"}}.
               </p>
             </li>
           </ol>
@@ -6225,9 +6239,6 @@
                   <p>
                     If <var>cdm</var> is no longer usable for any reason, run the following steps:
                   </p>
-                  <p class="note">
-                    These steps are intended to be run on unrecoverable failures of the [=CDM=].
-                  </p>
                   <ol>
                     <li>
                       <p>
@@ -6237,7 +6248,9 @@
                     </li>
                     <li>
                       <p>
-                        Run the [=CDM Unavailable=] algorithm on <var>media keys</var>.
+                        Run the [=CDM Unavailable=] algorithm on <var>media keys</var> with the
+                        reason {{MediaKeyStatus/"hardware-context-reset"}} for a hardware context
+                        reset or {{MediaKeyStatus/"internal-error"}} otherwise.
                       </p>
                     </li>
                     <li>
@@ -6339,9 +6352,10 @@
                                     </li>
                                     <li>
                                       <p>
-                                        If <var>cdm</var> is no longer usable for any reason then
-                                        run the [=CDM Unavailable=] algorithm on <var>media
-                                        keys</var>.
+                                        If <var>cdm</var> is no longer usable, run the [=CDM Unavailable=]
+                                        algorithm on <var>media keys</var> with the reason
+                                        {{MediaKeyStatus/"hardware-context-reset"}} for a hardware
+                                        context reset, or {{MediaKeyStatus/"internal-error"}} otherwise.
                                       </p>
                                     </li>
                                     <li>
