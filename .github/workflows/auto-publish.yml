@@ -1,0 +1,89 @@
+name: Build, validate, deploy and publish
+
+on:
+  # Worflow runs on pull requests where it makes sure that the spec can still be
+  # generated, that markup is valid and that there are no broken links, as
+  # well as on pushes to the default branch where it also deploys the generated
+  # spec to the gh-pages branch and publishes the result to /TR.
+  # The "workflow_dispatch" hook allows admins to also trigger the workflow
+  # manually from GitHub's UI.
+  pull_request: {}
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - source: encrypted-media-respec.html
+            destination: index.html
+            echidna_token: ECHIDNA_TOKEN_ENCRYPTED_MEDIA
+            build_override: |
+              specStatus: WD
+
+          - source: hdcp-version-registry-respec.html
+            destination: hdcp-version-registry.html
+            echidna_token: ECHIDNA_TOKEN_EME_HDCP_VERSION_REGISTRY
+            build_override: |
+              specStatus: DRY
+
+          - source: format-registry/initdata/index-respec.html
+            destination: format-registry/initdata/index.html
+            echidna_token: ECHIDNA_TOKEN_EME_INITDATA_REGISTRY
+            build_override: |
+              specStatus: DRY
+          - source: format-registry/initdata/cenc-respec.html
+            destination: format-registry/initdata/cenc.html
+            echidna_token: ECHIDNA_TOKEN_EME_INITDATA_CENC
+            build_override: |
+              specStatus: NOTE
+          - source: format-registry/initdata/keyids-respec.html
+            destination: format-registry/initdata/keyids.html
+            echidna_token: ECHIDNA_TOKEN_EME_INITDATA_KEYIDS
+            build_override: |
+              specStatus: NOTE
+          - source: format-registry/initdata/webm-respec.html
+            destination: format-registry/initdata/webm.html
+            echidna_token: ECHIDNA_TOKEN_EME_INITDATA_WEBM
+            build_override: |
+              specStatus: NOTE
+
+          - source: format-registry/stream/index-respec.html
+            destination: format-registry/stream/index.html
+            echidna_token: ECHIDNA_TOKEN_EME_STREAM_REGISTRY
+            build_override: |
+              specStatus: DRY
+          - source: format-registry/stream/mp4-respec.html
+            destination: format-registry/stream/mp4.html
+            echidna_token: ECHIDNA_TOKEN_EME_STREAM_MP4
+            build_override: |
+              specStatus: NOTE
+          - source: format-registry/stream/webm-respec.html
+            destination: format-registry/stream/webm.html
+            echidna_token: ECHIDNA_TOKEN_EME_STREAM_WEBM
+            build_override: |
+              specStatus: NOTE
+
+    steps:
+      # See doc at https://github.com/actions/checkout#checkout-v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # See doc at https://github.com/w3c/spec-prod/#spec-prod
+      # The action only deploys the generated spec to the gh-pages branch when
+      # the workflow was triggered by a push to the default branch.
+      - name: Build and validate spec, push to gh-pages branch and deploy to /TR if needed
+        uses: w3c/spec-prod@v2
+        with:
+          TOOLCHAIN: respec
+          SOURCE: ${{ matrix.source }}
+          DESTINATION: ${{ matrix.destination }}
+          GH_PAGES_BRANCH: gh-pages
+          W3C_ECHIDNA_TOKEN: ${{ secrets[matrix.echidna_token] }}
+          W3C_WG_DECISION_URL: https://github.com/w3c/media-wg/issues/27
+          W3C_BUILD_OVERRIDE: ${{ matrix.build_override }}
