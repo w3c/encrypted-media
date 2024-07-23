@@ -122,7 +122,7 @@ for (const spec of specs) {
       spec.shortname.toUpperCase().replace(/-/g, '_');
   }
   if (spec.additionalPaths) {
-    spec.additionalPaths = spec.additionalPaths.map(path => `- '${path}'`).join('\n    ');
+    spec.additionalPaths = spec.additionalPaths.map(path => `\n      - '${path}'`).join('');
   }
 
   let content = template;
