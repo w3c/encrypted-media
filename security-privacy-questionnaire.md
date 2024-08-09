@@ -6,9 +6,9 @@ Questionnare: https://w3ctag.github.io/security-questionnaire/ (as at 24 May 202
 
 **Handling hardware context reset:** Information about certain device state changes will be exposed indirectly to Web sites, e.g. session closed due to "hardware context reset", which could be caused by using setting the device to sleep/resume, or switching monitors. Sites will not be able to know the exact reason. This exposure is necessary for sites to provide the best user experience.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** The API exposes whether the implementation supports CENC or CBCS encryption, or both. These two encryption schemes are incompatible, so the API allows websites to make intelligent choices about what content to serve to which user agents.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** The API exposes whether a HDCP version is supported by the implementation. This allows websites to know before fetching content if HDCP (and what version) can be enforced, which allows them, for example, to start pre-fetching high resolution content rather than starting at a low resolution or waiting for the license exchange.
 
 ## 2.2 Do features in your specification expose the minimum amount of information necessary to implement the intended functionality?
 
@@ -52,11 +52,13 @@ Questionnare: https://w3ctag.github.io/security-questionnaire/ (as at 24 May 202
 
 ## 2.7 Does this specification allow an origin to send data to the underlying platform?
 
-**Handling hardware context reset:** No.
+EME allows an origin to send encrypted media to a platform-level content decryption module (CDM) for playback, as well as a browser-intermediated negotiation of license keys between the origin and the CDM.
 
-**Querying encryption scheme support:** No.
+**Handling hardware context reset:** No additional data beyond the above.
 
-**HDCP policy detection:** No.
+**Querying encryption scheme support:** No additional data beyond the above.
+
+**HDCP policy detection:** No additional data beyond the above.
 
 ## 2.8 Do features in this specification enable access to device sensors?
 
