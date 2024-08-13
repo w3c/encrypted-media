@@ -63,7 +63,7 @@
         },
       },
 
-      xref: ["dom", "html", "infra", "webaudio"]
+      xref: ["dom", "html", "infra", "mimesniff", "webaudio"]
     };
     </script>
     <link rel="stylesheet" href="eme.css">
@@ -1021,22 +1021,6 @@
             multiple independent profiles for a single account.
           </p>
         </dd>
-        <dt>
-          <dfn>Valid Media MIME Type</dfn>
-        </dt>
-        <dd>
-          <p>
-            A valid media MIME type is a media <a data-cite="html#mime-types">MIME type</a> that is
-            also a [=valid MIME type string=] [[mimesniff]]. When a MIME type includes parameters,
-            such as `"codecs"` [[RFC6381]], such parameters MUST also be valid per the relevant
-            specification.
-          </p>
-          <p>
-            When used with the features defined in this specification, MIME type strings SHOULD
-            explicitly specify codecs and codec constraints (e.g., per [[RFC6381]]) unless these
-            are normatively implied by the container.
-          </p>
-        </dd>
       </dl>
     </section>
     <section>
@@ -1928,14 +1912,20 @@
                   </li><!-- Invalid input. -->
                   <li>
                     <p>
-                      If <var>content type</var> is not a [=valid media MIME type=] or is
-                      unrecognized, continue to the next iteration.
+                      Let <var>mimeType</var> be the result of running <a>parse a MIME type</a>
+                      with <var>content type</var>.
                     </p>
                   </li>
                   <li>
                     <p>
-                      Let <var>container</var> be the container type specified by <var>content
-                      type</var>.
+                      If <var>mimeType</var> is <code>failure</code> or is unrecognized,
+                      continue to the next iteration.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Let <var>container</var> be the container type specified by
+                      <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
@@ -1951,13 +1941,14 @@
                   </li>
                   <li>
                     <p>
-                      Let <var>parameters</var> be the RFC 6381 [[RFC6381]] parameters, if any,
-                      specified by <var>content type</var>.
+                      Let <var>parameters</var> be the "codecs" and "profiles" RFC 6381 [[RFC6381]]
+                      parameters, if any, of <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
                     <p>
                       If the user agent does not recognize one or more <var>parameters</var>,
+                      or if any parameters are not valid per the relevant specification,
                       continue to the next iteration.
                     </p>
                   </li>
@@ -1998,11 +1989,12 @@
                   </li>
                   <li>
                     <p>
-                      If <var>content type</var> is not strictly an <var>audio/video type</var>,
+                      If <var>mimeType</var> is not strictly an <var>audio/video type</var>,
                       continue to the next iteration.
                     </p>
                     <p class="note">
-                      For example, if <var>audio/video type</var> is Video and the top-level type
+                      For example, if <var>audio/video type</var> is Video and <var>mimeType</var>'s
+                      <var>type</var>
                       is not "video" or <var>media types</var> contains non-video codecs.
                     </p>
                   </li>
@@ -2483,8 +2475,13 @@
             </dt>
             <dd>
               <p>
-                The type of the <a data-cite="html#media-resource">media resource</a>. Its value
-                must be a [=valid media MIME type=]. The empty string is invalid.
+                The <a data-cite="html#mime-types">MIME type</a> of the
+                <a data-cite="html#media-resource">media resource</a>.
+              </p>
+              <p class="note">
+                Applications SHOULD ensure that the MIME type explicitly specifies codecs
+                and codec constraints (e.g., per [[RFC6381]]) unless these are normatively
+                implied by the container.
               </p>
             </dd>
             <dt>
@@ -2619,7 +2616,7 @@
               The returned object is a non-strict subset (plus any implied defaults) of the first
               satisfiable {{MediaKeySystemConfiguration}} configuration passed to the
               {{Navigator/requestMediaKeySystemAccess()}} call that returned the promise that was
-              resolved with this object. It does not contain values capabilities not specified in
+              resolved with this object. It does not contain values for capabilities not specified in
               that single configuration (other than implied defaults) and thus may not reflect all
               capabilities of the [=Key System=] implementation. All values in the configuration
               may be used in any combination. Members of type {{MediaKeysRequirement}} reflect
