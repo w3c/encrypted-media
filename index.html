@@ -123,7 +123,7 @@ dd{margin-left:0}
 <link rel="stylesheet" href="eme.css">
   
 <meta name="color-scheme" content="light">
-<meta name="revision" content="6f6f781dc3e5da41f9cbe09d170cf91e94c05c61">
+<meta name="revision" content="1c117a9b157d1b76b0197ff8c99fe1570c76daf3">
 <meta name="description" content="This specification extends HTMLMediaElement [HTML] providing APIs to control playback
         of encrypted content.">
 <style>
@@ -236,14 +236,15 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     "dom",
     "html",
     "infra",
+    "mimesniff",
     "webaudio"
   ],
-  "gitRevision": "6f6f781dc3e5da41f9cbe09d170cf91e94c05c61",
+  "gitRevision": "1c117a9b157d1b76b0197ff8c99fe1570c76daf3",
   "publishISODate": "2025-04-04T00:00:00.000Z",
   "generatedSubtitle": "W3C Editor's Draft 04 April 2025"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED"></head>
-  <body class="h-entry" data-cite="WEBIDL dom html infra webaudio"><div class="head">
+  <body class="h-entry" data-cite="WEBIDL dom html infra mimesniff webaudio"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">Encrypted Media Extensions</h1> 
@@ -1543,22 +1544,6 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
             multiple independent profiles for a single account.
           </p></div>
         </dd>
-        <dt>
-          <dfn id="dfn-valid-media-mime-type" tabindex="0" aria-haspopup="dialog" data-dfn-type="dfn">Valid Media MIME Type</dfn>
-        </dt>
-        <dd>
-          <p>
-            A valid media MIME type is a media <a href="https://html.spec.whatwg.org/multipage/#mime-types">MIME type</a> that is
-            also a <a data-link-type="dfn" href="https://mimesniff.spec.whatwg.org/#valid-mime-type">valid MIME type string</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-mimesniff" title="MIME Sniffing Standard">mimesniff</a></cite>]. When a MIME type includes parameters,
-            such as <code>"codecs"</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc6381" title="The 'Codecs' and 'Profiles' Parameters for &quot;Bucket&quot; Media Types">RFC6381</a></cite>], such parameters <em class="rfc2119">MUST</em> also be valid per the relevant
-            specification.
-          </p>
-          <p>
-            When used with the features defined in this specification, MIME type strings <em class="rfc2119">SHOULD</em>
-            explicitly specify codecs and codec constraints (e.g., per [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc6381" title="The 'Codecs' and 'Profiles' Parameters for &quot;Bucket&quot; Media Types">RFC6381</a></cite>]) unless these
-            are normatively implied by the container.
-          </p>
-        </dd>
       </dl>
     </section>
     <section id="obtaining-access-to-key-systems"><div class="header-wrapper"><h2 id="x3-obtaining-access-to-key-systems"><bdi class="secno">3. </bdi>
@@ -2428,14 +2413,20 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   </li>
                   <li>
                     <p>
-                      If <var>content type</var> is not a <a data-link-type="dfn|abstract-op" href="#dfn-valid-media-mime-type" class="internalDFN" id="ref-for-dfn-valid-media-mime-type-1">valid media MIME type</a> or is
-                      unrecognized, continue to the next iteration.
+                      Let <var>mimeType</var> be the result of running <a data-link-type="dfn" href="https://mimesniff.spec.whatwg.org/#parse-a-mime-type">parse a MIME type</a>
+                      with <var>content type</var>.
                     </p>
                   </li>
                   <li>
                     <p>
-                      Let <var>container</var> be the container type specified by <var>content
-                      type</var>.
+                      If <var>mimeType</var> is <code>failure</code> or is unrecognized,
+                      continue to the next iteration.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Let <var>container</var> be the container type specified by
+                      <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
@@ -2451,13 +2442,14 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   </li>
                   <li>
                     <p>
-                      Let <var>parameters</var> be the RFC 6381 [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc6381" title="The 'Codecs' and 'Profiles' Parameters for &quot;Bucket&quot; Media Types">RFC6381</a></cite>] parameters, if any,
-                      specified by <var>content type</var>.
+                      Let <var>parameters</var> be the "codecs" and "profiles" RFC 6381 [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc6381" title="The 'Codecs' and 'Profiles' Parameters for &quot;Bucket&quot; Media Types">RFC6381</a></cite>]
+                      parameters, if any, of <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
                     <p>
                       If the user agent does not recognize one or more <var>parameters</var>,
+                      or if any parameters are not valid per the relevant specification,
                       continue to the next iteration.
                     </p>
                   </li>
@@ -2498,11 +2490,12 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   </li>
                   <li>
                     <p>
-                      If <var>content type</var> is not strictly an <var>audio/video type</var>,
+                      If <var>mimeType</var> is not strictly an <var>audio/video type</var>,
                       continue to the next iteration.
                     </p>
                     <div class="note" role="note" id="issue-container-generatedID-36"><div role="heading" class="note-title marker" id="h-note-36" aria-level="6"><span>Note</span></div><p class="">
-                      For example, if <var>audio/video type</var> is Video and the top-level type
+                      For example, if <var>audio/video type</var> is Video and <var>mimeType</var>'s
+                      <a data-link-type="dfn" href="https://mimesniff.spec.whatwg.org/#type">type</a>
                       is not "video" or <var>media types</var> contains non-video codecs.
                     </p></div>
                   </li>
@@ -2970,9 +2963,14 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
             </dt>
             <dd>
               <p>
-                The type of the <a href="https://html.spec.whatwg.org/multipage/#media-resource">media resource</a>. Its value
-                must be a <a data-link-type="dfn|abstract-op" href="#dfn-valid-media-mime-type" class="internalDFN" id="ref-for-dfn-valid-media-mime-type-2">valid media MIME type</a>. The empty string is invalid.
+                The <a href="https://html.spec.whatwg.org/multipage/#mime-types">MIME type</a> of the
+                <a href="https://html.spec.whatwg.org/multipage/#media-resource">media resource</a>.
               </p>
+              <div class="note" role="note" id="issue-container-generatedID-48"><div role="heading" class="note-title marker" id="h-note-48" aria-level="5"><span>Note</span></div><p class="">
+                Applications <em class="rfc2119">SHOULD</em> ensure that the MIME type explicitly specifies codecs
+                and codec constraints (e.g., per [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc6381" title="The 'Codecs' and 'Profiles' Parameters for &quot;Bucket&quot; Media Types">RFC6381</a></cite>]) unless these are normatively
+                implied by the container.
+              </p></div>
             </dd>
             <dt>
               <code><dfn data-export="" data-dfn-type="dict-member" id="dom-mediakeysystemmediacapability-encryptionscheme" data-idl="field" data-title="encryptionScheme" data-dfn-for="MediaKeySystemMediaCapability" data-type="DOMString" tabindex="0" aria-haspopup="dialog">encryptionScheme</dfn></code> of type <a data-link-type="interface" data-lt="DOMString" href="https://webidl.spec.whatwg.org/#idl-DOMString"><code>DOMString</code></a>, defaulting to
@@ -2984,7 +2982,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                 not present indicates to the user agent that no specific encryption scheme is
                 required by the application, and therefore any encryption scheme is acceptable.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-48"><div role="heading" class="note-title marker" id="h-note-48" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-49"><div role="heading" class="note-title marker" id="h-note-49" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   Applications that are aware of this field <em class="rfc2119">SHOULD</em> specify the encryption schemes
                   they require, since different encryption schemes are generally incompatible with
@@ -2994,13 +2992,13 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   polyfill for older user agents.
                 </p>
               </div></div>
-              <div class="note" role="note" id="issue-container-generatedID-49"><div role="heading" class="note-title marker" id="h-note-49" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-50"><div role="heading" class="note-title marker" id="h-note-50" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   The empty string is distinct from null or not present, and so would be treated as
                   an unrecognized encryption scheme.
                 </p>
               </div></div>
-              <div class="note" role="note" id="issue-container-generatedID-50"><div role="heading" class="note-title marker" id="h-note-50" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-51"><div role="heading" class="note-title marker" id="h-note-51" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   Well-known values for encryptionScheme are:
                 </p>
@@ -3032,7 +3030,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                 The robustness level associated with the content type. The empty string indicates
                 that any ability to decrypt and decode the content type is acceptable.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-51"><div role="heading" class="note-title marker" id="h-note-51" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-52"><div role="heading" class="note-title marker" id="h-note-52" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   Implementations <em class="rfc2119">MUST</em> configure the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-29">CDM</a> to support at least the robustness
                   levels specified in the configuration of the <a data-link-type="idl" data-lt="MediaKeySystemAccess" href="#dom-mediakeysystemaccess" class="internalDFN" id="ref-for-dom-mediakeysystemaccess-12"><code>MediaKeySystemAccess</code></a> object used
@@ -3056,7 +3054,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
           value, including all codecs, <em class="rfc2119">MUST</em> be supported with
           <a data-link-type="idl" href="#dom-mediakeysystemmediacapability-robustness" class="internalDFN" id="ref-for-dom-mediakeysystemmediacapability-robustness-3"><code>robustness</code></a>.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-52"><div role="heading" class="note-title marker" id="h-note-52" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-53"><div role="heading" class="note-title marker" id="h-note-53" aria-level="4"><span>Note</span></div><p class="">
           If any of a set of codecs is acceptable, use a separate instances of this dictionary for
           each codec.
         </p></div>
@@ -3104,7 +3102,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               The returned object is a non-strict subset (plus any implied defaults) of the first
               satisfiable <a data-link-type="idl" data-lt="MediaKeySystemConfiguration" href="#dom-mediakeysystemconfiguration" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-10"><code>MediaKeySystemConfiguration</code></a> configuration passed to the
               <a data-link-type="idl" data-lt="requestMediaKeySystemAccess()" href="#dom-navigator-requestmediakeysystemaccess" class="internalDFN" id="ref-for-dom-navigator-requestmediakeysystemaccess-11"><code>requestMediaKeySystemAccess</code></a><code>()</code> call that returned the promise that was
-              resolved with this object. It does not contain values capabilities not specified in
+              resolved with this object. It does not contain values for capabilities not specified in
               that single configuration (other than implied defaults) and thus may not reflect all
               capabilities of the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-14">Key System</a> implementation. All values in the configuration
               may be used in any combination. Members of type <a data-link-type="idl" data-lt="MediaKeysRequirement" href="#dom-mediakeysrequirement" class="internalDFN" id="ref-for-dom-mediakeysrequirement-7"><code>MediaKeysRequirement</code></a> reflect
@@ -3119,11 +3117,11 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                 <p>
                   Return this object's <var>configuration</var> value.
                 </p>
-                <div class="note" role="note" id="issue-container-generatedID-53"><div role="heading" class="note-title marker" id="h-note-53" aria-level="4"><span>Note</span></div><p class="">
+                <div class="note" role="note" id="issue-container-generatedID-54"><div role="heading" class="note-title marker" id="h-note-54" aria-level="4"><span>Note</span></div><p class="">
                   This results in a new object being created and initialized from
                   <var>configuration</var> each time this method is called.
                 </p></div>
-                <div class="note" role="note" id="issue-container-generatedID-54"><div role="heading" class="note-title marker" id="h-note-54" aria-level="4"><span>Note</span></div><p class="">
+                <div class="note" role="note" id="issue-container-generatedID-55"><div role="heading" class="note-title marker" id="h-note-55" aria-level="4"><span>Note</span></div><p class="">
                   If <a data-link-type="idl" href="#dom-mediakeysystemmediacapability-encryptionscheme" class="internalDFN" id="ref-for-dom-mediakeysystemmediacapability-encryptionscheme-4"><code>encryptionScheme</code></a> was not given by the
                   application, the accumulated <var>configuration</var> <em class="rfc2119">MUST</em> still contain an
                   <a data-link-type="idl" href="#dom-mediakeysystemmediacapability-encryptionscheme" class="internalDFN" id="ref-for-dom-mediakeysystemmediacapability-encryptionscheme-5"><code>encryptionScheme</code></a> field with a value of
@@ -3281,7 +3279,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
       <p>
         A <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-13"><code>MediaKeys</code></a> object may be destroyed by the user agent when it is no longer accessible
       </p>
-      <div class="note" role="note" id="issue-container-generatedID-55"><div role="heading" class="note-title marker" id="h-note-55" aria-level="3"><span>Note</span></div><p class="">
+      <div class="note" role="note" id="issue-container-generatedID-56"><div role="heading" class="note-title marker" id="h-note-56" aria-level="3"><span>Note</span></div><p class="">
         For example, when there are no script references and no attached media element.
       </p></div>
       <p>
@@ -3366,7 +3364,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
             <p>
               Returns a new <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-5"><code>MediaKeySession</code></a> object.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-56"><div role="heading" class="note-title marker" id="h-note-56" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-57"><div role="heading" class="note-title marker" id="h-note-57" aria-level="4"><span>Note</span></div><p class="">
               The <var>sessionType</var> parameter affects the behavior of the returned object.
             </p></div>
             <p>
@@ -3378,7 +3376,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   If this object's <var>supported session types</var> value does not contain
                   <var>sessionType</var>, <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#dfn-throw">throw</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-webidl" title="Web IDL Standard">WEBIDL</a></cite>] a <a data-link-type="idl" data-lt="NotSupportedError" href="#dfn-notsupportederror" class="internalDFN" id="ref-for-dfn-notsupportederror-3"><code><code>NotSupportedError</code></code></a>.
                 </p>
-                <div class="note" role="note" id="issue-container-generatedID-57"><div role="heading" class="note-title marker" id="h-note-57" aria-level="4"><span>Note</span></div><p class="">
+                <div class="note" role="note" id="issue-container-generatedID-58"><div role="heading" class="note-title marker" id="h-note-58" aria-level="4"><span>Note</span></div><p class="">
                   <var>sessionType</var> values for which the <a data-link-type="dfn|abstract-op" href="#dfn-is-persistent-session-type" class="internalDFN" id="ref-for-dfn-is-persistent-session-type-4">Is persistent session type?</a>
                   algorithm returns <code>true</code> will fail if this object's <var>persistent
                   state allowed</var> value is <code>false</code>.
@@ -3389,7 +3387,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                   If the implementation does not support <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-6"><code>MediaKeySession</code></a> operations in the
                   current state, <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#dfn-throw">throw</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-webidl" title="Web IDL Standard">WEBIDL</a></cite>] an <a data-link-type="idl" data-lt="InvalidStateError" href="#dfn-invalidstateerror" class="internalDFN" id="ref-for-dfn-invalidstateerror-1"><code><code>InvalidStateError</code></code></a>.
                 </p>
-                <div class="note" role="note" id="issue-container-generatedID-58"><div role="heading" class="note-title marker" id="h-note-58" aria-level="4"><span>Note</span></div><p class="">
+                <div class="note" role="note" id="issue-container-generatedID-59"><div role="heading" class="note-title marker" id="h-note-59" aria-level="4"><span>Note</span></div><p class="">
                   Some implementations are unable to execute <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-7"><code>MediaKeySession</code></a> algorithms until
                   this <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-15"><code>MediaKeys</code></a> object is associated with a media element using
                   <a data-link-type="idl" data-lt="setMediaKeys()" href="#dom-htmlmediaelement-setmediakeys" class="internalDFN" id="ref-for-dom-htmlmediaelement-setmediakeys-1"><code>setMediaKeys</code></a><code>()</code>. This step enables applications to detect
@@ -3503,7 +3501,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                 [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-hdcp-version-registry" title="Encrypted Media Extensions HDCP Version Registry">EME-HDCP-VERSION-REGISTRY</a></cite>] provides the mapping from
                 <a data-link-type="idl" href="#dom-mediakeyspolicy-minhdcpversion" class="internalDFN" id="ref-for-dom-mediakeyspolicy-minhdcpversion-2"><code>minHdcpVersion</code></a> values to HDCP specifications.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-59"><div role="heading" class="note-title marker" id="h-note-59" aria-level="4"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-60"><div role="heading" class="note-title marker" id="h-note-60" aria-level="4"><span>Note</span></div><p class="">
                 The determination of HDCP status should be done in the same way that the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-34">CDM</a>
                 would enforce such a restriction during playback. In this way, application
                 developers can get a reasonable hint to allow them to optimize what content they
@@ -3594,7 +3592,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-19">Key Systems</a> that use such certificates <em class="rfc2119">MUST</em> also support requesting the
               certificate from the server via the <a data-link-type="dfn|abstract-op" href="#dfn-queue-a-message-event" class="internalDFN" id="ref-for-dfn-queue-a-message-event-1">Queue a "message" Event</a> algorithm.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-60"><div role="heading" class="note-title marker" id="h-note-60" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-61"><div role="heading" class="note-title marker" id="h-note-61" aria-level="4"><span>Note</span></div><p class="">
               This method allows an application to proactively provide a server certificate to
               implementations that support it to avoid the additional round trip should the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-37">CDM</a>
               request it. It is intended as an optimization, and applications are not required to
@@ -3642,7 +3640,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                       Let <var>sanitized certificate</var> be a validated and/or sanitized version
                       of <var>certificate</var>.
                     </p>
-                    <div class="note" role="note" id="issue-container-generatedID-61"><div role="heading" class="note-title marker" id="h-note-61" aria-level="4"><span>Note</span></div><p class="">
+                    <div class="note" role="note" id="issue-container-generatedID-62"><div role="heading" class="note-title marker" id="h-note-62" aria-level="4"><span>Note</span></div><p class="">
                       The user agent should thoroughly validate the certificate before passing it
                       to the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-38">CDM</a>. This may include verifying values are within reasonable
                       limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it,
@@ -3809,7 +3807,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
         accessible. Otherwise, a <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-15"><code>MediaKeySession</code></a> object that is no longer accessible <em class="rfc2119">SHALL NOT</em>
         receive further events and <em class="rfc2119">MAY</em> be destroyed.
       </p>
-      <div class="note" role="note" id="issue-container-generatedID-62"><div role="heading" class="note-title marker" id="h-note-62" aria-level="3"><span>Note</span></div><p class="">
+      <div class="note" role="note" id="issue-container-generatedID-63"><div role="heading" class="note-title marker" id="h-note-63" aria-level="3"><span>Note</span></div><p class="">
         The above rule implies that the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-40">CDM</a> instance must not be destroyed until all
         <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-20"><code>MediaKeys</code></a> objects and all <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-16"><code>MediaKeySession</code></a> objects associated with the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-41">CDM</a>
         instance are destroyed.
@@ -3819,11 +3817,11 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
         inaccessible to the page, the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-42">CDM</a> <em class="rfc2119">SHALL</em> close the <a data-link-type="dfn|abstract-op" href="#dfn-key-session" class="internalDFN" id="ref-for-dfn-key-session-3">key session</a> associated with the
         object.
       </p>
-      <div class="note" role="note" id="issue-container-generatedID-63"><div role="heading" class="note-title marker" id="h-note-63" aria-level="3"><span>Note</span></div><p class="">
+      <div class="note" role="note" id="issue-container-generatedID-64"><div role="heading" class="note-title marker" id="h-note-64" aria-level="3"><span>Note</span></div><p class="">
         Closing the key session results in the destruction of any license(s) and key(s) that have
         not been explicitly stored.
       </p></div>
-      <div class="note" role="note" id="issue-container-generatedID-64"><div role="heading" class="note-title marker" id="h-note-64" aria-level="3"><span>Note</span></div><p class="">
+      <div class="note" role="note" id="issue-container-generatedID-65"><div role="heading" class="note-title marker" id="h-note-65" aria-level="3"><span>Note</span></div><p class="">
         Exactly when the key session is closed is an implementation detail, and applications <em class="rfc2119">SHOULD NOT</em> rely on specific timing. 
         
          Applications that want to ensure a session is closed before taking some other action
@@ -3887,7 +3885,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               The session was closed because the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-45">CDM</a>'s original hardware context was reset.
               When this occurs, the User Agent <em class="rfc2119">MUST</em> allow the application to create new sessions on
               this <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-22"><code>MediaKeys</code></a> instance.
-              <div class="note" role="note" id="issue-container-generatedID-65"><div role="heading" class="note-title marker" id="h-note-65" aria-level="3"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-66"><div role="heading" class="note-title marker" id="h-note-66" aria-level="3"><span>Note</span></div><div class="">
                 <p>
                   This could occur for many reasons, including device hibernation, monitor
                   configuration change, etc. The exact reasons for a hardware context reset are
@@ -3903,7 +3901,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
             <td>
               The session was closed because the system needed to reclaim resources to allow the
               creation of other sessions.
-              <div class="note" role="note" id="issue-container-generatedID-66"><div role="heading" class="note-title marker" id="h-note-66" aria-level="3"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-67"><div role="heading" class="note-title marker" id="h-note-67" aria-level="3"><span>Note</span></div><div class="">
                 <p>
                   This would imply that the application is running into a device-specific limit on
                   session resources. If the closed session is still needed for some reason, the
@@ -3949,7 +3947,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               The <a data-link-type="dfn|abstract-op" href="#dfn-expiration" class="internalDFN" id="ref-for-dfn-expiration-2">expiration time</a> for all key(s) in the session, or <code>NaN</code> if no such
               time exists or if the license explicitly never expires, as determined by the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-46">CDM</a>.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-67"><div role="heading" class="note-title marker" id="h-note-67" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-68"><div role="heading" class="note-title marker" id="h-note-68" aria-level="4"><span>Note</span></div><p class="">
               This value <em class="rfc2119">MAY</em> change during the session lifetime, such as when an action triggers
               the start of a window.
             </p></div>
@@ -3972,7 +3970,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               A reference to a read-only map of <a data-link-type="dfn|abstract-op" href="#dfn-decryption-key-id" class="internalDFN" id="ref-for-dfn-decryption-key-id-5">key IDs</a> <a data-link-type="dfn|abstract-op" href="#dfn-known" class="internalDFN" id="ref-for-dfn-known-1">known</a> to the session to the current
               status of the associated key. Each entry <em class="rfc2119">MUST</em> have a unique key ID.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-68"><div role="heading" class="note-title marker" id="h-note-68" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-69"><div role="heading" class="note-title marker" id="h-note-69" aria-level="4"><span>Note</span></div><p class="">
               The map entries and their values may be updated whenever the event loop spins. The
               map <em class="rfc2119">MUST NOT</em> ever be inconsistent or partially updated, but it may change between
               accesses if the event loop spins in between the accesses. Key IDs may be added as the
@@ -3983,7 +3981,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               Instead, such keys <em class="rfc2119">MUST</em> be given an appropriate status, such as
               "<a data-link-type="idl" href="#dom-mediakeystatus-expired" class="internalDFN" id="ref-for-dom-mediakeystatus-expired-1"><code>expired</code></a>".
             </p></div>
-            <div class="note" role="note" id="issue-container-generatedID-69"><div role="heading" class="note-title marker" id="h-note-69" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-70"><div role="heading" class="note-title marker" id="h-note-70" aria-level="4"><span>Note</span></div><p class="">
               Some older platforms may contain <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-22">Key System</a> implementations that do not expose
               key IDs, making it impossible to provide a compliant user agent implementation. To
               maximize interoperability, user agent implementations exposing such <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-47">CDMs</a> <em class="rfc2119">SHOULD</em>
@@ -4169,7 +4167,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                               Let <var>requested license type</var> be a temporary non-persistable
                               license.
                             </p>
-                            <div class="note" role="note" id="issue-container-generatedID-70"><div role="heading" class="note-title marker" id="h-note-70" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-71"><div role="heading" class="note-title marker" id="h-note-71" aria-level="4"><span>Note</span></div><p class="">
                               The returned license must not be persistable or require persisting
                               information related to it.
                             </p></div>
@@ -4374,7 +4372,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                       Let <var>sanitized session ID</var> be a validated and/or sanitized version
                       of <var>sessionId</var>.
                     </p>
-                    <div class="note" role="note" id="issue-container-generatedID-71"><div role="heading" class="note-title marker" id="h-note-71" aria-level="4"><span>Note</span></div><p class="">
+                    <div class="note" role="note" id="issue-container-generatedID-72"><div role="heading" class="note-title marker" id="h-note-72" aria-level="4"><span>Note</span></div><p class="">
                       The user agent should thoroughly validate the sessionId value before passing
                       it to the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-52">CDM</a>. At a minimum, this should include checking that the length
                       and value are reasonable (e.g., not longer than tens of characters and
@@ -4393,7 +4391,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                       <a data-link-type="idl" href="#dom-mediakeysession-sessionid" class="internalDFN" id="ref-for-dom-mediakeysession-sessionid-4"><code>sessionId</code></a> attribute is <var>sanitized session ID</var>,
                       reject <var>promise</var> with a <a data-link-type="idl" data-lt="QuotaExceededError" href="#dfn-quotaexceedederror" class="internalDFN" id="ref-for-dfn-quotaexceedederror-3"><code><code>QuotaExceededError</code></code></a>.
                     </p>
-                    <div class="note" role="note" id="issue-container-generatedID-72"><div role="heading" class="note-title marker" id="h-note-72" aria-level="4"><span>Note</span></div><p class="">
+                    <div class="note" role="note" id="issue-container-generatedID-73"><div role="heading" class="note-title marker" id="h-note-73" aria-level="4"><span>Note</span></div><p class="">
                       In other words, do not create a session if a non-closed session, regardless
                       of type, already exists for this <var>sanitized session ID</var> in this
                       browsing context.
@@ -4452,7 +4450,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                           If there is a <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-21"><code>MediaKeySession</code></a> object that is not <a data-link-type="dfn|abstract-op" href="#dfn-closed" class="internalDFN" id="ref-for-dfn-closed-7">closed</a> in any <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-document">Document</a> and that represents the <var>session
                           data</var>, reject <var>promise</var> with a <a data-link-type="idl" data-lt="QuotaExceededError" href="#dfn-quotaexceedederror" class="internalDFN" id="ref-for-dfn-quotaexceedederror-4"><code><code>QuotaExceededError</code></code></a>.
                         </p>
-                        <div class="note" role="note" id="issue-container-generatedID-73"><div role="heading" class="note-title marker" id="h-note-73" aria-level="4"><span>Note</span></div><p class="">
+                        <div class="note" role="note" id="issue-container-generatedID-74"><div role="heading" class="note-title marker" id="h-note-74" aria-level="4"><span>Note</span></div><p class="">
                           In other words, do not create a session if a non-closed persistent
                           session already exists for this <var>sanitized session ID</var> in any
                           browsing context.
@@ -4609,7 +4607,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                       Let <var>sanitized response</var> be a validated and/or sanitized version of
                       <var>response copy</var>.
                     </p>
-                    <div class="note" role="note" id="issue-container-generatedID-74"><div role="heading" class="note-title marker" id="h-note-74" aria-level="4"><span>Note</span></div><p class="">
+                    <div class="note" role="note" id="issue-container-generatedID-75"><div role="heading" class="note-title marker" id="h-note-75" aria-level="4"><span>Note</span></div><p class="">
                       The user agent should thoroughly validate the response before passing it to
                       the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-56">CDM</a>. This may include verifying values are within reasonable limits,
                       stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or
@@ -4666,7 +4664,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                             If <var>sanitized response</var> contains a license or key(s)
                           </dt>
                           <dd>
-                            <div class="note" role="note" id="issue-container-generatedID-75"><div role="heading" class="note-title marker" id="h-note-75" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-76"><div role="heading" class="note-title marker" id="h-note-76" aria-level="4"><span>Note</span></div><p class="">
                               This includes an initial license, an updated license, and a license
                               renewal message.
                             </p></div>
@@ -4714,15 +4712,15 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                               such a way that closing one session does not affect the observable
                               state in other session(s), even if they contain overlapping key IDs.
                             </p>
-                            <div class="note" role="note" id="issue-container-generatedID-76"><div role="heading" class="note-title marker" id="h-note-76" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-77"><div role="heading" class="note-title marker" id="h-note-77" aria-level="4"><span>Note</span></div><p class="">
                               When <var>sanitized response</var> contains key(s) and/or related
                               data, <var>cdm</var> will likely store (in memory) the key and
                               related data indexed by key ID.
                             </p></div>
-                            <div class="note" role="note" id="issue-container-generatedID-77"><div role="heading" class="note-title marker" id="h-note-77" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-78"><div role="heading" class="note-title marker" id="h-note-78" aria-level="4"><span>Note</span></div><p class="">
                               The replacement algorithm within a session is <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-25">Key System</a>-dependent.
                             </p></div>
-                            <div class="note" role="note" id="issue-container-generatedID-78"><div role="heading" class="note-title marker" id="h-note-78" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-79"><div role="heading" class="note-title marker" id="h-note-79" aria-level="4"><span>Note</span></div><p class="">
                               It is <em class="rfc2119">RECOMMENDED</em> that <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-58">CDM</a> implementations support a standard and
                               reasonably high minimum number of keys per <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-22"><code>MediaKeySession</code></a>
                               object, including a standard replacement algorithm, and a standard
@@ -4749,7 +4747,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                                   data associated with this object, including the
                                   <a data-link-type="idl" href="#dom-mediakeysession-sessionid" class="internalDFN" id="ref-for-dom-mediakeysession-sessionid-6"><code>sessionId</code></a> and <a data-link-type="dfn|abstract-op" href="#dfn-record-s-of-license-destruction" class="internalDFN" id="ref-for-dfn-record-s-of-license-destruction-6">record of license destruction</a>.
                                 </p>
-                                <div class="note" role="note" id="issue-container-generatedID-79"><div role="heading" class="note-title marker" id="h-note-79" aria-level="4"><span>Note</span></div><p class="">
+                                <div class="note" role="note" id="issue-container-generatedID-80"><div role="heading" class="note-title marker" id="h-note-80" aria-level="4"><span>Note</span></div><p class="">
                                   A subsequent call to <a data-link-type="idl" data-lt="load()" href="#dom-mediakeysession-load" class="internalDFN" id="ref-for-dom-mediakeysession-load-4"><code>load</code></a><code>()</code> with the value of
                                   this object's <a data-link-type="idl" href="#dom-mediakeysession-sessionid" class="internalDFN" id="ref-for-dom-mediakeysession-sessionid-7"><code>sessionId</code></a> would fail because
                                   there is no data stored for that session ID.
@@ -4767,7 +4765,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                           </dt>
                           <dd>
                             Process <var>sanitized response</var>, not storing any session data.
-                            <div class="note" role="note" id="issue-container-generatedID-80"><div role="heading" class="note-title marker" id="h-note-80" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-81"><div role="heading" class="note-title marker" id="h-note-81" aria-level="4"><span>Note</span></div><p class="">
                               For example, <var>sanitized response</var> may contain information
                               that will be used to generate another <a data-link-type="idl" data-lt="message" href="#dfn-message" class="internalDFN" id="ref-for-dfn-message-4"><code><code>message</code></code></a> event. In this
                               case, there is no need to verify the contents against the
@@ -4883,7 +4881,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
               release any resources associated with the session and close it. Persisted data should
               not be released or cleared.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-81"><div role="heading" class="note-title marker" id="h-note-81" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-82"><div role="heading" class="note-title marker" id="h-note-82" aria-level="4"><span>Note</span></div><p class="">
               The returned promise is resolved when the request has been processed, and the
               <a data-link-type="idl" href="#dom-mediakeysession-closed" class="internalDFN" id="ref-for-dom-mediakeysession-closed-4"><code>closed</code></a> attribute promise is resolved with
               "<a data-link-type="idl" href="#dom-mediakeysessionclosedreason-closed-by-application" class="internalDFN" id="ref-for-dom-mediakeysessionclosedreason-closed-by-application-2"><code>closed-by-application</code></a>" when the session is closed.
@@ -4929,7 +4927,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                     <p>
                       Use <var>cdm</var> to close the <a data-link-type="dfn|abstract-op" href="#dfn-key-session" class="internalDFN" id="ref-for-dfn-key-session-6">key session</a> associated with this object.
                     </p>
-                    <div class="note" role="note" id="issue-container-generatedID-82"><div role="heading" class="note-title marker" id="h-note-82" aria-level="4"><span>Note</span></div><p class="">
+                    <div class="note" role="note" id="issue-container-generatedID-83"><div role="heading" class="note-title marker" id="h-note-83" aria-level="4"><span>Note</span></div><p class="">
                       Closing the key session results in the destruction of any license(s) and
                       key(s) that have not been explicitly stored.
                     </p></div>
@@ -5026,7 +5024,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
                             <p>
                               Destroy the license(s) and/or key(s) associated with the session.
                             </p>
-                            <div class="note" role="note" id="issue-container-generatedID-83"><div role="heading" class="note-title marker" id="h-note-83" aria-level="4"><span>Note</span></div><p class="">
+                            <div class="note" role="note" id="issue-container-generatedID-84"><div role="heading" class="note-title marker" id="h-note-84" aria-level="4"><span>Note</span></div><p class="">
                               This implies destruction of the license(s) and/or keys(s) whether
                               they are in memory, persistent store or both.
                             </p></div>
@@ -5140,7 +5138,7 @@ partial interface <a class="internalDFN idlID" data-link-type="interface" href="
           A key's status is independent of whether the key is currently being used and of media
           data.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-84"><div role="heading" class="note-title marker" id="h-note-84" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-85"><div role="heading" class="note-title marker" id="h-note-85" aria-level="4"><span>Note</span></div><p class="">
           For example, if a key has output requirements that cannot currently be met, the key's
           status should be "<a data-link-type="idl" href="#dom-mediakeystatus-output-downscaled" class="internalDFN" id="ref-for-dom-mediakeystatus-output-downscaled-1"><code>output-downscaled</code></a>" or
           "<a data-link-type="idl" href="#dom-mediakeystatus-output-restricted" class="internalDFN" id="ref-for-dom-mediakeystatus-output-restricted-2"><code>output-restricted</code></a>", as appropriate, regardless of whether that key
@@ -5394,7 +5392,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
                 Implementations <em class="rfc2119">MUST</em> support applications that do not differentiate messages and
                 <em class="rfc2119">MUST NOT</em> require that applications handle message types. Specifically, <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-26">Key Systems</a> <em class="rfc2119">MUST</em> support passing all types of messages to a single URL.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-85"><div role="heading" class="note-title marker" id="h-note-85" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-86"><div role="heading" class="note-title marker" id="h-note-86" aria-level="5"><span>Note</span></div><p class="">
                 This attribute allows an application to differentiate messages without parsing the
                 message. It is intended to enable optional application and/or server optimizations,
                 but applications are not required to use it.
@@ -5540,7 +5538,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             algorithm include a target <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-29"><code>MediaKeySession</code></a> object and a sequence of <a data-link-type="dfn|abstract-op" href="#dfn-decryption-key-id" class="internalDFN" id="ref-for-dfn-decryption-key-id-12">key ID</a> and
             associated <a data-link-type="idl" data-lt="MediaKeyStatus" href="#dom-mediakeystatus" class="internalDFN" id="ref-for-dom-mediakeystatus-15"><code>MediaKeyStatus</code></a> pairs.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-86"><div role="heading" class="note-title marker" id="h-note-86" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-87"><div role="heading" class="note-title marker" id="h-note-87" aria-level="5"><span>Note</span></div><p class="">
             The algorithm is always run in a task.
           </p></div>
           <p>
@@ -5593,7 +5591,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
                   </ol>
                 </li>
               </ol>
-              <div class="note" role="note" id="issue-container-generatedID-87"><div role="heading" class="note-title marker" id="h-note-87" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-88"><div role="heading" class="note-title marker" id="h-note-88" aria-level="5"><span>Note</span></div><p class="">
                 The effect of this steps is that the contents of <var>session</var>'s
                 <a data-link-type="idl" href="#dom-mediakeysession-keystatuses" class="internalDFN" id="ref-for-dom-mediakeysession-keystatuses-4"><code>keyStatuses</code></a> attribute are replaced without invalidating
                 existing references to the attribute. This replacement is atomic from a script
@@ -5624,7 +5622,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-31"><code>MediaKeySession</code></a>. Requests to run this algorithm include a target
             <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-32"><code>MediaKeySession</code></a> object and the new expiration time, which may be <code>NaN</code>.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-88"><div role="heading" class="note-title marker" id="h-note-88" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-89"><div role="heading" class="note-title marker" id="h-note-89" aria-level="5"><span>Note</span></div><p class="">
             The algorithm is always run in a task.
           </p></div>
           <p>
@@ -5663,7 +5661,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             The Session Closed algorithm updates the <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-34"><code>MediaKeySession</code></a> state after a <a data-link-type="dfn|abstract-op" href="#dfn-key-session" class="internalDFN" id="ref-for-dfn-key-session-7">key session</a> has been closed by the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-68">CDM</a>. Requests to run this algorithm include a
             target <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-35"><code>MediaKeySession</code></a> object and a <a data-link-type="idl" data-lt="MediaKeySessionClosedReason" href="#dom-mediakeysessionclosedreason" class="internalDFN" id="ref-for-dom-mediakeysessionclosedreason-7"><code>MediaKeySessionClosedReason</code></a>.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-89"><div role="heading" class="note-title marker" id="h-note-89" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-90"><div role="heading" class="note-title marker" id="h-note-90" aria-level="5"><span>Note</span></div><p class="">
             The algorithm is always run in a task.
           </p></div>
           <p>
@@ -5672,7 +5670,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             will fail and no further events will be queued for this object after this algorithm is
             run.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-90"><div role="heading" class="note-title marker" id="h-note-90" aria-level="5"><span>Note</span></div><div class="">
+          <div class="note" role="note" id="issue-container-generatedID-91"><div role="heading" class="note-title marker" id="h-note-91" aria-level="5"><span>Note</span></div><div class="">
             <p>
               The <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-69">CDM</a> may close a session at any point, such as when the session is no longer
               needed or when system resources are lost. In that case, the <a data-link-type="dfn|abstract-op" href="#dfn-monitor-for-cdm-state-changes" class="internalDFN" id="ref-for-dfn-monitor-for-cdm-state-changes-3">Monitor for CDM State Changes</a> algorithm detects the change and runs this algorithm.
@@ -5740,13 +5738,13 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             The Monitor for CDM State Changes algorithm executes steps required when various
             aspects of <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-71">CDM</a> state change.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-91"><div role="heading" class="note-title marker" id="h-note-91" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-92"><div role="heading" class="note-title marker" id="h-note-92" aria-level="5"><span>Note</span></div><p class="">
             This algorithm only applies to <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-72">CDM</a> state changes that are not covered by other
             algorithms. For example, <a data-link-type="idl" data-lt="update()" href="#dom-mediakeysession-update" class="internalDFN" id="ref-for-dom-mediakeysession-update-10"><code>update</code></a><code>()</code> may result in messages, key
             status changes and/or expiration changes, but those are all handled within that
             algorithm.
           </p></div>
-          <div class="note" role="note" id="issue-container-generatedID-92"><div role="heading" class="note-title marker" id="h-note-92" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-93"><div role="heading" class="note-title marker" id="h-note-93" aria-level="5"><span>Note</span></div><p class="">
             The algorithm is always run in parallel to the main event loop.
           </p></div>
           <p>
@@ -6028,7 +6026,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             initialized to <code>false</code>, and the <var>playback blocked waiting for key</var>
             value <em class="rfc2119">SHALL</em> be set to <code>false</code>.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-93"><div role="heading" class="note-title marker" id="h-note-93" aria-level="3"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-94"><div role="heading" class="note-title marker" id="h-note-94" aria-level="3"><span>Note</span></div><p class="">
             In other words, these values should be reset when, for example, <a href="https://html.spec.whatwg.org/multipage/#loading-the-media-resource">loading the media resource</a> or <a href="https://html.spec.whatwg.org/multipage/#seeking">seeking</a>.
           </p></div>
         </li>
@@ -6045,10 +6043,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a> may contain encrypted blocks during the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119">SHALL</em> run the <a href="#media-may-contain-encrypted-blocks">Media Data May Contain Encrypted Blocks</a>
             algorithm.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-94"><div role="heading" class="note-title marker" id="h-note-94" aria-level="3"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-95"><div role="heading" class="note-title marker" id="h-note-95" aria-level="3"><span>Note</span></div><p class="">
             For some container formats, such indication is separate from <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-11">Initialization Data</a>.
           </p></div>
-          <div class="note" role="note" id="issue-container-generatedID-95"><div role="heading" class="note-title marker" id="h-note-95" aria-level="3"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-96"><div role="heading" class="note-title marker" id="h-note-96" aria-level="3"><span>Note</span></div><p class="">
             The algorithm is to be run after parsing the relevant container data, including running
             the <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data-encountered" class="internalDFN" id="ref-for-dfn-initialization-data-encountered-1">Initialization Data Encountered</a> algorithm, but before decoding starts.
           </p></div>
@@ -6058,7 +6056,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             When the user agent encounters <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-12">Initialization Data</a> in the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a> during the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119">SHALL</em> run the
             <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data-encountered" class="internalDFN" id="ref-for-dfn-initialization-data-encountered-2">Initialization Data Encountered</a> algorithm.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-96"><div role="heading" class="note-title marker" id="h-note-96" aria-level="3"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-97"><div role="heading" class="note-title marker" id="h-note-97" aria-level="3"><span>Note</span></div><p class="">
             Some container formats may support encrypted media data that does not contain
             <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-13">Initialization Data</a> and thus support media data that does not trigger this
             algorithm.
@@ -6069,7 +6067,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             For each block of encrypted <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a> encountered during the
             <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#concept-media-load-resource">resource fetch algorithm</a>, the user agent <em class="rfc2119">SHALL</em> run the <a data-link-type="dfn|abstract-op" href="#dfn-encrypted-block-encountered" class="internalDFN" id="ref-for-dfn-encrypted-block-encountered-1">Encrypted Block Encountered</a> algorithm in the order the encrypted blocks were encountered.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-97"><div role="heading" class="note-title marker" id="h-note-97" aria-level="3"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-98"><div role="heading" class="note-title marker" id="h-note-98" aria-level="3"><span>Note</span></div><p class="">
             The above step provides flexibility for user agent implementations to perform
             decryption at any time after an encrypted block is encountered before it is needed for
             playback.
@@ -6091,7 +6089,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
               <p>
                 The user agent cannot provide data for the <a href="https://html.spec.whatwg.org/multipage/#current-playback-position">current playback position</a>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-98"><div role="heading" class="note-title marker" id="h-note-98" aria-level="3"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-99"><div role="heading" class="note-title marker" id="h-note-99" aria-level="3"><span>Note</span></div><p class="">
                 For example, at the beginning of playback or after <a href="https://html.spec.whatwg.org/multipage/#seeking">seeking</a>.
               </p></div>
             </li>
@@ -6161,7 +6159,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
             <p>
               Provides the <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-31"><code>MediaKeys</code></a> to use when decrypting media data during playback.
             </p>
-            <div class="note" role="note" id="issue-container-generatedID-99"><div role="heading" class="note-title marker" id="h-note-99" aria-level="4"><span>Note</span></div><p class="">
+            <div class="note" role="note" id="issue-container-generatedID-100"><div role="heading" class="note-title marker" id="h-note-100" aria-level="4"><span>Note</span></div><p class="">
               Support for clearing or replacing the associated <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-32"><code>MediaKeys</code></a> object during playback
               is a quality of implementation issue. In many cases it will result in a bad user
               experience or rejected promise.
@@ -6244,7 +6242,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediakeymessagee
                           <var>attaching media keys</var> value be false and reject
                           <var>promise</var> with an <a data-link-type="idl" data-lt="InvalidStateError" href="#dfn-invalidstateerror" class="internalDFN" id="ref-for-dfn-invalidstateerror-12"><code><code>InvalidStateError</code></code></a>.
                         </p>
-                        <div class="note" role="note" id="issue-container-generatedID-100"><div role="heading" class="note-title marker" id="h-note-100" aria-level="4"><span>Note</span></div><p class="">
+                        <div class="note" role="note" id="issue-container-generatedID-101"><div role="heading" class="note-title marker" id="h-note-101" aria-level="4"><span>Note</span></div><p class="">
                           For example, some implementations may not allow removal during playback.
                         </p></div>
                       </li>
@@ -6433,7 +6431,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               <td>
                 The element's <a data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-readystate"><code>readyState</code></a> is equal to or greater than
                 <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_metadata"><code>HAVE_METADATA</code></a>.
-                <div class="note" role="note" id="issue-container-generatedID-101"><div role="heading" class="note-title marker" id="h-note-101" aria-level="4"><span>Note</span></div><p class="">
+                <div class="note" role="note" id="issue-container-generatedID-102"><div role="heading" class="note-title marker" id="h-note-102" aria-level="4"><span>Note</span></div><p class="">
                   It is possible that the element is playing or has played.
                 </p></div>
               </td>
@@ -6486,7 +6484,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 decoding potentially-encrypted <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a>, run the following
                 steps:
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-102"><div role="heading" class="note-title marker" id="h-note-102" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-103"><div role="heading" class="note-title marker" id="h-note-103" aria-level="5"><span>Note</span></div><p class="">
                 These steps may be reached when the application provides <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a> before calling <a data-link-type="idl" data-lt="setMediaKeys()" href="#dom-htmlmediaelement-setmediakeys" class="internalDFN" id="ref-for-dom-htmlmediaelement-setmediakeys-3"><code>setMediaKeys</code></a><code>()</code> to provide a
                 <a data-link-type="idl" data-lt="MediaKeys" href="#dom-mediakeys" class="internalDFN" id="ref-for-dom-mediakeys-35"><code>MediaKeys</code></a> object. Selecting a <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-83">CDM</a> may affect the pipeline and/or decoders
                 used, so some implementations may delay playback of media data that may contain
@@ -6553,7 +6551,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                   </p>
                 </li>
               </ol>
-              <div class="note" role="note" id="issue-container-generatedID-103"><div role="heading" class="note-title marker" id="h-note-103" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-104"><div role="heading" class="note-title marker" id="h-note-104" aria-level="5"><span>Note</span></div><p class="">
                 While the media element may allow loading of "Upgradeable Content"
                 [<cite><a class="bibref" data-link-type="biblio" href="#bib-mixed-content" title="Mixed Content">MIXED-CONTENT</a></cite>], the user agent <em class="rfc2119">MUST NOT</em> expose Initialization Data from such
                 media data to the application.
@@ -6576,11 +6574,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                   <a data-link-type="idl" href="#dom-mediaencryptedevent-initdata" class="internalDFN" id="ref-for-dom-mediaencryptedevent-initdata-4"><code>initData</code></a> = <var>initData</var>
                 </li>
               </ul>
-              <div class="note" role="note" id="issue-container-generatedID-104"><div role="heading" class="note-title marker" id="h-note-104" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-105"><div role="heading" class="note-title marker" id="h-note-105" aria-level="5"><span>Note</span></div><p class="">
                 <a data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-readystate"><code>readyState</code></a> is <em>not</em> changed and no algorithms are
                 aborted. This event merely provides information.
               </p></div>
-              <div class="note" role="note" id="issue-container-generatedID-105"><div role="heading" class="note-title marker" id="h-note-105" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-106"><div role="heading" class="note-title marker" id="h-note-106" aria-level="5"><span>Note</span></div><p class="">
                 The <a data-link-type="idl" href="#dom-mediaencryptedevent-initdata" class="internalDFN" id="ref-for-dom-mediaencryptedevent-initdata-5"><code>initData</code></a> attribute will be null if the media data is
                 <em>not</em> <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-same-origin">CORS-same-origin</a> or is <a data-link-type="dfn|abstract-op" data-lt="mixed content limitations" href="#dfn-mixed-content-limitations" class="internalDFN" id="ref-for-dfn-mixed-content-limitations-2">mixed content</a>. Applications may retrieve the Initialization Data from an alternate
                 source.
@@ -6699,7 +6697,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                     If there is at least one <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-41"><code>MediaKeySession</code></a> created by the <var>media
                     keys</var> that is not <a data-link-type="dfn|abstract-op" href="#dfn-closed" class="internalDFN" id="ref-for-dfn-closed-10">closed</a>, run the following steps:
                   </p>
-                  <div class="note" role="note" id="issue-container-generatedID-106"><div role="heading" class="note-title marker" id="h-note-106" aria-level="5"><span>Note</span></div><p class="">
+                  <div class="note" role="note" id="issue-container-generatedID-107"><div role="heading" class="note-title marker" id="h-note-107" aria-level="5"><span>Note</span></div><p class="">
                     This check ensures the <var>cdm</var> has finished loading and is a
                     prerequisite for a matching key being available.
                   </p></div>
@@ -6714,7 +6712,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                       <p>
                         Let the <var>block key ID</var> be the key ID of <var>block</var>.
                       </p>
-                      <div class="note" role="note" id="issue-container-generatedID-107"><div role="heading" class="note-title marker" id="h-note-107" aria-level="5"><span>Note</span></div><p class="">
+                      <div class="note" role="note" id="issue-container-generatedID-108"><div role="heading" class="note-title marker" id="h-note-108" aria-level="5"><span>Note</span></div><p class="">
                         The key ID is generally specified by the container.
                       </p></div>
                     </li>
@@ -6741,7 +6739,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                             be a <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-42"><code>MediaKeySession</code></a> object containing that key and let <var>block
                             key</var> be that key.
                           </p>
-                          <div class="note" role="note" id="issue-container-generatedID-108"><div role="heading" class="note-title marker" id="h-note-108" aria-level="5"><span>Note</span></div><p class="">
+                          <div class="note" role="note" id="issue-container-generatedID-109"><div role="heading" class="note-title marker" id="h-note-109" aria-level="5"><span>Note</span></div><p class="">
                             If multiple sessions contain a key that is <a data-link-type="dfn|abstract-op" href="#dfn-usable-for-decryption" class="internalDFN" id="ref-for-dfn-usable-for-decryption-9">usable for decryption</a>
                             for the <var>block key ID</var>, which session and key to use is <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-33">Key System</a>-dependent.
                           </p></div>
@@ -6814,7 +6812,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                                       <p>
                                         Process the decrypted block as normal.
                                       </p>
-                                      <div class="note" role="note" id="issue-container-generatedID-109"><div role="heading" class="note-title marker" id="h-note-109" aria-level="5"><span>Note</span></div><p class="">
+                                      <div class="note" role="note" id="issue-container-generatedID-110"><div role="heading" class="note-title marker" id="h-note-110" aria-level="5"><span>Note</span></div><p class="">
                                         In other words, decode the block.
                                       </p></div>
                                     </li>
@@ -6826,14 +6824,14 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                                   </ol>
                                 </dd>
                               </dl>
-                              <div class="note" role="note" id="issue-container-generatedID-110"><div role="heading" class="note-title marker" id="h-note-110" aria-level="5"><span>Note</span></div><p class="">
+                              <div class="note" role="note" id="issue-container-generatedID-111"><div role="heading" class="note-title marker" id="h-note-111" aria-level="5"><span>Note</span></div><p class="">
                                 Not all decryption problems (e.g., using the wrong key) will result
                                 in a decryption failure. In such cases, no error is fired here but
                                 one may be fired during decode.
                               </p></div>
                             </li>
                           </ol>
-                          <div class="note" role="note" id="issue-container-generatedID-111"><div role="heading" class="note-title marker" id="h-note-111" aria-level="5"><span>Note</span></div><p class="">
+                          <div class="note" role="note" id="issue-container-generatedID-112"><div role="heading" class="note-title marker" id="h-note-112" aria-level="5"><span>Note</span></div><p class="">
                             Otherwise, there is no key for the <var>block key ID</var> in any
                             session so continue.
                           </p></div>
@@ -6849,11 +6847,11 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Set the <var>media element</var>'s <var>decryption blocked waiting for key</var>
                 value to <code>true</code>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-112"><div role="heading" class="note-title marker" id="h-note-112" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-113"><div role="heading" class="note-title marker" id="h-note-113" aria-level="5"><span>Note</span></div><p class="">
                 This step is reached when there is no key that is <a data-link-type="dfn|abstract-op" href="#dfn-usable-for-decryption" class="internalDFN" id="ref-for-dfn-usable-for-decryption-10">usable for decryption</a> for
                 <var>block</var>.
               </p></div>
-              <div class="note" role="note" id="issue-container-generatedID-113"><div role="heading" class="note-title marker" id="h-note-113" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-114"><div role="heading" class="note-title marker" id="h-note-114" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   Once the user agent has rendered the blocks preceding the block that cannot be
                   decrypted (as much as it can, such as, all complete video frames), it will run
@@ -6867,7 +6865,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               </div></div>
             </li>
           </ol>
-          <div class="note" role="note" id="issue-container-generatedID-114"><div role="heading" class="note-title marker" id="h-note-114" aria-level="5"><span>Note</span></div><div class="">
+          <div class="note" role="note" id="issue-container-generatedID-115"><div role="heading" class="note-title marker" id="h-note-115" aria-level="5"><span>Note</span></div><div class="">
             <p>
               For frame-based encryption, this may be implemented as follows when the media element
               attempts to decode a frame as part of the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#concept-media-load-resource">resource fetch algorithm</a>:
@@ -6941,7 +6939,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Set the <var>media element</var>'s <var>playback blocked waiting for key</var>
                 value to <code>true</code>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-115"><div role="heading" class="note-title marker" id="h-note-115" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-116"><div role="heading" class="note-title marker" id="h-note-116" aria-level="5"><span>Note</span></div><p class="">
                 As a result of the above step, the media element will become a <a href="https://html.spec.whatwg.org/multipage/#blocked-media-element">blocked media element</a> if it wasn't already. In
                 that case, the media element will stop playback.
               </p></div>
@@ -6971,7 +6969,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                   </p>
                 </dd>
               </dl>
-              <div class="note" role="note" id="issue-container-generatedID-116"><div role="heading" class="note-title marker" id="h-note-116" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-117"><div role="heading" class="note-title marker" id="h-note-117" aria-level="5"><span>Note</span></div><p class="">
                 In other words, if the video frame and audio data for the <a href="https://html.spec.whatwg.org/multipage/#current-playback-position">current playback position</a> have been decoded
                 because they were unencrypted and/or successfully decrypted, set
                 <a data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-readystate"><code>readyState</code></a> to <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_current_data"><code>HAVE_CURRENT_DATA</code></a>.
@@ -7038,7 +7036,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                     Set the <var>media element</var>'s <var>playback blocked waiting for key</var>
                     value to <code>false</code>.
                   </p>
-                  <div class="note" role="note" id="issue-container-generatedID-117"><div role="heading" class="note-title marker" id="h-note-117" aria-level="5"><span>Note</span></div><p class="">
+                  <div class="note" role="note" id="issue-container-generatedID-118"><div role="heading" class="note-title marker" id="h-note-118" aria-level="5"><span>Note</span></div><p class="">
                     As a result of the above step, the media element may no longer be a
                     <a href="https://html.spec.whatwg.org/multipage/#blocked-media-element">blocked media element</a> and thus
                     playback may resume.
@@ -7050,7 +7048,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                     <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_current_data"><code>HAVE_CURRENT_DATA</code></a>, <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_future_data"><code>HAVE_FUTURE_DATA</code></a>
                     or <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_enough_data"><code>HAVE_ENOUGH_DATA</code></a> as <a href="https://html.spec.whatwg.org/multipage/#ready-states">appropriate</a>.
                   </p>
-                  <div class="note" role="note" id="issue-container-generatedID-118"><div role="heading" class="note-title marker" id="h-note-118" aria-level="5"><span>Note</span></div><div class="">
+                  <div class="note" role="note" id="issue-container-generatedID-119"><div role="heading" class="note-title marker" id="h-note-119" aria-level="5"><span>Note</span></div><div class="">
                     <p>
                       States beyond <a data-link-type="const" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-have_current_data"><code>HAVE_CURRENT_DATA</code></a> and the
                       <a data-link-type="event" href="https://html.spec.whatwg.org/multipage/media.html#event-media-canplaythrough">canplaythrough</a> event do not (or are unlikely to)
@@ -7328,7 +7326,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           <a href="#exposed-value-requirements">Values Exposed to the Application</a> also apply to
           identifiers exposed to the application.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-119"><div role="heading" class="note-title marker" id="h-note-119" aria-level="4"><span>Note</span></div><div class="">
+        <div class="note" role="note" id="issue-container-generatedID-120"><div role="heading" class="note-title marker" id="h-note-120" aria-level="4"><span>Note</span></div><div class="">
           <p>
             In summary:
           </p>
@@ -7383,7 +7381,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               <p>
                 Implementations <em class="rfc2119">SHOULD</em> avoid <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-6">use of Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-120"><div role="heading" class="note-title marker" id="h-note-120" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-121"><div role="heading" class="note-title marker" id="h-note-121" aria-level="5"><span>Note</span></div><p class="">
                 For example, use identifiers or other values that apply to a group of clients or
                 devices rather than individual clients.
               </p></div>
@@ -7393,7 +7391,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Implementations <em class="rfc2119">SHOULD</em> only <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-7">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> when necessary to enforce the policies related to the
                 specific <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-103">CDM</a> instance and session.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-121"><div role="heading" class="note-title marker" id="h-note-121" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-122"><div role="heading" class="note-title marker" id="h-note-122" aria-level="5"><span>Note</span></div><p class="">
                 For example, "<a data-link-type="idl" href="#dom-mediakeysessiontype-temporary" class="internalDFN" id="ref-for-dom-mediakeysessiontype-temporary-12"><code>temporary</code></a>" and
                 "<a data-link-type="idl" href="#dom-mediakeysessiontype-persistent-license" class="internalDFN" id="ref-for-dom-mediakeysessiontype-persistent-license-7"><code>persistent-license</code></a>" sessions may have different
                 requirements.
@@ -7404,7 +7402,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Implementations that <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-8">use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> <em class="rfc2119">SHOULD</em> support the option to not use them. Implementations with
                 such support <em class="rfc2119">SHOULD</em> expose the ability for the user to select this option.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-122"><div role="heading" class="note-title marker" id="h-note-122" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-123"><div role="heading" class="note-title marker" id="h-note-123" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   When supported, applications can select for this mode using
                   <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-distinctiveidentifier" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-distinctiveidentifier-23"><code>distinctiveIdentifier</code></a> =
@@ -7432,7 +7430,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <a data-link-type="dfn|abstract-op" data-lt="associable by an entity" href="#dfn-associable-by-an-entity" class="internalDFN" id="ref-for-dfn-associable-by-an-entity-5">associable</a> only by an entity in possession of the
             decryption key.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-123"><div role="heading" class="note-title marker" id="h-note-123" aria-level="5"><span>Note</span></div><div class="">
+          <div class="note" role="note" id="issue-container-generatedID-124"><div role="heading" class="note-title marker" id="h-note-124" aria-level="5"><span>Note</span></div><div class="">
             <p>
               Identifiers may be exposed in the following ways:
             </p>
@@ -7463,13 +7461,13 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             The server <em class="rfc2119">MUST NOT</em> expose a <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-17">Distinctive Identifier</a> to any entity other than the
             <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-105">CDM</a> that sent it.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-124"><div role="heading" class="note-title marker" id="h-note-124" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-125"><div role="heading" class="note-title marker" id="h-note-125" aria-level="5"><span>Note</span></div><p class="">
             Specifically, it should not be provided to the application or included unencrypted in
             messages to the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-106">CDM</a>. This can be accomplished by encrypting the identifier or
             message with the identifier or such that it is only decryptable by that specific
             <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-107">CDM</a>.
           </p></div>
-          <div class="note" role="note" id="issue-container-generatedID-125"><div role="heading" class="note-title marker" id="h-note-125" aria-level="5"><span>Note</span></div><div class="">
+          <div class="note" role="note" id="issue-container-generatedID-126"><div role="heading" class="note-title marker" id="h-note-126" aria-level="5"><span>Note</span></div><div class="">
             <p>
               Among other things, this means that:
             </p>
@@ -7505,7 +7503,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> and <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-8">browsing profile</a>. See <a href="#per-origin-per-profile-values" class="sec-ref"><bdi class="secno">8.4.1 </bdi>
             Use Per-Origin Per-Profile Values</a>.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-126"><div role="heading" class="note-title marker" id="h-note-126" aria-level="5"><span>Note</span></div><div class="">
+          <div class="note" role="note" id="issue-container-generatedID-127"><div role="heading" class="note-title marker" id="h-note-127" aria-level="5"><span>Note</span></div><div class="">
             <p>
               This includes but is not limited to <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-18">Distinctive Identifiers</a>.
             </p>
@@ -7524,7 +7522,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             to applications, even in encrypted form, <em class="rfc2119">MUST</em> be <a data-link-type="dfn|abstract-op" href="#dfn-non-associable-by-application" class="internalDFN" id="ref-for-dfn-non-associable-by-application-5">non-associable by application</a>(s)
             across <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origins</a>, <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-9">browsing profiles</a>, and <a href="#allow-identifiers-cleared">clearing of identifiers</a>.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-127"><div role="heading" class="note-title marker" id="h-note-127" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-128"><div role="heading" class="note-title marker" id="h-note-128" aria-level="5"><span>Note</span></div><p class="">
             For all such identifiers, it <em class="rfc2119">MUST NOT</em> be possible for one or more applications,
             including related license or other servers to achieve such correlation or association.
           </p></div>
@@ -7567,7 +7565,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           in the following sections. Which method is used depends on the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-109">CDM</a> implementation and
           application of the requirements of this specification, especially those below.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-128"><div role="heading" class="note-title marker" id="h-note-128" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-129"><div role="heading" class="note-title marker" id="h-note-129" aria-level="4"><span>Note</span></div><p class="">
           <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-distinctiveidentifier" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-distinctiveidentifier-24"><code>distinctiveIdentifier</code></a> controls whether <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-23">Distinctive Identifiers</a> and <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-permanent-identifier-s-26">Distinctive Permanent Identifiers</a> may be <a data-link-type="dfn|abstract-op" data-lt="use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-9">used</a>, including for
           individualization. Specifically, such identifiers may only be <a data-link-type="dfn|abstract-op" data-lt="use Distinctive Identifier(s) or Distinctive Permanent Identifier(s)" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-10">used</a> when the value of the
           <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-distinctiveidentifier" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-distinctiveidentifier-25"><code>distinctiveIdentifier</code></a> member of the
@@ -7585,7 +7583,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             the other requirements of this specification. The process <em class="rfc2119">MUST</em> be performed by the user
             agent and <em class="rfc2119">MUST NOT</em> use the APIs defined in this specification.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-129"><div role="heading" class="note-title marker" id="h-note-129" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-130"><div role="heading" class="note-title marker" id="h-note-130" aria-level="5"><span>Note</span></div><p class="">
             For example, such a process may initialize a client device and/or obtain a <a href="#per-origin-per-profile-identifiers">per-origin</a> <a href="#allow-identifiers-cleared">clearable</a> identifier for <a href="#per-origin-per-profile-identifiers">a single browsing profile</a> by communicating
             with a pre-determined server hosted by the user agent or CDM vendor, possibly <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-permanent-identifier-s-3">using Distinctive Permanent Identifier(s)</a> or other <a data-link-type="dfn|abstract-op" href="#dfn-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-permanent-identifier-s-3">Permanent Identifier(s)</a> from the
             client device.
@@ -7688,7 +7686,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               <p>
                 <em class="rfc2119">MUST</em> adhere to the <a href="#identifier-requirements">identifier requirements</a>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-130"><div role="heading" class="note-title marker" id="h-note-130" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-131"><div role="heading" class="note-title marker" id="h-note-131" aria-level="5"><span>Note</span></div><p class="">
                 This includes only using values that are <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and
                 <a href="#allow-identifiers-cleared">clearable</a> and <a href="#encrypt-identifiers">encrypting</a> them as required.
               </p></div>
@@ -7721,7 +7719,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
         <p>
           Implementations <em class="rfc2119">MUST</em> support multiple keys in each <a data-link-type="idl" data-lt="MediaKeySession" href="#dom-mediakeysession" class="internalDFN" id="ref-for-dom-mediakeysession-43"><code>MediaKeySession</code></a> object.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-131"><div role="heading" class="note-title marker" id="h-note-131" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-132"><div role="heading" class="note-title marker" id="h-note-132" aria-level="4"><span>Note</span></div><p class="">
           The mechanics of how multiple keys are supported is an implementation detail, but it <em class="rfc2119">MUST</em>
           be transparent to the application and the APIs defined in this specification.
         </p></div>
@@ -7743,7 +7741,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             Implementations <em class="rfc2119">SHOULD</em> allow licenses generated with any <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data-type" class="internalDFN" id="ref-for-dfn-initialization-data-type-9">Initialization Data Type</a>
             they support to be used with any content type.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-132"><div role="heading" class="note-title marker" id="h-note-132" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-133"><div role="heading" class="note-title marker" id="h-note-133" aria-level="5"><span>Note</span></div><p class="">
             Otherwise, the <a data-link-type="idl" data-lt="requestMediaKeySystemAccess()" href="#dom-navigator-requestmediakeysystemaccess" class="internalDFN" id="ref-for-dom-navigator-requestmediakeysystemaccess-13"><code>requestMediaKeySystemAccess</code></a><code>()</code> algorithm might, for
             example, reject a <a data-link-type="idl" data-lt="MediaKeySystemConfiguration" href="#dom-mediakeysystemconfiguration" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-11"><code>MediaKeySystemConfiguration</code></a> because one of the
             <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-initdatatypes" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-initdatatypes-5"><code>initDataTypes</code></a> is not supported with one of the
@@ -7759,7 +7757,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             container, the user agents <em class="rfc2119">MUST</em> support <a href="#initdata-encountered">extracting</a>
             that type of <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-19">Initialization Data</a> from each such supported container.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-133"><div role="heading" class="note-title marker" id="h-note-133" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-134"><div role="heading" class="note-title marker" id="h-note-134" aria-level="5"><span>Note</span></div><p class="">
             In other words, indicating support for an <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data-type" class="internalDFN" id="ref-for-dfn-initialization-data-type-11">Initialization Data Type</a> implies both
             <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-116">CDM</a> support for generating license requests and, for container-specific types, user
             agent support for extracting it from the container. This does <strong>not</strong> mean
@@ -7796,7 +7794,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             allows the content to be decrypted in a fully specified and compatible way when a key
             or keys are provided.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-134"><div role="heading" class="note-title marker" id="h-note-134" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-135"><div role="heading" class="note-title marker" id="h-note-135" aria-level="5"><span>Note</span></div><p class="">
             The <cite><a data-matched-text="[[[EME-STREAM-REGISTRY]]]" href="https://www.w3.org/TR/eme-stream-registry/">Encrypted Media Extensions Stream Format Registry</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-stream-registry" title="Encrypted Media Extensions Stream Format Registry">EME-STREAM-REGISTRY</a></cite>] provides references to such
             stream formats.
           </p></div>
@@ -7809,7 +7807,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             In-band support content, such as captions, described audio, and transcripts, <em class="rfc2119">SHOULD NOT</em>
             be encrypted.
           </p>
-          <div class="note" role="note" id="issue-container-generatedID-135"><div role="heading" class="note-title marker" id="h-note-135" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-136"><div role="heading" class="note-title marker" id="h-note-136" aria-level="5"><span>Note</span></div><p class="">
             Decryption of such tracks - especially such that they can be provided back the user
             agent - is not generally supported by implementations. Thus, encrypting such tracks
             would prevent them from being widely available for use with accessibility features in
@@ -7832,7 +7830,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
       <p>
         All user agents <em class="rfc2119">MUST</em> support the common <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-38">Key Systems</a> described in this section.
       </p>
-      <div class="note" role="note" id="issue-container-generatedID-136"><div role="heading" class="note-title marker" id="h-note-136" aria-level="3"><span>Note</span></div><p class="">
+      <div class="note" role="note" id="issue-container-generatedID-137"><div role="heading" class="note-title marker" id="h-note-137" aria-level="3"><span>Note</span></div><p class="">
         This ensures that there is a common baseline level of functionality that is guaranteed to
         be supported in all user agents, including those that are entirely open source. Thus,
         content providers that need only basic decryption can build simple applications that will
@@ -8247,7 +8245,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           threats and take care to safely parse, decrypt, etc. such data. User Agents <em class="rfc2119">SHOULD</em>
           validate data before passing it to the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-118">CDM</a>.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-137"><div role="heading" class="note-title marker" id="h-note-137" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-138"><div role="heading" class="note-title marker" id="h-note-138" aria-level="4"><span>Note</span></div><p class="">
           Such validation is especially important if the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-119">CDM</a> does not run in the same
           (sandboxed) context as, for example, the DOM.
         </p></div>
@@ -8255,7 +8253,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           Implementations <em class="rfc2119">MUST NOT</em> return active content or passive content that affects program
           control flow to the application.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-138"><div role="heading" class="note-title marker" id="h-note-138" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-139"><div role="heading" class="note-title marker" id="h-note-139" aria-level="4"><span>Note</span></div><p class="">
           For example, it is not safe to expose URLs or other information that may have come from
           media data, such as is the case for the <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-23">Initialization Data</a> passed to
           <a data-link-type="idl" data-lt="generateRequest()" href="#dom-mediakeysession-generaterequest" class="internalDFN" id="ref-for-dom-mediakeysession-generaterequest-7"><code>generateRequest</code></a><code>()</code>. Applications must determine the URLs to use. The
@@ -8289,7 +8287,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           implementations and UAs that expose them <em class="rfc2119">MUST</em> be especially careful in all areas of
           security, including parsing of <a href="#input-data-security">all data</a>.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-139"><div role="heading" class="note-title marker" id="h-note-139" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-140"><div role="heading" class="note-title marker" id="h-note-140" aria-level="4"><span>Note</span></div><p class="">
           User agents should be especially diligent when using a <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-125">CDM</a> or underlying mechanism
           that is part of or provided by the client OS, platform and/or hardware.
         </p></div>
@@ -8298,7 +8296,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           sufficiently sandboxed or otherwise secured, the user agent <em class="rfc2119">SHOULD</em> <a href="#security-consent">ensure that users are fully informed and/or give explicit consent</a>
           before loading or invoking it.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-140"><div role="heading" class="note-title marker" id="h-note-140" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-141"><div role="heading" class="note-title marker" id="h-note-141" aria-level="4"><span>Note</span></div><p class="">
           Granting permissions to unauthenticated origins is equivalent to granting the permissions
           to any origin in the presence of a network attacker. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
         </p></div>
@@ -8420,7 +8418,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Such mechanisms <em class="rfc2119">MUST</em> be per <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> to avoid valid uses enabling subsequent
                 malicious access and <em class="rfc2119">MUST</em> be per <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-10">browsing profile</a>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-141"><div role="heading" class="note-title marker" id="h-note-141" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-142"><div role="heading" class="note-title marker" id="h-note-142" aria-level="5"><span>Note</span></div><p class="">
                 The restriction of the APIs defined in this specification to secure contexts
                 ensures that a <a href="#network-attacks">network attacker</a> cannot exploit
                 permissions granted to an unauthenticated origin. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
@@ -8488,7 +8486,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           important if, for example, modification or deletion of such data could erase a user's
           right to specific content.
         </p>
-        <div class="note" role="note" id="issue-container-generatedID-142"><div role="heading" class="note-title marker" id="h-note-142" aria-level="4"><span>Note</span></div><p class="">
+        <div class="note" role="note" id="issue-container-generatedID-143"><div role="heading" class="note-title marker" id="h-note-143" aria-level="4"><span>Note</span></div><p class="">
           Even if a path-restriction feature was made available by user agents, the usual DOM
           scripting security model would make it trivial to bypass this protection and access the
           data from any path.
@@ -8615,7 +8613,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 information that is exposed outside the client device or to the application,
                 including, for example, in <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-135">CDM</a> messages.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-143"><div role="heading" class="note-title marker" id="h-note-143" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-144"><div role="heading" class="note-title marker" id="h-note-144" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   The type of information covered by this requirement includes but is not limited
                   to:
@@ -8906,7 +8904,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 User agents <em class="rfc2119">MAY</em>, possibly in a manner configured by the user, automatically delete
                 <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-40">Distinctive Identifiers</a> and/or other Key System data after a period of time.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-144"><div role="heading" class="note-title marker" id="h-note-144" aria-level="5"><span>Note</span></div><div class="">
+              <div class="note" role="note" id="issue-container-generatedID-145"><div role="heading" class="note-title marker" id="h-note-145" aria-level="5"><span>Note</span></div><div class="">
                 <p>
                   For example, a user agent could be configured to store such data as session-only
                   storage, deleting the data once the user had closed all the browsing contexts
@@ -8950,7 +8948,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
                 Such mechanisms <em class="rfc2119">MUST</em> be per <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> to avoid valid uses enabling subsequent
                 malicious access and <em class="rfc2119">MUST</em> be per <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-17">browsing profile</a>.
               </p>
-              <div class="note" role="note" id="issue-container-generatedID-145"><div role="heading" class="note-title marker" id="h-note-145" aria-level="5"><span>Note</span></div><p class="">
+              <div class="note" role="note" id="issue-container-generatedID-146"><div role="heading" class="note-title marker" id="h-note-146" aria-level="5"><span>Note</span></div><p class="">
                 The restriction of the APIs defined in this specification to secure contexts
                 ensures that a <a href="#network-attacks">network attacker</a> cannot exploit
                 permissions granted to an unauthenticated origin. See <a href="#persisted-consent-abuse">abuse of persisted consent</a>.
@@ -8983,7 +8981,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               </p>
             </dd>
           </dl>
-          <div class="note" role="note" id="issue-container-generatedID-146"><div role="heading" class="note-title marker" id="h-note-146" aria-level="5"><span>Note</span></div><p class="">
+          <div class="note" role="note" id="issue-container-generatedID-147"><div role="heading" class="note-title marker" id="h-note-147" aria-level="5"><span>Note</span></div><p class="">
             While these suggestions prevent trivial use of the APIs defined in this specification
             for user tracking, they do not block it altogether. Within a single origin, a site can
             continue to track the user during a session, and can then pass all this information to
@@ -10474,20 +10472,6 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
       <a href="#ref-for-dfn-browsing-profile-14" title="§ 11.4.2 Mitigations">§ 11.4.2 Mitigations</a> <a href="#ref-for-dfn-browsing-profile-15" title="Reference 2">(2)</a> <a href="#ref-for-dfn-browsing-profile-16" title="Reference 3">(3)</a> <a href="#ref-for-dfn-browsing-profile-17" title="Reference 4">(4)</a> 
     </li><li>
       <a href="#ref-for-dfn-browsing-profile-18" title="§ 11.5.1 Concerns">§ 11.5.1 Concerns</a> <a href="#ref-for-dfn-browsing-profile-19" title="Reference 2">(2)</a> <a href="#ref-for-dfn-browsing-profile-20" title="Reference 3">(3)</a> 
-    </li>
-  </ul>
-    </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-valid-media-mime-type" aria-label="Links in this document to definition: Valid Media MIME Type">
-      <span class="caret"></span>
-      <div>
-        <a class="self-link" href="#dfn-valid-media-mime-type" aria-label="Permalink for definition: Valid Media MIME Type. Activate to close this dialog.">Permalink</a>
-         
-      </div>
-      <p><b>Referenced in:</b></p>
-      <ul>
-    <li>
-      <a href="#ref-for-dfn-valid-media-mime-type-1" title="§ 3.2.2.3 Get Supported Capabilities for Audio/Video Type">§ 3.2.2.3 Get Supported Capabilities for Audio/Video Type</a> 
-    </li><li>
-      <a href="#ref-for-dfn-valid-media-mime-type-2" title="§ 3.4.1 Dictionary MediaKeySystemMediaCapability Members">§ 3.4.1 Dictionary MediaKeySystemMediaCapability Members</a> 
     </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-encrypted-media" aria-label="Links in this document to definition: encrypted-media">
