@@ -162,11 +162,11 @@ Yes, see the [Security](https://w3c.github.io/encrypted-media/#security) and [Pr
 
 ## 2.21 Does your feature allow sites to learn about the user’s use of assistive technology?
 
-**Handling hardware context reset:** TODO
+**Handling hardware context reset:** No.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** No.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** No.
 
 ## 2.22 What should this questionnaire have asked?
 
