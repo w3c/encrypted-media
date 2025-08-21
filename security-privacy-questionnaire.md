@@ -1,6 +1,6 @@
 # Encrypted Media Exensions v2 Self-Review Questionnaire: Security and Privacy
 
-Questionnare: https://w3ctag.github.io/security-questionnaire/ (as at 18 April 2025)
+Questionnare: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20250418/ (from 18 April 2025)
 
 ## 2.1 What information does this feature expose, and for what purposes?
 
