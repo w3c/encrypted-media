@@ -40,7 +40,7 @@ The delivery of Root Key varies depending on the platform and key system. Common
 ## Advantages of Using Embedded Keys For Key Rotation
 
 * **Performance:** By eliminating the need for a network round-trip for every new key, this model prevents playback stutter and stalls, which is critical for live sports and dynamic ad insertion.  
-* **Efficiency:** This model avoids the client strom with sharp server load spike when the content key rotates during live streaming events.
+* **Efficiency:** This model avoids the license storm with sharp server load spike when the content key rotates during live streaming events.
 
 ## Issues with the Current EME spec
 
@@ -103,6 +103,9 @@ Instead of `s1.close()`, if s1’s reference is dropped, s1 will not be destruct
 ## Single Session Mode
 
 There are CDM implementations which manage the root key and embedded keys in the same session. In this case, as part of `generateRequest()`, the CDM will close a child session with a new [MediaKeySessionClosedReason](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysessionclosedreason) enum value: “parent-merged”, and merge it into the parent session.
+
+> [!NOTE]
+> "Single Session Mode" is provided solely for backward compatibility with legacy CDMs. Use of this mode is discouraged. Key Systems SHOULD support the management of root keys and embedded keys in separate sessions.
 
 <img src="key_rotation_3.png" width="500em">
 
