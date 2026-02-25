@@ -40,7 +40,7 @@ The delivery of Root Key varies depending on the platform and key system. Common
 ## Advantages of Using Embedded Keys For Key Rotation
 
 * **Performance:** By eliminating the need for a network round-trip for every new key, this model prevents playback stutter and stalls, which is critical for live sports and dynamic ad insertion.  
-* **Efficiency:** This model avoids the client strom with sharp server load spike when the content key rotates during live streaming events.
+* **Efficiency:** This model avoids the license storm with sharp server load spike when the content key rotates during live streaming events.
 
 ## Issues with the Current EME spec
 
@@ -73,7 +73,7 @@ Nearly a decade ago, around 2015, the EME community actively debated supporting 
 
 generateRequest() should allow processing initData without generating a new request. For initData containing embedded keys, the CDM can decrypt the content key directly, and then [Update Key Statuses](https://www.w3.org/TR/encrypted-media-2/#dfn-update-key-statuses).
 
-![]()
+<img src="key_rotation_1.png" width="500em">
 
 ### **Workflow**
 
@@ -96,7 +96,7 @@ To solve this issue, we propose to introduce a new parent-child model for MediaK
 * Add a new [MediaKeySessionClosedReason](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysessionclosedreason): “parent-closed”  
   * If the parent session is closed, all children sessions will be closed with reason “parent-closed”.
 
-![][image2]
+<img src="key_rotation_2.png" width="500em">
 
 Instead of `s1.close()`, if s1’s reference is dropped, s1 will not be destructed, because it’s still being referenced by s2 via `s2.parent`.
 
@@ -104,19 +104,24 @@ Instead of `s1.close()`, if s1’s reference is dropped, s1 will not be destruct
 
 There are CDM implementations which manage the root key and embedded keys in the same session. In this case, as part of `generateRequest()`, the CDM will close a child session with a new [MediaKeySessionClosedReason](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysessionclosedreason) enum value: “parent-merged”, and merge it into the parent session.
 
-![][image3]
+> [!NOTE]
+> "Single Session Mode" is provided solely for backward compatibility with legacy CDMs. Use of this mode is discouraged. Key Systems SHOULD support the management of root keys and embedded keys in separate sessions.
+
+<img src="key_rotation_3.png" width="500em">
 
 ## Root Key Baked in the Client
 
 When the root key is baked in the client, or acquired via a side channel, embedded key PSSHs will be accepted by the CDM without generating any key request.
 
-![][image4]
+<img src="key_rotation_4.png" width="400em">
 
 ## Summary of EME Spec Changes
 
 * Relax `generateRequest()` to allow processing initData without generating a new request.  
 * Add a new attribute `readonly attribute MediaKeySession.parent`  
 * Add new [`MediaKeySessionClosedReason`](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysessionclosedreason) enum values: `parent-closed` and `parent-merged`.
+
+**TODO**: Propose more detailed spec language changes.
 
 ## Review on Requirements
 
