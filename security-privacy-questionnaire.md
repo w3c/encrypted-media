@@ -36,7 +36,7 @@ Questionnaire: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20
 
 ## 2.5 Does data exposed by your specification carry related but distinct information that may not be obvious to users?
 
-**Handling hardware context reset:** The `hardware-context-reset` reason aggregates multiple internal causes (such as sleep/resume and display configuration changes). The spec deliberately collapses these so that the specific cause is not exposed.
+**Handling hardware context reset:** The `hardware-context-reset` reason aggregates multiple internal causes (such as sleep/resume and display configuration changes), but since these can only be triggered by user actions and not by the page, the `hardware-context-reset` reason is not a useful fingerprinting vector.
 
 **Querying encryption scheme support:** Supported encryption schemes correlate with the underlying CDM, but that information is already implied by the chosen `keySystem` string. No novel fingerprinting surface is added.
 
