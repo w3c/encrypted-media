@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="ReSpec 35.6.1">
+<meta name="generator" content="ReSpec 37.0.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 dfn{cursor:pointer}
@@ -16,6 +16,7 @@ dfn{cursor:pointer}
 .dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
 .dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
 .dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
 .dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
 .dfn-panel a[href]:hover{border-bottom-width:1px}
 .dfn-panel ul{padding:0}
@@ -42,6 +43,10 @@ a.bibref{text-decoration:none}
 .respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
 }
 #references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
 cite .bibref{font-style:italic}
 a[href].orcid{padding-left:4px;padding-right:4px}
 a[href].orcid>svg{margin-bottom:-2px}
@@ -58,7 +63,7 @@ details.respec-tests-details>li{padding-left:1em}
 .self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
 aside.example .marker>a.self-link{color:inherit}
 .header-wrapper{display:flex;align-items:baseline}
-:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2):has(+a.self-link){position:relative;left:-.5em}
 :is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
 :is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
 :is(h2,h3)+a.self-link{top:-.2em}
@@ -69,6 +74,8 @@ dd{margin-left:0}
 @media print{
 .removeOnSave{display:none}
 }
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 </style>
     
     
@@ -86,7 +93,7 @@ dd{margin-left:0}
 </style>
   
 <meta name="color-scheme" content="light">
-<meta name="revision" content="084ca4fd322ea6cef5e84fc2d430e09f75f21cb1">
+<meta name="revision" content="d3e713b402006005661ec6a5c3a43843aa8b5669">
 <meta name="description" content="This specification defines the stream formats for use with the Encrypted Media Extensions [ENCRYPTED-MEDIA].">
 <style>
 var:hover{text-decoration:underline;cursor:pointer}
@@ -106,7 +113,7 @@ var.respec-hl{background:0 0;color:#000;box-shadow:unset}
 }
 </style>
 <style>
-var{position:relative;cursor:pointer}
+var[data-type]{position:relative}
 var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
 var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
 var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
@@ -168,16 +175,16 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   "xref": [
     "encrypted-media"
   ],
-  "gitRevision": "084ca4fd322ea6cef5e84fc2d430e09f75f21cb1",
-  "publishISODate": "2025-12-03T00:00:00.000Z",
-  "generatedSubtitle": "W3C Editor's Draft 03 December 2025"
+  "gitRevision": "d3e713b402006005661ec6a5c3a43843aa8b5669",
+  "publishISODate": "2026-05-07T00:00:00.000Z",
+  "generatedSubtitle": "W3C Editor's Draft 07 May 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED"></head>
   <body class="h-entry informative" data-cite="encrypted-media"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">Encrypted Media Extensions Stream Format Registry</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2025-12-03">03 December 2025</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2026-05-07">07 May 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
@@ -198,7 +205,9 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         
         
         
-        <dt>Editors:</dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
+        <dt>
+                Editors:
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
     <span class="p-name fn">Joey Parrish</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>)
   </dd><dd class="editor p-author h-card vcard" data-editor-id="115364">
     <span class="p-name fn">Greg Freedman</span> (<a class="p-org org h-org" href="https://www.netflix.com/">Netflix Inc.</a>)
@@ -230,7 +239,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <p class="copyright">
     <a href="https://www.w3.org/policies/#copyright">Copyright</a>
     ©
-    2025
+    2026
     
     <a href="https://www.w3.org/">World Wide Web Consortium</a>.
     <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup>
@@ -254,8 +263,9 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <p>
     This document was published by the <a href="https://www.w3.org/groups/wg/media">Media Working Group</a> as
     an Editor's Draft. 
-  </p><p>Publication as an Editor's Draft does not
-  imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
+  </p><p>Publication as
+  an Editor's Draft does not imply endorsement
+  by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
     This is a draft document and may be updated, replaced, or obsoleted by other
     documents at any time. It is inappropriate to cite this document as other
     than a work in progress.
@@ -302,6 +312,19 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 
     <section id="entry-requirements"><div class="header-wrapper"><h2 id="x3-registration-entry-requirements"><bdi class="secno">3. </bdi>Registration Entry Requirements</h2><a class="self-link" href="#entry-requirements" aria-label="Permalink for Section 3."></a></div>
       
+      <p>
+        To register an entry, file an issue in the
+        <a href="https://github.com/w3c/encrypted-media/issues">Encrypted Media Extensions GitHub issue tracker</a>
+        so it can be discussed and evaluated for compliance before being added to the registry.
+      </p>
+      <p>
+        For the entry to be included, there needs to be interest from at least one
+        implementer in the Media Working Group.
+        If the Media Working Group reaches consensus to accept the candidate,
+        send a pull request (either by the registry editors or by the party requesting
+        the candidate registration) to register the candidate
+        that meets the following requirements:
+      </p>
       <ol>
         <li>
           Each entry must include a unique MIME-type/subtype pair. If the byte stream format is derived-from an existing file format, then it should use the MIME-type/subtype pairs typically used for the file format.
@@ -314,23 +337,15 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           Per the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-2/">Encrypted Media Extensions</a></cite> specification, the media container for a stream format must not be encrypted.</li>
         <li>
           Per the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-2/">Encrypted Media Extensions</a></cite> specification, entries must be fully specified and support "common encryption" such that the content can decrypted in a fully specified and compatible way when a key or keys are provided.
-        </li><li>
-          Candidate entries must be announced by filing an issue in the
-          <a href="https://github.com/w3c/encrypted-media/issues/">Encrypted Media Extensions GitHub issue tracker</a>
-          so they can be discussed and evaluated for compliance before being added to
-          the registry.
-        </li>
-        <li>
-          If the Media Working Group reaches consensus to accept the candidate,
-          a pull request should be drafted
-          (either by the registry editors or by the party requesting the candidate registration)
-          to register the candidate.
-          The registry editors will review and merge the pull request.
-        </li>
-        <li>
-          Existing entries cannot be deleted or deprecated.
         </li>
       </ol>
+      <p>
+        Once consensus is reached by the Working Group,
+        the registry editors will review and merge the pull request.
+      </p>
+      <p>
+        Existing entries cannot be deleted or deprecated.
+      </p>
     </section>
 
     <section id="registry"><div class="header-wrapper"><h2 id="x4-registry"><bdi class="secno">4. </bdi>Registry</h2><a class="self-link" href="#registry" aria-label="Permalink for Section 4."></a></div>
@@ -369,7 +384,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     </dd><dt id="bib-eme-stream-webm">[EME-STREAM-WEBM]</dt><dd>
       <a href="https://www.w3.org/TR/eme-stream-webm/"><cite>WebM Stream Format</cite></a>. Joey Parrish; Greg Freedman.  W3C. 18 July 2024. W3C Working Group Note. URL: <a href="https://www.w3.org/TR/eme-stream-webm/">https://www.w3.org/TR/eme-stream-webm/</a>
     </dd><dt id="bib-encrypted-media">[ENCRYPTED-MEDIA]</dt><dd>
-      <a href="https://www.w3.org/TR/encrypted-media-2/"><cite>Encrypted Media Extensions</cite></a>. Joey Parrish; Greg Freedman.  W3C. 21 August 2025. W3C Working Draft. URL: <a href="https://www.w3.org/TR/encrypted-media-2/">https://www.w3.org/TR/encrypted-media-2/</a>
+      <a href="https://www.w3.org/TR/encrypted-media-2/"><cite>Encrypted Media Extensions</cite></a>. Joey Parrish; Greg Freedman.  W3C. 26 November 2025. W3C Working Draft. URL: <a href="https://www.w3.org/TR/encrypted-media-2/">https://www.w3.org/TR/encrypted-media-2/</a>
     </dd></dl>
   </section></section><p role="navigation" id="back-to-top">
     <a href="#title"><abbr title="Back to Top">↑</abbr></a>
@@ -388,9 +403,12 @@ function setupVarHighlighter() {
     .forEach(varElem => varElem.addEventListener("click", highlightListener));
 }
 
+/**
+ * @param {MouseEvent} ev
+ */
 function highlightListener(ev) {
   ev.stopPropagation();
-  const { target: varElem } = ev;
+  const varElem = /** @type {HTMLElement} */ (ev.target);
   const hightligtedElems = highlightVars(varElem);
   const resetListener = () => {
     const hlColor = getHighlightColor(varElem);
@@ -413,6 +431,9 @@ const HL_COLORS = new Map([
   ["respec-hl-c7", true],
 ]);
 
+/**
+ * @param {HTMLElement} target
+ */
 function getHighlightColor(target) {
   // return current colors if applicable
   const { value } = target.classList;
@@ -424,12 +445,18 @@ function getHighlightColor(target) {
   if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
 
   // otherwise get some other available color
-  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+  return HL_COLORS.keys().find(c => HL_COLORS.get(c)) || "respec-hl-c1";
 }
 
+/**
+ * @param {HTMLElement} varElem
+ */
 function highlightVars(varElem) {
   const textContent = norm(varElem.textContent);
-  const parent = varElem.closest(".algorithm, section");
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
   const highlightColor = getHighlightColor(varElem);
 
   const varsToHighlight = [...parent.querySelectorAll("var")].filter(
@@ -452,12 +479,20 @@ function highlightVars(varElem) {
   return varsToHighlight;
 }
 
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
 function removeHighlight(el, highlightColor) {
   el.classList.remove("respec-hl", highlightColor);
   // clean up empty class attributes so they don't come in export
   if (!el.classList.length) el.removeAttribute("class");
 }
 
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
 function addHighlight(elem, highlightColor) {
   elem.classList.add("respec-hl", highlightColor);
 }
@@ -485,8 +520,11 @@ function setupPanel() {
 }
 
 function panelListener() {
-  /** @type {HTMLElement} */
+  /** @type {HTMLElement | null} */
   let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
   return event => {
     const { target, type } = event;
 
@@ -494,24 +532,34 @@ function panelListener() {
 
     // For keys, we only care about Enter key to activate the panel
     // otherwise it's activated via a click.
-    if (type === "keydown" && event.key !== "Enter") return;
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
 
     const action = deriveAction(event);
 
     switch (action) {
       case "show": {
         hidePanel(panel);
-        /** @type {HTMLElement} */
+        /** @type {HTMLElement | null} */
         const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
         panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
-        const coords = deriveCoordinates(event);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
         displayPanel(dfn, panel, coords);
         break;
       }
       case "dock": {
-        panel.style.left = null;
-        panel.style.top = null;
-        panel.classList.add("docked");
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
         break;
       }
       case "hide": {
@@ -562,7 +610,8 @@ function deriveAction(event) {
     if (hitALink) {
       return target.classList.contains("self-link") ? "hide" : "dock";
     }
-    const panel = target.closest(".dfn-panel");
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
     return panel.classList.contains("docked") ? "hide" : "none";
   }
   if (document.querySelector(".dfn-panel:not([hidden])")) {
@@ -606,9 +655,9 @@ function displayPanel(dfn, panel, { x, y }) {
     const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
     const newCaretOffset = left - newLeft;
     panel.style.left = `${newLeft}px`;
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const caret = panel.querySelector(".caret");
-    caret.style.left = `${newCaretOffset}px`;
+    if (caret) caret.style.left = `${newCaretOffset}px`;
   }
 
   // As it's a dialog, we trap focus.
@@ -657,6 +706,9 @@ function trapFocus(panel, dfn) {
 function createTrapListener(anchors, panel, dfn) {
   const lastIndex = anchors.length - 1;
   let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
   return event => {
     switch (event.key) {
       // Hitting "Tab" traps us in a nice loop around elements.
@@ -686,7 +738,7 @@ function createTrapListener(anchors, panel, dfn) {
   };
 }
 
-/** @param {HTMLElement} panel */
+/** @param {HTMLElement | null} panel */
 function hidePanel(panel) {
   if (!panel) return;
   panel.hidden = true;
