@@ -14,9 +14,9 @@ Questionnare: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-202
 
 **Handling hardware context reset:** Yes. It only exposes an enum summarizing the reason.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** Yes. The API exposes only the negotiated encryption scheme(s) per content type, via the `MediaKeySystemMediaCapability.encryptionScheme` attribute returned from `MediaKeySystemAccess.getConfiguration()`. No CDM internals are revealed.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** Yes. `MediaKeys.getStatusForPolicy()` returns only a single `MediaKeyStatus` per query, not raw HDCP capabilities or display chain details.
 
 ## 2.3 Do the features in your specification expose personal information, personally-identifiable information (PII), or information derived from either?
 
@@ -36,11 +36,11 @@ Questionnare: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-202
 
 ## 2.5 Does data exposed by your specification carry related but distinct information that may not be obvious to users?
 
-**Handling hardware context reset:** TODO
+**Handling hardware context reset:** The `hardware-context-reset` reason aggregates multiple internal causes (such as sleep/resume and display configuration changes). The spec deliberately collapses these so that the specific cause is not exposed.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** Supported encryption schemes correlate with the underlying CDM, but that information is already implied by the chosen `keySystem` string. No novel fingerprinting surface is added.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** HDCP version support is a property of the connected display chain, so it can change when the user moves the window between displays. This is consistent with similar information already conveyed through `MediaKeyStatus` for active sessions.
 
 ## 2.6 Do the features in your specification introduce state that persists across browsing sessions?
 
@@ -138,27 +138,27 @@ Yes, see the [Security](https://w3c.github.io/encrypted-media/#security) and [Pr
 
 ## 2.18 What happens when a document that uses your feature is kept alive in BFCache (instead of getting destroyed) after navigation, and potentially gets reused on future navigations back to the document?
 
-**Handling hardware context reset:** TODO
+**Handling hardware context reset:** These features do not introduce new BFCache-related behavior beyond what already applies to EME. EME does not currently specify BFCache handling.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** These features do not introduce new BFCache-related behavior beyond what already applies to EME. EME does not currently specify BFCache handling.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** These features do not introduce new BFCache-related behavior beyond what already applies to EME. EME does not currently specify BFCache handling.
 
 ## 2.19 What happens when a document that uses your feature gets disconnected?
 
-**Handling hardware context reset:** TODO
+**Handling hardware context reset:** These features do not introduce new behavior for disconnected documents beyond what already applies to EME.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** These features do not introduce new behavior for disconnected documents beyond what already applies to EME.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** These features do not introduce new behavior for disconnected documents beyond what already applies to EME.
 
 ## 2.20 Does your spec define when and how new kinds of errors should be raised?
 
-**Handling hardware context reset:** TODO
+**Handling hardware context reset:** Yes. When a hardware context reset occurs, the session is closed and the `closed` promise resolves with `MediaKeySessionClosedReason.hardware-context-reset`.
 
-**Querying encryption scheme support:** TODO
+**Querying encryption scheme support:** Yes. `requestMediaKeySystemAccess()` rejects with `NotSupportedError` when no configuration with a recognized encryption scheme can be supported.
 
-**HDCP policy detection:** TODO
+**HDCP policy detection:** Yes. `getStatusForPolicy()` resolves with a `MediaKeyStatus` value reflecting whether the policy can be supported (e.g., `usable` or `output-restricted`).
 
 ## 2.21 Does your feature allow sites to learn about the user’s use of assistive technology?
 
