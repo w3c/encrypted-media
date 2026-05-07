@@ -11,3 +11,4 @@ The latest Editor's Draft is at https://w3c.github.io/encrypted-media/, together
 * [Encrypted Media Extensions Stream Format Registry](https://w3c.github.io/encrypted-media/format-registry/stream/index.html)
   * [ISO Common Encryption Protection Scheme for ISO Base Media File Format Stream Format](https://w3c.github.io/encrypted-media/format-registry/stream/mp4.html)
   * [WebM Stream Format](https://w3c.github.io/encrypted-media/format-registry/stream/webm.html)
+* [Encrypted Media Extensions HDCP Version Registry](https://w3c.github.io/encrypted-media/hdcp-version-registry.html)

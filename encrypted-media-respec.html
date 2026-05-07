@@ -13,10 +13,10 @@
       implementationReportURI: "https://w3c.github.io/test-results/encrypted-media/all.html",
 
       // the specification's short name, as in https://www.w3.org/TR/short-name/
-      shortName: "encrypted-media",
+      shortName: "encrypted-media-2",
 
-      // if there a publicly available Editor's Draft, this is the link
       edDraftURI: "https://w3c.github.io/encrypted-media/",
+      prevRecURI: "https://www.w3.org/TR/2017/REC-encrypted-media-20170918/",
 
       // editors, add as many as you like
       // only "name" is required
@@ -63,7 +63,7 @@
         },
       },
 
-      xref: ["dom", "html", "infra", "webaudio"]
+      xref: ["dom", "html", "infra", "mimesniff", "webaudio"]
     };
     </script>
     <link rel="stylesheet" href="eme.css">
@@ -189,7 +189,7 @@
           </p>
         </dd>
         <dt>
-          <dfn data-lt="Key System(s)">Key System</dfn>
+          <dfn class="export">Key System</dfn>
         </dt>
         <dd>
           <p>
@@ -1021,22 +1021,6 @@
             multiple independent profiles for a single account.
           </p>
         </dd>
-        <dt>
-          <dfn>Valid Media MIME Type</dfn>
-        </dt>
-        <dd>
-          <p>
-            A valid media MIME type is a media <a data-cite="html#mime-types">MIME type</a> that is
-            also a [=valid MIME type string=] [[mimesniff]]. When a MIME type includes parameters,
-            such as `"codecs"` [[RFC6381]], such parameters MUST also be valid per the relevant
-            specification.
-          </p>
-          <p>
-            When used with the features defined in this specification, MIME type strings SHOULD
-            explicitly specify codecs and codec constraints (e.g., per [[RFC6381]]) unless these
-            are normatively implied by the container.
-          </p>
-        </dd>
       </dl>
     </section>
     <section>
@@ -1255,7 +1239,7 @@
           </h4>
           <section>
             <h5>
-              <dfn>Get Supported Configuration</dfn>
+              <dfn class="export">Get Supported Configuration</dfn>
             </h5>
             <p>
               Given a [=Key Systems=] implementation <var>implementation</var>,
@@ -1294,8 +1278,8 @@
                 configurations for which consent has been denied during the execution of this
                 algorithm or based on persisted consent information for the origin. It is used to
                 determine whether user consent for a candidate configuration or accumulated
-                configuration has been denied. Consent is denied for a accumulated configuration if
-                every derived configuration has already been denied. Internal representation of
+                configuration has been denied. Consent is denied for an accumulated configuration
+                if every derived configuration has already been denied. Internal representation of
                 <var>restrictions</var> is implementation-specific.
               </p>
             </div>
@@ -1486,8 +1470,8 @@
                     with the feature.
                   </p>
                   <p>
-                    A feature is required by an implementtion with this combination if all
-                    configurations in the combination that are suported by the implementation
+                    A feature is required by an implementation with this combination if all
+                    configurations in the combination that are supported by the implementation
                     include the feature.
                   </p>
                 </div>
@@ -1928,14 +1912,20 @@
                   </li><!-- Invalid input. -->
                   <li>
                     <p>
-                      If <var>content type</var> is not a [=valid media MIME type=] or is
-                      unrecognized, continue to the next iteration.
+                      Let <var>mimeType</var> be the result of running <a>parse a MIME type</a>
+                      with <var>content type</var>.
                     </p>
                   </li>
                   <li>
                     <p>
-                      Let <var>container</var> be the container type specified by <var>content
-                      type</var>.
+                      If <var>mimeType</var> is <code>failure</code> or is unrecognized, continue
+                      to the next iteration.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Let <var>container</var> be the container type specified by
+                      <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
@@ -1951,14 +1941,15 @@
                   </li>
                   <li>
                     <p>
-                      Let <var>parameters</var> be the RFC 6381 [[RFC6381]] parameters, if any,
-                      specified by <var>content type</var>.
+                      Let <var>parameters</var> be the "codecs" and "profiles" RFC 6381 [[RFC6381]]
+                      parameters, if any, of <var>mimeType</var>.
                     </p>
                   </li>
                   <li>
                     <p>
-                      If the user agent does not recognize one or more <var>parameters</var>,
-                      continue to the next iteration.
+                      If the user agent does not recognize one or more <var>parameters</var>, or if
+                      any parameters are not valid per the relevant specification, continue to the
+                      next iteration.
                     </p>
                   </li>
                   <li>
@@ -1998,12 +1989,13 @@
                   </li>
                   <li>
                     <p>
-                      If <var>content type</var> is not strictly a <var>audio/video type</var>,
+                      If <var>mimeType</var> is not strictly an <var>audio/video type</var>,
                       continue to the next iteration.
                     </p>
                     <p class="note">
-                      For example, if <var>audio/video type</var> is Video and the top-level type
-                      is not "video" or <var>media types</var> contains non-video codecs.
+                      For example, if <var>audio/video type</var> is Video and
+                      <var>mimeType</var>'s [=MIME type/type=] is not "video" or <var>media
+                      types</var> contains non-video codecs.
                     </p>
                   </li>
                   <li>
@@ -2483,8 +2475,13 @@
             </dt>
             <dd>
               <p>
-                The type of the <a data-cite="html#media-resource">media resource</a>. Its value
-                must be a [=valid media MIME type=]. The empty string is invalid.
+                The <a data-cite="html#mime-types">MIME type</a> of the <a data-cite=
+                "html#media-resource">media resource</a>.
+              </p>
+              <p class="note">
+                Applications SHOULD ensure that the MIME type explicitly specifies codecs and codec
+                constraints (e.g., per [[RFC6381]]) unless these are normatively implied by the
+                container.
               </p>
             </dd>
             <dt>
@@ -2618,12 +2615,12 @@
               The returned object is a non-strict subset (plus any implied defaults) of the first
               satisfiable {{MediaKeySystemConfiguration}} configuration passed to the
               {{Navigator/requestMediaKeySystemAccess()}} call that returned the promise that was
-              resolved with this object. It does not contain values capabilities not specified in
-              that single configuration (other than implied defaults) and thus may not reflect all
-              capabilities of the [=Key System=] implementation. All values in the configuration
-              may be used in any combination. Members of type {{MediaKeysRequirement}} reflect
-              whether the capability is required for any combination. They will not have the value
-              {{MediaKeysRequirement/"optional"}}.
+              resolved with this object. It does not contain values for capabilities not specified
+              in that single configuration (other than implied defaults) and thus may not reflect
+              all capabilities of the [=Key System=] implementation. All values in the
+              configuration may be used in any combination. Members of type
+              {{MediaKeysRequirement}} reflect whether the capability is required for any
+              combination. They will not have the value {{MediaKeysRequirement/"optional"}}.
             </p>
             <p>
               When this method is invoked, the user agent MUST run the following steps:
@@ -2796,7 +2793,7 @@
         represents a [=CDM=] instance.
       </p>
       <p>
-        A {{MediaKeys}} object may be destroyed by the user agent when it is no longer accessible
+        A {{MediaKeys}} object may be destroyed by the user agent when it is no longer accessible.
       </p>
       <p class="note">
         For example, when there are no script references and no attached media element.
@@ -3091,7 +3088,7 @@
                         <p>
                           If the [=CDM=] would block presentation of decrypted media data for the
                           [=dictionary member=], then resolve <var>promise</var> with
-                          {{MediaKeyStatus/"output-restricted"}}.
+                          {{MediaKeyStatus/"output-restricted"}} and abort these steps.
                         </p>
                       </li>
                     </ol>
@@ -3118,14 +3115,14 @@
               Provides a server certificate to be used to encrypt messages to the license server.
             </p>
             <p>
-              [=Key Systems=] that use such certificates MUST also support requesting the
-              certificate from the server via the [=Queue a "message" Event=] algorithm.
+              For [=Key Systems=] that use such certificates, applications SHOULD call
+              {{MediaKeys/setServerCertificate()}} to explicitly set the server certificate.
+              Otherwise, license exchange may fail.
             </p>
             <p class="note">
-              This method allows an application to proactively provide a server certificate to
-              implementations that support it to avoid the additional round trip should the [=CDM=]
-              request it. It is intended as an optimization, and applications are not required to
-              use it.
+              Some key systems also support requesting the certificate from the server via the
+              [=Queue a "message" Event=] algorithm. However, this is not supported by all key
+              systems that use such certificates.
             </p>
             <p>
               The server certificate contents are [=Key System=]-specific. It MUST NOT contain
@@ -3145,7 +3142,7 @@
               <li>
                 <p>
                   If <var>serverCertificate</var> is an empty array, return a promise rejected with
-                  a new a newly created {{TypeError}}.
+                  a newly created {{TypeError}}.
                 </p>
               </li>
               <li>
@@ -3771,7 +3768,7 @@
                               <li>
                                 <p>
                                   Let <var>message</var> be the request that needs to be processed
-                                  before a license request request for the <var>requested license
+                                  before a license request for the <var>requested license
                                   type</var> can be generated based on the <var>sanitized init
                                   data</var>.
                                 </p>
@@ -3964,7 +3961,7 @@
                         <p>
                           If there is no data stored for the <var>sanitized session ID</var> in the
                           <var>origin</var>, resolve <var>promise</var> with <code>false</code> and
-                          abort these steps. 
+                          abort the parallel steps of this algorithm. 
                           <!-- Per https://github.com/w3ctag/promises-guide#rejections-should-be-used-for-exceptional-situations. -->
                         </p>
                       </li>
@@ -4510,7 +4507,7 @@
             <p>
               Removes all license(s) and key(s) associated with the session. For <a href=
               "#is-persistent-session-type">persistent session types</a>, other session data will
-              be cleared as defined for each session type once a release message acknowledgment is
+              be cleared as defined for each session type once a release message acknowledgement is
               processed by {{MediaKeySession/update()}}.
             </p>
             <p>
@@ -5572,7 +5569,7 @@
         </li>
       </ul>
       <p>
-        The following modifications are made to the behaviour of the {{HTMLMediaElement}}:
+        The following modifications are made to the behavior of the {{HTMLMediaElement}}:
       </p>
       <ul>
         <li>
@@ -6945,7 +6942,7 @@
             </li>
             <li>
               <p>
-                All identifers except [=Permanent Identifiers=] MUST be <a href=
+                All identifiers except [=Permanent Identifiers=] MUST be <a href=
                 "#per-origin-per-profile-identifiers">unique per origin and profile</a>, <a href=
                 "#non-associable-identifiers">non-associable</a>, and <a href=
                 "#allow-identifiers-cleared">clearable</a>.
@@ -6953,7 +6950,7 @@
             </li>
             <li>
               <p>
-                All identifers SHOULD be <a href="#encrypt-identifiers">encrypted</a> when exposed
+                All identifiers SHOULD be <a href="#encrypt-identifiers">encrypted</a> when exposed
                 outside the client.
               </p>
             </li>
@@ -7069,7 +7066,7 @@
           </div>
           <p>
             The [=CDM=] MUST verify that the encryption key belongs to a valid server for its [=Key
-            System=]. For identifers exposed to the application, this MAY be implemented using a
+            System=]. For identifiers exposed to the application, this MAY be implemented using a
             <a href="#server-certificate">server certificate</a>.
           </p>
           <p>
@@ -7451,7 +7448,7 @@
             To ensure accessibility information is available in usable form, for implementations
             that choose to support encrypted in-band support content: a) the [=CDM=] MUST provide
             the decrypted data to the user agent and b) the user agent MUST process it in the same
-            way as equivalent unencrypted support content. For example, to be exposed as
+            way as equivalent unencrypted support content, for example, to be exposed as
             <a data-cite="html#timed-text-tracks">timed text tracks</a> [[HTML]].
           </p>
         </section>
@@ -7528,6 +7525,12 @@
             <li>
               <p>
                 The {{MediaKeys/setServerCertificate()}} method: Not supported.
+              </p>
+            </li>
+            <li>
+              <p>
+                The {{MediaKeys/getStatusForPolicy()}} method: Implementations should always
+                resolve promise with {{MediaKeyStatus/"usable"}}.
               </p>
             </li>
             <li>
@@ -8065,10 +8068,10 @@
             Potential Attacks
           </h4>
           <p>
-            Malicious pages could host legitimate applications in an iframe in an attempt hide an
-            attack or deceive the user as to the source, such as making the use appear to be from a
-            legitimate content provider. This is especially relevent for implementations that
-            <a href="#security-consent">inform the user or require consent</a>, such as for
+            Malicious pages could host legitimate applications in an iframe in an attempt to hide
+            an attack or deceive the user as to the source, such as making the use appear to be
+            from a legitimate content provider. This is especially relevant for implementations
+            that <a href="#security-consent">inform the user or require consent</a>, such as for
             security and/or <a href="#privacy-consent">privacy reasons</a>. In addition to <a href=
             "#network-attacks">Network Attacks</a>, attackers could try to exploit legitimate uses
             of the APIs defined in this specification by hosting them in an <code>iframe</code>. By
@@ -8134,10 +8137,10 @@
         Privacy
       </h2>
       <p>
-        The presence or use of [=Key System(s)=] on a user's device raises a number of privacy
-        issues, falling into two categories: (a) user-specific information that may be disclosed by
-        the EME interface itself or within [=Key System=] messages and (b) user-specific
-        information that may be persistently stored on the user's device.
+        The presence or use of [=Key System|Key System(s)=] on a user's device raises a number of
+        privacy issues, falling into two categories: (a) user-specific information that may be
+        disclosed by the EME interface itself or within [=Key System=] messages and (b)
+        user-specific information that may be persistently stored on the user's device.
       </p>
       <p>
         User Agents MUST take responsibility for providing users with adequate control over their
@@ -9264,7 +9267,7 @@
     </section>
     <section id="acknowledgements">
       <h2>
-        Acknowledgments
+        Acknowledgements
       </h2>
       <p>
         The editors would like to thank Aaron Colwell, Alex Russell, Anne van Kesteren, Bob Lund,
