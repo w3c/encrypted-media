@@ -1,14 +1,14 @@
-# Encrypted Media Exensions v2 Self-Review Questionnaire: Security and Privacy
+# Encrypted Media Extensions v2 Self-Review Questionnaire: Security and Privacy
 
-Questionnare: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20250418/ (from 18 April 2025)
+Questionnaire: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20250418/ (from 18 April 2025)
 
 ## 2.1 What information does this feature expose, and for what purposes?
 
-**Handling hardware context reset:** Information about certain device state changes will be exposed indirectly to Web sites, e.g. session closed due to "hardware context reset", which could be caused by using setting the device to sleep/resume, or switching monitors. Sites will not be able to know the exact reason. This exposure is necessary for sites to provide the best user experience.
+**Handling hardware context reset:** Information about certain device state changes will be exposed indirectly to Web sites, e.g. session closed due to "hardware context reset", which could be caused by setting the device to sleep/resume, or switching monitors. Sites will not be able to know the exact reason. This exposure is necessary for sites to provide the best user experience.
 
 **Querying encryption scheme support:** The API exposes whether the implementation supports CENC or CBCS encryption, or both. These two encryption schemes are incompatible, so the API allows websites to make intelligent choices about what content to serve to which user agents.
 
-**HDCP policy detection:** The API exposes whether a HDCP version is supported by the implementation. This allows websites to know before fetching content if HDCP (and what version) can be enforced, which allows them, for example, to start pre-fetching high resolution content rather than starting at a low resolution or waiting for the license exchange.
+**HDCP policy detection:** The API exposes whether an HDCP version is supported by the implementation. This allows websites to know before fetching content if HDCP (and what version) can be enforced, which allows them, for example, to start pre-fetching high resolution content rather than starting at a low resolution or waiting for the license exchange.
 
 ## 2.2 Do features in your specification expose the minimum amount of information necessary to implement the intended functionality?
 
@@ -52,7 +52,7 @@ Questionnare: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-202
 
 ## 2.7 Do the features in your specification expose information about the underlying platform to origins?
 
-**Handling hardware context reset:** Currently "hardware context reset" only happens on Windows. So the site could guess it's an Windows OS if it happens.
+**Handling hardware context reset:** Currently "hardware context reset" only happens on Windows. So the site could guess it's a Windows OS if it happens.
 
 **Querying encryption scheme support:** The `MediaKeySystemMediaCapability.encryptionScheme` attribute, returned from MediaKeySystemAccess.getConfiguration(), indicates the encryption scheme associated with the content type. This gives an indication of which encryption schemes the underlying platform supports.
 
