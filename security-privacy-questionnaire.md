@@ -4,9 +4,9 @@ Questionnaire: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20
 
 ## 2.1 What information does this feature expose, and for what purposes?
 
-**Handling hardware context reset:** Information about certain device state changes will be exposed indirectly to Web sites, e.g. session closed due to "hardware context reset", which could be caused by setting the device to sleep/resume, or switching monitors. Sites will not be able to know the exact reason. This exposure is necessary for sites to provide the best user experience.
+**Handling hardware context reset:** Information about certain device state changes will be exposed indirectly to Web sites, e.g. session closed due to "hardware context reset", which could be caused by setting the device to sleep/resume, or switching monitors. Sites will not be able to know the exact reason. This allows the application to distinguish recoverable closures (where it should create a new session and resume playback) from unrecoverable ones.
 
-**Querying encryption scheme support:** The API exposes whether the implementation supports CENC or CBCS encryption, or both. These two encryption schemes are incompatible, so the API allows websites to make intelligent choices about what content to serve to which user agents.
+**Querying encryption scheme support:** The API exposes which encryption schemes (such as `cenc` or `cbcs`) the implementation supports. These encryption schemes are incompatible with each other, so the API allows websites to make intelligent choices about what content to serve to which user agents.
 
 **HDCP policy detection:** The API exposes whether an HDCP version is supported by the implementation. This allows websites to know before fetching content if HDCP (and what version) can be enforced, which allows them, for example, to start pre-fetching high resolution content rather than starting at a low resolution or waiting for the license exchange.
 
