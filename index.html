@@ -130,7 +130,7 @@ body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 <link rel="stylesheet" href="eme.css">
   
 <meta name="color-scheme" content="light">
-<meta name="revision" content="83e80b5226fd1533ab1b4f36a0806059b5eb715e">
+<meta name="revision" content="3a40f1a9a9d5a6ba3f6c584e2b69eb9126d9df30">
 <meta name="description" content="This specification extends HTMLMediaElement [HTML] providing APIs to control playback
         of encrypted content.">
 <style>
@@ -273,7 +273,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     "mimesniff",
     "webaudio"
   ],
-  "gitRevision": "83e80b5226fd1533ab1b4f36a0806059b5eb715e",
+  "gitRevision": "3a40f1a9a9d5a6ba3f6c584e2b69eb9126d9df30",
   "publishISODate": "2026-05-08T00:00:00.000Z",
   "generatedSubtitle": "W3C Editor's Draft 08 May 2026"
 }</script>
@@ -8560,6 +8560,29 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           have been visited and information stored for those sites. In particular, <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-52">Key Systems</a>
           <em class="rfc2119">MUST</em> not share key or other data between <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origins</a>.
         </p>
+        <p>
+          Several features in this specification expose capability information that may
+          marginally contribute to fingerprinting:
+        </p>
+        <ul>
+          <li>
+            <p>
+              The <a data-link-type="idl" href="#dom-mediakeysystemmediacapability-encryptionscheme" class="internalDFN" id="ref-for-dom-mediakeysystemmediacapability-encryptionscheme-7"><code>encryptionScheme</code></a> member of
+              <a data-link-type="idl" data-lt="MediaKeySystemMediaCapability" href="#dom-mediakeysystemmediacapability" class="internalDFN" id="ref-for-dom-mediakeysystemmediacapability-11"><code>MediaKeySystemMediaCapability</code></a> reveals which encryption schemes a
+              <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-53">Key System</a> supports. This information is largely determined by the
+              <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-54">Key System</a> itself and so adds little beyond what is already implied
+              by the application's choice of <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-55">Key System</a>.
+            </p>
+          </li>
+          <li>
+            <p>
+              <a data-link-type="idl" data-lt="getStatusForPolicy()" href="#dom-mediakeys-getstatusforpolicy" class="internalDFN" id="ref-for-dom-mediakeys-getstatusforpolicy-4"><code>getStatusForPolicy</code></a><code>()</code> reveals whether a specified HDCP
+              policy can be enforced. This reflects the capabilities of the
+              currently-connected display chain, and may change during a session if
+              the user reconfigures their displays.
+            </p>
+          </li>
+        </ul>
       </section>
       <section id="privacy-leakage"><div class="header-wrapper"><h3 id="x11-3-information-leakage"><bdi class="secno">11.3 </bdi>
           Information Leakage
@@ -8737,13 +8760,13 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-134">CDM</a>.
           </p>
           <p>
-            Since the content of licenses and <a data-link-type="dfn|abstract-op" href="#dfn-record-s-of-license-destruction" class="internalDFN" id="ref-for-dfn-record-s-of-license-destruction-16">records of license destruction</a> are <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-53">Key System</a>-specific and since key IDs may contain any value, these data items could be
+            Since the content of licenses and <a data-link-type="dfn|abstract-op" href="#dfn-record-s-of-license-destruction" class="internalDFN" id="ref-for-dfn-record-s-of-license-destruction-16">records of license destruction</a> are <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-56">Key System</a>-specific and since key IDs may contain any value, these data items could be
             abused to store user-identifying information.
           </p>
           <p>
-            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-54">Key Systems</a> may access or create persistent or semi-persistent identifier(s) for a
+            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-57">Key Systems</a> may access or create persistent or semi-persistent identifier(s) for a
             device or user of a device. In some cases these identifiers may be bound to a specific
-            device in a secure manner. If these identifiers are present in <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-55">Key System</a> messages,
+            device in a secure manner. If these identifiers are present in <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-58">Key System</a> messages,
             then devices and/or users may be tracked. If the mitigations below are not applied,
             this could include both tracking of users / devices over time and associating multiple
             users of a given device.
@@ -8756,26 +8779,26 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           </p>
           <p>
             If not mitigated, such tracking may take three forms depending on the design of the
-            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-56">Key System</a>:
+            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-59">Key System</a>:
           </p>
           <ul>
             <li>
               <p>
                 In all cases, such identifiers are expected to be available to sites and/or servers
-                that fully support the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-57">Key System</a> (and thus can interpret <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-58">Key System</a>
+                that fully support the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-60">Key System</a> (and thus can interpret <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-61">Key System</a>
                 messages) enabling tracking by such sites.
               </p>
             </li>
             <li>
               <p>
-                If identifiers exposed by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-59">Key Systems</a> are not origin-specific, then two sites
-                and/or servers that fully support the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-60">Key System</a> may collude to track the user.
+                If identifiers exposed by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-62">Key Systems</a> are not origin-specific, then two sites
+                and/or servers that fully support the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-63">Key System</a> may collude to track the user.
               </p>
             </li>
             <li>
               <p>
-                If <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-61">Key System</a> messages contain information derived from a user identifier in a
-                consistent manner, for example such that a portion of the initial <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-62">Key System</a>
+                If <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-64">Key System</a> messages contain information derived from a user identifier in a
+                consistent manner, for example such that a portion of the initial <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-65">Key System</a>
                 message for a specific content item does not change over time and is dependent on
                 the user identifier, then this information could be used by any application to
                 track the device or user over time.
@@ -8783,12 +8806,12 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             </li>
           </ul>
           <p>
-            In addition, if a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-63">Key System</a> permits keys or other data to be stored and to be
+            In addition, if a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-66">Key System</a> permits keys or other data to be stored and to be
             re-used between origins, then it may be possible for two origins to collude and track a
             unique user by recording their ability to access a common key.
           </p>
           <p>
-            Finally, if any user interface for user control of <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-64">Key Systems</a> presents data
+            Finally, if any user interface for user control of <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-67">Key Systems</a> presents data
             separately from data in HTTP session cookies [<cite><a class="bibref" data-link-type="biblio" href="#bib-cookies" title="HTTP State Management Mechanism">COOKIES</a></cite>] or persistent storage, then
             users are likely to modify site authorization or delete data in one and not the others.
             This would allow sites to use the various features as redundant backup for each other,
@@ -8830,7 +8853,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             </dt>
             <dd>
               <p>
-                <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-65">Key System</a> implementations <em class="rfc2119">SHOULD</em> avoid <a data-link-type="dfn|abstract-op" data-lt="using Distinctive Identifier(s) or Distinctive Permanent Identifier(s)" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-12">using Distinctive Identifiers and Distinctive Permanent Identifiers</a> whenever possible and only use them when they meaningfully
+                <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-68">Key System</a> implementations <em class="rfc2119">SHOULD</em> avoid <a data-link-type="dfn|abstract-op" data-lt="using Distinctive Identifier(s) or Distinctive Permanent Identifier(s)" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-12">using Distinctive Identifiers and Distinctive Permanent Identifiers</a> whenever possible and only use them when they meaningfully
                 contribute to the robustness of the implementation. See <a href="#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">Limit or
                 Avoid use of Distinctive Identifiers and Permanent Identifiers</a>.
               </p>
@@ -8849,10 +8872,10 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             </dt>
             <dd>
               <p>
-                <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-35">Distinctive Identifiers</a> in <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-66">Key System</a> messages <em class="rfc2119">MUST</em> be encrypted, together
-                with a timestamp or nonce, such that the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-67">Key System</a> messages are always
-                different. This prevents the use of <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-68">Key System</a> messages for tracking except by
-                servers fully supporting the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-69">Key System</a>. See <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
+                <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-35">Distinctive Identifiers</a> in <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-69">Key System</a> messages <em class="rfc2119">MUST</em> be encrypted, together
+                with a timestamp or nonce, such that the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-70">Key System</a> messages are always
+                different. This prevents the use of <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-71">Key System</a> messages for tracking except by
+                servers fully supporting the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-72">Key System</a>. See <a href="#encrypt-identifiers">Encrypt Identifiers</a>.
               </p>
             </dd>
             <dt id="like-cookies">
@@ -8862,7 +8885,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <dd>
               <p>
                 User agents <em class="rfc2119">SHOULD</em> present the presence of <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-37">Distinctive Identifiers</a> and data
-                stored by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-70">Key Systems</a> to the user in a way that associates them strongly with
+                stored by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-73">Key Systems</a> to the user in a way that associates them strongly with
                 HTTP session cookies [<cite><a class="bibref" data-link-type="biblio" href="#bib-cookies" title="HTTP State Management Mechanism">COOKIES</a></cite>], including it in "remove all data", and presenting
                 it in the same UI locations. This might encourage users to view such identifiers
                 with healthy suspicion. User agents <em class="rfc2119">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
@@ -8896,7 +8919,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               </p>
             </dd>
             <dt>
-              Use origin-specific and browsing profile-specific <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-71">Key System</a> storage
+              Use origin-specific and browsing profile-specific <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-74">Key System</a> storage
             </dt>
             <dd>
               <p>
@@ -8916,7 +8939,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <dd>
               <p>
                 User agents <em class="rfc2119">MUST</em> provide users with the ability to clear any persistent data,
-                including <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-39">Distinctive Identifiers</a>, maintained by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-72">Key Systems</a>. See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
+                including <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-39">Distinctive Identifiers</a>, maintained by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-75">Key Systems</a>. See <a href="#allow-persistent-data-cleared">Allow Persistent Data to Be Cleared</a>.
               </p>
             </dd>
             <dt>
@@ -8952,7 +8975,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <dd>
               
               <p>
-                User agents <em class="rfc2119">MAY</em> restrict access to <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-73">Key Systems</a> and/or features to scripts
+                User agents <em class="rfc2119">MAY</em> restrict access to <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-76">Key Systems</a> and/or features to scripts
                 originating at the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a> of the top-level <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-document">Document</a> of the browsing
                 context. For example, <a data-link-type="idl" data-lt="requestMediaKeySystemAccess()" href="#dom-navigator-requestmediakeysystemaccess" class="internalDFN" id="ref-for-dom-navigator-requestmediakeysystemaccess-14"><code>requestMediaKeySystemAccess</code></a><code>()</code> may deny requests
                 for certain configurations for pages from other origins running in
@@ -8978,20 +9001,20 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
               </p></div>
             </dd>
             <dt>
-              Provide user controls to disable <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-74">Key Systems</a> or <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-75">Key System</a> use of identifiers
+              Provide user controls to disable <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-77">Key Systems</a> or <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-78">Key System</a> use of identifiers
             </dt>
             <dd>
               <p>
-                User Agents <em class="rfc2119">SHOULD</em> provide users with a global control of whether a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-76">Key System</a>
-                is enabled and/or whether <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-77">Key System</a> <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-14">use of Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> is enabled (if supported by the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-78">Key System</a>). User agents <em class="rfc2119">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
+                User Agents <em class="rfc2119">SHOULD</em> provide users with a global control of whether a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-79">Key System</a>
+                is enabled and/or whether <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-80">Key System</a> <a data-link-type="dfn|abstract-op" href="#dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s" class="internalDFN" id="ref-for-dfn-use-distinctive-identifier-s-or-distinctive-permanent-identifier-s-14">use of Distinctive Identifier(s) or Distinctive Permanent Identifier(s)</a> is enabled (if supported by the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-81">Key System</a>). User agents <em class="rfc2119">SHOULD</em> help the user avoid <a href="#incomplete-clearing">Incomplete Clearing of Data</a>.
               </p>
             </dd>
             <dt>
-              Require site-specific whitelisting of access to each <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-79">Key System</a>
+              Require site-specific whitelisting of access to each <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-82">Key System</a>
             </dt>
             <dd>
               <p>
-                User agents <em class="rfc2119">MAY</em> require the user to explicitly authorize access to each <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-80">Key System</a> - and/or certain features - before a site can use it. User agents <em class="rfc2119">SHOULD</em>
+                User agents <em class="rfc2119">MAY</em> require the user to explicitly authorize access to each <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-83">Key System</a> - and/or certain features - before a site can use it. User agents <em class="rfc2119">SHOULD</em>
                 enable users to revoke this authorization either temporarily or permanently.
               </p>
             </dd>
@@ -9000,7 +9023,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             </dt>
             <dd>
               <p>
-                User agents <em class="rfc2119">MAY</em> allow users to share blacklists of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origins</a> and/or <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-81">Key Systems</a>. This would allow communities to act together to protect their privacy.
+                User agents <em class="rfc2119">MAY</em> allow users to share blacklists of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origins</a> and/or <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-84">Key Systems</a>. This would allow communities to act together to protect their privacy.
               </p>
             </dd>
           </dl>
@@ -9025,20 +9048,20 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           </h4><a class="self-link" href="#concerns-1" aria-label="Permalink for Section 11.5.1"></a></div><p><em>This section is non-normative.</em></p>
           
           <p>
-            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-82">Key Systems</a> may store information on a user's device, or user agents may store
+            <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-85">Key Systems</a> may store information on a user's device, or user agents may store
             information on behalf of Key Systems. Potentially, this could reveal information about
             a user to another user of the same device, including potentially the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origins</a> that
-            have used a particular <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-83">Key System</a> (i.e., sites visited) or even the content that
-            has been decrypted using a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-84">Key System</a>.
+            have used a particular <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-86">Key System</a> (i.e., sites visited) or even the content that
+            has been decrypted using a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-87">Key System</a>.
           </p>
           <p>
-            If information stored by one origin affects the operation of the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-85">Key System</a> for
+            If information stored by one origin affects the operation of the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-88">Key System</a> for
             another origin, then potentially the sites visited or content viewed by a user on one
             site may be revealed to another, potentially malicious, site.
           </p>
           <p>
             If information stored for one <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-18">browsing profile</a> on the client device affects the
-            operation of the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-86">Key System</a> for other <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-19">browsing profiles</a>, or browsers, then
+            operation of the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-89">Key System</a> for other <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-19">browsing profiles</a>, or browsers, then
             potentially the sites visited or content viewed in one may be revealed by or
             correlatable with another <a data-link-type="dfn|abstract-op" href="#dfn-browsing-profile" class="internalDFN" id="ref-for-dfn-browsing-profile-20">browsing profile</a>, even including for different operating
             system user accounts or browsers.
@@ -9064,7 +9087,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
           
           <p>
             A user's attempts to protect his or her privacy by clearing <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-41">Distinctive Identifiers</a>
-            and stored data and/or disabling a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-87">Key System</a> may be defeated if all such data and
+            and stored data and/or disabling a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-90">Key System</a> may be defeated if all such data and
             functionality as well as cookies [<cite><a class="bibref" data-link-type="biblio" href="#bib-cookies" title="HTTP State Management Mechanism">COOKIES</a></cite>] and other site data are not cleared and/or
             disabled at the same time. For example:
           </p>
@@ -9079,22 +9102,22 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
             <li>
               <p>
                 If a user clears <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-43">Distinctive Identifiers</a> without also clearing data stored by
-                <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-88">Key Systems</a>, including persistent sessions, as well as cookies and other
+                <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-91">Key Systems</a>, including persistent sessions, as well as cookies and other
                 persistent storage, sites can defeat those attempts by using the remaining data to
                 associate the old and new identifiers.
               </p>
             </li>
             <li>
               <p>
-                If a user disables a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-89">Key System</a>, especially for a specific <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a>, without
+                If a user disables a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-92">Key System</a>, especially for a specific <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">origin</a>, without
                 also clearing cookies or other persistent storage, sites can defeat those attempts
                 by using the remaining features.
               </p>
             </li>
             <li>
               <p>
-                If a user disables a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-90">Key System</a>, then later decide to enable the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-91">Key System</a>, without also clearing cookies or other persistent storage, <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-44">Distinctive Identifiers</a>, and data stored by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-92">Key Systems</a>, sites may be able to associate
-                data prior to the disabling with data and behavior after the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-93">Key System</a> is
+                If a user disables a <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-93">Key System</a>, then later decide to enable the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-94">Key System</a>, without also clearing cookies or other persistent storage, <a data-link-type="dfn|abstract-op" href="#dfn-distinctive-identifier-s" class="internalDFN" id="ref-for-dfn-distinctive-identifier-s-44">Distinctive Identifiers</a>, and data stored by <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-95">Key Systems</a>, sites may be able to associate
+                data prior to the disabling with data and behavior after the <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-96">Key System</a> is
                 re-enabled.
               </p>
             </li>
@@ -9122,7 +9145,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
         </p>
         <p>
           User agent implementers that support such mode(s) <em class="rfc2119">SHOULD</em> carefully consider whether
-          access to <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-94">Key Systems</a> should be disabled in these mode(s). For example, such modes
+          access to <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-97">Key Systems</a> should be disabled in these mode(s). For example, such modes
           <em class="rfc2119">MAY</em> prohibit creation of <a data-link-type="idl" data-lt="MediaKeySystemAccess" href="#dom-mediakeysystemaccess" class="internalDFN" id="ref-for-dom-mediakeysystemaccess-17"><code>MediaKeySystemAccess</code></a> objects that support or use
           <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-persistentstate" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-persistentstate-13"><code>persistentState</code></a> or a
           <a data-link-type="idl" href="#dom-mediakeysystemconfiguration-distinctiveidentifier" class="internalDFN" id="ref-for-dom-mediakeysystemconfiguration-distinctiveidentifier-27"><code>distinctiveIdentifier</code></a> (either as part of the <a data-link-type="dfn|abstract-op" href="#dfn-cdm" class="internalDFN" id="ref-for-dfn-cdm-140">CDM</a>
@@ -9239,7 +9262,7 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
         </h3><a class="self-link" href="#example-selecting-key-system" aria-label="Permalink for Section 13.2"></a></div>
         
         <p class="exampledescription">
-          This example selects a supported <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-95">Key System</a> using the
+          This example selects a supported <a data-link-type="dfn|abstract-op" href="#dfn-key-system" class="internalDFN" id="ref-for-dfn-key-system-98">Key System</a> using the
           <a data-link-type="idl" data-lt="requestMediaKeySystemAccess()" href="#dom-navigator-requestmediakeysystemaccess" class="internalDFN" id="ref-for-dom-navigator-requestmediakeysystemaccess-15"><code>requestMediaKeySystemAccess</code></a><code>()</code> method then uses the <a data-link-type="dfn|abstract-op" href="#dfn-initialization-data" class="internalDFN" id="ref-for-dfn-initialization-data-24">Initialization Data</a>
           from the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/media.html#media-data">media data</a> to generate the license request and send it to
           the appropriate license server. One of the supported key systems uses a
@@ -9843,19 +9866,19 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
     </li><li>
       <a href="#ref-for-dfn-key-system-50" title="§ 11.1 Information Disclosed by EME and Key Systems">§ 11.1 Information Disclosed by EME and Key Systems</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-51" title="§ 11.2 Fingerprinting">§ 11.2 Fingerprinting</a> <a href="#ref-for-dfn-key-system-52" title="Reference 2">(2)</a> 
+      <a href="#ref-for-dfn-key-system-51" title="§ 11.2 Fingerprinting">§ 11.2 Fingerprinting</a> <a href="#ref-for-dfn-key-system-52" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-53" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-54" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-55" title="Reference 5">(5)</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-53" title="§ 11.4.1 Concerns">§ 11.4.1 Concerns</a> <a href="#ref-for-dfn-key-system-54" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-55" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-56" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-57" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-58" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-59" title="Reference 7">(7)</a> <a href="#ref-for-dfn-key-system-60" title="Reference 8">(8)</a> <a href="#ref-for-dfn-key-system-61" title="Reference 9">(9)</a> <a href="#ref-for-dfn-key-system-62" title="Reference 10">(10)</a> <a href="#ref-for-dfn-key-system-63" title="Reference 11">(11)</a> <a href="#ref-for-dfn-key-system-64" title="Reference 12">(12)</a> 
+      <a href="#ref-for-dfn-key-system-56" title="§ 11.4.1 Concerns">§ 11.4.1 Concerns</a> <a href="#ref-for-dfn-key-system-57" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-58" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-59" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-60" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-61" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-62" title="Reference 7">(7)</a> <a href="#ref-for-dfn-key-system-63" title="Reference 8">(8)</a> <a href="#ref-for-dfn-key-system-64" title="Reference 9">(9)</a> <a href="#ref-for-dfn-key-system-65" title="Reference 10">(10)</a> <a href="#ref-for-dfn-key-system-66" title="Reference 11">(11)</a> <a href="#ref-for-dfn-key-system-67" title="Reference 12">(12)</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-65" title="§ 11.4.2 Mitigations">§ 11.4.2 Mitigations</a> <a href="#ref-for-dfn-key-system-66" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-67" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-68" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-69" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-70" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-71" title="Reference 7">(7)</a> <a href="#ref-for-dfn-key-system-72" title="Reference 8">(8)</a> <a href="#ref-for-dfn-key-system-73" title="Reference 9">(9)</a> <a href="#ref-for-dfn-key-system-74" title="Reference 10">(10)</a> <a href="#ref-for-dfn-key-system-75" title="Reference 11">(11)</a> <a href="#ref-for-dfn-key-system-76" title="Reference 12">(12)</a> <a href="#ref-for-dfn-key-system-77" title="Reference 13">(13)</a> <a href="#ref-for-dfn-key-system-78" title="Reference 14">(14)</a> <a href="#ref-for-dfn-key-system-79" title="Reference 15">(15)</a> <a href="#ref-for-dfn-key-system-80" title="Reference 16">(16)</a> <a href="#ref-for-dfn-key-system-81" title="Reference 17">(17)</a> 
+      <a href="#ref-for-dfn-key-system-68" title="§ 11.4.2 Mitigations">§ 11.4.2 Mitigations</a> <a href="#ref-for-dfn-key-system-69" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-70" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-71" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-72" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-73" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-74" title="Reference 7">(7)</a> <a href="#ref-for-dfn-key-system-75" title="Reference 8">(8)</a> <a href="#ref-for-dfn-key-system-76" title="Reference 9">(9)</a> <a href="#ref-for-dfn-key-system-77" title="Reference 10">(10)</a> <a href="#ref-for-dfn-key-system-78" title="Reference 11">(11)</a> <a href="#ref-for-dfn-key-system-79" title="Reference 12">(12)</a> <a href="#ref-for-dfn-key-system-80" title="Reference 13">(13)</a> <a href="#ref-for-dfn-key-system-81" title="Reference 14">(14)</a> <a href="#ref-for-dfn-key-system-82" title="Reference 15">(15)</a> <a href="#ref-for-dfn-key-system-83" title="Reference 16">(16)</a> <a href="#ref-for-dfn-key-system-84" title="Reference 17">(17)</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-82" title="§ 11.5.1 Concerns">§ 11.5.1 Concerns</a> <a href="#ref-for-dfn-key-system-83" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-84" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-85" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-86" title="Reference 5">(5)</a> 
+      <a href="#ref-for-dfn-key-system-85" title="§ 11.5.1 Concerns">§ 11.5.1 Concerns</a> <a href="#ref-for-dfn-key-system-86" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-87" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-88" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-89" title="Reference 5">(5)</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-87" title="§ 11.6.1 Concerns">§ 11.6.1 Concerns</a> <a href="#ref-for-dfn-key-system-88" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-89" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-90" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-91" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-92" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-93" title="Reference 7">(7)</a> 
+      <a href="#ref-for-dfn-key-system-90" title="§ 11.6.1 Concerns">§ 11.6.1 Concerns</a> <a href="#ref-for-dfn-key-system-91" title="Reference 2">(2)</a> <a href="#ref-for-dfn-key-system-92" title="Reference 3">(3)</a> <a href="#ref-for-dfn-key-system-93" title="Reference 4">(4)</a> <a href="#ref-for-dfn-key-system-94" title="Reference 5">(5)</a> <a href="#ref-for-dfn-key-system-95" title="Reference 6">(6)</a> <a href="#ref-for-dfn-key-system-96" title="Reference 7">(7)</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-94" title="§ 11.7 Private Browsing Modes">§ 11.7 Private Browsing Modes</a> 
+      <a href="#ref-for-dfn-key-system-97" title="§ 11.7 Private Browsing Modes">§ 11.7 Private Browsing Modes</a> 
     </li><li>
-      <a href="#ref-for-dfn-key-system-95" title="§ 13.2 Selecting a Supported Key System and Using Initialization Data from the &quot;encrypted&quot; Event">§ 13.2 Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</a> 
+      <a href="#ref-for-dfn-key-system-98" title="§ 13.2 Selecting a Supported Key System and Using Initialization Data from the &quot;encrypted&quot; Event">§ 13.2 Selecting a Supported Key System and Using Initialization Data from the "encrypted" Event</a> 
     </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dfn-key-session" aria-label="Links in this document to definition: Key Session">
@@ -10848,6 +10871,8 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
       <a href="#ref-for-dom-mediakeysystemmediacapability-9" title="§ 3.4 MediaKeySystemMediaCapability dictionary">§ 3.4 MediaKeySystemMediaCapability dictionary</a> 
     </li><li>
       <a href="#ref-for-dom-mediakeysystemmediacapability-10" title="§ 3.4.1 Dictionary MediaKeySystemMediaCapability Members">§ 3.4.1 Dictionary MediaKeySystemMediaCapability Members</a> 
+    </li><li>
+      <a href="#ref-for-dom-mediakeysystemmediacapability-11" title="§ 11.2 Fingerprinting">§ 11.2 Fingerprinting</a> 
     </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-mediakeysystemmediacapability-contenttype" aria-label="Links in this document to definition: contentType">
@@ -10884,6 +10909,8 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
       <a href="#ref-for-dom-mediakeysystemmediacapability-encryptionscheme-4" title="§ 4.2 Methods">§ 4.2 Methods</a> <a href="#ref-for-dom-mediakeysystemmediacapability-encryptionscheme-5" title="Reference 2">(2)</a> 
     </li><li>
       <a href="#ref-for-dom-mediakeysystemmediacapability-encryptionscheme-6" title="§ 9.1.1 Capabilities">§ 9.1.1 Capabilities</a> 
+    </li><li>
+      <a href="#ref-for-dom-mediakeysystemmediacapability-encryptionscheme-7" title="§ 11.2 Fingerprinting">§ 11.2 Fingerprinting</a> 
     </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-scheme-cenc" aria-label="Links in this document to definition: cenc">
@@ -11205,6 +11232,8 @@ interface <dfn data-export="" data-dfn-type="interface" id="dom-mediaencryptedev
       <a href="#ref-for-dom-mediakeys-getstatusforpolicy-2" title="§ 5. MediaKeys Interface">§ 5. MediaKeys Interface</a> 
     </li><li>
       <a href="#ref-for-dom-mediakeys-getstatusforpolicy-3" title="§ 9.1.1 Capabilities">§ 9.1.1 Capabilities</a> 
+    </li><li>
+      <a href="#ref-for-dom-mediakeys-getstatusforpolicy-4" title="§ 11.2 Fingerprinting">§ 11.2 Fingerprinting</a> 
     </li>
   </ul>
     </div><div class="dfn-panel" hidden="" role="dialog" aria-modal="true" id="dfn-panel-for-dom-mediakeyspolicy" aria-label="Links in this document to definition: MediaKeysPolicy">
