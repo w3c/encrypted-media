@@ -38,7 +38,7 @@ Questionnaire: https://www.w3.org/TR/2025/NOTE-security-privacy-questionnaire-20
 
 **Handling hardware context reset:** The `hardware-context-reset` reason aggregates multiple internal causes (such as sleep/resume and display configuration changes), but since these can only be triggered by user actions and not by the page, the `hardware-context-reset` reason is not a useful fingerprinting vector.
 
-**Querying encryption scheme support:** Supported encryption schemes correlate with the underlying CDM, but that information is already implied by the chosen `keySystem` string. No novel fingerprinting surface is added.
+**Querying encryption scheme support:** Supported encryption schemes correlate with the underlying CDM, and the chosen `keySystem` already implies most of this information. Any marginal additional fingerprinting surface is described in the [Fingerprinting](https://w3c.github.io/encrypted-media/#privacy-fingerprinting) section.
 
 **HDCP policy detection:** HDCP version support is a property of the connected display chain, so it can change when the user moves the window between displays. This is consistent with similar information already conveyed through `MediaKeyStatus` for active sessions.
 
