@@ -267,14 +267,21 @@
             be provided to the [=CDM=] via an {{MediaKeySession/update()}} call. (They may later be
             loaded by {{MediaKeySession/load()}} as part of the stored session data.)
           </p>
-          <p class="note">
-            Authors SHOULD encrypt each set of stream(s) that requires enforcement of a
-            meaningfully different policy with a distinct key (and key ID). For example, if
-            policies may differ between two video resolutions, stream(s) containing one resolution
-            should not be encrypted with the key used to encrypt stream(s) containing the other
-            resolution. When encrypted, audio streams SHOULD NOT use the same key as any video
-            stream. This is the only way to ensure enforcement and compatibility across clients.
-          </p>
+          <div>
+            <p>
+              <span class="practicelab">When packaging encrypted media, encrypt each
+              set of stream(s) that requires enforcement of a meaningfully different
+              policy with a distinct key (and key ID).</span>
+            </p>
+            <p>
+              For example, when policies differ between two video resolutions, each set
+              of stream(s) is encrypted with a distinct key so the policies can be
+              enforced independently; similarly, audio and video streams use distinct
+              keys when their policies differ. Sharing keys across policy groups would
+              prevent independent enforcement, so distinct keys per policy group are the
+              only way to ensure enforcement and compatibility across clients.
+            </p>
+          </div>
         </dd>
         <dt>
           <dfn>Usable For Decryption</dfn>
@@ -342,14 +349,20 @@
           <dfn class="export">Initialization Data</dfn>
         </dt>
         <dd>
-          <p class="note">
-            [=Key Systems=] usually require a block of initialization data containing information
-            about the stream to be decrypted before they can construct a license request message.
-            This block could be a simple key or content ID or a more complex structure containing
-            such information. It SHOULD always allow unique identification of the [=key(s)=] needed
-            to decrypt the content. This initialization information MAY be obtained in some
-            application-specific way or provided with the [=HTMLMediaElement/media data=].
-          </p>
+          <div>
+            <p>
+              <span class="practicelab">When generating initialization data, uniquely
+              identify each [=key=] needed to decrypt the content.</span>
+            </p>
+            <p>
+              [=Key Systems=] usually require a block of initialization data containing
+              information about the stream to be decrypted before they can construct a license
+              request message. This block could be a simple key or content ID or a more
+              complex structure containing such information. Applications obtain the
+              initialization data either in some application-specific way or from the
+              [=HTMLMediaElement/media data=].
+            </p>
+          </div>
           <p>
             Initialization Data is a generic term for container-specific data that is used by a
             [=CDM=] to generate a license request.
@@ -603,18 +616,18 @@
               Identifier(s)=] in the individualization process.
             </p>
             <p>
-              Distinctive Identifiers exposed to the application, even in encrypted form, MUST
-              adhere to the <a href="#identifier-requirements">identifier requirements</a>,
-              including being <a href="#encrypt-identifiers">encrypted</a>, <a href=
-              "#per-origin-per-profile-identifiers">unique per origin and profile</a>, and <a href=
-              "#allow-identifiers-cleared">clearable</a>.
+              Distinctive Identifiers exposed to the application, even in encrypted form, are
+              subject to the [[[#identifier-requirements|identifier requirements]]], including
+              being [[[#encrypt-identifiers|encrypted]]],
+              [[[#per-origin-per-profile-identifiers|unique per origin and profile]]], and
+              [[[#allow-identifiers-cleared|clearable]]].
             </p>
             <p>
               While the instantiation or use of a Distinctive Identifier is triggered by the
               application's use of the APIs defined in this specification, the identifier need not
               be provided to the application to trigger conditions related to Distinctive
-              Identifiers. (The [=Distinctive Permanent Identifier(s)=] MUST NOT ever be provided
-              to the application, even in opaque or encrypted form.)
+              Identifiers. ([=Distinctive Permanent Identifier(s)=] are not provided to the
+              application, even in opaque or encrypted form.)
             </p>
           </div>
           <p class="note">
@@ -1946,11 +1959,8 @@
                     <p>
                       Let <var>media types</var> be the set of codecs and codec constraints
                       specified by <var>parameters</var>. The case-sensitivity of string
-                      comparisons is determined by the appropriate RFC or other specification.
-                    </p>
-                    <p class="note">
-                      Case-sensitive string comparison is RECOMMENDED because RFC 6381 [[RFC6381]]
-                      says, "Values are case sensitive" for some formats.
+                      comparisons is determined by the appropriate RFC or other specification
+                      (e.g., case-sensitive per RFC 6381 [[RFC6381]] for some formats).
                     </p>
                   </li>
                   <li>
@@ -2468,11 +2478,6 @@
                 The <a data-cite="html#mime-types">MIME type</a> of the <a data-cite=
                 "html#media-resource">media resource</a>.
               </p>
-              <p class="note">
-                Applications SHOULD ensure that the MIME type explicitly specifies codecs and codec
-                constraints (e.g., per [[RFC6381]]) unless these are normatively implied by the
-                container.
-              </p>
             </dd>
             <dt>
               <code><dfn>encryptionScheme</dfn></code> of type {{DOMString}}, defaulting to
@@ -2484,16 +2489,6 @@
                 not present indicates to the user agent that no specific encryption scheme is
                 required by the application, and therefore any encryption scheme is acceptable.
               </p>
-              <div class="note">
-                <p>
-                  Applications that are aware of this field SHOULD specify the encryption schemes
-                  they require, since different encryption schemes are generally incompatible with
-                  one another. It is unrealistic for an application to be accepting of "any"
-                  encryption scheme, but the default of null and the interpretation of null as
-                  "any" provide backward compatibility for unaware applications and a path to a
-                  polyfill for older user agents.
-                </p>
-              </div>
               <div class="note">
                 <p>
                   The empty string is distinct from null or not present, and so would be treated as
@@ -2548,6 +2543,20 @@
           If any of a set of codecs is acceptable, use a separate instances of this dictionary for
           each codec.
         </p>
+        <div>
+          <p>
+            <span class="practicelab">When passing a {{MediaKeySystemMediaCapability}} to
+            {{Navigator/requestMediaKeySystemAccess()}}, specify codecs and codec constraints in
+            the MIME type (e.g., per [[RFC6381]]) unless the container normatively implies them,
+            and set {{MediaKeySystemMediaCapability/encryptionScheme}} to a specific value rather
+            than relying on the default of null.</span>
+          </p>
+          <p>
+            Different encryption schemes are generally incompatible with one another. The default
+            of null and the interpretation of null as "any" provide backward compatibility for
+            unaware applications and a path to a polyfill for older user agents.
+          </p>
+        </div>
       </section>
     </section>
     <section>
@@ -3325,13 +3334,16 @@
         Closing the key session results in the destruction of any license(s) and key(s) that have
         not been explicitly stored.
       </p>
-      <p class="note">
-        Exactly when the key session is closed is an implementation detail, and applications SHOULD
-        NOT rely on specific timing. 
-        <!-- TODO: Replace and/or expand on this with an implementation of Issue #360. -->
-         Applications that want to ensure a session is closed before taking some other action
-        SHOULD call {{MediaKeySession/close()}} and wait for the returned promise to be resolved.
-      </p>
+      <div>
+        <p>
+          <span class="practicelab">When you need a key session to be definitely closed
+          before taking another action, call {{MediaKeySession/close()}} and await the
+          returned promise; do not rely on the timing of automatic session closure.</span>
+        </p>
+        <p>
+          Exactly when the key session is closed is an implementation detail.
+        </p>
+      </div>
       <p>
         For methods that return a promise, all errors are reported asynchronously by rejecting the
         returned Promise. This includes [[WEBIDL]] type mapping errors.
@@ -3456,9 +3468,7 @@
             <p>
               The [=expiration time=] for all key(s) in the session, or <code>NaN</code> if no such
               time exists or if the license explicitly never expires, as determined by the [=CDM=].
-            </p>
-            <p class="note">
-              This value MAY change during the session lifetime, such as when an action triggers
+              This value can change during the session lifetime, such as when an action triggers
               the start of a window.
             </p>
           </dd>
@@ -3493,13 +3503,13 @@
               {{MediaKeyStatus/"expired"}}.
             </p>
             <p class="note">
-              Some older platforms may contain [=Key System=] implementations that do not expose
-              key IDs, making it impossible to provide a compliant user agent implementation. To
-              maximize interoperability, user agent implementations exposing such [=CDMs=] SHOULD
-              implement this member as follows: Whenever a non-empty list is appropriate, such as
-              when the [=key session=] represented by this object may contain [=key(s)=], populate
-              the map with a single pair containing the one-byte key ID <code>0</code> and the
-              {{MediaKeyStatus}} most appropriate for the aggregated status of this object.
+              Some older platforms can contain [=Key System=] implementations that do not expose
+              key IDs, making it impossible to provide a compliant user agent implementation. In
+              such cases, to maximize interoperability, the map is populated with a single pair
+              containing the one-byte key ID <code>0</code> and the {{MediaKeyStatus}} most
+              appropriate for the aggregated status of this object whenever a non-empty list is
+              appropriate (e.g., when the [=key session=] represented by this object can contain
+              [=key(s)=]).
             </p>
           </dd>
           <dt>
@@ -6907,58 +6917,6 @@
           <a href="#exposed-value-requirements">Values Exposed to the Application</a> also apply to
           identifiers exposed to the application.
         </p>
-        <div class="note">
-          <p>
-            In summary:
-          </p>
-          <ul>
-            <li>
-              <p>
-                <a href=
-                "#limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">Limit or
-                Avoid use of Distinctive Identifiers and Permanent Identifiers</a>.
-              </p>
-            </li>
-            <li>
-              <p>
-                All identifiers except [=Permanent Identifiers=] MUST be <a href=
-                "#per-origin-per-profile-identifiers">unique per origin and profile</a>, <a href=
-                "#non-associable-identifiers">non-associable</a>, and <a href=
-                "#allow-identifiers-cleared">clearable</a>.
-              </p>
-            </li>
-            <li>
-              <p>
-                All identifiers SHOULD be <a href="#encrypt-identifiers">encrypted</a> when exposed
-                outside the client.
-              </p>
-            </li>
-            <li>
-              <p>
-                [=Distinctive Identifiers=] MUST be <a href="#encrypt-identifiers">encrypted</a>
-                when exposed outside the client, <a href=
-                "#per-origin-per-profile-identifiers">unique per origin and profile</a>, and
-                <a href="#allow-identifiers-cleared">clearable</a>.
-              </p>
-            </li>
-            <li>
-              <p>
-                [=Distinctive Permanent Identifiers=] MUST be <a href=
-                "#encrypt-identifiers">encrypted</a> when exposed outside the client and MUST NOT
-                be exposed to the application.
-              </p>
-            </li>
-            <li>
-              <p>
-                All potential identifiers or [=Distinctive Values=] not covered above that are
-                generated as a result of use of the APIs defined in this specification MUST be
-                <a href="#per-origin-per-profile-identifiers">unique per origin and profile</a> and
-                <a href="#allow-identifiers-cleared">clearable</a>. This includes but is not
-                limited to random identifiers, session data, and other [=CDM=] data.
-              </p>
-            </li>
-          </ul>
-        </div>
         <section id="limit-or-avoid-use-of-distinctive-identifiers-and-permanent-identifiers">
           <h3>
             Limit or Avoid use of Distinctive Identifiers and Permanent Identifiers
@@ -7058,32 +7016,6 @@
             message with the identifier or such that it is only decryptable by that specific
             [=CDM=].
           </p>
-          <div class="note">
-            <p>
-              Among other things, this means that:
-            </p>
-            <ul>
-              <li>
-                <p>
-                  Every signature made with device-specific or user-specific keys MUST be
-                  different, even given the same plaintext.
-                </p>
-              </li>
-              <li>
-                <p>
-                  Identifiers, keys, or certificates relating to device-specific or user-specific
-                  keys MUST be encrypted for the license or [=individualization=] server.
-                </p>
-              </li>
-              <li>
-                <p>
-                  Messages from the license server to the [=CDM=] MUST NOT expose recipient-unique
-                  identifiers, such as the ID of the intended decryption key, on the outside of the
-                  encryption envelope.
-                </p>
-              </li>
-            </ul>
-          </div>
         </section>
         <section id="per-origin-per-profile-identifiers">
           <h3>
@@ -7093,15 +7025,6 @@
             All identifiers except [=Distinctive Permanent Identifiers=] MUST be unique per
             [=origin=] and [=browsing profile=]. See <a href="#per-origin-per-profile-values"></a>.
           </p>
-          <div class="note">
-            <p>
-              This includes but is not limited to [=Distinctive Identifiers=].
-            </p>
-            <p>
-              [=Distinctive Permanent Identifiers=] MUST NOT be exposed to the application or
-              origin.
-            </p>
-          </div>
         </section>
         <section id="non-associable-identifiers">
           <h3>
@@ -7112,10 +7035,6 @@
             to applications, even in encrypted form, MUST be [=non-associable by application=](s)
             across [=origins=], [=browsing profiles=], and <a href=
             "#allow-identifiers-cleared">clearing of identifiers</a>.
-          </p>
-          <p class="note">
-            For all such identifiers, it MUST NOT be possible for one or more applications,
-            including related license or other servers to achieve such correlation or association.
           </p>
         </section>
         <section id="allow-identifiers-cleared">
