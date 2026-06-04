@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="ReSpec 35.1.1">
+<meta name="generator" content="ReSpec 37.1.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 dfn{cursor:pointer}
@@ -16,6 +16,7 @@ dfn{cursor:pointer}
 .dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
 .dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
 .dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
 .dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
 .dfn-panel a[href]:hover{border-bottom-width:1px}
 .dfn-panel ul{padding:0}
@@ -42,13 +43,17 @@ a.bibref{text-decoration:none}
 .respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
 }
 #references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
-cite .bibref{font-style:normal}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+cite .bibref{font-style:italic}
 a[href].orcid{padding-left:4px;padding-right:4px}
 a[href].orcid>svg{margin-bottom:-2px}
 ol.tof,ul.tof{list-style:none outside none}
 .caption{margin-top:.5em;font-style:italic}
 #issue-summary>ul{column-count:2}
-#issue-summary li{list-style:none;display:inline-block}
+#issue-summary li{list-style:none}
 details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
 details.respec-tests-details>*{padding-right:2em}
 details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
@@ -58,7 +63,7 @@ details.respec-tests-details>li{padding-left:1em}
 .self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
 aside.example .marker>a.self-link{color:inherit}
 .header-wrapper{display:flex;align-items:baseline}
-:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2):has(+a.self-link){position:relative;left:-.5em}
 :is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
 :is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
 :is(h2,h3)+a.self-link{top:-.2em}
@@ -69,6 +74,8 @@ dd{margin-left:0}
 @media print{
 .removeOnSave{display:none}
 }
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 </style>
     
     
@@ -76,9 +83,27 @@ dd{margin-left:0}
 
   
 <meta name="color-scheme" content="light">
+<meta name="revision" content="034476c1d0f18cd5e38aff46e348fb7bc19b0866">
 <meta name="description" content="This specification defines the stream format for using WebM [WebM] content with the Encrypted Media Extensions [ENCRYPTED-MEDIA].">
 <style>
-var{position:relative;cursor:pointer}
+var:hover{text-decoration:underline;cursor:pointer}
+var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
+@media (prefers-color-scheme:dark){
+var.respec-hl{filter:saturate(.9) brightness(.9)}
+}
+var.respec-hl-c1{--bg-color:#f4d200}
+var.respec-hl-c2{--bg-color:#ff87a2}
+var.respec-hl-c3{--bg-color:#96e885}
+var.respec-hl-c4{--bg-color:#3eeed2}
+var.respec-hl-c5{--bg-color:#eacfb6}
+var.respec-hl-c6{--bg-color:#82ddff}
+var.respec-hl-c7{--bg-color:#ffbcf2}
+@media print{
+var.respec-hl{background:0 0;color:#000;box-shadow:unset}
+}
+</style>
+<style>
+var[data-type]{position:relative}
 var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
 var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
 var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
@@ -90,8 +115,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   "edDraftURI": "https://w3c.github.io/encrypted-media/format-registry/stream/webm.html",
   "editors": [
     {
-      "name": "Joey Parrish",
-      "w3cid": "105371",
+      "name": "Xiaohan Wang",
+      "w3cid": "116192",
       "company": "Google Inc.",
       "companyURL": "https://www.google.com/"
     },
@@ -103,6 +128,13 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     }
   ],
   "formerEditors": [
+    {
+      "name": "Joey Parrish",
+      "note": "Until June 2026",
+      "w3cid": "105371",
+      "company": "Google Inc.",
+      "companyURL": "https://www.google.com/"
+    },
     {
       "name": "Mark Watson",
       "note": "Until September 2019",
@@ -151,15 +183,16 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   "xref": [
     "encrypted-media"
   ],
-  "publishISODate": "2024-07-22T00:00:00.000Z",
-  "generatedSubtitle": "W3C Editor's Draft 22 July 2024"
+  "gitRevision": "034476c1d0f18cd5e38aff46e348fb7bc19b0866",
+  "publishISODate": "2026-06-04T00:00:00.000Z",
+  "generatedSubtitle": "W3C Editor's Draft 04 June 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED"></head>
   <body class="h-entry" data-cite="encrypted-media"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">WebM Stream Format</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2024-07-22">22 July 2024</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2026-06-04">04 June 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
@@ -180,14 +213,18 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         
         
         
-        <dt>Editors:</dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
-    <span class="p-name fn">Joey Parrish</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>)
+        <dt>
+                Editors:
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="116192">
+    <span class="p-name fn">Xiaohan Wang</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>)
   </dd><dd class="editor p-author h-card vcard" data-editor-id="115364">
     <span class="p-name fn">Greg Freedman</span> (<a class="p-org org h-org" href="https://www.netflix.com/">Netflix Inc.</a>)
   </dd>
         <dt>
                 Former editors:
-              </dt><dd class="editor p-author h-card vcard" data-editor-id="46379">
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
+    <span class="p-name fn">Joey Parrish</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>) (Until June 2026)
+  </dd><dd class="editor p-author h-card vcard" data-editor-id="46379">
     <span class="p-name fn">Mark Watson</span> (<a class="p-org org h-org" href="https://www.netflix.com/">Netflix Inc.</a>) (Until September 2019)
   </dd><dd class="editor p-author h-card vcard" data-editor-id="52505">
     <span class="p-name fn">David Dorwin</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>) (Until September 2017)
@@ -212,7 +249,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <p class="copyright">
     <a href="https://www.w3.org/policies/#copyright">Copyright</a>
     ©
-    2024
+    2026
     
     <a href="https://www.w3.org/">World Wide Web Consortium</a>.
     <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup>
@@ -223,22 +260,23 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <hr title="Separator for header">
   </div>
     <section id="abstract" class="introductory"><h2>Abstract</h2>
-      <p>This specification defines the stream format for using WebM [<cite><a class="bibref" data-link-type="biblio" href="#bib-webm" title="WebM Container Guidelines">WebM</a></cite>] content with the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-1/">Encrypted Media Extensions</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-encrypted-media" title="Encrypted Media Extensions">ENCRYPTED-MEDIA</a></cite>].</p>
+      <p>This specification defines the stream format for using WebM [<cite><a class="bibref" data-link-type="biblio" href="#bib-webm" title="WebM Container Guidelines">WebM</a></cite>] content with the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-2/">Encrypted Media Extensions</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-encrypted-media" title="Encrypted Media Extensions">ENCRYPTED-MEDIA</a></cite>].</p>
     </section>
 
     <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
       document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
       publications and the latest revision of this technical report can be found
-      in the <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
-      https://www.w3.org/TR/.</em></p>
+      in the
+      <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> standards and drafts index</a>.</em></p>
     <p>
     This document was published by the <a href="https://www.w3.org/groups/wg/media">Media Working Group</a> as
     an Editor's Draft. 
-  </p><p>Publication as an Editor's Draft does not
-  imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
-    This is a draft document and may be updated, replaced or obsoleted by other
+  </p><p>Publication as
+  an Editor's Draft does not imply endorsement
+  by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
+    This is a draft document and may be updated, replaced, or obsoleted by other
     documents at any time. It is inappropriate to cite this document as other
-    than work in progress.
+    than a work in progress.
     
   </p><p>
     
@@ -253,14 +291,14 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           made in connection with the deliverables of
           the group; that page also includes
           instructions for disclosing a patent. An individual who has actual
-          knowledge of a patent which the individual believes contains
+          knowledge of a patent that the individual believes contains
           <a href="https://www.w3.org/policies/patent-policy/#def-essential">Essential Claim(s)</a>
           must disclose the information in accordance with
           <a href="https://www.w3.org/policies/patent-policy/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
         
   </p><p>
                       This document is governed by the
-                      <a id="w3c_process_revision" href="https://www.w3.org/policies/process/20231103/">03 November 2023 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+                      <a id="w3c_process_revision" href="https://www.w3.org/policies/process/20250818/">18 August 2025 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
                     </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract</a></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document</a></li><li class="tocline"><a class="tocxref" href="#stream-format"><bdi class="secno">1. </bdi>Stream Format</a></li><li class="tocline"><a class="tocxref" href="#detect-format"><bdi class="secno">2. </bdi>Detection</a></li><li class="tocline"><a class="tocxref" href="#detect-encrypted-blocks"><bdi class="secno">3. </bdi>Detecting Encrypted Blocks</a></li><li class="tocline"><a class="tocxref" href="#init-data"><bdi class="secno">4. </bdi>Initialization Data Extraction</a></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">5. </bdi>Conformance</a></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">A. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">A.1 </bdi>Normative references</a></li></ol></li></ol></nav>
 
     <section id="stream-format"><div class="header-wrapper"><h2 id="x1-stream-format"><bdi class="secno">1. </bdi>Stream Format</h2><a class="self-link" href="#stream-format" aria-label="Permalink for Section 1."></a></div>
@@ -281,21 +319,22 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 
     <section id="detect-encrypted-blocks"><div class="header-wrapper"><h2 id="x3-detecting-encrypted-blocks"><bdi class="secno">3. </bdi>Detecting Encrypted Blocks</h2><a class="self-link" href="#detect-encrypted-blocks" aria-label="Permalink for Section 3."></a></div>
       
-      <p>For the purposes of the <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-1/#dfn-encrypted-block-encountered">Encrypted Block Encountered</a> algorithm, encrypted blocks are those marked encrypted by the <a href="https://www.webmproject.org/docs/webm-encryption/#46-signal-byte-format">Signal Byte</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-webm-encryption" title="WebM Encryption">WebM-Encryption</a></cite>].</p>
+      <p>For the purposes of the <a data-link-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-encrypted-block-encountered">Encrypted Block Encountered</a> algorithm, encrypted blocks are those marked encrypted by the <a href="https://www.webmproject.org/docs/webm-encryption/#46-signal-byte-format">Signal Byte</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-webm-encryption" title="WebM Encryption">WebM-Encryption</a></cite>].</p>
     </section>
 
     <section id="init-data"><div class="header-wrapper"><h2 id="x4-initialization-data-extraction"><bdi class="secno">4. </bdi>Initialization Data Extraction</h2><a class="self-link" href="#init-data" aria-label="Permalink for Section 4."></a></div>
       
-      <p><a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-1/#dfn-initialization-data">Initialization Data</a> is always a single <a data-link-type="dfn|abstract-op" data-lt="Decryption key ID" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-1/#dfn-decryption-key-id">key ID</a>, as defined by the <cite><a data-matched-text="[[[EME-INITDATA-WEBM]]]" href="https://www.w3.org/TR/eme-initdata-webm/">"webm" Initialization Data Format</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-initdata-registry" title="Encrypted Media Extensions Initialization Data Format Registry">EME-INITDATA-REGISTRY</a></cite>].</p>
-      <p>Each time a <a href="https://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-matroska" title="Matroska Specifications">Matroska</a></cite>] element is encountered in a <a href="https://matroska.org/technical/specs/index.html#LevelTrack">Track</a>, the <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-1/#dfn-initialization-data-encountered">Initialization Data Encountered</a> algorithm <em class="rfc2119">SHALL</em> be invoked with <var title="">initDataType</var> = <code>"<a href="https://www.w3.org/TR/eme-initdata-webm/#format">webm</a>"</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-initdata-registry" title="Encrypted Media Extensions Initialization Data Format Registry">EME-INITDATA-REGISTRY</a></cite>] and <var title="">initData</var> = the value in that element.</p>
+      <p><a data-link-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-initialization-data">Initialization Data</a> is always a single <a data-link-type="dfn" data-lt="Decryption key ID" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>, as defined by the <cite><a data-matched-text="[[[EME-INITDATA-WEBM]]]" href="https://www.w3.org/TR/eme-initdata-webm/">"webm" Initialization Data Format</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-initdata-registry" title="Encrypted Media Extensions Initialization Data Format Registry">EME-INITDATA-REGISTRY</a></cite>].</p>
+      <p>Each time a <a href="https://matroska.org/technical/specs/index.html#ContentEncKeyID">ContentEncKeyID</a> [<cite><a class="bibref" data-link-type="biblio" href="#bib-matroska" title="Matroska Specifications">Matroska</a></cite>] element is encountered in a <a href="https://matroska.org/technical/specs/index.html#LevelTrack">Track</a>, the <a data-link-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-initialization-data-encountered">Initialization Data Encountered</a> algorithm <em class="rfc2119">SHALL</em> be invoked with <var title="">initDataType</var> = <code>"<a href="https://www.w3.org/TR/eme-initdata-webm/#format">webm</a>"</code> [<cite><a class="bibref" data-link-type="biblio" href="#bib-eme-initdata-registry" title="Encrypted Media Extensions Initialization Data Format Registry">EME-INITDATA-REGISTRY</a></cite>] and <var title="">initData</var> = the value in that element.</p>
     </section>
 
     <section id="conformance"><div class="header-wrapper"><h2 id="x5-conformance"><bdi class="secno">5. </bdi>Conformance</h2><a class="self-link" href="#conformance" aria-label="Permalink for Section 5."></a></div><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p><p>
         The key word <em class="rfc2119">SHALL</em> in this document
         is to be interpreted as described in
-        <a href="https://datatracker.ietf.org/doc/html/bcp14">BCP 14</a>
+        <a href="https://www.rfc-editor.org/info/bcp14">BCP 14</a>
         [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">RFC2119</a></cite>] [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8174" title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">RFC8174</a></cite>]
-        when, and only when, they appear in all capitals, as shown here.
+        when, and only when, it appears in all
+        capitals, as shown here.
       </p>
     </section>
   
@@ -303,11 +342,11 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
 <section id="references" class="appendix"><div class="header-wrapper"><h2 id="a-references"><bdi class="secno">A. </bdi>References</h2><a class="self-link" href="#references" aria-label="Permalink for Appendix A."></a></div><section id="normative-references"><div class="header-wrapper"><h3 id="a-1-normative-references"><bdi class="secno">A.1 </bdi>Normative references</h3><a class="self-link" href="#normative-references" aria-label="Permalink for Appendix A.1"></a></div>
     
     <dl class="bibliography"><dt id="bib-eme-initdata-registry">[EME-INITDATA-REGISTRY]</dt><dd>
-      <a href="https://www.w3.org/TR/eme-initdata-registry/"><cite>Encrypted Media Extensions Initialization Data Format Registry</cite></a>. David Dorwin; Adrian Bateman; Mark Watson.  W3C. 15 September 2016. W3C Working Group Note. URL: <a href="https://www.w3.org/TR/eme-initdata-registry/">https://www.w3.org/TR/eme-initdata-registry/</a>
+      <a href="https://www.w3.org/TR/eme-initdata-registry/"><cite>Encrypted Media Extensions Initialization Data Format Registry</cite></a>. Joey Parrish; Greg Freedman.  W3C. 7 May 2026. DRY. URL: <a href="https://www.w3.org/TR/eme-initdata-registry/">https://www.w3.org/TR/eme-initdata-registry/</a>
     </dd><dt id="bib-eme-initdata-webm">[EME-INITDATA-WEBM]</dt><dd>
       <a href="https://www.w3.org/TR/eme-initdata-webm/"><cite>"webm" Initialization Data Format</cite></a>. Joey Parrish; Greg Freedman.  W3C. 18 July 2024. W3C Working Group Note. URL: <a href="https://www.w3.org/TR/eme-initdata-webm/">https://www.w3.org/TR/eme-initdata-webm/</a>
     </dd><dt id="bib-encrypted-media">[ENCRYPTED-MEDIA]</dt><dd>
-      <a href="https://www.w3.org/TR/encrypted-media-1/"><cite>Encrypted Media Extensions</cite></a>. David Dorwin; Jerry Smith; Mark Watson; Adrian Bateman.  W3C. 18 September 2017. W3C Recommendation. URL: <a href="https://www.w3.org/TR/encrypted-media-1/">https://www.w3.org/TR/encrypted-media-1/</a>
+      <a href="https://www.w3.org/TR/encrypted-media-2/"><cite>Encrypted Media Extensions</cite></a>. Joey Parrish; Greg Freedman.  W3C. 20 May 2026. W3C Working Draft. URL: <a href="https://www.w3.org/TR/encrypted-media-2/">https://www.w3.org/TR/encrypted-media-2/</a>
     </dd><dt id="bib-matroska">[Matroska]</dt><dd>
       <a href="https://matroska.org/technical/specs/index.html"><cite>Matroska Specifications</cite></a>.  Matroska. 9 January 2014. URL: <a href="https://matroska.org/technical/specs/index.html">https://matroska.org/technical/specs/index.html</a>
     </dd><dt id="bib-rfc2119">[RFC2119]</dt><dd>
@@ -321,7 +360,124 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     </dd></dl>
   </section></section><p role="navigation" id="back-to-top">
     <a href="#title"><abbr title="Back to Top">↑</abbr></a>
-  </p><script id="respec-dfn-panel">(() => {
+  </p><script id="respec-highlight-vars">(() => {
+// @ts-check
+
+if (document.respec) {
+  document.respec.ready.then(setupVarHighlighter);
+} else {
+  setupVarHighlighter();
+}
+
+function setupVarHighlighter() {
+  document
+    .querySelectorAll("var")
+    .forEach(varElem => varElem.addEventListener("click", highlightListener));
+}
+
+/**
+ * @param {MouseEvent} ev
+ */
+function highlightListener(ev) {
+  ev.stopPropagation();
+  const varElem = /** @type {HTMLElement} */ (ev.target);
+  const hightligtedElems = highlightVars(varElem);
+  const resetListener = () => {
+    const hlColor = getHighlightColor(varElem);
+    hightligtedElems.forEach(el => removeHighlight(el, hlColor));
+    [...HL_COLORS.keys()].forEach(key => HL_COLORS.set(key, true));
+  };
+  if (hightligtedElems.length) {
+    document.body.addEventListener("click", resetListener, { once: true });
+  }
+}
+
+// availability of highlight colors. colors from var.css
+const HL_COLORS = new Map([
+  ["respec-hl-c1", true],
+  ["respec-hl-c2", true],
+  ["respec-hl-c3", true],
+  ["respec-hl-c4", true],
+  ["respec-hl-c5", true],
+  ["respec-hl-c6", true],
+  ["respec-hl-c7", true],
+]);
+
+/**
+ * @param {HTMLElement} target
+ */
+function getHighlightColor(target) {
+  // return current colors if applicable
+  const { value } = target.classList;
+  const re = /respec-hl-\w+/;
+  const activeClass = re.test(value) && value.match(re);
+  if (activeClass) return activeClass[0];
+
+  // first color preference
+  if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
+
+  // otherwise get some other available color
+  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+}
+
+/**
+ * @param {HTMLElement} varElem
+ */
+function highlightVars(varElem) {
+  const textContent = norm(varElem.textContent);
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
+  const highlightColor = getHighlightColor(varElem);
+
+  const varsToHighlight = [...parent.querySelectorAll("var")].filter(
+    el =>
+      norm(el.textContent) === textContent &&
+      el.closest(".algorithm, section") === parent
+  );
+
+  // update availability of highlight color
+  const colorStatus = varsToHighlight[0].classList.contains("respec-hl");
+  HL_COLORS.set(highlightColor, colorStatus);
+
+  // highlight vars
+  if (colorStatus) {
+    varsToHighlight.forEach(el => removeHighlight(el, highlightColor));
+    return [];
+  } else {
+    varsToHighlight.forEach(el => addHighlight(el, highlightColor));
+  }
+  return varsToHighlight;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
+function removeHighlight(el, highlightColor) {
+  el.classList.remove("respec-hl", highlightColor);
+  // clean up empty class attributes so they don't come in export
+  if (!el.classList.length) el.removeAttribute("class");
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
+function addHighlight(elem, highlightColor) {
+  elem.classList.add("respec-hl", highlightColor);
+}
+
+/**
+ * Same as `norm` from src/core/utils, but our build process doesn't allow
+ * imports in runtime scripts, so duplicated here.
+ * @param {string} str
+ */
+function norm(str) {
+  return str.trim().replace(/\s+/g, " ");
+}
+})()</script><script id="respec-dfn-panel">(() => {
 // @ts-check
 if (document.respec) {
   document.respec.ready.then(setupPanel);
@@ -336,8 +492,11 @@ function setupPanel() {
 }
 
 function panelListener() {
-  /** @type {HTMLElement} */
+  /** @type {HTMLElement | null} */
   let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
   return event => {
     const { target, type } = event;
 
@@ -345,24 +504,34 @@ function panelListener() {
 
     // For keys, we only care about Enter key to activate the panel
     // otherwise it's activated via a click.
-    if (type === "keydown" && event.key !== "Enter") return;
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
 
     const action = deriveAction(event);
 
     switch (action) {
       case "show": {
         hidePanel(panel);
-        /** @type {HTMLElement} */
+        /** @type {HTMLElement | null} */
         const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
         panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
-        const coords = deriveCoordinates(event);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
         displayPanel(dfn, panel, coords);
         break;
       }
       case "dock": {
-        panel.style.left = null;
-        panel.style.top = null;
-        panel.classList.add("docked");
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
         break;
       }
       case "hide": {
@@ -413,7 +582,8 @@ function deriveAction(event) {
     if (hitALink) {
       return target.classList.contains("self-link") ? "hide" : "dock";
     }
-    const panel = target.closest(".dfn-panel");
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
     return panel.classList.contains("docked") ? "hide" : "none";
   }
   if (document.querySelector(".dfn-panel:not([hidden])")) {
@@ -457,9 +627,9 @@ function displayPanel(dfn, panel, { x, y }) {
     const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
     const newCaretOffset = left - newLeft;
     panel.style.left = `${newLeft}px`;
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const caret = panel.querySelector(".caret");
-    caret.style.left = `${newCaretOffset}px`;
+    if (caret) caret.style.left = `${newCaretOffset}px`;
   }
 
   // As it's a dialog, we trap focus.
@@ -508,6 +678,9 @@ function trapFocus(panel, dfn) {
 function createTrapListener(anchors, panel, dfn) {
   const lastIndex = anchors.length - 1;
   let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
   return event => {
     switch (event.key) {
       // Hitting "Tab" traps us in a nice loop around elements.
@@ -537,7 +710,7 @@ function createTrapListener(anchors, panel, dfn) {
   };
 }
 
-/** @param {HTMLElement} panel */
+/** @param {HTMLElement | null} panel */
 function hidePanel(panel) {
   if (!panel) return;
   panel.hidden = true;
