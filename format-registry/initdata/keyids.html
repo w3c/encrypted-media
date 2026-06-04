@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en" dir="ltr"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="ReSpec 35.1.1">
+<meta name="generator" content="ReSpec 37.1.0">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style>
 span.example-title{text-transform:none}
@@ -36,6 +36,7 @@ dfn{cursor:pointer}
 .dfn-panel .marker{padding:.1em;margin-left:.5em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;color:#040b1c}
 .dfn-panel .marker.dfn-exported{background:#d1edfd;box-shadow:0 0 0 .125em #1ca5f940}
 .dfn-panel .marker.idl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
+.dfn-panel .marker.cddl-block{background:#8ccbf2;box-shadow:0 0 0 .125em #0670b161}
 .dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}
 .dfn-panel a[href]:hover{border-bottom-width:1px}
 .dfn-panel ul{padding:0}
@@ -62,13 +63,17 @@ a.bibref{text-decoration:none}
 .respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}
 }
 #references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}
-cite .bibref{font-style:normal}
+@media (prefers-color-scheme:dark){
+#references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+}
+body:has(input[name=color-scheme][value=dark]:checked) #references :target{background:color-mix(in srgb, #eaf3ff 15%, transparent)}
+cite .bibref{font-style:italic}
 a[href].orcid{padding-left:4px;padding-right:4px}
 a[href].orcid>svg{margin-bottom:-2px}
 ol.tof,ul.tof{list-style:none outside none}
 .caption{margin-top:.5em;font-style:italic}
 #issue-summary>ul{column-count:2}
-#issue-summary li{list-style:none;display:inline-block}
+#issue-summary li{list-style:none}
 details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}
 details.respec-tests-details>*{padding-right:2em}
 details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}
@@ -78,7 +83,7 @@ details.respec-tests-details>li{padding-left:1em}
 .self-link:hover{opacity:1;text-decoration:none;background-color:transparent}
 aside.example .marker>a.self-link{color:inherit}
 .header-wrapper{display:flex;align-items:baseline}
-:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2){position:relative;left:-.5em}
+:is(h2,h3,h4,h5,h6):not(#toc>h2,#abstract>h2,#sotd>h2,.head>h2):has(+a.self-link){position:relative;left:-.5em}
 :is(h2,h3,h4,h5,h6):not(#toch2)+a.self-link{color:inherit;order:-1;position:relative;left:-1.1em;font-size:1rem;opacity:.5}
 :is(h2,h3,h4,h5,h6)+a.self-link::before{content:"§";text-decoration:none;color:var(--heading-text)}
 :is(h2,h3)+a.self-link{top:-.2em}
@@ -89,6 +94,8 @@ dd{margin-left:0}
 @media print{
 .removeOnSave{display:none}
 }
+body:has(input[name=color-scheme][value=light]:checked),head:not(:has(meta[name=color-scheme][content~=dark]))+body{color-scheme:light}
+body:has(input[name=color-scheme][value=dark]:checked){color-scheme:dark}
 </style>
     
     
@@ -96,12 +103,39 @@ dd{margin-left:0}
 
   
 <meta name="color-scheme" content="light">
-<meta name="revision" content="81ab0edaf64a9dce1e794bf9a8b1a41559983ff2">
+<meta name="revision" content="034476c1d0f18cd5e38aff46e348fb7bc19b0866">
 <meta name="description" content="This specification defines the &quot;keyids&quot; initialization data format for use with the Encrypted Media Extensions [ENCRYPTED-MEDIA].">
 <style>
-.hljs{--base:#fafafa;--mono-1:#383a42;--mono-2:#686b77;--mono-3:#717277;--hue-1:#0b76c5;--hue-2:#336ae3;--hue-3:#a626a4;--hue-4:#42803c;--hue-5:#ca4706;--hue-5-2:#c91243;--hue-6:#986801;--hue-6-2:#9a6a01}
+.hljs,body:has(input[name=color-scheme][value=light]:checked) .hljs,head:not(:has(meta[name=color-scheme][content~=dark]))+body .hljs{--base:#fafafa;--mono-1:#383a42;--mono-2:#686b77;--mono-3:#717277;--hue-1:#0b76c5;--hue-2:#336ae3;--hue-3:#a626a4;--hue-4:#42803c;--hue-5:#ca4706;--hue-5-2:#c91243;--hue-6:#986801;--hue-6-2:#9a6a01}
 @media (prefers-color-scheme:dark){
-.hljs{--base:#282c34;--mono-1:#abb2bf;--mono-2:#818896;--mono-3:#5c6370;--hue-1:#56b6c2;--hue-2:#61aeee;--hue-3:#c678dd;--hue-4:#98c379;--hue-5:#e06c75;--hue-5-2:#be5046;--hue-6:#d19a66;--hue-6-2:#e6c07b}
+.hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
+}
+}
+body:has(input[name=color-scheme][value=dark]:checked) .hljs{
+  --base: #282c34;
+  --mono-1: #abb2bf;
+  --mono-2: #818896;
+  --mono-3: #5c6370;
+  --hue-1: #56b6c2;
+  --hue-2: #61aeee;
+  --hue-3: #c678dd;
+  --hue-4: #98c379;
+  --hue-5: #e06c75;
+  --hue-5-2: #be5046;
+  --hue-6: #d19a66;
+  --hue-6-2: #e6c07b;
 }
 .hljs{display:block;overflow-x:auto;padding:.5em;color:#383a42;color:var(--mono-1,#383a42);background:#fafafa;background:var(--base,#fafafa)}
 .hljs-comment,.hljs-quote{color:#717277;color:var(--mono-3,#717277);font-style:italic}
@@ -117,7 +151,24 @@ dd{margin-left:0}
 .hljs-link{text-decoration:underline}
 </style>
 <style>
-var{position:relative;cursor:pointer}
+var:hover{text-decoration:underline;cursor:pointer}
+var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}
+@media (prefers-color-scheme:dark){
+var.respec-hl{filter:saturate(.9) brightness(.9)}
+}
+var.respec-hl-c1{--bg-color:#f4d200}
+var.respec-hl-c2{--bg-color:#ff87a2}
+var.respec-hl-c3{--bg-color:#96e885}
+var.respec-hl-c4{--bg-color:#3eeed2}
+var.respec-hl-c5{--bg-color:#eacfb6}
+var.respec-hl-c6{--bg-color:#82ddff}
+var.respec-hl-c7{--bg-color:#ffbcf2}
+@media print{
+var.respec-hl{background:0 0;color:#000;box-shadow:unset}
+}
+</style>
+<style>
+var[data-type]{position:relative}
 var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}
 var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#222}
 var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#222;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}
@@ -129,8 +180,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
   "edDraftURI": "https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html",
   "editors": [
     {
-      "name": "Joey Parrish",
-      "w3cid": "105371",
+      "name": "Xiaohan Wang",
+      "w3cid": "116192",
       "company": "Google Inc.",
       "companyURL": "https://www.google.com/"
     },
@@ -142,6 +193,13 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     }
   ],
   "formerEditors": [
+    {
+      "name": "Joey Parrish",
+      "note": "Until June 2026",
+      "w3cid": "105371",
+      "company": "Google Inc.",
+      "companyURL": "https://www.google.com/"
+    },
     {
       "name": "Mark Watson",
       "note": "Until September 2019",
@@ -179,16 +237,16 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     "encoding",
     "encrypted-media"
   ],
-  "gitRevision": "81ab0edaf64a9dce1e794bf9a8b1a41559983ff2",
-  "publishISODate": "2024-08-20T00:00:00.000Z",
-  "generatedSubtitle": "W3C Editor's Draft 20 August 2024"
+  "gitRevision": "034476c1d0f18cd5e38aff46e348fb7bc19b0866",
+  "publishISODate": "2026-06-04T00:00:00.000Z",
+  "generatedSubtitle": "W3C Editor's Draft 04 June 2026"
 }</script>
 <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED"></head>
   <body class="h-entry" data-cite="encoding encrypted-media"><div class="head">
     <p class="logos"><a class="logo" href="https://www.w3.org/"><img crossorigin="" alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
   </a></p>
     <h1 id="title" class="title">"keyids" Initialization Data Format</h1> 
-    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2024-08-20">20 August 2024</time></p>
+    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">W3C Editor's Draft</a> <time class="dt-published" datetime="2026-06-04">04 June 2026</time></p>
     <details open="">
       <summary>More details about this document</summary>
       <dl>
@@ -209,14 +267,18 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
         
         
         
-        <dt>Editors:</dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
-    <span class="p-name fn">Joey Parrish</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>)
+        <dt>
+                Editors:
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="116192">
+    <span class="p-name fn">Xiaohan Wang</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>)
   </dd><dd class="editor p-author h-card vcard" data-editor-id="115364">
     <span class="p-name fn">Greg Freedman</span> (<a class="p-org org h-org" href="https://www.netflix.com/">Netflix Inc.</a>)
   </dd>
         <dt>
                 Former editors:
-              </dt><dd class="editor p-author h-card vcard" data-editor-id="46379">
+              </dt><dd class="editor p-author h-card vcard" data-editor-id="105371">
+    <span class="p-name fn">Joey Parrish</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>) (Until June 2026)
+  </dd><dd class="editor p-author h-card vcard" data-editor-id="46379">
     <span class="p-name fn">Mark Watson</span> (<a class="p-org org h-org" href="https://www.netflix.com/">Netflix Inc.</a>) (Until September 2019)
   </dd><dd class="editor p-author h-card vcard" data-editor-id="52505">
     <span class="p-name fn">David Dorwin</span> (<a class="p-org org h-org" href="https://www.google.com/">Google Inc.</a>) (Until September 2017)
@@ -241,7 +303,7 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <p class="copyright">
     <a href="https://www.w3.org/policies/#copyright">Copyright</a>
     ©
-    2024
+    2026
     
     <a href="https://www.w3.org/">World Wide Web Consortium</a>.
     <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup>
@@ -252,8 +314,8 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <hr title="Separator for header">
   </div>
     <section id="abstract" class="introductory"><h2>Abstract</h2>
-      <p>This specification defines the <code>"keyids"</code> <a data-link-type="dfn|abstract-op" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-initialization-data">initialization data</a> format for use with the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-2/">Encrypted Media Extensions</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-encrypted-media" title="Encrypted Media Extensions">ENCRYPTED-MEDIA</a></cite>].</p>
-      <div class="note" role="note" id="issue-container-generatedID"><div role="heading" class="note-title marker" id="h-note" aria-level="3"><span>Note</span></div><p class="">It defines a stream format-independent format for specifying a list of <a data-link-type="dfn|abstract-op" data-lt="Decryption key ID" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s).
+      <p>This specification defines the <code>"keyids"</code> <a data-link-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-initialization-data">initialization data</a> format for use with the <cite><a data-matched-text="[[[ENCRYPTED-MEDIA]]]" href="https://www.w3.org/TR/encrypted-media-2/">Encrypted Media Extensions</a></cite> [<cite><a class="bibref" data-link-type="biblio" href="#bib-encrypted-media" title="Encrypted Media Extensions">ENCRYPTED-MEDIA</a></cite>].</p>
+      <div class="note" role="note" id="issue-container-generatedID"><div class="note-title marker" id="h-note"><span>Note</span></div><p class="">It defines a stream format-independent format for specifying a list of <a data-link-type="dfn" data-lt="Decryption key ID" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s).
       This type can be used by applications to directly provide information necessary to generate a license request without using media data or constructing container-specific formats.
       </p></div>
     </section>
@@ -261,16 +323,17 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <section id="sotd" class="introductory"><h2>Status of This Document</h2><p><em>This section describes the status of this
       document at the time of its publication. A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
       publications and the latest revision of this technical report can be found
-      in the <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
-      https://www.w3.org/TR/.</em></p>
+      in the
+      <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> standards and drafts index</a>.</em></p>
     <p>
     This document was published by the <a href="https://www.w3.org/groups/wg/media">Media Working Group</a> as
     an Editor's Draft. 
-  </p><p>Publication as an Editor's Draft does not
-  imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
-    This is a draft document and may be updated, replaced or obsoleted by other
+  </p><p>Publication as
+  an Editor's Draft does not imply endorsement
+  by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. </p><p>
+    This is a draft document and may be updated, replaced, or obsoleted by other
     documents at any time. It is inappropriate to cite this document as other
-    than work in progress.
+    than a work in progress.
     
   </p><p>
     
@@ -285,14 +348,14 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
           made in connection with the deliverables of
           the group; that page also includes
           instructions for disclosing a patent. An individual who has actual
-          knowledge of a patent which the individual believes contains
+          knowledge of a patent that the individual believes contains
           <a href="https://www.w3.org/policies/patent-policy/#def-essential">Essential Claim(s)</a>
           must disclose the information in accordance with
           <a href="https://www.w3.org/policies/patent-policy/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
         
   </p><p>
                       This document is governed by the
-                      <a id="w3c_process_revision" href="https://www.w3.org/policies/process/20231103/">03 November 2023 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
+                      <a id="w3c_process_revision" href="https://www.w3.org/policies/process/20250818/">18 August 2025 <abbr title="World Wide Web Consortium">W3C</abbr> Process Document</a>.
                     </p></section><nav id="toc"><h2 class="introductory" id="table-of-contents">Table of Contents</h2><ol class="toc"><li class="tocline"><a class="tocxref" href="#abstract">Abstract</a></li><li class="tocline"><a class="tocxref" href="#sotd">Status of This Document</a></li><li class="tocline"><a class="tocxref" href="#format"><bdi class="secno">1. </bdi>Format</a></li><li class="tocline"><a class="tocxref" href="#example"><bdi class="secno">2. </bdi>Example</a></li><li class="tocline"><a class="tocxref" href="#conformance"><bdi class="secno">3. </bdi>Conformance</a></li><li class="tocline"><a class="tocxref" href="#references"><bdi class="secno">A. </bdi>References</a><ol class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><bdi class="secno">A.1 </bdi>Normative references</a></li></ol></li></ol></nav>
 
     <section id="format"><div class="header-wrapper"><h2 id="x1-format"><bdi class="secno">1. </bdi>Format</h2><a class="self-link" href="#format" aria-label="Permalink for Section 1."></a></div>
@@ -300,26 +363,26 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
       <p>The format is a JSON object, encoded in UTF-8 as specified in the Encoding specification [<cite><a class="bibref" data-link-type="biblio" href="#bib-encoding" title="Encoding Standard">encoding</a></cite>], containing the following member:</p>
       <dl>
         <dt>"kids"</dt>
-        <dd>An array of <a data-link-type="dfn|abstract-op" data-lt="Decryption key ID" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s). Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
+        <dd>An array of <a data-link-type="dfn" data-lt="Decryption key ID" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s). Each element of the array is the base64url encoding of the octet sequence containing the key ID value.</dd>
       </dl>
 
-      <div class="note" role="note" id="issue-container-generatedID-0"><div role="heading" class="note-title marker" id="h-note-0" aria-level="3"><span>Note</span></div><p class="">See <a href="https://www.w3.org/TR/encrypted-media-2/#using-base64url">Using base64url</a>.</p></div>
-      <div class="note" role="note" id="issue-container-generatedID-1"><div role="heading" class="note-title marker" id="h-note-1" aria-level="3"><span>Note</span></div><p class="">Applications may encode the JSON string using the <a data-link-type="idl" data-lt="TextEncoder" data-type="interface" href="https://encoding.spec.whatwg.org/#textencoder"><code>TextEncoder</code></a> interface [<cite><a class="bibref" data-link-type="biblio" href="#bib-encoding" title="Encoding Standard">encoding</a></cite>].</p></div>
+      <div class="note" role="note" id="issue-container-generatedID-0"><div class="note-title marker" id="h-note-0"><span>Note</span></div><p class="">See <a href="https://www.w3.org/TR/encrypted-media-2/#using-base64url">Using base64url</a>.</p></div>
+      <div class="note" role="note" id="issue-container-generatedID-1"><div class="note-title marker" id="h-note-1"><span>Note</span></div><p class="">Applications may encode the JSON string using the <a data-link-type="interface" data-lt="TextEncoder" href="https://encoding.spec.whatwg.org/#textencoder"><code>TextEncoder</code></a> interface [<cite><a class="bibref" data-link-type="biblio" href="#bib-encoding" title="Encoding Standard">encoding</a></cite>].</p></div>
     </section>
 
     <section class="informative" id="example"><div class="header-wrapper"><h2 id="x2-example"><bdi class="secno">2. </bdi>Example</h2><a class="self-link" href="#example" aria-label="Permalink for Section 2."></a></div><p><em>This section is non-normative.</em></p>
       
-      <p>The following example will generate a license request for two <a data-link-type="dfn|abstract-op" data-lt="Decryption key ID" data-type="dfn" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s). (Line breaks are for readability only.)</p>
+      <p>The following example will generate a license request for two <a data-link-type="dfn" data-lt="Decryption key ID" href="https://www.w3.org/TR/encrypted-media-2/#dfn-decryption-key-id">key ID</a>(s). (Line breaks are for readability only.)</p>
         <div class="example" id="example-1">
         <div class="marker">
     <a class="self-link" href="#example-1">Example<bdi> 1</bdi></a>
-  </div> <pre aria-busy="false"><code class="hljs json">{
-  <span class="hljs-attr">"kids"</span>:
-    [
-     <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span>,
+  </div> <pre aria-busy="false"><code class="hljs json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"kids"</span><span class="hljs-punctuation">:</span>
+    <span class="hljs-punctuation">[</span>
+     <span class="hljs-string">"LwVHf8JLtPrv2GUXFW2v_A"</span><span class="hljs-punctuation">,</span>
      <span class="hljs-string">"0DdtU9od-Bh5L3xbv0Xf_A"</span>
-    ]
-}</code></pre>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre>
       </div>
     </section>
 
@@ -332,11 +395,128 @@ var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}
     <dl class="bibliography"><dt id="bib-encoding">[encoding]</dt><dd>
       <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Anne van Kesteren.  WHATWG. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
     </dd><dt id="bib-encrypted-media">[ENCRYPTED-MEDIA]</dt><dd>
-      <a href="https://www.w3.org/TR/encrypted-media-2/"><cite>Encrypted Media Extensions</cite></a>. Joey Parrish; Greg Freedman.  W3C. 7 August 2024. W3C Working Draft. URL: <a href="https://www.w3.org/TR/encrypted-media-2/">https://www.w3.org/TR/encrypted-media-2/</a>
+      <a href="https://www.w3.org/TR/encrypted-media-2/"><cite>Encrypted Media Extensions</cite></a>. Joey Parrish; Greg Freedman.  W3C. 20 May 2026. W3C Working Draft. URL: <a href="https://www.w3.org/TR/encrypted-media-2/">https://www.w3.org/TR/encrypted-media-2/</a>
     </dd></dl>
   </section></section><p role="navigation" id="back-to-top">
     <a href="#title"><abbr title="Back to Top">↑</abbr></a>
-  </p><script id="respec-dfn-panel">(() => {
+  </p><script id="respec-highlight-vars">(() => {
+// @ts-check
+
+if (document.respec) {
+  document.respec.ready.then(setupVarHighlighter);
+} else {
+  setupVarHighlighter();
+}
+
+function setupVarHighlighter() {
+  document
+    .querySelectorAll("var")
+    .forEach(varElem => varElem.addEventListener("click", highlightListener));
+}
+
+/**
+ * @param {MouseEvent} ev
+ */
+function highlightListener(ev) {
+  ev.stopPropagation();
+  const varElem = /** @type {HTMLElement} */ (ev.target);
+  const hightligtedElems = highlightVars(varElem);
+  const resetListener = () => {
+    const hlColor = getHighlightColor(varElem);
+    hightligtedElems.forEach(el => removeHighlight(el, hlColor));
+    [...HL_COLORS.keys()].forEach(key => HL_COLORS.set(key, true));
+  };
+  if (hightligtedElems.length) {
+    document.body.addEventListener("click", resetListener, { once: true });
+  }
+}
+
+// availability of highlight colors. colors from var.css
+const HL_COLORS = new Map([
+  ["respec-hl-c1", true],
+  ["respec-hl-c2", true],
+  ["respec-hl-c3", true],
+  ["respec-hl-c4", true],
+  ["respec-hl-c5", true],
+  ["respec-hl-c6", true],
+  ["respec-hl-c7", true],
+]);
+
+/**
+ * @param {HTMLElement} target
+ */
+function getHighlightColor(target) {
+  // return current colors if applicable
+  const { value } = target.classList;
+  const re = /respec-hl-\w+/;
+  const activeClass = re.test(value) && value.match(re);
+  if (activeClass) return activeClass[0];
+
+  // first color preference
+  if (HL_COLORS.get("respec-hl-c1") === true) return "respec-hl-c1";
+
+  // otherwise get some other available color
+  return [...HL_COLORS.keys()].find(c => HL_COLORS.get(c)) || "respec-hl-c1";
+}
+
+/**
+ * @param {HTMLElement} varElem
+ */
+function highlightVars(varElem) {
+  const textContent = norm(varElem.textContent);
+  const parent = /** @type {HTMLElement} */ (
+    varElem.closest(".algorithm, section")
+  );
+  if (!parent) return [];
+  const highlightColor = getHighlightColor(varElem);
+
+  const varsToHighlight = [...parent.querySelectorAll("var")].filter(
+    el =>
+      norm(el.textContent) === textContent &&
+      el.closest(".algorithm, section") === parent
+  );
+
+  // update availability of highlight color
+  const colorStatus = varsToHighlight[0].classList.contains("respec-hl");
+  HL_COLORS.set(highlightColor, colorStatus);
+
+  // highlight vars
+  if (colorStatus) {
+    varsToHighlight.forEach(el => removeHighlight(el, highlightColor));
+    return [];
+  } else {
+    varsToHighlight.forEach(el => addHighlight(el, highlightColor));
+  }
+  return varsToHighlight;
+}
+
+/**
+ * @param {HTMLElement} el
+ * @param {string} highlightColor
+ */
+function removeHighlight(el, highlightColor) {
+  el.classList.remove("respec-hl", highlightColor);
+  // clean up empty class attributes so they don't come in export
+  if (!el.classList.length) el.removeAttribute("class");
+}
+
+/**
+ * @param {HTMLElement} elem
+ * @param {string} highlightColor
+ */
+function addHighlight(elem, highlightColor) {
+  elem.classList.add("respec-hl", highlightColor);
+}
+
+/**
+ * Same as `norm` from src/core/utils, but our build process doesn't allow
+ * imports in runtime scripts, so duplicated here.
+ * @param {string} str
+ */
+function norm(str) {
+  return str.trim().replace(/\s+/g, " ");
+}
+})()</script><script id="respec-dfn-panel">(() => {
 // @ts-check
 if (document.respec) {
   document.respec.ready.then(setupPanel);
@@ -351,8 +531,11 @@ function setupPanel() {
 }
 
 function panelListener() {
-  /** @type {HTMLElement} */
+  /** @type {HTMLElement | null} */
   let panel = null;
+  /**
+   * @param {KeyboardEvent|MouseEvent} event
+   */
   return event => {
     const { target, type } = event;
 
@@ -360,24 +543,34 @@ function panelListener() {
 
     // For keys, we only care about Enter key to activate the panel
     // otherwise it's activated via a click.
-    if (type === "keydown" && event.key !== "Enter") return;
+    if (
+      type === "keydown" &&
+      /** @type {KeyboardEvent} */ (event).key !== "Enter"
+    )
+      return;
 
     const action = deriveAction(event);
 
     switch (action) {
       case "show": {
         hidePanel(panel);
-        /** @type {HTMLElement} */
+        /** @type {HTMLElement | null} */
         const dfn = target.closest("dfn, .index-term");
+        if (!dfn?.id) break;
         panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
-        const coords = deriveCoordinates(event);
+        if (!panel) break;
+        const coords = deriveCoordinates(
+          /** @type {MouseEvent|KeyboardEvent} */ (event)
+        );
         displayPanel(dfn, panel, coords);
         break;
       }
       case "dock": {
-        panel.style.left = null;
-        panel.style.top = null;
-        panel.classList.add("docked");
+        if (panel) {
+          panel.style.left = "";
+          panel.style.top = "";
+          panel.classList.add("docked");
+        }
         break;
       }
       case "hide": {
@@ -428,7 +621,8 @@ function deriveAction(event) {
     if (hitALink) {
       return target.classList.contains("self-link") ? "hide" : "dock";
     }
-    const panel = target.closest(".dfn-panel");
+
+    const panel = /** @type {HTMLElement} */ (target.closest(".dfn-panel"));
     return panel.classList.contains("docked") ? "hide" : "none";
   }
   if (document.querySelector(".dfn-panel:not([hidden])")) {
@@ -472,9 +666,9 @@ function displayPanel(dfn, panel, { x, y }) {
     const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
     const newCaretOffset = left - newLeft;
     panel.style.left = `${newLeft}px`;
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     const caret = panel.querySelector(".caret");
-    caret.style.left = `${newCaretOffset}px`;
+    if (caret) caret.style.left = `${newCaretOffset}px`;
   }
 
   // As it's a dialog, we trap focus.
@@ -523,6 +717,9 @@ function trapFocus(panel, dfn) {
 function createTrapListener(anchors, panel, dfn) {
   const lastIndex = anchors.length - 1;
   let currentIndex = 0;
+  /**
+   * @param {KeyboardEvent} event
+   */
   return event => {
     switch (event.key) {
       // Hitting "Tab" traps us in a nice loop around elements.
@@ -552,7 +749,7 @@ function createTrapListener(anchors, panel, dfn) {
   };
 }
 
-/** @param {HTMLElement} panel */
+/** @param {HTMLElement | null} panel */
 function hidePanel(panel) {
   if (!panel) return;
   panel.hidden = true;
