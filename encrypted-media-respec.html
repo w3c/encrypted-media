@@ -3310,17 +3310,17 @@
         only if the object's {{MediaKeySession/closed}} attribute has been resolved.
       </p>
       <p>
-        The User Agent SHALL execute the [=Monitor for CDM State Changes=] algorithm continuously
-        for each {{MediaKeySession}} object that is not [=media key session/closed=]. The [=Monitor
-        for CDM State Changes=] algorithm MUST be run in parallel to the main event loop but not in
-        parallel to other procedures defined in this specification that are also defined to be run
-        in parallel.
+        The [=user agent=] SHALL execute the [=Monitor for CDM State Changes=] algorithm continuously
+        for each {{MediaKeySession}} object that is not [=media key session/closed=]. The [=user agent=] MUST
+        run the [=Monitor for CDM State Changes=] algorithm in parallel to the main event loop but
+        not in parallel to other procedures defined in this specification that are also defined to
+        be run in parallel.
       </p>
       <p>
-        A {{MediaKeySession}} object SHALL NOT be destroyed and SHALL continue to receive events if
-        it is not [=media key session/closed=] and the {{MediaKeys}} object that created it remains
-        accessible. Otherwise, a {{MediaKeySession}} object that is no longer accessible SHALL NOT
-        receive further events and MAY be destroyed.
+        The [=user agent=] SHALL NOT destroy a {{MediaKeySession}} object and SHALL continue to deliver
+        events to it if it is not [=media key session/closed=] and the {{MediaKeys}} object that
+        created it remains accessible. Otherwise, for a {{MediaKeySession}} object that is no longer
+        accessible, the [=user agent=] SHALL NOT deliver further events to it and MAY destroy it.
       </p>
       <p class="note">
         The above rule implies that the [=CDM=] instance must not be destroyed until all
@@ -3712,9 +3712,9 @@
                         </p>
                         <p>
                           If the result of running the [=Is persistent session type?=] algorithm on
-                          <var>session type</var> is <code>true</code>, the ID MUST be unique
-                          within the [=origin=] of this object's [=Document=] over time, including
-                          across Documents and browsing sessions.
+                          <var>session type</var> is <code>true</code>, the [=CDM=] MUST make the ID
+                          unique within the [=origin=] of this object's [=Document=] over time,
+                          including across Documents and browsing sessions.
                         </p>
                       </li>
                       <li>
@@ -3966,8 +3966,9 @@
                       <li>
                         <p>
                           Let <var>session data</var> be the data stored for the <var>sanitized
-                          session ID</var> in the <var>origin</var>. This MUST NOT include data
-                          from other origin(s) or that is not associated with an origin.
+                          session ID</var> in the <var>origin</var>. The [=CDM=] MUST NOT include
+                          data from other origin(s) or that is not associated with an origin in
+                          <var>session data</var>.
                         </p>
                       </li>
                       <li>
@@ -4218,7 +4219,7 @@
                               <dd>
                                 Process <var>sanitized response</var>, storing the license/key(s)
                                 and related session data contained in <var>sanitized
-                                response</var>. Such data MUST be stored such that only the
+                                response</var>. The [=CDM=] MUST store such data such that only the
                                 [=origin=] of this object's [=Document=] can access it.
                               </dd>
                               <dt>
@@ -4235,9 +4236,10 @@
                               Persistence</a>.
                             </p>
                             <p>
-                              State information, including keys, for each session MUST be stored in
-                              such a way that closing one session does not affect the observable
-                              state in other session(s), even if they contain overlapping key IDs.
+                              The [=CDM=] MUST store state information, including keys, for each
+                              session in such a way that closing one session does not affect the
+                              observable state in other session(s), even if they contain overlapping
+                              key IDs.
                             </p>
                             <p class="note">
                               When <var>sanitized response</var> contains key(s) and/or related
@@ -4772,8 +4774,8 @@
               </td>
               <td>
                 The [=CDM=] is certain the key is currently [=usable for decryption=].<br>
-                Keys that <em>may not</em> currently be [=usable for decryption=] MUST NOT have
-                this status.
+                The [=CDM=] MUST NOT assign this status to keys that <em>may not</em> currently be
+                [=usable for decryption=].
               </td>
             </tr>
             <tr>
@@ -4784,7 +4786,8 @@
                 The key is no longer [=usable for decryption=] because its [=expiration time=] has
                 passed.<br>
                 The time represented by the {{MediaKeySession/expiration}} attribute MUST be
-                earlier than the current time. All other keys in the session MUST have this status.
+                earlier than the current time. The [=CDM=] MUST assign this status to all other keys
+                in the session.
               </td>
             </tr>
             <tr>
@@ -4908,9 +4911,9 @@
               <td>
                 The message contains a request for [=App-Assisted Individualization=] (or
                 re-individualization).<br>
-                As with all other messages, any identifiers in the message MUST be <a href=
-                "#per-origin-per-profile-identifiers">distinctive per origin and profile</a> and
-                MUST NOT be [=Distinctive Permanent Identifiers=].
+                As with all other messages, the [=CDM=] MUST make any identifiers in the message <a
+                href="#per-origin-per-profile-identifiers">distinctive per origin and profile</a>
+                and MUST NOT make them [=Distinctive Permanent Identifiers=].
               </td>
             </tr>
           </tbody>
@@ -5042,10 +5045,10 @@
             <var>message type</var>, and a <var>message</var>.
           </p>
           <p>
-            <var>message</var> MUST NOT contain [=Distinctive Permanent Identifier(s)=], even in an
-            encrypted form. <var>message</var> MUST NOT contain [=Distinctive Identifier(s)=], even
-            in an encrypted form, if the {{MediaKeySession}} object's <var>use distinctive
-            identifier</var> value is false.
+            The [=CDM=] MUST NOT include [=Distinctive Permanent Identifier(s)=] in
+            <var>message</var>, even in an encrypted form. The [=CDM=] MUST NOT include [=Distinctive
+            Identifier(s)=] in <var>message</var>, even in an encrypted form, if the
+            {{MediaKeySession}} object's <var>use distinctive identifier</var> value is false.
           </p>
           <p>
             The following steps are run:
@@ -5497,8 +5500,8 @@
           remove it.
         </p>
         <p>
-          <em>All</em> data associated with a session MUST be cleared when the session is cleared,
-          such as in {{MediaKeySession/update()}} when processing a [=record of license
+          The [=CDM=] MUST clear <em>all</em> data associated with a session when the session is
+          cleared, such as in {{MediaKeySession/update()}} when processing a [=record of license
           destruction=] acknowledgement. See <a href="#persistent-state-requirements">Persistent
           Data</a>.
         </p>
