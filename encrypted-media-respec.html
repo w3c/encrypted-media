@@ -227,8 +227,8 @@
             when the {{MediaKeySession}} object is destroyed.
           </p>
           <p>
-            All license(s) and key(s) associated with a Key Session which have not been explicitly
-            stored MUST be destroyed when the Key Session is closed.
+            The [=CDM=] MUST destroy all license(s) and key(s) associated with a Key Session which
+            have not been explicitly stored when the Key Session is closed.
           </p>
           <p>
             [=Key IDs=] MUST be unique within a session.
@@ -247,10 +247,11 @@
             a new session.
           </p>
           <p>
-            Each Session ID SHALL be unique within the browsing context in which it was created.
-            For session types for which the [=Is persistent session type?=] algorithm returns
-            <code>true</code>, Session IDs MUST be unique within the [=origin=] over time,
-            including across browsing sessions.
+            The [=CDM=] SHALL generate each Session ID such that it is unique within the browsing
+            context in which it was created. For session types for which the [=Is persistent
+            session type?=] algorithm returns <code>true</code>, the [=CDM=] MUST generate Session
+            IDs such that they are unique within the [=origin=] over time, including across
+            browsing sessions.
           </p>
           <p class="note">
             The underlying content protection protocol does not necessarily need to support Session
@@ -265,9 +266,10 @@
             Unless otherwise stated, key refers to a decryption key that can be used to decrypt
             blocks within [=HTMLMediaElement/media data=]. Each such key is uniquely identified by
             a [=key ID=]. A key is associated with the [=key session|session=] used to provide it
-            to the [=CDM=]. (The same key may be present in multiple sessions.) Such keys MUST only
-            be provided to the [=CDM=] via an {{MediaKeySession/update()}} call. (They may later be
-            loaded by {{MediaKeySession/load()}} as part of the stored session data.)
+            to the [=CDM=]. (The same key may be present in multiple sessions.) The [=user agent=]
+            MUST only provide such keys to the [=CDM=] via an {{MediaKeySession/update()}} call.
+            (They may later be loaded by {{MediaKeySession/load()}} as part of the stored session
+            data.)
           </p>
           <div>
             <p>
@@ -397,9 +399,9 @@
             code.
           </p>
           <p>
-            Initialization Data SHOULD NOT contain Key System-specific data or values.
-            Implementations MUST support the common formats defined in [[EME-INITDATA-REGISTRY]]
-            for each [=Initialization Data Type=] they support.
+            Initialization Data SHOULD NOT contain Key System-specific data or values. [=User agents=] and [=CDMs=]
+            MUST support the common formats defined in [[EME-INITDATA-REGISTRY]] for each
+            [=Initialization Data Type=] they support.
           </p>
           <p class="note">
             Use of proprietary formats/contents, i.e., formats not defined in
@@ -572,10 +574,10 @@
             Identifier</dfn> is a [=Permanent Identifier=] that is [=distinctive=].
           </p>
           <p>
-            When exposed outside the client, Distinctive Permanent Identifiers and values derived
-            from or otherwise related to them MUST be <a href="#encrypt-identifiers">encrypted</a>.
-            Distinctive Permanent Identifiers MUST NOT ever be exposed to the application, even in
-            encrypted form.
+            When exposing Distinctive Permanent Identifiers and values derived from or otherwise
+            related to them outside the client, the [=CDM=] MUST <a href=
+            "#encrypt-identifiers">encrypt</a> them. The [=CDM=] MUST NOT ever expose Distinctive
+            Permanent Identifiers to the application, even in encrypted form.
           </p>
           <p class="note">
             While a Distinctive Permanent Identifier is typically unique to a user or client
@@ -940,8 +942,8 @@
             lifetime of related such entities, it exposes, even in encrypted form, one or more
             [=Distinctive Permanent Identifier(s)=], information about them, or values derived from
             or otherwise related to them outside the client. This includes but is not limited to
-            providing such a value to an [=individualization=] server. Such values MUST NOT be
-            provided to the application.
+            providing such a value to an [=individualization=] server. The [=CDM=] MUST NOT provide
+            such values to the application.
           </p>
           <p>
             An implementation, configuration, instance, or object <dfn data-lt=
