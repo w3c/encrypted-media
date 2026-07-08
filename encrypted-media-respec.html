@@ -1095,9 +1095,8 @@
                 </p>
                 <p>
                   Requiring Secure Contexts is <em>not</em> a replacement for other security- and
-                  privacy-related requirements and recommendations. Implementations MUST meet all
-                  related requirements and SHOULD follow related recommendations such that the
-                  risks on in an secure context would be similar.
+                  privacy-related requirements and recommendations. Refer to <a
+                  href="#security"></a> and <a href="#privacy"></a> for more detail.
                 </p>
               </div>
               <p>
@@ -2489,28 +2488,26 @@
                   an unrecognized encryption scheme.
                 </p>
               </div>
-              <div class="note">
-                <p>
-                  Well-known values for encryptionScheme are:
-                </p>
-                <ul>
-                  <li>
-                    <code><dfn id="scheme-cenc" data-lt='"cenc"'>cenc</dfn></code>: The "cenc"
-                    mode, defined in [[CENC]], section 4.2a. AES-CTR mode full sample and video NAL
-                    subsample encryption.
-                  </li>
-                  <li>
-                    <code><dfn id="scheme-cbcs" data-lt='"cbcs"'>cbcs</dfn></code>: The "cbcs"
-                    mode, defined in [[CENC]], section 4.2d. AES-CBC mode partial video NAL pattern
-                    encryption. For video, the spec allows various encryption patterns.
-                  </li>
-                  <li>
-                    <code><dfn class="lint-ignore">cbcs-1-9</dfn></code>: The same as [="cbcs"=]
-                    mode, but with a specific encrypt:skip pattern of 1:9 for video, as recommended
-                    in [[CENC]], section 10.4.2.
-                  </li>
-                </ul>
-              </div>
+              <p>
+                Well-known values for {{MediaKeySystemMediaCapability/encryptionScheme}} are:
+              </p>
+              <ul>
+                <li>
+                  <code><dfn id="scheme-cenc" data-lt='"cenc"'>cenc</dfn></code>: The "cenc"
+                  mode, defined in [[CENC]], section 4.2a. AES-CTR mode full sample and video NAL
+                  subsample encryption.
+                </li>
+                <li>
+                  <code><dfn id="scheme-cbcs" data-lt='"cbcs"'>cbcs</dfn></code>: The "cbcs"
+                  mode, defined in [[CENC]], section 4.2d. AES-CBC mode partial video NAL pattern
+                  encryption. For video, the spec allows various encryption patterns.
+                </li>
+                <li>
+                  <code><dfn class="lint-ignore">cbcs-1-9</dfn></code>: The same as [="cbcs"=]
+                  mode, but with a specific encrypt:skip pattern of 1:9 for video, as recommended
+                  in [[CENC]], section 10.4.2.
+                </li>
+              </ul>
             </dd>
             <dt>
               <code><dfn>robustness</dfn></code> of type {{DOMString}}, defaulting to
@@ -2618,7 +2615,7 @@
                 </p>
                 <p class="note">
                   If {{MediaKeySystemMediaCapability/encryptionScheme}} was not given by the
-                  application, the accumulated <var>configuration</var> MUST still contain an
+                  application, the accumulated <var>configuration</var> will still contain an
                   {{MediaKeySystemMediaCapability/encryptionScheme}} field with a value of
                   <code>null</code>, so that polyfills can detect the user agent's support for the
                   field without specifying specific values.
@@ -3148,13 +3145,11 @@
                     <p>
                       Let <var>sanitized certificate</var> be a validated and/or sanitized version
                       of <var>certificate</var>.
-                    </p>
-                    <p class="note">
-                      The user agent should thoroughly validate the certificate before passing it
+                      The user agent SHOULD thoroughly validate the certificate before passing it
                       to the [=CDM=]. This may include verifying values are within reasonable
                       limits, stripping irrelevant data or fields, pre-parsing it, sanitizing it,
-                      and/or generating a fully sanitized version. The user agent should check that
-                      the length and values of fields are reasonable. Unknown fields should be
+                      and/or generating a fully sanitized version. The user agent SHOULD check that
+                      the length and values of fields are reasonable. Unknown fields SHOULD be
                       rejected or removed.
                     </p>
                   </li>
@@ -3496,10 +3491,10 @@
               IDs are not removed if they became unusable, such as due to expiration. Instead, such
               keys MUST be given an appropriate status, such as {{MediaKeyStatus/"expired"}}.
             </p>
-            <p class="note">
+            <p>
               Some older platforms can contain [=Key System=] implementations that do not expose
               key IDs, making it impossible to provide a compliant user agent implementation. In
-              such cases, to maximize interoperability, the map is populated with a single pair
+              such cases, to maximize interoperability, the map MUST be populated with a single pair
               containing the one-byte key ID <code>0</code> and the {{MediaKeyStatus}} most
               appropriate for the aggregated status of this object whenever a non-empty list is
               appropriate (e.g., when the [=key session=] represented by this object can contain
@@ -3885,11 +3880,9 @@
                     <p>
                       Let <var>sanitized session ID</var> be a validated and/or sanitized version
                       of <var>sessionId</var>.
-                    </p>
-                    <p class="note">
-                      The user agent should thoroughly validate the sessionId value before passing
-                      it to the [=CDM=]. At a minimum, this should include checking that the length
-                      and value are reasonable (e.g., not longer than tens of characters and
+                      The user agent SHOULD thoroughly validate the <var>sessionId</var> value before
+                      passing it to the [=CDM=]. At a minimum, this should include checking that the
+                      length and value are reasonable (e.g., not longer than tens of characters and
                       alphanumeric).
                     </p>
                   </li>
@@ -4123,13 +4116,11 @@
                     <p>
                       Let <var>sanitized response</var> be a validated and/or sanitized version of
                       <var>response copy</var>.
-                    </p>
-                    <p class="note">
-                      The user agent should thoroughly validate the response before passing it to
+                      The user agent SHOULD thoroughly validate the response before passing it to
                       the [=CDM=]. This may include verifying values are within reasonable limits,
                       stripping irrelevant data or fields, pre-parsing it, sanitizing it, and/or
-                      generating a fully sanitized version. The user agent should check that the
-                      length and values of fields are reasonable. Unknown fields should be rejected
+                      generating a fully sanitized version. The user agent SHOULD check that the
+                      length and values of fields are reasonable. Unknown fields SHOULD be rejected
                       or removed.
                     </p>
                   </li>
@@ -4238,7 +4229,7 @@
                               The replacement algorithm within a session is [=Key
                               System=]-dependent.
                             </p>
-                            <p class="note">
+                            <p>
                               It is RECOMMENDED that [=CDM=] implementations support a standard and
                               reasonably high minimum number of keys per {{MediaKeySession}}
                               object, including a standard replacement algorithm, and a standard
@@ -5210,14 +5201,14 @@
             will fail and no further events will be queued for this object after this algorithm is
             run.
           </p>
+          <p>
+            Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.
+          </p>
           <div class="note">
             <p>
               The [=CDM=] may close a session at any point, such as when the session is no longer
               needed or when system resources are lost. In that case, the [=Monitor for CDM State
               Changes=] algorithm detects the change and runs this algorithm.
-            </p>
-            <p>
-              Keys in other sessions MUST be unaffected, even if they have overlapping key IDs.
             </p>
             <p>
               After this algorithm has run, event handlers for the events queued by this algorithm
@@ -7344,7 +7335,7 @@
         <p>
           Implementations MUST support multiple keys in each {{MediaKeySession}} object.
         </p>
-        <p class="note">
+        <p>
           The mechanics of how multiple keys are supported is an implementation detail, but it MUST
           be transparent to the application and the APIs defined in this specification.
         </p>
@@ -7907,8 +7898,8 @@
           implementations and UAs that expose them MUST be especially careful in all areas of
           security, including parsing of <a href="#input-data-security">all data</a>.
         </p>
-        <p class="note">
-          User agents should be especially diligent when using a [=CDM=] or underlying mechanism
+        <p>
+          User agents SHOULD be especially diligent when using a [=CDM=] or underlying mechanism
           that is part of or provided by the client OS, platform and/or hardware.
         </p>
         <p>
