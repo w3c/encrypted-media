@@ -347,6 +347,16 @@
             usage.
           </p>
         </dd>
+        <dt>
+          <dfn>Key Replacement Algorithm</dfn>
+        </dt>
+        <dd>
+          <p>
+            A key replacement algorithm is the process used by a [=CDM=] to manage the keys within
+            a [=key session|session=] when new keys are provided, for example by evicting existing
+            keys to make room for new ones.
+          </p>
+        </dd>
         <dt id="initialization-data">
           <dfn class="export">Initialization Data</dfn>
         </dt>
@@ -3491,10 +3501,10 @@
               map will never be inconsistent or partially updated, but it may change between
               accesses if the event loop spins in between the accesses. Key IDs may be added as the
               result of a {{MediaKeySession/load()}} or {{MediaKeySession/update()}} call. Key IDs
-              may be removed as the result of a {{MediaKeySession/update()}} call that removes
-              knowledge of existing keys (or replaces the existing set of keys with a new set). Key
-              IDs are not removed if they became unusable, such as due to expiration. Instead, such
-              keys MUST be given an appropriate status, such as {{MediaKeyStatus/"expired"}}.
+              may be removed as the result of a {{MediaKeySession/update()}} call, for example if
+              the [=key replacement algorithm=] is run. Key IDs are not removed if they became
+              unusable, such as due to expiration. Instead, such keys are given an appropriate
+              status, such as {{MediaKeyStatus/"expired"}}.
             </p>
             <p class="note">
               Some older platforms can contain [=Key System=] implementations that do not expose
@@ -4235,16 +4245,16 @@
                               related data indexed by key ID.
                             </p>
                             <p class="note">
-                              The replacement algorithm within a session is [=Key
+                              The [=key replacement algorithm=] within a session is [=Key
                               System=]-dependent.
                             </p>
                             <p class="note">
-                              It is RECOMMENDED that [=CDM=] implementations support a standard and
+                              It is recommended that [=CDM=] implementations support a standard and
                               reasonably high minimum number of keys per {{MediaKeySession}}
-                              object, including a standard replacement algorithm, and a standard
-                              and reasonably high minimum number of {{MediaKeySession}} objects.
-                              This enables a reasonable number of key rotation algorithms to be
-                              implemented across user agents and may reduce the likelihood of
+                              object, including a standard [=key replacement algorithm=], and a
+                              standard and reasonably high minimum number of {{MediaKeySession}}
+                              objects. This enables a reasonable number of key rotation algorithms
+                              to be implemented across user agents and may reduce the likelihood of
                               playback interruptions in use cases that involve various streams in
                               the same element (e.g., adaptive streams, various audio and video
                               tracks) using different keys.
