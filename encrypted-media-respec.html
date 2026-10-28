@@ -6809,8 +6809,8 @@
         <ul>
           <li>
             <p>
-              each stream's container and codec(s) are supported both by the [=user agent=] for
-              unencrypted playback and by the {{MediaKeySystemConfiguration}} of the
+              each stream's container and codec(s) are supported by the [=user agent=] for
+              unencrypted playback and included in the {{MediaKeySystemConfiguration}} of the
               {{MediaKeySystemAccess}} object used to create the {{MediaKeys}} object; and
             </p>
           </li>
@@ -6823,26 +6823,16 @@
           </li>
         </ul>
         <p class="note">
-          Switching encryption status alone between streams that share the same <a data-cite=
-          "html#mime-types">MIME type</a> and codecs does not change the stream's content type and
-          does not require calling {{SourceBuffer/changeType()}} [[MEDIA-SOURCE]]. Switching
-          between streams with different MIME types or codecs (whether encrypted, unencrypted, or a
-          combination) is governed by the media source mechanism, such as
-          {{SourceBuffer/changeType()}}. When a {{MediaKeys}} object is associated with the
-          {{HTMLMediaElement}}, support for unencrypted streams whose container or codec(s) were
-          not included in the {{MediaKeySystemConfiguration}} used to create that {{MediaKeys}}
-          object is a quality of implementation issue.
+          When the conditions above are not met, support for switching between unencrypted and
+          encrypted streams is a quality of implementation issue. Where unsupported,
+          {{HTMLMediaElement/setMediaKeys()}} does not reject solely because a switch might occur
+          later; instead, playback fails upon switching via the <a data-cite=
+          "html#fatal-decode-error">media data is corrupted</a> steps.
         </p>
         <p class="note">
-          Support for switching between unencrypted and encrypted streams when the {{MediaKeys}}
-          object is associated after {{HTMLMediaElement/readyState}} has transitioned past
-          {{HTMLMediaElement/HAVE_NOTHING}} is a quality of implementation issue. If an
-          implementation does not support such a switch, {{HTMLMediaElement/setMediaKeys()}} does
-          not reject solely because a switch might occur later (though it can reject per the
-          {{HTMLMediaElement/setMediaKeys()}} algorithm if associating the [=CDM=] with an active
-          media pipeline fails); instead, playback fails upon encountering the unsupported switch
-          by running the <a data-cite="html#fatal-decode-error">media data is corrupted</a> steps
-          of the [=resource fetch algorithm=].
+          Changing encryption status alone does not change a stream's <a data-cite=
+          "html#mime-types">MIME type</a>; {{SourceBuffer/changeType()}} [[MEDIA-SOURCE]] is only
+          needed when switching MIME types or codecs.
         </p>
       </section>
     </section>
