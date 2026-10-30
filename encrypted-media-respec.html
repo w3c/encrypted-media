@@ -55,7 +55,7 @@
         },
       },
 
-      xref: ["dom", "html", "infra", "mimesniff", "webaudio", "webidl"]
+      xref: ["dom", "html", "infra", "media-source", "mimesniff", "webaudio", "webidl"]
     };
     </script>
     <link rel="stylesheet" href="eme.css">
@@ -5728,10 +5728,30 @@
             <p>
               Provides the {{MediaKeys}} to use when decrypting media data during playback.
             </p>
+            <div>
+              <p>
+                <span class="practicelab">Call {{HTMLMediaElement/setMediaKeys()}} and await the
+                returned promise before <a data-cite="html#loading-the-media-resource">loading the
+                media resource</a> (for example, before setting {{HTMLMediaElement/src}} or
+                {{HTMLMediaElement/srcObject}}, or before appending media data when using
+                [[MEDIA-SOURCE]]), especially when playing a mix of unencrypted and encrypted
+                streams.</span>
+              </p>
+              <p>
+                Selecting a [=CDM=] can affect the media pipeline and decoders used by the
+                {{HTMLMediaElement}}. Associating a {{MediaKeys}} object while
+                {{HTMLMediaElement/readyState}} is {{HTMLMediaElement/HAVE_NOTHING}} ensures the
+                appropriate pipeline is set up before decoding begins (see <a href=
+                "#mixed-encrypted-unencrypted-streams"></a>).
+              </p>
+            </div>
             <p class="note">
-              Support for clearing or replacing the associated {{MediaKeys}} object during playback
-              is a quality of implementation issue. In many cases it will result in a bad user
-              experience or rejected promise.
+              Support for associating a {{MediaKeys}} object after the media element's
+              {{HTMLMediaElement/readyState}} has transitioned past
+              {{HTMLMediaElement/HAVE_NOTHING}}, or for clearing or replacing the associated
+              {{MediaKeys}} object during playback, is a quality of implementation issue. In many
+              cases it will result in a bad user experience, a rejected promise, or a decode error
+              upon switching between unencrypted and encrypted streams.
             </p>
             <p>
               When this method is invoked, the user agent MUST run the following steps:
@@ -6773,6 +6793,46 @@
           CSS Transforms, MAY be unavailable. One likely restriction is that video media MAY be
           constrained to appear only in rectangular regions with sides parallel to the edges of the
           window and with normal orientation.
+        </p>
+      </section>
+      <section id="mixed-encrypted-unencrypted-streams">
+        <h3>
+          Mixed Encrypted and Unencrypted Streams
+        </h3>
+        <p>
+          If a non-null {{MediaKeys}} object is associated with an {{HTMLMediaElement}} (that is,
+          {{HTMLMediaElement/setMediaKeys()}} has resolved) while the media element's
+          {{HTMLMediaElement/readyState}} is {{HTMLMediaElement/HAVE_NOTHING}}, the [=user agent=]
+          MUST support switching between unencrypted and encrypted streams in any order during
+          playback, provided that:
+        </p>
+        <ul>
+          <li>
+            <p>
+              each stream's container and codec(s) are supported by the [=user agent=] for
+              unencrypted playback and included in the {{MediaKeySystemConfiguration}} of the
+              {{MediaKeySystemAccess}} object used to create the {{MediaKeys}} object; and
+            </p>
+          </li>
+          <li>
+            <p>
+              if the streams use different <a data-cite="html#mime-types">MIME types</a> or codecs,
+              switching between those MIME types or codecs is supported by the media source
+              mechanism (for example, via {{SourceBuffer/changeType()}} [[MEDIA-SOURCE]]).
+            </p>
+          </li>
+        </ul>
+        <p class="note">
+          When the conditions above are not met, support for switching between unencrypted and
+          encrypted streams is a quality of implementation issue. Where unsupported,
+          {{HTMLMediaElement/setMediaKeys()}} does not reject solely because a switch might occur
+          later; instead, playback fails upon switching via the <a data-cite=
+          "html#fatal-decode-error">media data is corrupted</a> steps.
+        </p>
+        <p class="note">
+          Changing encryption status alone does not change a stream's <a data-cite=
+          "html#mime-types">MIME type</a>; {{SourceBuffer/changeType()}} [[MEDIA-SOURCE]] is only
+          needed when switching MIME types or codecs.
         </p>
       </section>
     </section>
