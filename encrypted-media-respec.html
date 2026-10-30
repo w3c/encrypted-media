@@ -3246,14 +3246,19 @@
           </h4>
           <p>
             The CDM unavailable algorithm is run to close all {{MediaKeySession}} objects
-            associated with a {{MediaKeys}} object, <var>media keys</var> when the [=CDM=] instance
-            becomes unavailable. Requests to run this algorithm include a
+            associated with a {{MediaKeys}} object when the [=CDM=] instance becomes unavailable.
+            Requests to run this algorithm include a target {{MediaKeys}} object and a
             {{MediaKeySessionClosedReason}} value.
           </p>
           <p>
             The following steps are run:
           </p>
           <ol>
+            <li>
+              <p>
+                Let <var>media keys</var> be the associated {{MediaKeys}} object.
+              </p>
+            </li>
             <li>
               <p>
                 Let the <var>reason</var> be the specified {{MediaKeySessionClosedReason}} value.
@@ -5384,15 +5389,16 @@
             <li>
               <p>
                 If <var>cdm</var> has become unavailable due to a hardware context reset, [=queue a
-                task=] to run the [=CDM Unavailable=] algorithm with reason
+                task=] to run the [=CDM Unavailable=] algorithm on the {{MediaKeys}} object that
+                created <var>session</var> with reason
                 {{MediaKeySessionClosedReason/"hardware-context-reset"}}.
               </p>
             </li>
             <li>
               <p>
                 If <var>cdm</var> has become unavailable for any other reason, [=queue a task=] to
-                run the [=CDM Unavailable=] algorithm with reason
-                {{MediaKeySessionClosedReason/"internal-error"}}.
+                run the [=CDM Unavailable=] algorithm on the {{MediaKeys}} object that created
+                <var>session</var> with reason {{MediaKeySessionClosedReason/"internal-error"}}.
               </p>
             </li>
           </ol>
