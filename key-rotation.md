@@ -67,7 +67,85 @@ Nearly a decade ago, around 2015, the EME community actively debated supporting 
 * **Simplicity**: Application logic should be simple to support embedded keys.  
 * **Interoperability**: Interoperable with key rotation features in different key systems, e.g. PlayReady [License Chaining](https://learn.microsoft.com/en-us/playready/overview/license-chaining).
 
-# Proposals
+# Proposal
+
+## Use `MediaKeySession.update()` for Embedded Keys
+
+Rather than introducing new session management APIs or relaxing `generateRequest()`, the application can use the existing [`MediaKeySession.update()`](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysession-update) method to pass in-band initialization data (`initData` / PSSH boxes containing embedded keys) directly to an active `MediaKeySession` that holds the Root Key (an approach originally discussed in [Issue #132](https://github.com/w3c/encrypted-media/issues/132#issuecomment-195427458)).
+
+### **Workflow**
+
+* When the application encounters `initData` requiring a Root Key (e.g., at the start of playback or when the Root Key rotates), it creates a `MediaKeySession`, calls `generateRequest(initDataType, initData)`, fetches the root license from the license server, and provides it via `update(license)`.
+* When the application subsequently encounters in-band `initData` containing embedded keys (identified via PSSH inspection or manifest signaling), it calls `update(initData)` directly on the existing root `MediaKeySession`.
+* The CDM decrypts the embedded content key(s) locally using the Root Key, updates the session's `keyStatuses`, and fires a `keystatuseschange` event without queuing any outbound `message` event.
+
+```javascript
+let rootSession = null;
+
+video.addEventListener('encrypted', async (event) => {
+  const { initDataType, initData } = event;
+
+  if (isRootKeyInitData(initData)) {
+    // 1. Initial setup (or Root Key rotation): standard license exchange
+    rootSession = mediaKeys.createSession();
+    rootSession.addEventListener('message', async (msgEvent) => {
+      const license = await fetchLicenseFromServer(msgEvent.message);
+      await rootSession.update(license);
+    });
+    await rootSession.generateRequest(initDataType, initData);
+  } else {
+    // 2. High-frequency Embedded Key rotation (e.g., in-band moof PSSH):
+    //    Pass initData directly to the existing root session — no server request!
+    await rootSession.update(initData);
+  }
+});
+```
+
+Note that this proposal focuses on the workflow where the Root Key is acquired via the EME license request flow (or loaded from a persistent session), which initializes a callable `MediaKeySession`. When the Root Key is baked into the client or acquired via a side channel outside of EME, there is no existing initialized `MediaKeySession` on which to call `update(initData)`. Since it is currently unclear what the baked-in or side-channel key workflow would look like under this approach, we leave those cases to future discussion.
+
+## EME Spec Compatibility of `update()`
+
+This workflow aligns with the existing normative steps of [`MediaKeySession.update(response)`](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysession-update) in the EME specification and requires no WebIDL or normative algorithm changes:
+
+* **Method Definition:** `update()` *"Provides messages, including licenses, to the CDM."*
+  * **Mapping:** In-band `initData` containing encrypted embedded keys is treated as a Key System-specific message.
+* **Step 6.1:** *"If sanitized response contains a license or key(s)..."*
+  * **Mapping:** Although `initData` is not a full server license, it contains encrypted content keys, satisfying this condition.
+* **Step 6.3:** *"If another message needs to be sent... execute the following steps..."*
+  * **Mapping:** Because the CDM decrypts the embedded key locally using the Root Key, no outbound message needs to be sent, and no `message` event is queued.
+* **Step 8:** *"If the set of keys known to the CDM for this object changed or the status of any key(s) changed, run the Update Key Statuses algorithm..."*
+  * **Mapping:** After decrypting the embedded key(s), the CDM updates `keyStatuses` and fires `keystatuseschange`.
+
+## Handling Key Accumulation in Long-Lived Sessions
+
+Passing a continuous stream of ephemeral embedded keys into a single `MediaKeySession` via `update()` means the session will accumulate a large number of keys over time during high-frequency key rotation.
+
+* **Key Replacement and Eviction ([Issue #583](https://github.com/w3c/encrypted-media/issues/583) / [PR #598](https://github.com/w3c/encrypted-media/pull/598)):** The EME specification defines the **Key Replacement Algorithm** to cover both replacing an existing key when a new version is provided and evicting older keys when CDM storage capacity is reached.
+* This allows the CDM to automatically evict older, unused rotated keys within the single root `MediaKeySession`, preventing resource exhaustion without requiring the player application to manage key lifetimes manually.
+
+## Summary of EME Spec Changes
+
+* **No Normative Changes Required:** Unsolicited `update()` calls on an initialized `MediaKeySession` are already permitted by the EME specification.
+* **Non-Normative Note on `MediaKeySession.update()`:** The current specification prose frequently refers to the data passed to `update(response)` as a `"response"` or `"license"` from a license server, which can be unclear when passing in-band `initData`. We propose adding a non-normative note to `MediaKeySession.update()` clarifying that `response` may also include in-band initialization data containing embedded keys for local key rotation by the CDM.
+
+## Review on Requirements
+
+* **Compatibility**: Uses the existing `MediaKeySession.update()` method with zero breaking changes to `generateRequest()` or existing session lifecycle behavior.
+* **Simplicity**: Keeps CDM and browser implementations simple by managing the Root Key and its associated Embedded Keys within a single `MediaKeySession`, avoiding parent-child session tracking while giving the player explicit control over which root session receives the embedded key.
+* **Interoperability**: Works across key systems and aligns with how single-session embedded key rotation is handled on platforms such as Android `MediaDrm`.
+
+## Alternative ideas in previous discussions
+
+* **Direct Consumption of In-band Keys**: One of the earliest proposals suggested that the User Agent (UA) or CDM should be able to directly consume in-band keys from the media stream without triggering an encrypted event or requiring license server messages ([source](https://github.com/w3c/encrypted-media/issues/132#:~:text=Allow%20simple%20inband,minimal%20spec%20impact.)).  
+   * Cons: Inconsistent with the current architecture. No existing way to get the initData to the CDM directly.  
+* **A New Method to Provide initData Mid-session**: Add a new method to MediaKeySession that would allow the application to provide initData to an existing session at any time ([source](https://github.com/w3c/encrypted-media/issues/132#:~:text=so%2C%20i%20think%20a%20better%20solution%20would%20be%20to%20allow%20provision%20of%20initdata%20into%20an%20existing%20session%20at%20any%20time.%20this%20may%20or%20may%20not%20trigger%20a%20message%20exchange.%20this%20method%20would%20be%20very%20much%20like%20update\(\)%2C%20except%20that%20it%20is%20initdata%2C%20rather%20than%20message%20data%2C%20which%20is%20provided.)). This would avoid the creation of a new session for each key rotation.  
+   * Cons: New API to handle initData. The application needs to decide whether to create a new session or use an existing session.
+* **Relaxing `generateRequest()` and Parent-Child Session Model**: Allow `generateRequest()` to process `initData` containing embedded keys without queuing a `message` event, and introduce a parent-child `MediaKeySession` hierarchy (`MediaKeySession.parent`, `parent-closed`, and `parent-merged`). See [Appendix: Relax `generateRequest()` Proposal](#appendix-relax-generaterequest-proposal) for full details.
+   * Cons: Implicitly matching child sessions to parent root sessions in the CDM is complex and error-prone; resolving `generateRequest()` without queuing a `message` event breaks assumptions in existing player state machines; requires new WebIDL attributes and close reasons with uncertain ecosystem adoption.
+
+# Appendix: Relax `generateRequest()` Proposal
+
+*(Note: This appendix preserves the 2025 explainer proposal for historical reference.)*
 
 ## Relax generateRequest()
 
@@ -130,12 +208,3 @@ When the root key is baked in the client, or acquired via a side channel, embedd
   * Most players will ignore the new  [MediaKeySessionClosedReason](https://www.w3.org/TR/encrypted-media-2/#dom-mediakeysessionclosedreason) enum values. But if they care, they can understand what is happening.  
 * **Simplicity**: A simple application can work as is: create a new session on each new initData, and send all key requests to servers. It’s also straightforward to manage the root key and embedded keys via session management.  
 * **Interoperability**: The proposal should work with different CDM implementations, including PlayReady and Widevine.
-
-## Alternative ideas in previous discussions
-
-* **Direct Consumption of In-band Keys**: One of the earliest proposals suggested that the User Agent (UA) or CDM should be able to directly consume in-band keys from the media stream without triggering an encrypted event or requiring license server messages ([source](https://github.com/w3c/encrypted-media/issues/132#:~:text=Allow%20simple%20inband,minimal%20spec%20impact.)).  
-   * Cons: Inconsistent with the current architecture. No existing way to get the initData to the CDM directly.  
-* **A New Method to Provide initData Mid-session**: Add a new method to MediaKeySession that would allow the application to provide initData to an existing session at any time ([source](https://github.com/w3c/encrypted-media/issues/132#:~:text=so%2C%20i%20think%20a%20better%20solution%20would%20be%20to%20allow%20provision%20of%20initdata%20into%20an%20existing%20session%20at%20any%20time.%20this%20may%20or%20may%20not%20trigger%20a%20message%20exchange.%20this%20method%20would%20be%20very%20much%20like%20update\(\)%2C%20except%20that%20it%20is%20initdata%2C%20rather%20than%20message%20data%2C%20which%20is%20provided.)). This would avoid the creation of a new session for each key rotation.  
-   * Cons: New API to handle initData. The application needs to decide whether to create a new session or using existing session. No multi-session support to manage embedded content keys.
-* **Using the update() Method for Mid-stream initData**: Use the existing update() method to provide mid-stream initData to the CDM ([source](https://github.com/w3c/encrypted-media/issues/132#issuecomment-195427458)).
-   * Cons: Bigger change to the EME workflow. The application needs to decide whether to create a new session or use an existing session. No multi-session support to manage embedded content keys.
