@@ -8929,12 +8929,8 @@
          { contentType: 'audio/webm; codecs="vorbis"' }
        ],
        videoCapabilities: [
-         { contentType: 'video/webm; codecs="vp9"',
-           robustness: 'foo' },
-         { contentType: 'video/webm; codecs="vp9"',
-           robustness: 'bar' },
-         { contentType: 'video/webm; codecs="vp8"',
-           robustness: 'bar' },
+         { contentType: 'video/webm; codecs="vp9"' },
+         { contentType: 'video/webm; codecs="vp8"' },
        ]
      }
     ];
@@ -8954,7 +8950,7 @@
     ).catch(
       function(error) {
         // Try the next key system.
-        navigator.requestMediaKeySystemAccess('org.w3.clearkey', clearKeyOptions).then(
+        return navigator.requestMediaKeySystemAccess('org.w3.clearkey', clearKeyOptions).then(
           function(keySystemAccess) {
             // Not shown:
             // 1. Use keySystemAccess.getConfiguration().audioCapabilities[0].contentType
@@ -8963,12 +8959,11 @@
             // 2. Set video.src.
 
             licenseUrl = 'https://license.example.com/clearkey/request';
+            serverCertificate = undefined;
             return keySystemAccess.createMediaKeys();
           }
         );
       }
-    ).catch(
-      console.error.bind(console, 'Unable to instantiate a key system supporting the required combinations')
     );
   }
 
